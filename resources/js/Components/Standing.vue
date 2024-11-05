@@ -7,7 +7,7 @@
         <table class="w-full">
           <thead>
             <tr class="text-left text-sm font-medium bg-gray-100 text-gray-500 uppercase tracking-wider">
-              <th class="p-3">Team</th>
+              <th class="p-3">Teams</th>
               <th class="p-3 text-center">Wins</th>
               <th class="p-3 text-center">Losses</th>
             </tr>
