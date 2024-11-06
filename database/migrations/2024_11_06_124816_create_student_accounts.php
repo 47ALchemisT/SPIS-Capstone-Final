@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('student_accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');;
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->string('role');
             $table->boolean('status');
+            $table->string('username')->unique(); // Ensure the username is unique
+            $table->string('password'); // Store the hashed password
             $table->timestamps();
         });
     }

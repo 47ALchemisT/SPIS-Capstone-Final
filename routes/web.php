@@ -17,6 +17,7 @@ use App\Http\Controllers\SportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentPalakasanController;
 use App\Http\Controllers\VenueController;
+use App\Http\Controllers\LoginController;
 use App\Models\AssignedSports;
 
 Route::resource('product', ProductController::class);
@@ -31,6 +32,11 @@ Route::resource('palakasan/team', PalakasanTeamController::class);
 Route::resource('palakasan/sportselection', PalakasanSportsController::class);
 Route::resource('studentplayer', StudentPalakasanController::class);
 Route::post('studentplayer/store', [StudentPalakasanController::class, 'store'])->name('player.store');
+
+//Log In
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('details/sportview/{sport}', function ($sport) {
     $sportModel = AssignedSports::findOrFail($sport);
@@ -72,6 +78,8 @@ Route::post('student/import', [StudentController::class, 'import'])->name('stude
 
 Route::get('/', function () {
     return Inertia::render('SSCAdmin/Dashboard');
+
+
 });
 
 
