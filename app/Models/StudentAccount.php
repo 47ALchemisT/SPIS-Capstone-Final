@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable; 
+use Illuminate\Notifications\Notifiable; 
 
-class StudentAccount extends Model
+class StudentAccount extends Authenticatable 
 {
-    use HasFactory;
+    use HasFactory, Notifiable; 
 
     protected $table = 'student_accounts';
 
@@ -17,8 +18,8 @@ class StudentAccount extends Model
         'status',
         'username',
         'password',
-
     ];
+
 
     public function student()
     {

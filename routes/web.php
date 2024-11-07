@@ -76,7 +76,7 @@ Route::post('/match-result', [OnePalakasanController::class, 'storeMatchResult']
 Route::resource('student', StudentController::class);
 Route::post('student/import', [StudentController::class, 'import'])->name('student.import');
 
-Route::get('/', function () {
+Route::get('/admindashboard', function () {
     return Inertia::render('SSCAdmin/Dashboard');
 
 

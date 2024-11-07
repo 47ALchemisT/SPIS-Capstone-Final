@@ -35,7 +35,7 @@ class LoginController extends Controller
             // Redirect based on role (customize as per your needs)
         switch ($studentAccount->role) {
             case 'Admin':
-                return redirect()->intended('dashboard');
+                return redirect()->intended('/admindashboard');
             case 'Facilitator':
                 return redirect()->intended('facidashboard');
             case 'College Sport Head':
