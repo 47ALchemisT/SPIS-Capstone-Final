@@ -15,6 +15,8 @@ class StudentAccount extends Model
         'student_id',
         'role',
         'status',
+        'username',
+        'password',
 
     ];
 
@@ -22,6 +24,9 @@ class StudentAccount extends Model
     {
         return $this->belongsTo(Student::class, 'student_id');
     }
-
+    public function studentID()
+    {
+        return $this->HasMany(StudentPlayer::class, 'student_player_id');
+    }
 
 }

@@ -42,12 +42,25 @@ class AccountController extends Controller
             'role' => 'required|string|max:255',
             'status' => 'required|boolean', // Assuming 'status' is either true or false
         ]);
+        $student = Student::find($validated['student_id']);
+        
+        // Extract the first name and generate the username
+        $first_name = explode(' ', trim($student->first_name))[0]; // Get the first name
+        
+        // Generate username: only the first name in lowercase
+        $username = strtolower($first_name);
+
+        // Generate password: first name + "123"
+        $password = strtolower($first_name) . '123';
+    
     
         // Create the student account
         StudentAccount::create([
             'student_id' => $validated['student_id'],
             'role' => $validated['role'],
             'status' => $validated['status'],
+            'username' => $username,
+            'password' => $password,
         ]);
     
         // Redirect back with success message
@@ -81,8 +94,10 @@ class AccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Studentaccount $student_id)
     {
-        //
+        $student_id->delete();
+    
+        return redirect()->route('studentaccount.index')->with('success', 'Product deleted successfully.');
     }
 }
