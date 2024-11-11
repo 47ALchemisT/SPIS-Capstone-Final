@@ -42,4 +42,9 @@ class AssignedSports extends Model
     {
         return $this->hasMany(SportsVariations::class, 'assigned_sport_id');
     }
+
+    public function sport_id()
+    {
+        return $this->hasMany(TeamStanding::class, 'assigned_sport_id');
+    }
 }

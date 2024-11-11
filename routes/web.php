@@ -12,6 +12,7 @@ use App\Http\Controllers\PointsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoundRobinController;
 use App\Http\Controllers\SingleEliminationController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\StudentController;
@@ -42,6 +43,8 @@ Route::get('details/sportview/{sport}', function ($sport) {
             return app(DoubleEliminationController::class)->index($sportModel);
         case 'Free for All':
             return app(FreeForAllController::class)->index($sportModel);
+        case 'Round Robin':
+            return app(RoundRobinController::class)->index($sportModel);
         default:
             abort(404, 'Invalid sport setup');
     }
@@ -54,6 +57,14 @@ Route::post('/generate-teams', [FreeForAllController::class, 'generateTeams'])->
 Route::post('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');
 Route::post('/resultsSE', [SingleEliminationController::class, 'storeResult'])->name('results.store');
 Route::post('/resultsDE', [DoubleEliminationController::class, 'storeResult'])->name('results.store');
+
+Route::post('/round-robin/store', [RoundRobinController::class, 'store_round_robin'])->name('round-robin.store');
+Route::post('/matches/update-date-time', [RoundRobinController::class, 'updateDateTime'])->name('matches.updateDateTimeRR');
+Route::post('/results/store', [RoundRobinController::class, 'storeResult'])->name('resultsRR.store');
+Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])
+    ->name('sport-variations.update-time');
+Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])
+    ->name('sport-variations.update-ranks');
 
 
 

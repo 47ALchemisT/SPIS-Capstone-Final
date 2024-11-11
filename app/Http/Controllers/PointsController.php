@@ -32,16 +32,23 @@ class PointsController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the input fields in a single call
+        // Validate the input fields
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'pointdescription' => 'required|string|max:255',
-            'rankdescription' => 'required|string|max:255',
+            'type' => 'required|string|in:Major,Minor',
+            'rankPoints' => 'required|array|min:1',
+            'rankPoints.*.rank' => 'required|string|max:255',
+            'rankPoints.*.points' => 'required|numeric',
         ]);
-                    
-        // Create a new college using the validated data
-        Points::create($validated);
-                    
+        
+        // Create a new Points record for each rank-points pair
+        foreach ($validated['rankPoints'] as $rankPoint) {
+            Points::create([
+                'type' => $validated['type'],
+                'rank' => $rankPoint['rank'],
+                'points' => $rankPoint['points'],
+            ]);
+        }
+        
         // Redirect with a success message
         return redirect()->route('points.index')->with('success', 'Points successfully added.');
     }
@@ -67,19 +74,34 @@ class PointsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $points = Points::findOrFail($id); // Find the product by ID
+        $points = Points::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'pointdescription' => 'required|string|max:255',
-            'rankdescription' => 'required|string|max:255',
-
+        $validated = $request->validate([
+            'type' => 'required|string|in:Major,Minor',
+            'rankPoints' => 'required|array|min:1',
+            'rankPoints.*.rank' => 'required|string|max:255',
+            'rankPoints.*.points' => 'required|numeric',
         ]);
 
-        $points->update($request->only('name', 'pointdescription','rankdescription',)); // Update the product
+        // Update the existing record
+        $points->update([
+            'type' => $validated['type'],
+            'rank' => $validated['rankPoints'][0]['rank'],
+            'points' => $validated['rankPoints'][0]['points'],
+        ]);
 
-        return redirect()->route('points.index')->with('success', 'Product updated successfully.');
+        // Create new records for any additional rank-points pairs
+        for ($i = 1; $i < count($validated['rankPoints']); $i++) {
+            Points::create([
+                'type' => $validated['type'],
+                'rank' => $validated['rankPoints'][$i]['rank'],
+                'points' => $validated['rankPoints'][$i]['points'],
+            ]);
+        }
+
+        return redirect()->route('points.index')->with('success', 'Points updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.

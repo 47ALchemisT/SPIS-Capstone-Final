@@ -83,7 +83,7 @@ class OnePalakasanController extends Controller
             'palakasan_sport_id' => 'required|exists:palakasans,id',
             'sport_id' => 'required|exists:sports,id',
             'categories' => 'required|string|in:Men,Women,Mixed',
-            'setup' => 'required|string|in:Double Elimination,Single Elimination,Free for All',
+            'setup' => 'required',
         ]);
     
         // Store the validated data in the database

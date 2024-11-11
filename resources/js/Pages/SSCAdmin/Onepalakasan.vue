@@ -1,5 +1,5 @@
 <template>
-    <Head title="College"/>
+    <Head title="Palakasan"/>
     <AppLayout>
         <template v-slot:default>
 
@@ -80,7 +80,7 @@
                                 </div>
 
                                 <div class="grid grid-cols-4 mt-4 gap-4">
-                                    <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'teams'">
+                                    <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'lineups'">
                                         <div>
                                             <h1 class="text-md font-semibold text-blue-700">Teams</h1>
                                         </div>
@@ -88,7 +88,7 @@
                                         <p class="text-xs text-blue-700 text-center mb-3">total number of teams</p>
                                     </div>
 
-                                    <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'sports'">
+                                    <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'leagues'">
                                         <div>
                                             <h1 class="text-md font-semibold text-blue-700">Sports</h1>
                                         </div>
@@ -392,9 +392,10 @@
                         @change="updateCategoryForFreeForAll"
                     >
                         <option value="" disabled>Select a setup</option>
-                        <option value="Double Elimination">Double Elimination</option>
                         <option value="Single Elimination">Single Elimination</option>
+                        <option value="Double Elimination">Double Elimination</option>
                         <option value="Free for All">Free for All</option>
+                        <option value="Round Robin">Round Robin</option>
                     </select>
                     <span v-if="form1.errors.setup" class="text-red-500">{{ form1.errors.setup }}</span>
                     </div>
@@ -421,23 +422,23 @@
 
                     <!-- Modal Buttons -->
                     <div class="flex justify-end">
-                    <button type="button" @click="closeSportsModal" class="mr-2 px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg">Cancel</button>
-                    <button
-                        type="submit"
-                        :disabled="form1.processing"
-                        class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
-                    >
-                        <span v-if="!form1.processing">
-                        Confirm
-                        </span>
-                        <span v-else>
-                        <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                        </span>
-                    </button>  
+                        <button type="button" @click="closeSportsModal" class="mr-2 px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg">Cancel</button>
+                        <button
+                            type="submit"
+                            :disabled="form1.processing"
+                            class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
+                        >
+                            <span v-if="!form1.processing">
+                            Confirm
+                            </span>
+                            <span v-else>
+                            <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                            </span>
+                        </button>  
                     </div>
                 </form>
                 </div>
@@ -589,13 +590,13 @@
     onMounted(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabFromQuery = urlParams.get('tab');
-    if (tabFromQuery && ['details', 'teams', 'sports'].includes(tabFromQuery)) {
+    if (tabFromQuery && ['details', 'lineups', 'leagues'].includes(tabFromQuery)) {
         activeTab.value = tabFromQuery;
     }
     });
 
     watch(() => route().params.tab, (newTab) => {
-    if (newTab && ['details', 'teams', 'sports'].includes(newTab)) {
+    if (newTab && ['details', 'lineups', 'leagues'].includes(newTab)) {
         activeTab.value = newTab;
     }
     });

@@ -401,7 +401,7 @@ const closeCreateMatchesModal = () => {
 
 const activeTab = ref('matches');  // Default to "Details" 
 const returnToPalakasan = () => {
-  router.get(route('palakasan.details', { tab: 'sports' }));
+  router.get(route('palakasan.details', { tab: 'leagues' }));
 };
 
 // Check if matches already exist for this sport

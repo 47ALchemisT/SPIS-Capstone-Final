@@ -13,6 +13,9 @@ class SportsVariations extends Model
         'assigned_sport_id',
         'sport_variation_name',
         'sport_variation_venue_id',
+        'status',
+        'date',
+        'time'
     ];
 
     public function sport_id()

@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('points', function (Blueprint $table) {
+        Schema::create('overall_results', function (Blueprint $table) {
             $table->id();
-            $table->string('type');//major or minor
-            $table->string('rank');
-            $table->integer('points');
             $table->timestamps();
         });
     }
@@ -25,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('points');
+        Schema::dropIfExists('overall_results');
     }
 };
