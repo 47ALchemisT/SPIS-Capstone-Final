@@ -3,7 +3,7 @@
     <AppLayout>
         <template v-slot:default>
             <div class="flex items-center gap-2">
-                    <h1 class="text-4xl font-semibold">{{ sport.sport.name }}</h1>
+                    <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                     <div>
                         <button 
                             @click="returnToPalakasan" 
@@ -26,15 +26,25 @@
                     <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
                 </div>
             </div>
-            <div class="flex gap-2 mt-2">
-                <p class="py-1 px-4 rounded-full bg-blue-100 text-blue-700 text-sm"> {{ sport.setup }}</p>
-                <p class="py-1 px-4 rounded-full bg-blue-100 text-blue-700 text-sm">{{ sport.categories }}</p>
+            <div class="flex items-center gap-2 mt-2">
+                <p class="text-sm"> {{ sport.setup }}</p>
+                <p class="text-xs">|</p>
+                <p class=" text-sm">{{ sport.type }}</p>
+                <p class="text-xs">|</p>
+                <p class=" text-sm">{{ sport.status }}</p>
             </div>
-
-            <!-- Tournament Winner Display -->
+            <Toast ref="toastRef" />
             <div v-if="tournamentWinner" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h2 class="text-lg font-semibold text-green-800">Game Winner</h2>
                 <p class="text-xl font-bold text-green-700 mt-2">🏆 {{ getTeamName(tournamentWinner) }}</p>
+                <button
+                    @click="openRankingModal"
+                    type="button"
+                    class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    :disabled="isSubmittingRankings || rankingsSubmitted"
+                    >
+                    {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
+                </button>
             </div>
 
             <!-- Tabs Navigation -->
@@ -57,22 +67,20 @@
                         </div>
                 </div>
                 <div class="flex items-center gap-2">
-
-
-                    <button 
-                        @click="openCreateMatchesModal" 
-                        type="button" 
-                        class=" flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                    <button
+                        @click="openCreateMatchesModal"
+                        type="button"
+                        class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
                         :disabled="hasExistingMatches"
-                        >
-                        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14.384 14.38a23 23 0 0 1 1.056 4.863l.064.644l.126 1.431a10 10 0 0 1-9.15-.98l2.08-2.087l.246-.24c1.793-1.728 3.41-2.875 5.387-3.566zm6.09-.783l.414.003l.981.014a10 10 0 0 1-4.319 6.704l-.054-.605c-.18-2.057-.55-3.958-1.163-5.814c1.044-.182 2.203-.278 3.529-.298zm-7.869-3.181a25 25 0 0 1 1.052 2.098c-2.276.77-4.142 2.053-6.144 3.967l-.355.344l-2.236 2.24a10 10 0 0 1-2.917-6.741L2 12l.004-.25H3.1l.467-.002c3.547-.026 6.356-.367 8.938-1.295zm9.388 1.202l-1.515-.02c-1.86-.003-3.45.124-4.865.402a26 26 0 0 0-1.163-2.38c1.393-.695 2.757-1.597 4.179-2.75l.428-.354l.816-.682a10 10 0 0 1 2.098 5.409zM7.33 3.158L8.596 4.68c1.145 1.398 2.121 2.713 2.949 3.985c-2.26.766-4.739 1.052-7.883 1.081L3.1 9.75h-.844A10 10 0 0 1 7.33 3.157zM17 3.34q.796.46 1.483 1.046l-1.025.857c-1.379 1.128-2.688 1.993-4.034 2.649c-.89-1.398-1.943-2.836-3.182-4.358l-.474-.574l-.485-.584A10 10 0 0 1 17 3.34"/></svg>                        {{ hasExistingMatches ? 'Game Already Started' : 'Start Game' }}
+                    >
+                        {{ hasExistingMatches ? 'Game Already Started' : 'Start Game' }}
                     </button>
                 </div>
             </nav>
 
             <div class="mt-4">
                 <div v-if="activeTab === 'matches'">
-                    <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues"  :allMatches="allMatches"/>                
+                    <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues"  :allMatches="allMatches" :venueRecords="venueRecords"/>                
                 </div>
                 <div v-if="activeTab === 'standing'">
                     <div class="w-full">
@@ -145,6 +153,58 @@
                 </div>
             </div>
 
+            <!-- Ranking Modal -->
+            <div v-if="showRankingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg shadow-lg relative w-96 max-h-[90vh] overflow-y-auto">
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <h3 class="text-lg font-semibold text-gray-900">Submit Rankings</h3>
+                        <button @click="closeRankingModal" class="text-gray-400 hover:text-gray-900">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <form @submit.prevent="submitRankings">
+                        <div v-for="(team) in rankingTeams" :key="team.id" class="mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium">{{ team.assigned_team_name }}</span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-medium">Rank</span>
+                                    <input
+                                    v-model="team.rank"
+                                    type="text"
+                                    min="1"
+                                    disabled
+                                    :max="teams.length"
+                                    class="w-8 border text-center rounded px-2 py-1"
+                                    placeholder="Rank"
+                                    />
+                                    <span class="font-medium">Points</span>
+                                    <input
+                                    v-model="team.points"
+                                    type="number"
+                                    min="0"
+                                    class="w-16 border rounded px-2 py-1"
+                                    placeholder="Points"
+                                    required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button
+                            type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            :disabled="isSubmittingRankings || rankingsSubmitted"
+                            >
+                            {{ isSubmittingRankings ? 'Submitting...' : (rankingsSubmitted ? 'Rankings Submitted' : 'Submit Rankings') }}
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!-- Score Setting Modal -->
             <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div class="bg-white rounded-lg shadow-lg relative w-72">
@@ -208,61 +268,76 @@
             </div>
             <!-- Create Matches Modal -->
             <div v-if="showCreateMatchesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg relative w-96">
-                    <button 
-                        @click="closeCreateMatchesModal" 
-                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-                    >
-                        &times;
-                    </button>
-                    <h2 class="text-lg font-bold mb-4">Create Initial Matches</h2>
+                <div class="bg-white rounded-lg shadow-lg relative w-96">
+                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            Create {{ sport.sport.name }} Matches
+                        </h3>
+                        <button               
+                            @click="closeCreateMatchesModal" 
+                            type="button" 
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span class="sr-only">Close modal</span>
+                        </button>
+                    </div>
 
                     <!-- Form Starts Here -->
                     <form @submit.prevent="createInitialMatches">
+                        <div class="p-5">
+                            <!-- Venue Selection -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Select Venue
+                                </label>
+                                <div class="relative">
+                                    <select
+                                        v-model="selectedVenue"
+                                        class="w-full p-2 pr-8 rounded-md bg-white ring-1 ring-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 appearance-none"
+                                        required
+                                    >
+                                        <option value="" disabled>Choose a venue</option>
+                                        <option
+                                            v-for="venue in props.venues"
+                                            :key="venue.id"
+                                            :value="venue.id"
+                                        >
+                                            {{ venue.name }}
+                                        </option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <!-- Venue Selection -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Select Venue
-                            </label>
-                            <select 
-                                v-model="selectedVenue"
-                                class="w-full border rounded-md p-2 mb-4 bg-white"
-                                required
+                            <!-- Shuffle Teams Option -->
+                            <div class="mb-4 py-2.5 px-3 bg-gray-50 rounded-md ring-1 ring-gray-300">
+                                <label class="flex items-center">
+                                    <input
+                                        v-model="shuffleTeams"
+                                        type="checkbox"
+                                        class="form-checkbox h-4 w-4 text-blue-600 border-blue-600 focus:ring-blue-500"
+                                    >
+                                    <span class="ml-2 text-gray-700 text-sm">Shuffle and randomize teams</span>
+                                </label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button 
+                                type="submit"
+                                :disabled="createMatchesLoading || !selectedVenue"
+                                class="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <option value="" disabled>Choose a venue</option>
-                                <option 
-                                    v-for="venue in props.venues" 
-                                    :key="venue.id" 
-                                    :value="venue.id"
-                                >
-                                    {{ venue.name }}
-                                </option>
-                            </select>
+                                {{ createMatchesLoading ? 'Creating...' : 'Create Matches' }}
+                            </button>
+
+                            <p v-if="createMatchesError" class="text-red-600 mt-2">{{ createMatchesError }}</p>
                         </div>
-
-                        <!-- Shuffle Teams Option -->
-                        <div class="mb-4">
-                            <label class="flex items-center">
-                                <input 
-                                    v-model="shuffleTeams" 
-                                    type="checkbox" 
-                                    class="form-checkbox h-5 w-5 text-blue-600"
-                                >
-                                <span class="ml-2 text-gray-700">Shuffle and randomize teams</span>
-                            </label>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button 
-                            type="submit"
-                            :disabled="createMatchesLoading || !selectedVenue"
-                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {{ createMatchesLoading ? 'Creating...' : 'Create Matches' }}
-                        </button>
-
-                        <p v-if="createMatchesError" class="text-red-600 mt-2">{{ createMatchesError }}</p>
                     </form>
                     <!-- Form Ends Here -->
 
@@ -274,12 +349,14 @@
 </template>
  
 <script setup>
-import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, onMounted, computed } from 'vue';
+import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/GameSchedule.vue';
+import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed
+
 
 const props = defineProps({
     sport: [Array, Object],
@@ -289,7 +366,25 @@ const props = defineProps({
     results: Array,
     venues: Array,
     allMatches: Array,
+    venueRecords: Array
 });
+
+const toastRef = ref(null);
+const page = usePage();
+
+// Watch for flash messages
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash.message) {
+            toastRef.value.addToast(flash.message, 'success');
+        }
+        if (flash.error) {
+            toastRef.value.addToast(flash.error, 'error');
+        }
+    },
+    { deep: true }
+);
 
 const activeTab = ref('matches');
 const selectedVenue = ref('');
@@ -304,7 +399,7 @@ const createMatchesLoading = ref(false);
 const createMatchesError = ref('');
 
 const returnToPalakasan = () => {
-    router.get(route('palakasan.details', { tab: 'sports' }));
+    router.get(route('palakasan.details', { tab: 'leagues' }));
 };
 
 const hasExistingMatches = computed(() => {
@@ -425,8 +520,6 @@ const createInitialMatches = async () => {
         if (!matches.length) {
             throw new Error('No matches were generated');
         }
-        console.log("Match data being sent:", JSON.stringify(matches, null, 2));
-
 
         // Add logging before sending request
         console.log("Match data being sent:", matches);
@@ -437,8 +530,6 @@ const createInitialMatches = async () => {
                 console.log('Success response:', page);
                 createMatchesLoading.value = false;
                 closeCreateMatchesModal();
-                // Optionally refresh the page or update the matches list
-                router.visit(window.location.pathname);
             },
             onError: (errors) => {
             console.error('Error creating matches:', errors);
@@ -607,6 +698,91 @@ const completedMatches = computed(() => {
 const progressPercentage = computed(() => {
     return (completedMatches.value / totalMatches.value) * 100;
 });
+
+
+//
+const showRankingModal = ref(false);
+const isSubmittingRankings = ref(false);
+const rankingTeams = ref([]);
+const rankingsSubmitted = ref(false);
+
+const calculateTeamRecords = () => {
+  const records = {};
+  props.teams.forEach(team => {
+    records[team.id] = { wins: 0, losses: 0, points: 0 };
+  });
+
+  props.results.forEach(result => {
+    if (result.winning_team_id) {
+      records[result.winning_team_id].wins++;
+      records[result.winning_team_id].points += result.winning_points || 0;
+    }
+    if (result.losing_team_id) {
+      records[result.losing_team_id].losses++;
+      records[result.losing_team_id].points += result.losing_points || 0;
+    }
+  });
+
+  return records;
+};
+
+const sortTeamsByRecord = (teams, records) => {
+  return [...teams].sort((a, b) => {
+    const teamA = records[a.id] || { wins: 0, losses: 0, points: 0 };
+    const teamB = records[b.id] || { wins: 0, losses: 0, points: 0 };
+
+    // Sort by wins first, then by points, then by losses
+    if (teamA.wins !== teamB.wins) return teamB.wins - teamA.wins;
+    if (teamA.points !== teamB.points) return teamB.points - teamA.points;
+    return teamA.losses - teamB.losses;
+  });
+};
+
+const openRankingModal = () => {
+  if (rankingsSubmitted.value) return;
+
+  const records = calculateTeamRecords();
+  const sortedTeams = sortTeamsByRecord(props.teams, records);
+
+  rankingTeams.value = sortedTeams.map((team, index) => ({
+    ...team,
+    rank: index + 1,
+    points: records[team.id].points || 0,
+  }));
+
+  showRankingModal.value = true;
+};
+
+const closeRankingModal = () => {
+  showRankingModal.value = false;
+};
+
+const submitRankings = async () => {
+  if (rankingsSubmitted.value) return;
+
+  isSubmittingRankings.value = true;
+
+  const rankings = rankingTeams.value.map(team => ({
+    assigned_sport_id: props.sport.id,
+    assigned_team_id: team.id,
+    rank: parseInt(team.rank),
+    points: team.points,
+  }));
+
+  try {
+    await router.post(route('overall-results.store'), { rankings }, {
+      preserveState: true,
+      preserveScroll: true,
+    });
+    rankingsSubmitted.value = true;
+    closeRankingModal();
+  } catch (error) {
+    console.error('Error submitting rankings:', error);
+    // Handle error (e.g., show error message to user)
+  } finally {
+    isSubmittingRankings.value = false;
+  }
+};
 </script>
  
 <style scoped>

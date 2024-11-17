@@ -6,9 +6,13 @@ use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
 use App\Models\College;
 use App\Models\MatchResult;
+use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\Sport;
 use App\Models\SportMatch; // Include SportMatch model
+use App\Models\SportsVariationsMatches;
+use App\Models\StudentAccount;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,6 +22,8 @@ class OnePalakasanController extends Controller
     {   
         $sports = Sport::all();
         $colleges = College::all();
+        $overallResult = OverallResult::all();
+        $variationResult = SportsVariationsMatches::all();
 
         // Fetch the latest Palakasan
         $latestPalakasan = Palakasan::latest()->first();        
@@ -36,6 +42,8 @@ class OnePalakasanController extends Controller
                 ->where('palakasan_id', $latestPalakasan->id)
                 ->get();
         }
+
+        $facilitator = StudentAccount::with('student')->where('role', 'Facilitator')->get();  
         
         $palakasans = Palakasan::all();
 
@@ -46,6 +54,9 @@ class OnePalakasanController extends Controller
             'assignedSports' => $assignedSports,
             'assignedTeams' => $assignedTeams,
             'latestPalakasan' => $latestPalakasan, // Pass the latest Palakasan (could be null) to the view
+            'overallResult' => $overallResult,
+            'variationResult' => $variationResult,
+            'facilitator' => $facilitator
         ]);
     }
 
@@ -58,7 +69,7 @@ class OnePalakasanController extends Controller
             'description' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'status' => 'required|boolean',
+            'status' => 'required',
         ]);
         
         // Create a new Palakasan record
@@ -84,6 +95,10 @@ class OnePalakasanController extends Controller
             'sport_id' => 'required|exists:sports,id',
             'categories' => 'required|string|in:Men,Women,Mixed',
             'setup' => 'required',
+            'type' => 'required',
+            'facilitator_id' => 'required|exists:student_accounts,id',
+            'status' => 'required',
+
         ]);
     
         // Store the validated data in the database
@@ -92,6 +107,10 @@ class OnePalakasanController extends Controller
             'sport_id' => $validated['sport_id'],
             'categories' => $validated['categories'],
             'setup' => $validated['setup'],
+            'type' => $validated['type'],
+            'facilitator_id' => $validated['facilitator_id'],
+            'status' => $validated['status'],
+
         ]);
         
         // Fetch the teams assigned to this Palakasan
@@ -103,8 +122,6 @@ class OnePalakasanController extends Controller
         }
         return redirect()->back()->with('success', 'Sport created and teams matched successfully.');
     }
-
-
 
     public function store_teams(Request $request)
     {
@@ -126,17 +143,27 @@ class OnePalakasanController extends Controller
         return redirect()->back()->with('success', 'Sport created and teams matched successfully.');
     }
 
-    // Update status
-    public function updateStatus(Request $request, $id)
+    public function updatePalakasanStatus(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'required|boolean',
-        ]);
-
-        $palakasan = Palakasan::findOrFail($id);
-        $palakasan->status = $request->status;
-        $palakasan->save();
-
-        return redirect()->back()->with('success', 'Palakasan status updated successfully.');
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'status' => 'required|in:live,completed',
+            ]);
+    
+            // Find the Palakasan record
+            $palakasan = Palakasan::findOrFail($id);
+            
+            // Update the status
+            $palakasan->update([
+                'status' => $validated['status']
+            ]);
+    
+            $statusMessage = $validated['status'] === 'live' ? 'live' : 'completed';
+            return redirect()->back()->with('success', "Palakasan status updated to {$statusMessage} successfully.");
+ 
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update Palakasan status: ' . $e->getMessage());
+        }
     }
 }

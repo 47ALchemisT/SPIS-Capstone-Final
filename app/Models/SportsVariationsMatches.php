@@ -14,6 +14,7 @@ class SportsVariationsMatches extends Model
         'sport_variation_id',
         'sport_variation_team_id',
         'rank',
+        'points'
     ];
 
     public function sportVariationID()

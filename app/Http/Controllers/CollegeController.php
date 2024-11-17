@@ -44,7 +44,7 @@ class CollegeController extends Controller
         College::create($validated);
     
         // Redirect with a success message
-        return redirect()->route('college.index')->with('success', 'College successfully added.');
+        return redirect()->back()->with('success', 'College successfully added.');
     }
 
     /**
@@ -81,7 +81,7 @@ class CollegeController extends Controller
 
         $colleges->update($request->only('name', 'shortName', 'teamName', 'description')); // Update the product
 
-        return redirect()->route('college.index')->with('success', 'Product updated successfully.');
+        return redirect()->back()->with('success', 'Product updated successfully.');
     }
 
     /**

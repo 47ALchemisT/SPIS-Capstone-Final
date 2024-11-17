@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('sport_id')->constrained('sports')->onDelete('cascade'); // Add foreign key constraint
             $table->string('categories');
             $table->string('setup');
+            $table->string('type');
+            //facilitator_id
+            $table->string('status');
             $table->timestamps();
         });
     }

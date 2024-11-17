@@ -16,6 +16,9 @@ class AssignedSports extends Model
         'sport_id',
         'categories',
         'setup',
+        'type',
+        'facilitator_id',
+        'status'
     ];
 
     public function sport()
@@ -46,5 +49,14 @@ class AssignedSports extends Model
     public function sport_id()
     {
         return $this->hasMany(TeamStanding::class, 'assigned_sport_id');
+    }
+
+    public function assignedSportID()
+    {
+        return $this->hasMany(OverallResult::class, 'assigned_sport_id');
+    }
+
+    public function facilitatorID(){
+        return $this->belongsTo(StudentAccount::class, 'facilitator_id');
     }
 }

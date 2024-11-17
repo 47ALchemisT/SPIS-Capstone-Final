@@ -9,6 +9,7 @@ use App\Models\Palakasan;
 use App\Models\SportMatch;
 use App\Models\Venue;
 use App\Models\TeamStanding;
+use App\Models\UsedVenueRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -22,11 +23,14 @@ class RoundRobinController extends Controller
         $allMatches = SportMatch::all();
         $assignedSports->load('sport');
         $tournaments = Palakasan::all();
+        $latestPalakasan = Palakasan::latest()->first();
         $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
         $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
         $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
         $standings = TeamStanding::where('assigned_sport_id', $assignedSports->id)
                                  ->get();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
 
         return Inertia::render('SSCAdmin/MatchSetup/RoundRobin', [
             'sport' => $assignedSports,
@@ -37,6 +41,7 @@ class RoundRobinController extends Controller
             'venues' => $venues,
             'standings' => $standings,
             'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords
 
         ]);
     }   
@@ -134,7 +139,7 @@ class RoundRobinController extends Controller
             'date' => 'required|date_format:Y-m-d',
             'time' => 'required|string',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -142,21 +147,37 @@ class RoundRobinController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
+    
         try {
             DB::beginTransaction();
-
-            $match = SportMatch::findOrFail($request->matchId);
+    
+            // Find the match and eager load necessary relationships
+            $match = SportMatch::with(['assignedSport'])->findOrFail($request->matchId);
             
+            if (!$match->assignedSport) {
+                throw new \Exception('Associated sport not found');
+            }
+    
+            // 1. UPDATE the match schedule
             $match->update([
                 'date' => $request->date,
                 'time' => $request->time,
             ]);
-
+    
+            // 2. CREATE a new venue usage record
+            // Always create a new record, not update
+            $venueRecord = new UsedVenueRecord([
+                'palakasan_id' => $match->assignedSport->palakasan_sport_id,
+                'venue_id' => $match->match_venue_id,
+                'date' => $request->date,
+                'time' => $request->time
+            ]);
+            $venueRecord->save();
+    
             DB::commit();
-
-            return redirect()->back()->with('message', 'Match schedule updated successfully');
-
+    
+            return redirect()->back()->with('message', 'Match schedule and venue record updated successfully');
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -165,7 +186,7 @@ class RoundRobinController extends Controller
             ], 500);
         }
     }
-
+    
     public function storeResult(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -220,8 +241,6 @@ class RoundRobinController extends Controller
         }
     }
 
-
-
     protected function updateStandings($match, $teamAScore, $teamBScore, $winningTeamId)
     {
         $teamAStanding = TeamStanding::firstOrCreate(
@@ -256,32 +275,45 @@ class RoundRobinController extends Controller
         $teamAStanding->save();
         $teamBStanding->save();
     }
-
     
     protected function checkForTiesAndCreateMatches($assignedSportId)
     {
+        // Get all matches for this sport
+        $matches = SportMatch::where('assigned_sport_id', $assignedSportId)->get();
+    
+        // Check if all matches have been played
+        $allMatchesPlayed = $matches->every(function ($match) {
+            return $match->status === 'completed';
+        });
+    
+        if (!$allMatchesPlayed) {
+            return; // Don't create tie-breakers if not all matches are played
+        }
+    
+        // Get the standings
         $standings = TeamStanding::where('assigned_sport_id', $assignedSportId)
             ->orderBy('points', 'desc')
             ->orderBy('won', 'desc')
             ->take(2)
             ->get();
-
+    
+        // Check if the top two teams are tied
         if ($standings->count() == 2 && $standings[0]->points == $standings[1]->points) {
             // Get the most recently used venue or a default venue
             $lastMatch = SportMatch::where('assigned_sport_id', $assignedSportId)
                 ->whereNotNull('match_venue_id')
                 ->latest()
                 ->first();
-
+    
             $venueId = $lastMatch ? $lastMatch->match_venue_id : Venue::first()->id;
-
-            // Create a tie-breaker match
-            $tieBreaker = SportMatch::create([
+    
+            // Create a tie-breaker match between the top two teams
+            SportMatch::create([
                 'assigned_sport_id' => $assignedSportId,
                 'teamA_id' => $standings[0]->team_id,
                 'teamB_id' => $standings[1]->team_id,
                 'round' => 'Tie Breaker',
-                'game' => 'Tie Breaker',
+                'game' => 'Tie Breaker Final',
                 'bracket_type' => 'tie_breaker',
                 'elimination_type' => 'tie_breaker',
                 'status' => 'pending',
@@ -289,7 +321,7 @@ class RoundRobinController extends Controller
                 'date' => null,
                 'time' => null
             ]);
-
+    
             // You might want to notify the admin or update the UI to show that a tie-breaker match has been created
         }
     }

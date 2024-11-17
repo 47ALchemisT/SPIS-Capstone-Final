@@ -54,7 +54,7 @@
 
         <div class="flex pt-16">
             <!-- Sidebar -->
-            <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-e border-gray-300 shadow pt-16">
+            <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-e border-gray-300 pt-16">
                 <div class="h-full px-5 py-4 overflow-y-auto flex flex-col justify-between space-y-2">
                     <div>
                         <div class="text-xs mb-2 mt-1 text-gray-800 font-medium">Dashboard</div>

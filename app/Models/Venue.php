@@ -26,4 +26,8 @@ class Venue extends Model
     {
         return $this->hasMany(SportsVariations::class, 'sport_variation_venue_id'); 
     }
+
+    public function venueID(){
+        return $this->hasMany(UsedVenueRecord::class, 'venue_id');
+    }
 }

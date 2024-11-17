@@ -5,8 +5,7 @@
       <template v-slot:default>
         <!-- Header Section -->
         <div class="flex items-center gap-2">
-          <h1 class="text-4xl font-semibold">{{ sport.sport.name }}</h1>
-          <h1 class="text-4xl font-semibold">{{ sportVariationMatches.id }}</h1>
+          <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
           <div>
             <button
               @click="returnToPalakasan"
@@ -18,6 +17,7 @@
             </button>
           </div>
         </div>
+
         <!-- Progress Bar -->
         <div class="mt-2 space-y-2">
           <div class="flex items-center text-xs">
@@ -31,14 +31,19 @@
             ></div>
           </div>
         </div>
+
         <!-- Tags Section -->
-        <div class="flex gap-2 mt-2">
-          <p class="py-1 px-4 rounded-full bg-blue-100 text-blue-700 text-sm">{{ sport.setup }}</p>
-          <p class="py-1 px-4 rounded-full bg-blue-100 text-blue-700 text-sm">{{ sport.categories }}</p>
+        <div class="flex items-center gap-2 mt-2">
+              <p class="text-sm"> {{ sport.setup }}</p>
+              <p class="text-xs">|</p>
+              <p class=" text-sm">{{ sport.type }}</p>
+              <p class="text-xs">|</p>
+              <p class=" text-sm">{{ sport.status }}</p>
         </div>
 
+
         <!-- Sport Variations List -->
-        <div class=" py-6 mb-6">
+        <div class="py-6 mb-6">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold mb-4">Sport Variations</h2>
             <div class="">
@@ -105,15 +110,13 @@
                       class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     >
                       <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
-     
                     </button>
                   </div>
-
                 </div>
               </div>
               
               <!-- Variation Matches -->
-              <div v-if="sportVariationMatches.length > 0" class="mt-4">
+              <div v-if="getVariationMatches(variation.id).length > 0" class="mt-4">
                 <table class="w-full text-sm">
                   <thead>
                     <tr>
@@ -122,7 +125,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="match in getSortedMatches(sportVariationMatches.filter(m => m.sport_variation_id === variation.id))" 
+                    <tr v-for="match in getSortedMatches(getVariationMatches(variation.id))" 
                         :key="match.id" 
                         class="border-b">
                       <td class="px-4 py-2">{{ getTeamName(match.sport_variation_team_id) }}</td>
@@ -233,6 +236,7 @@
                   <label class="block text-sm font-medium text-gray-700 mt-5 mb-2">Venue</label>
                   <select 
                     v-model="updateTimeForm.sport_variation_venue_id"
+                    @change="updateAvailableTimeSlots"
                     required
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -296,8 +300,8 @@
                   </button>
                   <button 
                     @click="updateTime"
-                    :disabled="updateTimeForm.processing"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    :disabled="updateTimeForm.processing || !isValidTimeSelection"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {{ updateTimeForm.processing ? 'Saving...' : 'Save' }}
                   </button>
@@ -306,40 +310,37 @@
             </div>
           </div>
         </div>
-
-        <!-- Rank Update Modal -->
         <div v-if="showRankModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="relative p-4 w-full max-w-[24rem] max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
-              <!-- Modal Header -->
-              <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Set Rankings
+          <div class="relative p-4 w-full max-w-[32rem] max-h-full">
+            <div class="relative bg-white rounded-lg shadow">
+              <div class="flex items-center justify-between p-4 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Set Rankings and Points
                 </h3>
-                <button @click="closeRankModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                <button @click="closeRankModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center">
                   <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                   </svg>
-                  <span class="sr-only">Close modal</span>
                 </button>
               </div>
-              <!-- Modal Body -->
+              
               <div class="p-4 pt-0">
                 <form @submit.prevent="updateRanks">
                   <div class="mt-4">
                     <table class="w-full text-sm">
                       <thead>
                         <tr>
-                          <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
-                          <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
+                          <th class="px-4 py-2 font-medium text-left">Team</th>
+                          <th class="px-4 py-2 font-medium text-left">Rank</th>
+                          <th class="px-4 py-2 font-medium text-left">Points</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="match in selectedVariationMatches" :key="match.id">
-                          <td class="px-4 py-2">  {{ getTeamName(match.sport_variation_team_id) }}</td>
-                          <td class="px-4 py-2">
+                        <tr v-for="match in sortedMatches" :key="match.id">
+                          <td class="px-4 py-2 w-72">{{ getTeamName(match.sport_variation_team_id) }}</td>
+                          <td class="px-4 py-2 w-44">
                             <select 
-                              v-model="rankUpdates[match.id]"
+                              v-model="rankUpdates[match.id].rank"
                               class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="" disabled>Select rank</option>
@@ -352,6 +353,15 @@
                               </option>
                             </select>
                           </td>
+                          <td class="px-4 py-2 w-12">
+                            <input 
+                              type="number"
+                              v-model="rankUpdates[match.id].points"
+                              min="0"
+                              class=" px-2 py-1 border w-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Enter points"
+                            />
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -359,19 +369,18 @@
 
                   <div v-if="rankUpdateError" class="mt-4 text-red-500 text-sm">{{ rankUpdateError }}</div>
 
-                  <!-- Modal Buttons -->
                   <div class="grid grid-cols-2 gap-2 mt-4">
                     <button 
                       type="button"
                       @click="closeRankModal"
-                      class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                      class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
                     >
                       Cancel
                     </button>
                     <button 
                       type="submit"
                       :disabled="!isValidRankSelection"
-                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50"
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 disabled:opacity-50"
                     >
                       {{ rankUpdateForm.processing ? 'Saving...' : 'Save' }}
                     </button>
@@ -381,7 +390,6 @@
             </div>
           </div>
         </div>
-
       </template>
     </AppLayout>
   </div>
@@ -389,7 +397,7 @@
 
 <script setup>
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 
@@ -425,18 +433,33 @@ const props = defineProps({
   sportVariationMatches: {
     type: Array,
     default: () => []
+  },
+  venueRecords: {
+    type: Array,
+    default: () => []
   }
 });
 
 const showModal = ref(false);
-const showUpdateTimeModal = ref(false);
 const errorMessage = ref('');
-const selectedVariation = ref(null);
-
 const showRankModal = ref(false);
 const selectedVariationMatches = ref([]);
 const rankUpdateError = ref('');
 const rankUpdates = ref({});
+const showUpdateTimeModal = ref(false);
+const selectedVariation = ref(null);
+
+const totalMatches = computed(() => props.sportVariations.length);
+const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);
+const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMatches.value / totalMatches.value) * 100 : 0);
+
+
+const updateTimeForm = useForm({
+  sport_variation_id: '',
+  sport_variation_venue_id: '',
+  date: '',
+  time: '',
+});
 
 const rankUpdateForm = useForm({
   matches: [],
@@ -449,11 +472,6 @@ const form = useForm({
   date: '',
   time: '',
   status: 'pending',
-});
-
-const generateTeamsForm = useForm({
-  sport_variation_id: '',
-  teams: [],
 });
 
 onMounted(() => {
@@ -474,13 +492,6 @@ const submitForm = async () => {
         form.reset();
         showModal.value = false;
         errorMessage.value = '';
-
-        // Generate teams automatically after adding a new variation
-        const newVariation = props.sportVariations.find(v => v.sport_variation_name === form.sport_variation_name);
-        if (newVariation) {
-          openGenerateTeamsModal(newVariation);
-          generateTeams();
-        }
       },
       onError: (errors) => {
         console.error('Validation errors:', errors);
@@ -508,51 +519,14 @@ const getVenueName = (venueId) => {
 };
 
 const getTeamName = (teamId) => {
-  const team = props.teams.find((t) => t.id === teamId);
-  return team ? team.college.name : 'Unknown team';
+  const team = props.teams.find((t) => t.id === teamId && t.palakasan_id === props.sport.palakasan_sport_id);
+  return team ? team.assigned_team_name : 'Unknown team';
 };
 
-
-const openGenerateTeamsModal = (variation) => {
-  selectedVariation.value = variation;
-  generateTeamsForm.sport_variation_id = variation.id;
-  generateTeamsForm.teams = []; // Reset teams selection
-  showGenerateTeamsModal.value = true;
-};
-
-const generateTeams = () => {
-  generateTeamsForm.post(route('generate-teams'), {
-    preserveState: true,
-    preserveScroll: true,
-    onSuccess: () => {
-      closeGenerateTeamsModal();
-      alert('Teams generated successfully!');
-    },
-    onError: (errors) => {
-      console.error('Error generating teams:', errors);
-      alert('An error occurred while generating teams. Please try again.');
-    },
-  });
-};
-
-const updateTimeForm = useForm({
-  sport_variation_id: '',
-  sport_variation_venue_id: '',
-  date: '',
-  time: '',
+// Add a new computed property to filter teams for the current sport
+const currentSportTeams = computed(() => {
+  return props.teams.filter(team => team.palakasan_id === props.sport.palakasan_sport_id);
 });
-
-onMounted(() => {
-  form.assigned_sport_id = props.sport.id;
-});
-
-
-
-const closeUpdateTimeModal = () => {
-  showUpdateTimeModal.value = false;
-  updateTimeForm.reset();
-  updateTimeForm.clearErrors();
-};
 
 const openUpdateTimeModal = (variation) => {
   selectedVariation.value = variation;
@@ -561,68 +535,115 @@ const openUpdateTimeModal = (variation) => {
   updateTimeForm.date = variation.date;
   updateTimeForm.time = variation.time;
   showUpdateTimeModal.value = true;
+  updateAvailableTimeSlots();
+};
+
+const closeUpdateTimeModal = () => {
+  showUpdateTimeModal.value = false;
+  selectedVariation.value = null;
+  updateTimeForm.reset();
+  updateTimeForm.clearErrors();
+  errorMessage.value = '';
 };
 
 const updateTime = async () => {
+  if (!isValidTimeSelection.value) {
+    errorMessage.value = 'Please select an available time slot.';
+    return;
+  }
+
   try {
     await updateTimeForm.patch(route('sport-variations.update-time', selectedVariation.value.id), {
+      preserveState: true,
+      preserveScroll: true,
       onSuccess: () => {
         closeUpdateTimeModal();
-        // Optionally, you can refresh the sportVariations data here
       },
       onError: (errors) => {
-        console.error('Validation errors:', errors);
+        console.error('Update time errors:', errors);
+        errorMessage.value = 'Please correct the errors and try again.';
       },
-      onFinish: () => {
-        updateTimeForm.processing = false;
-      }
     });
   } catch (error) {
     console.error('Update time error:', error);
-    updateTimeForm.processing = false;
+    errorMessage.value = 'An unexpected error occurred. Please try again.';
   }
 };
 
+const openRankModal = (variation) => {
+    selectedVariation.value = variation;
+    selectedVariationMatches.value = props.sportVariationMatches
+      .filter(m => m.sport_variation_id === variation.id)
+      .filter(m => currentSportTeams.value.some(team => team.id === m.sport_variation_team_id));
+    
+    rankUpdates.value = selectedVariationMatches.value.reduce((acc, match) => ({
+      ...acc,
+      [match.id]: {
+        rank: match.rank || '',
+        points: match.points || ''
+      }
+    }), {});
+    showRankModal.value = true;
+  };
 
-const timeSlots = [
-  { value: '6:00 AM', label: '6:00 AM' },
-  { value: '6:30 AM', label: '6:30 AM' },
-  { value: '7:00 AM', label: '7:00 AM' },
-  { value: '7:30 AM', label: '7:30 AM' },
-  { value: '8:00 AM', label: '8:00 AM' },
-  { value: '8:30 AM', label: '8:30 AM' },
-  { value: '09:00 AM', label: '9:00 AM' },
-  { value: '09:30 AM', label: '9:30 AM' },
-  { value: '10:00 AM', label: '10:00 AM' },
-  { value: '10:30 AM', label: '10:30 AM' },
-  { value: '11:00 AM', label: '11:00 AM' },
-  { value: '11:30 AM', label: '11:30 AM' },
-  { value: '12:00 PM', label: '12:00 PM' },
-  { value: '01:00 PM', label: '1:00 PM' },
-  { value: '01:30 PM', label: '1:30 PM' },
-  { value: '02:00 PM', label: '2:00 PM' },
-  { value: '02:30 PM', label: '2:30 PM' },
-  { value: '03:00 PM', label: '3:00 PM' },
-  { value: '03:30 PM', label: '3:30 PM' },
-  { value: '04:00 PM', label: '4:00 PM' },
-  { value: '04:30 PM', label: '4:30 PM' },
-  { value: '05:00 PM', label: '5:00 PM' },
-  { value: '05:30 PM', label: '5:30 PM' },
-  { value: '06:00 PM', label: '6:00 PM' }
-];
-
-const availableTimeSlots = ref(timeSlots);
-
-const getCurrentDate = () => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
+  const closeRankModal = () => {
+  showRankModal.value = false;
+  selectedVariation.value = null;
+  selectedVariationMatches.value = [];
+  rankUpdates.value = {};
+  rankUpdateError.value = '';
+  rankUpdateForm.reset();
 };
 
-onMounted(() => {
-  form.assigned_sport_id = props.sport.id;
-});
+  const isValidRankSelection = computed(() => {
+    const selectedMatches = Object.values(rankUpdates.value);
+    const allFieldsFilled = selectedMatches.every(match => 
+      match.rank !== '' && match.points !== ''
+    );
+    const selectedRanks = new Set(selectedMatches.map(match => match.rank).filter(rank => rank !== ''));
+    return allFieldsFilled && selectedRanks.size === selectedVariationMatches.value.length;
+  });
 
-//
+  const updateRanks = async () => {
+    const selectedRanks = Object.values(rankUpdates.value)
+      .filter(match => match.rank !== '')
+      .map(match => match.rank.toString());
+    
+    const uniqueRanks = new Set(selectedRanks);
+    
+    if (selectedRanks.length !== uniqueRanks.size) {
+      rankUpdateError.value = 'Each team must have a unique rank.';
+      return;
+    }
+
+    if (selectedRanks.length !== selectedVariationMatches.value.length) {
+      rankUpdateError.value = 'All teams must have a rank and points assigned.';
+      return;
+    }
+
+    rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, data]) => ({
+      id: parseInt(id),
+      rank: parseInt(data.rank),
+      points: parseInt(data.points)
+    }));
+
+    try {
+      await rankUpdateForm.patch(route('sport-variations.update-ranks', selectedVariation.value.id), {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: () => {
+          closeRankModal();
+        },
+        onError: (errors) => {
+          console.error('Update ranks errors:', errors);
+          rankUpdateError.value = 'Please correct the errors and try again.';
+        },
+      });
+    } catch (error) {
+      console.error('Update ranks error:', error);
+      rankUpdateError.value = 'An unexpected error occurred. Please try again.';
+    }
+  };
 
 const formatDateTime = (date, time) => {
   if (!date && !time) return 'Not scheduled';
@@ -654,143 +675,175 @@ const getStatusClass = (status) => {
   };
   return statusClasses[status?.toLowerCase()] || 'text-gray-600';
 };
-//
 
-// Add these new methods
 const formatRank = (rank) => {
-  const suffixes = {
-    1: 'st',
-    2: 'nd',
-    3: 'rd'
-  };
+  const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
   const suffix = suffixes[rank] || 'th';
   return `${rank}${suffix} place`;
 };
 
-
-const availableRanks = (currentMatchId) => {
-  const maxRank = selectedVariationMatches.value.length;
-  // Get currently selected ranks, excluding the current match's rank
-  const usedRanks = new Set(
-    Object.entries(rankUpdates.value)
-      .filter(([matchId]) => matchId !== currentMatchId.toString())
-      .map(([_, rank]) => rank?.toString())
-      .filter(rank => rank !== '') // Filter out empty ranks
-  );
-
-  // Return array of available ranks (those not used by other matches)
-  return Array.from({ length: maxRank }, (_, i) => i + 1)
-    .filter(rank => !usedRanks.has(rank.toString()));
-};
-
-
-const openRankModal = (variation) => {
-  selectedVariation.value = variation;
-  selectedVariationMatches.value = props.sportVariationMatches.filter(
-    m => m.sport_variation_id === variation.id
-  );
-  // Initialize rankUpdates with current values
-  rankUpdates.value = selectedVariationMatches.value.reduce((acc, match) => ({
-    ...acc,
-    [match.id]: match.rank || ''
-  }), {});
-  showRankModal.value = true;
-};
-
 const getSortedMatches = (matches) => {
   return [...matches].sort((a, b) => {
-    // Sort by rank (if both have ranks)
-    if (a.rank && b.rank) {
-      return a.rank - b.rank;
-    }
-    // Put ranked matches before unranked ones
+    if (a.rank && b.rank) return a.rank - b.rank;
     if (a.rank) return -1;
     if (b.rank) return 1;
-    // Keep original order for unranked matches
     return 0;
   });
 };
 
-const closeRankModal = () => {
-  showRankModal.value = false;
-  selectedVariation.value = null;
-  selectedVariationMatches.value = [];
-  rankUpdates.value = {};
-  rankUpdateError.value = '';
+const getVariationMatches = (variationId) => {
+  return props.sportVariationMatches
+    .filter(match => match.sport_variation_id === variationId)
+    .filter(match => currentSportTeams.value.some(team => team.id === match.sport_variation_team_id));
 };
 
-const isValidRankSelection = computed(() => {
-  // Check if rankUpdates exists and has values
-  if (!rankUpdates.value || Object.keys(rankUpdates.value).length === 0) {
-    return false;
-  }
-
-  // Check if all matches have a rank assigned
-  return selectedVariationMatches.value.every(match => 
-    rankUpdates.value[match.id] && rankUpdates.value[match.id] !== ''
+// Update the availableRanks function
+const availableRanks = (matchId) => {
+  const currentRanks = new Set();
+  
+  // Collect all currently selected ranks except for the current match
+  Object.entries(rankUpdates.value).forEach(([id, data]) => {
+    if (id !== matchId.toString() && data.rank) {
+      currentRanks.add(data.rank.toString());
+    }
+  });
+  
+  // Generate all possible ranks
+  const allRanks = Array.from(
+    { length: selectedVariationMatches.value.length }, 
+    (_, i) => (i + 1).toString()
   );
+  
+  // Return ranks that are either unselected or currently selected by this match
+  return allRanks.filter(rank => 
+    !currentRanks.has(rank) || 
+    rankUpdates.value[matchId]?.rank === rank
+  );
+};
+
+const getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const isValidTimeSelection = computed(() => {
+  return updateTimeForm.sport_variation_venue_id && 
+         updateTimeForm.date && 
+         updateTimeForm.time && 
+         !availableTimeSlots.value.find(slot => slot.value === updateTimeForm.time)?.disabled;
 });
 
-const updateRanks = async () => {
-  // Validate that all ranks are unique
-  const selectedRanks = Object.values(rankUpdates.value)
-    .filter(rank => rank !== '')
-    .map(rank => rank.toString());
-  
-  const uniqueRanks = new Set(selectedRanks);
-  if (selectedRanks.length !== uniqueRanks.size) {
-    rankUpdateError.value = 'Each team must have a unique rank.';
-    return;
-  }
+const availableTimeSlots = ref([
+  { value: '6:00 AM', label: '6:00 AM', disabled: false  },
+  { value: '6:30 AM', label: '6:30 AM', disabled: false  },
+  { value: '7:00 AM', label: '7:00 AM', disabled: false  },
+  { value: '7:30 AM', label: '7:30 AM', disabled: false  },
+  { value: '8:00 AM', label: '8:00 AM', disabled: false  },
+  { value: '8:30 AM', label: '8:30 AM', disabled: false  },
+  { value: '9:00 AM', label: '9:00 AM', disabled: false  },
+  { value: '9:30 AM', label: '9:30 AM', disabled: false  },
+  { value: '10:00 AM', label: '10:00 AM', disabled: false  },
+  { value: '10:30 AM', label: '10:30 AM', disabled: false  },
+  { value: '11:00 AM', label: '11:00 AM', disabled: false  },
+  { value: '11:30 AM', label: '11:30 AM', disabled: false  },
+  { value: '12:00 PM', label: '12:00 PM', disabled: false  },
+  { value: '1:00 PM', label: '1:00 PM', disabled: false  },
+  { value: '1:30 PM', label: '1:30 PM', disabled: false  },
+  { value: '2:00 PM', label: '2:00 PM', disabled: false  },
+  { value: '2:30 PM', label: '2:30 PM', disabled: false  },
+  { value: '3:00 PM', label: '3:00 PM', disabled: false  },
+  { value: '3:30 PM', label: '3:30 PM', disabled: false  },
+  { value: '4:00 PM', label: '4:00 PM', disabled: false  },
+  { value: '4:30 PM', label: '4:30 PM', disabled: false  },
+  { value: '5:00 PM', label: '5:00 PM', disabled: false  },
+  { value: '5:30 PM', label: '5:30 PM', disabled: false  },
+  { value: '6:00 PM', label: '6:00 PM', disabled: false  }
+]);
 
-  // Validate that all teams have ranks assigned
-  if (!isValidRankSelection.value) {
-    rankUpdateError.value = 'All teams must have a rank assigned.';
-    return;
-  }
+const updateAvailableTimeSlots = () => {
+  if (!updateTimeForm.date || !updateTimeForm.sport_variation_venue_id) return;
 
-  rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, rank]) => ({
-    id: parseInt(id),
-    rank: parseInt(rank)
+  console.log('Updating available time slots');
+  console.log('Selected Date:', updateTimeForm.date);
+  console.log('Selected Venue:', updateTimeForm.sport_variation_venue_id);
+
+  // Check UsedVenueRecord for conflicts
+  const conflictingRecords = props.venueRecords.filter(record => 
+    record.venue_id === updateTimeForm.sport_variation_venue_id &&
+    record.date === updateTimeForm.date &&
+    (!selectedVariation.value || record.id !== selectedVariation.value.id) // Exclude the current variation if editing
+  );
+
+  console.log('Conflicting Records:', conflictingRecords);
+
+  // Create a Set of used time slots for quick lookup
+  const usedTimeSlots = new Set(conflictingRecords.map(record => record.time));
+
+  console.log('Used Time Slots:', usedTimeSlots);
+
+  // Update available time slots
+  availableTimeSlots.value = availableTimeSlots.value.map(slot => ({
+    ...slot,
+    disabled: usedTimeSlots.has(slot.value)
   }));
 
-  try {
-    await rankUpdateForm.patch(
-      route('sport-variations.update-ranks', selectedVariation.value.id),
-      {
-        onSuccess: () => {
-          closeRankModal();
-        },
-        onError: (errors) => {
-          console.error('Validation errors:', errors);
-          rankUpdateError.value = 'An error occurred while updating ranks.';
-        },
-        onFinish: () => {
-          rankUpdateForm.processing = false;
-        }
-      }
+  // If editing and the current time is selected, make it available
+  if (selectedVariation.value && selectedVariation.value.time && selectedVariation.value.date === updateTimeForm.date) {
+    const currentTimeSlot = availableTimeSlots.value.find(slot => 
+      slot.value === selectedVariation.value.time
     );
-  } catch (error) {
-    console.error('Update ranks error:', error);
-    rankUpdateError.value = 'An unexpected error occurred.';
-    rankUpdateForm.processing = false;
+    if (currentTimeSlot) {
+      currentTimeSlot.disabled = false;
+    }
+  }
+
+  console.log('Updated available time slots:', availableTimeSlots.value);
+
+  // Reset the selected time if it's now disabled
+  if (updateTimeForm.time && availableTimeSlots.value.find(slot => slot.value === updateTimeForm.time)?.disabled) {
+    updateTimeForm.time = '';
   }
 };
 
-//
+const sortedMatches = computed(() => {
+  return [...selectedVariationMatches.value].sort((a, b) => {
+    const rankA = rankUpdates.value[a.id]?.rank || Infinity;
+    const rankB = rankUpdates.value[b.id]?.rank || Infinity;
+    return rankA - rankB;
+  });
+});
+watch(
+  () => rankUpdates.value,
+  () => {
+    // The computed property will automatically update the sort
+  },
+  { deep: true }
+);
 
-// Replace the existing computed properties with these corrected versions:
-const totalMatches = computed(() => props.sportVariations.length);
+const updateAssignedSportStatus = async () => {
+  if (progressPercentage.value === 100) {
+    try {
+      await router.patch(route('assigned-sports.update-status', props.sport.id), {
+        status: 'completed'
+      });
+      // Optionally, you can update the local state here if needed
+      props.sport.status = 'completed';
+    } catch (error) {
+      console.error('Failed to update assigned sport status:', error);
+    }
+  }
+};
 
-const completedMatches = computed(() => {
-  return props.sportVariations.filter(variation => variation.status === 'completed').length;
+watch(() => updateTimeForm.date, updateAvailableTimeSlots);
+watch(() => updateTimeForm.sport_variation_venue_id, updateAvailableTimeSlots);
+watch(progressPercentage, (newValue) => {
+  if (newValue === 100) {
+    updateAssignedSportStatus();
+  }
 });
 
-const progressPercentage = computed(() => {
-  return totalMatches.value > 0 ? (completedMatches.value / totalMatches.value) * 100 : 0;
-});
+
 </script>
-
-<style scoped>
-/* Component specific styles can be added here */
-</style>

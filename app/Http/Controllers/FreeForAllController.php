@@ -10,6 +10,7 @@ use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\SportsVariations;
 use App\Models\SportsVariationsMatches;
+use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -28,11 +29,14 @@ class FreeForAllController extends Controller
             $venues = Venue::all();
             $assignedSports->load('sport');
             $tournaments = Palakasan::all();
-            $teams = AssignedTeams::with('college')->get();
+            $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
             $allMatches = SportMatch::all();
             $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)
                 ->get();
             $sportVariationMatches = SportsVariationsMatches::all();
+            $latestPalakasan = Palakasan::latest()->first();
+            $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
     
             return Inertia::render('SSCAdmin/MatchSetup/FreeForAll', [
                 'sport' => $assignedSports,
@@ -43,7 +47,8 @@ class FreeForAllController extends Controller
                 'sportVariations' => $sportVariations,
                 'colleges' => $colleges,
                 'sportVariationMatches' => $sportVariationMatches,
-                'points' => $points
+                'points' => $points,
+                'venueRecords' => $venueRecords
             ]);
         } catch (Exception $e) {
             return redirect()
@@ -82,17 +87,14 @@ class FreeForAllController extends Controller
                     'sport_variation_id' => $sportVariation->id,
                     'sport_variation_team_id' => $teamId,
                     'rank' => null,
+                    'points' => null,
                 ]);
             }
     
             DB::commit();
     
             return redirect()->back()->with('success', 'Sport variation and teams generated successfully');
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->withErrors($e->errors())
-                ->withInput();
+
         } catch (QueryException $e) {
             DB::rollBack();
             $errorMessage = 'Database error occurred while creating sport variation.';
@@ -109,6 +111,7 @@ class FreeForAllController extends Controller
                 ->withInput();
         }
     }
+
     public function generateTeams(Request $request)
     {
         try {
@@ -131,6 +134,7 @@ class FreeForAllController extends Controller
                     'sport_variation_id' => $sportVariationId,
                     'sport_variation_team_id' => $teamId,
                     'rank' => null,
+                    'points' => null,
                 ]);
             }
     
@@ -178,15 +182,27 @@ class FreeForAllController extends Controller
 
             DB::beginTransaction();
 
+            $latestPalakasan = Palakasan::latest()->first();
+
+            // Update the sport variation
             $sportVariation->update([
                 'sport_variation_venue_id' => $validated['sport_variation_venue_id'],
                 'date' => $validated['date'],
                 'time' => $validated['time'],
             ]);
 
+            // Create a new record in the usedvenuerecords table
+            UsedVenueRecord::create([
+                'palakasan_id' => $latestPalakasan->id,
+                'venue_id' => $validated['sport_variation_venue_id'],
+                'date' => $validated['date'],
+                'time' => $validated['time'],
+ 
+            ]);
+
             DB::commit();
 
-            return redirect()->back()->with('success', 'Schedule updated successfully');
+            return redirect()->back()->with('success', 'Schedule updated successfully and venue record created');
 
         } catch (ValidationException $e) {
             DB::rollBack();
@@ -215,7 +231,8 @@ class FreeForAllController extends Controller
             $validated = $request->validate([
                 'matches' => 'required|array',
                 'matches.*.id' => 'required|exists:sports_variations_matches,id',
-                'matches.*.rank' => 'required|integer|min:1'
+                'matches.*.rank' => 'required|integer|min:1',
+                'matches.*.points' => 'required|integer|min:1'
             ]);
 
             DB::beginTransaction();
@@ -223,7 +240,10 @@ class FreeForAllController extends Controller
             foreach ($validated['matches'] as $match) {
                 SportsVariationsMatches::where('id', $match['id'])
                     ->where('sport_variation_id', $sportVariation->id)
-                    ->update(['rank' => $match['rank']]);
+                    ->update([
+                        'rank' => $match['rank'],
+                        'points' => $match['points']  // Add points update
+                    ]);
             }
 
             // Update the variation status to completed if it wasn't already
@@ -253,6 +273,13 @@ class FreeForAllController extends Controller
                 ->with('error', 'An unexpected error occurred while updating rankings.')
                 ->withInput();
         }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $assignedSport = AssignedSports::findOrFail($id);
+        $assignedSport->update(['status' => $request->input('status')]);
+        return redirect()->back()->with('success', 'status updated succesfully');
     }
 
 }

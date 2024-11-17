@@ -2,11 +2,15 @@
     <Head title="College"/>
     <AppLayout>
         <template v-slot:default>
+            <div v-if="$page.props.flash.message" class="alert">
+                {{ $page.props.flash.message }}
+            </div>
             <!--Head-->
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800">College</h1>
                 <h1 class="text-sm font-normal text-gray-700">List of colleges in MSU at Naawan</h1>
             </div>
+            <Toast ref="toastRef" />
             <!--Content-->
             <div class="mt-3 space-y-3">
                 <!--Utility-->
@@ -179,15 +183,33 @@
  <script setup>
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-    import { Head, useForm, router } from '@inertiajs/vue3';
-    import { ref, onMounted, computed } from 'vue';
+    import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+    import { ref, onMounted, computed, watch } from 'vue';
     import { route } from 'ziggy-js';
     import AppLayout from '@/Layout/DashboardLayout.vue';
+    import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed
 
     const props = defineProps({
         colleges: Array,
         errors: Object
     })
+   
+    const toastRef = ref(null);
+    const page = usePage();
+
+    // Watch for flash messages
+    watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash.message) {
+        toastRef.value.addToast(flash.message, 'success');
+        }
+        if (flash.error) {
+        toastRef.value.addToast(flash.error, 'error');
+        }
+    },
+    { deep: true }
+    );
 
     const isModalOpen = ref(false);
     const isDeleteModalOpen = ref(false);
@@ -229,6 +251,7 @@
                 preserveState: false,
                 preserveScroll: true,
                 onSuccess: () => {
+                    toastRef.value.addToast('Operation successful!', 'success');
                     closeModal();
                 },
             });
@@ -237,6 +260,7 @@
                 preserveState: false,
                 preserveScroll: true,
                 onSuccess: () => {
+                    toastRef.value.addToast('Operation successful!', 'success');
                     closeModal();
                 },
             });

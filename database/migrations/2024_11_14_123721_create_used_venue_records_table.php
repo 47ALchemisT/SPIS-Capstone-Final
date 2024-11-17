@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('palakasans', function (Blueprint $table) {
+        Schema::create('used_venue_records', function (Blueprint $table) {
             $table->id();
-            $table->integer('year');
-            $table->string('theme');
-            $table->string('tagline');
-            $table->text('description'); // Corrected here
-            $table->date('start_date'); 
-            $table->date('end_date');
-            $table->string('status');
+            $table->foreignId('palakasan_id')->constrained('palakasans')->onDelete('cascade'); 
+            $table->foreignId('venue_id')->constrained('venues')->onDelete('cascade');
+            $table->date('date'); 
+            $table->string('time');
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('palakasans');
+        Schema::dropIfExists('used_venue_records');
     }
 };

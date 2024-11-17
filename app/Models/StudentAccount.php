@@ -23,5 +23,8 @@ class StudentAccount extends Model
         return $this->belongsTo(Student::class, 'student_id');
     }
 
+    public function facilitatorID(){
+        return $this->hasMany(AssignedSports::class, 'facilitator_id');
+    }
 
 }

@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
 use App\Models\MatchResult;
+use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\SportMatch;
+use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +25,11 @@ class SingleEliminationController extends Controller
         $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
         $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
         $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+
+        $latestPalakasan = Palakasan::latest()->first();
+
         $allMatches = SportMatch::all();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
         return Inertia::render('SSCAdmin/MatchSetup/SingleElimination', [
             'sport' => $assignedSports,
             'tournaments' => $tournaments,
@@ -32,6 +38,7 @@ class SingleEliminationController extends Controller
             'results' => $results,
             'venues' => $venues,
             'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords
         ]);
     }   
 
@@ -82,10 +89,7 @@ class SingleEliminationController extends Controller
     
             DB::commit();
     
-            return response()->json([
-                'message' => 'Matches created successfully',
-                'matches' => $matches
-            ], 200);
+            return redirect()->back()->with('message', 'Matches successfully created');
     
         } catch (\Exception $e) {
             DB::rollBack();
@@ -199,7 +203,7 @@ class SingleEliminationController extends Controller
             'date' => 'required|date_format:Y-m-d',
             'time' => 'required|string',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -207,28 +211,80 @@ class SingleEliminationController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
+    
         try {
             DB::beginTransaction();
-
-            $match = SportMatch::findOrFail($request->matchId);
+    
+            // Find the match and eager load necessary relationships
+            $match = SportMatch::with(['assignedSport'])->findOrFail($request->matchId);
             
-            // Update the match with the provided date, time, and venue
+            if (!$match->assignedSport) {
+                throw new \Exception('Associated sport not found');
+            }
+    
+            // 1. UPDATE the match schedule
             $match->update([
                 'date' => $request->date,
                 'time' => $request->time,
             ]);
-
+    
+            // 2. CREATE a new venue usage record
+            $venueRecord = new UsedVenueRecord([
+                'palakasan_id' => $match->assignedSport->palakasan_sport_id,
+                'venue_id' => $match->match_venue_id,
+                'date' => $request->date,
+                'time' => $request->time
+            ]);
+            $venueRecord->save();
+    
             DB::commit();
-
-            return redirect()->back()->with('message', 'Match schedule and venue updated successfully');
-
+    
+            return redirect()->back()->with('message', 'Match schedule and venue record updated successfully');
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to update match schedule and venue: ' . $e->getMessage()
+                'message' => 'Failed to update match schedule: ' . $e->getMessage()
             ], 500);
+        }
+    }
+    
+    public function storeOverallResults(Request $request)
+    {
+        $request->validate([
+            'rankings' => 'required|array',
+            'rankings.*.assigned_sport_id' => 'required|exists:assigned_sports,id',
+            'rankings.*.assigned_team_id' => 'required|exists:assigned_teams,id',
+            'rankings.*.rank' => 'required|integer|min:1',
+            'rankings.*.points' => 'required|integer|min:0',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($request->rankings as $ranking) {
+                OverallResult::updateOrCreate(
+                    [
+                        'assigned_sport_id' => $ranking['assigned_sport_id'],
+                        'assigned_team_id' => $ranking['assigned_team_id'],
+                    ],
+                    [
+                        'rank' => $ranking['rank'],
+                        'points' => $ranking['points'],
+                    ]
+                );
+            }
+
+            DB::commit();
+            return Inertia::render('DoubleElimination', [
+                'message' => 'Rankings saved successfully',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Inertia::render('DoubleElimination', [
+                'error' => 'Failed to save rankings: ' . $e->getMessage(),
+            ]);
         }
     }
 }

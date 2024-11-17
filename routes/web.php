@@ -6,6 +6,7 @@ use App\Http\Controllers\DoubleEliminationController;
 use App\Http\Controllers\FreeForAllController;
 use App\Http\Controllers\OnePalakasanController;
 use App\Http\Controllers\PalakasanController;
+use App\Http\Controllers\PalakasanHistoryController;
 use App\Http\Controllers\PalakasanSportsController;
 use App\Http\Controllers\PalakasanTeamController;
 use App\Http\Controllers\PointsController;
@@ -50,22 +51,25 @@ Route::get('details/sportview/{sport}', function ($sport) {
     }
 })->name('sportview.index');
 
+//route for palakasan viewing
+Route::get('details/palakasan-history/{palakasan}', [PalakasanHistoryController::class, 'show'])->name('palakasanHistory.show');
+
 Route::post('/matches', [SingleEliminationController::class, 'store_single_elimination'])->name('matchesSingle.store');
 Route::post('/matchesDE', [DoubleEliminationController::class, 'store'])->name('matches.store');
 Route::post('/sport-variations', [FreeForAllController::class, 'store'])->name('sport-variations.store');
 Route::post('/generate-teams', [FreeForAllController::class, 'generateTeams'])->name('generate-teams');
-Route::post('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');
+Route::put('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');
 Route::post('/resultsSE', [SingleEliminationController::class, 'storeResult'])->name('results.store');
 Route::post('/resultsDE', [DoubleEliminationController::class, 'storeResult'])->name('results.store');
 
 Route::post('/round-robin/store', [RoundRobinController::class, 'store_round_robin'])->name('round-robin.store');
 Route::post('/matches/update-date-time', [RoundRobinController::class, 'updateDateTime'])->name('matches.updateDateTimeRR');
 Route::post('/results/store', [RoundRobinController::class, 'storeResult'])->name('resultsRR.store');
-Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])
-    ->name('sport-variations.update-time');
-Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])
-    ->name('sport-variations.update-ranks');
-
+Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])->name('sport-variations.update-time');
+Route::patch('/assigned-sports/{id}/update-status', [FreeForAllController::class, 'updateStatus'])
+     ->name('assigned-sports.update-status');
+Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
+Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
 
 
 //trial routinf
@@ -73,7 +77,7 @@ Route::get('details', [OnePalakasanController::class, 'details'])->name('palakas
 Route::post('detail/store', [OnePalakasanController::class, 'store_palakasan'])->name('palakasan.store');
 Route::post('sport/store', [OnePalakasanController::class, 'store_sports'])->name('palakasanSport.store');
 Route::post('team/store', [OnePalakasanController::class, 'store_teams'])->name('team.store');
-Route::put('/palakasan/{id}/update-status', [OnePalakasanController::class, 'updateStatus'])->name('palakasan.updateStatus');
+Route::put('/palakasan/{id}/update-status', [OnePalakasanController::class, 'updatePalakasanStatus'])->name('palakasan.updateStatus');
 Route::get('/selectedSport/{id}', [OnePalakasanController::class, 'showSport'])->name('sport.show');
 Route::post('/match-result', [OnePalakasanController::class, 'storeMatchResult'])->name('match.result.store');
 

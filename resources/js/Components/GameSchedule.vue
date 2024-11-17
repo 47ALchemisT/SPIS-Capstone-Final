@@ -3,24 +3,20 @@
     <h2 class="text-md font-medium mt-1 mb-4">Match Schedule</h2>
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div v-for="match in sortedMatches" 
-           :key="match.id" 
-           class="bg-white shadow rounded-lg p-4 border border-gray-300 hover:shadow-md transition-all duration-200">
+        :key="match.id" 
+        class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-md transition-all duration-200">
         <div class="flex justify-between items-center mb-3">
           <div class="flex flex-col">
             <span class="font-semibold text-md">{{ match.game }}</span>
-            <span class="text-xs text-gray-500">Round {{ match.round }}</span>
-          </div>
-          <div class="flex">
-            <button 
-              type="button" 
-              class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-            >
-              <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18.5L9 17l-6 3V7l6-3l6 3l6-3v7M9 4v13m6-10v5m6.121 8.121a3 3 0 1 0-4.242 0Q17.506 20.749 19 22q1.577-1.335 2.121-1.879M19 18v.01"/></svg>
-            </button>
+            <div class=" text-xs flex justify-between gap-1.5 items-center">
+              <span :class="getStatusClass(match.status)">Status : {{ formatStatus(match.status) }}</span>
+            </div>          </div>
+          <div class="flex items-center gap-2">
+
             <button 
               @click="openTimeModal(match)" 
               type="button" 
-              class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              class="p-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               :disabled="match.status === 'completed'"
             >
               <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -63,11 +59,7 @@
               </span>
             </div>
           </div>
-          <p class="text-xs text-gray-400">|</p>
-          <div class=" text-xs flex justify-between gap-1.5 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg"  class="h-3 w-3"  viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
-            <span :class="getStatusClass(match.status)">Status: {{ match.status }}</span>
-          </div>
+
         </div>
       </div>
     </div>
@@ -91,8 +83,14 @@
           <!-- Modal body -->
           <div class="p-4 pt-0">
             <label class="text-sm font-medium text-gray-900 mt-5 dark:text-white mb-2 block">
-                Pick your date
-              </label>
+              Pick the Date and Time of the game
+            </label>
+            <div class="text-xs p-3 bg-blue-50  text-blue-700 rounded-lg border mb-3 border-blue-400">
+              <h1 class="font-semibold mb-1">
+                Note
+              </h1>
+              <p>All the time that is available can be selected, the time that are not available will be grayed out and cannot be selected. This is a first come first serve, so make sure you set the time correctly</p>
+            </div>
             <div class="mx-auto sm:mx-0 flex justify-center mb-5">
               <input
                 type="date"
@@ -102,9 +100,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <label class="text-sm font-medium text-gray-900 dark:text-white mb-2 block">
-              Pick your time
-            </label>
+
             <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
               <li v-for="slot in availableTimeSlots" :key="slot.value">
                 <input 
@@ -119,7 +115,7 @@
                 <label :for="slot.value"
                   :class="[
                     'inline-flex items-center justify-center w-full px-2 py-1.5 text-sm font-medium text-center',
-                    slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
+                    slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400 rounded-md' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
                   ]"
                 >
                   {{ slot.label }}
@@ -139,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
   
 const props = defineProps({
@@ -162,7 +158,12 @@ const props = defineProps({
   allMatches: {
     type: Array,
     required: true
+  },
+  venueRecords: {
+    type: Array,
+    required: true
   }
+
 });
   
 const isTimeModalOpen = ref(false);
@@ -185,24 +186,24 @@ const timeSlots = [
   { value: '7:30 AM', label: '7:30 AM' },
   { value: '8:00 AM', label: '8:00 AM' },
   { value: '8:30 AM', label: '8:30 AM' },
-  { value: '09:00  AM', label: '9:00 AM' },
-  { value: '09:30 AM', label: '9:30 AM' },
+  { value: '9:00 AM', label: '9:00 AM' },
+  { value: '9:30 AM', label: '9:30 AM' },
   { value: '10:00 AM', label: '10:00 AM' },
   { value: '10:30 AM', label: '10:30 AM' },
   { value: '11:00 AM', label: '11:00 AM' },
   { value: '11:30 AM', label: '11:30 AM' },
   { value: '12:00 PM', label: '12:00 PM' },
-  { value: '01:00 PM', label: '1:00 PM' },
-  { value: '01:30 PM', label: '1:30 PM' },
-  { value: '02:00 PM', label: '2:00 PM' },
-  { value: '02:30 PM', label: '2:30 PM' },
-  { value: '03:00 PM', label: '3:00 PM' },
-  { value: '03:30 PM', label: '3:30 PM' },
-  { value: '04:00 PM', label: '4:00 PM' },
-  { value: '04:30 PM', label: '4:30 PM' },
-  { value: '05:00 PM', label: '5:00 PM' },
-  { value: '05:30 PM', label: '5:30 PM' },
-  { value: '06:00 PM', label: '6:00 PM' }
+  { value: '1:00 PM', label: '1:00 PM' },
+  { value: '1:30 PM', label: '1:30 PM' },
+  { value: '2:00 PM', label: '2:00 PM' },
+  { value: '2:30 PM', label: '2:30 PM' },
+  { value: '3:00 PM', label: '3:00 PM' },
+  { value: '3:30 PM', label: '3:30 PM' },
+  { value: '4:00 PM', label: '4:00 PM' },
+  { value: '4:30 PM', label: '4:30 PM' },
+  { value: '5:00 PM', label: '5:00 PM' },
+  { value: '5:30 PM', label: '5:30 PM' },
+  { value: '6:00 PM', label: '6:00 PM' }
 ];
 
 const getVenueName = (venueId) => {
@@ -255,6 +256,11 @@ const getCurrentDate = () => {
   return today.toISOString().split('T')[0];
 };
 
+const formatStatus = (status) => {
+  if (!status) return '';
+  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+};
+
 const formatDateTime = (date, time) => {
   if (!date || !time) return 'Not scheduled';
   return `${new Date(date).toLocaleDateString()} ${time}`;
@@ -263,19 +269,30 @@ const formatDateTime = (date, time) => {
 const updateAvailableTimeSlots = () => {
   if (!selectedDate.value || !selectedMatch.value) return;
 
-  const usedTimeSlots = props.allMatches
-    .filter(match => 
-      match.date === selectedDate.value && 
-      match.match_venue_id === selectedMatch.value.match_venue_id &&
-      match.id !== selectedMatch.value.id
-    )
-    .map(match => match.time);
+  const conflictingRecords = props.venueRecords.filter(record => {
+    return record.date === selectedDate.value && 
+           record.venue_id === selectedMatch.value.match_venue_id &&
+           record.match_id !== selectedMatch.value.id;
+  });
+
+  const bookedTimes = new Set(conflictingRecords.map(record => record.time));
 
   availableTimeSlots.value = timeSlots.map(slot => ({
     ...slot,
-    disabled: usedTimeSlots.includes(slot.value)
+    disabled: bookedTimes.has(slot.value)
   }));
+
+  // If editing existing match, make its current time slot available
+  if (selectedMatch.value.time && selectedMatch.value.date === selectedDate.value) {
+    const currentTimeSlot = availableTimeSlots.value.find(slot => 
+      slot.value === selectedMatch.value.time
+    );
+    if (currentTimeSlot) {
+      currentTimeSlot.disabled = false;
+    }
+  }
 };
+
 
 const openTimeModal = (match) => {
   selectedMatch.value = match;
@@ -301,11 +318,8 @@ const saveDateTime = () => {
     return;
   }
 
-  const isTimeSlotAvailable = availableTimeSlots.value.find(
-    slot => slot.value === selectedTime.value && !slot.disabled
-  );
-
-  if (!isTimeSlotAvailable) {
+  const selectedSlot = availableTimeSlots.value.find(slot => slot.value === selectedTime.value);
+  if (!selectedSlot || selectedSlot.disabled) {
     formError.value = 'Selected time slot is not available';
     return;
   }
@@ -317,7 +331,7 @@ const saveDateTime = () => {
   form.post(route('matches.updateDateTime'), {
     preserveState: true,
     preserveScroll: true,
-    onSuccess: () => {
+    onSuccess: (response) => {
       selectedMatch.value.date = selectedDate.value;
       selectedMatch.value.time = selectedTime.value;
       closeTimeModal();
@@ -327,6 +341,7 @@ const saveDateTime = () => {
     }
   });
 };
+
 
 const sortedMatches = computed(() => {
   return [...props.matches].sort((a, b) => {
@@ -349,4 +364,7 @@ const sortedMatches = computed(() => {
     return a.round - b.round;
   });
 });
+
+watch(selectedDate, updateAvailableTimeSlots);
+watch(selectedMatch, updateAvailableTimeSlots);
 </script>

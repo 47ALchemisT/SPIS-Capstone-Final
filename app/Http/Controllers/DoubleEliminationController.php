@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
 use App\Models\MatchResult;
+use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\SportMatch;
+use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +25,8 @@ class DoubleEliminationController extends Controller
         $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
         $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
         $allMatches = SportMatch::all();
+        $latestPalakasan = Palakasan::latest()->first();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
 
         return Inertia::render('SSCAdmin/MatchSetup/DoubleElimination', [
             'sport' => $assignedSports,
@@ -32,6 +36,7 @@ class DoubleEliminationController extends Controller
             'results' => $results,
             'venues' => $venues,
             'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords
 
         ]);
     }   
@@ -236,28 +241,36 @@ class DoubleEliminationController extends Controller
             ]);
         }
     }
-
     protected function handleFinalMatch($match, $winningTeamId, $losingTeamId)
     {
+        // Only create deciding match if winner is from losers bracket
         $isWinnerFromLosersBracket = $this->isFromLosersBracket($match, $winningTeamId);
-        $isLoserFromLosersBracket = $this->isFromLosersBracket($match, $losingTeamId);
-    
-        if ($isWinnerFromLosersBracket || $isLoserFromLosersBracket) {
+        
+        if ($isWinnerFromLosersBracket) {
+            // If winner came from losers bracket, create deciding match
             $this->createDecidingMatch($match, $winningTeamId, $losingTeamId);
         } else {
+            // If winner is from winners bracket, end tournament
             $this->endTournament($match->assigned_sport_id, $winningTeamId);
         }
     }
-
+    
     protected function isFromLosersBracket($match, $teamId)
     {
-        $lastLosersMatch = SportMatch::where('assigned_sport_id', $match->assigned_sport_id)
+        // Find the last match this team played in the losers bracket
+        $lastLosersBracketMatch = SportMatch::where('assigned_sport_id', $match->assigned_sport_id)
             ->where('bracket_type', 'losers')
+            ->where(function($query) use ($teamId) {
+                $query->where('teamA_id', $teamId)
+                      ->orWhere('teamB_id', $teamId);
+            })
             ->orderBy('round', 'desc')
             ->first();
-
-        return $lastLosersMatch && ($lastLosersMatch->teamA_id == $teamId || $lastLosersMatch->teamB_id == $teamId);
+    
+        // Check if the team's most recent match before the final was in the losers bracket
+        return $lastLosersBracketMatch !== null;
     }
+
 
     protected function createDecidingMatch($previousMatch, $teamFromLosersBracket, $teamFromWinnersBracket)
     {
@@ -281,8 +294,6 @@ class DoubleEliminationController extends Controller
         SportMatch::where('assigned_sport_id', $assignedSportId)
             ->update(['status' => 'completed']);
 
-        // Additional logic for ending the tournament can be added here
-        // For example, you might want to update the tournament status or create a final result record
     }
 
     protected function isFinalMatch($match)
@@ -293,5 +304,46 @@ class DoubleEliminationController extends Controller
             ->first();
 
         return $match->id === $finalMatch->id;
+    }
+
+
+    public function storeOverallResults(Request $request)
+    {
+        $request->validate([
+            'rankings' => 'required|array',
+            'rankings.*.assigned_sport_id' => 'required|exists:assigned_sports,id',
+            'rankings.*.assigned_team_id' => 'required|exists:assigned_teams,id',
+            'rankings.*.rank' => 'required|integer|min:1',
+            'rankings.*.points' => 'required|integer|min:0',
+        ]);
+    
+        try {
+            DB::beginTransaction();
+    
+            foreach ($request->rankings as $ranking) {
+                // Update or create the overall result
+                OverallResult::updateOrCreate(
+                    [
+                        'assigned_sport_id' => $ranking['assigned_sport_id'],
+                        'assigned_team_id' => $ranking['assigned_team_id'],
+                    ],
+                    [
+                        'rank' => $ranking['rank'],
+                        'points' => $ranking['points'],
+                    ]
+                );
+    
+                // Update the status of the assigned sport to 'completed'
+                AssignedSports::where('id', $ranking['assigned_sport_id'])
+                    ->update(['status' => 'completed']);
+            }
+    
+            DB::commit();
+            return redirect()->back()->with('message', 'Ranking successfully submitted');
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'There was an error saving the scores.');
+        }
     }
 }

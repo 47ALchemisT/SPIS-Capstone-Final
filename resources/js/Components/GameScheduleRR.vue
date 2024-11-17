@@ -197,6 +197,10 @@ const props = defineProps({
     type: Array,
     required: true
   },
+  venueRecords: {
+    type: Array,
+    required: true
+  }
 });
 
 const isWinnerModalOpen = ref(false);
@@ -329,18 +333,31 @@ const formatDateTime = (date, time) => {
 const updateAvailableTimeSlots = () => {
   if (!selectedDate.value || !selectedMatch.value) return;
 
-  const usedTimeSlots = props.allMatches
-    .filter(match => 
-      match.date === selectedDate.value && 
-      match.match_venue_id === selectedMatch.value.match_venue_id &&
-      match.id !== selectedMatch.value.id
-    )
-    .map(match => match.time);
+  const conflictingRecords = props.venueRecords.filter(record => {
+    return record.date === selectedDate.value && 
+           record.venue_id === selectedMatch.value.match_venue_id &&
+           record.match_id !== selectedMatch.value.id; // Exclude current match when editing
+  });
+
+  const bookedTimes = new Set(conflictingRecords.map(record => record.time));
 
   availableTimeSlots.value = timeSlots.map(slot => ({
     ...slot,
-    disabled: usedTimeSlots.includes(slot.value)
+    disabled: bookedTimes.has(slot.value)
   }));
+
+  // If editing existing match, make its current time slot available
+  if (selectedMatch.value.time && selectedMatch.value.date === selectedDate.value) {
+    const currentTimeSlot = availableTimeSlots.value.find(slot => 
+      slot.value === selectedMatch.value.time
+    );
+    if (currentTimeSlot) {
+      currentTimeSlot.disabled = false;
+    }
+  }
+
+  console.log('Booked times:', Array.from(bookedTimes));
+  console.log('Available slots:', availableTimeSlots.value);
 };
 
 const openTimeModal = (match) => {

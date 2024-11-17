@@ -66,6 +66,11 @@ class AssignedTeams extends Model
      {
          return $this->hasMany(TeamStanding::class, 'team_id');
      }
+
+     public function assignedTeamID()
+     {
+         return $this->hasMany(OverallResult::class, 'assigned_team_id');
+     }
     
 }
 

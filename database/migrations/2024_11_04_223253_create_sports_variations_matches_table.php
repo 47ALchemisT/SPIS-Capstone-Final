@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('sport_variation_id')->constrained('sports_variations')->onDelete('cascade'); // Foreign key to assigned_sports
             $table->foreignId('sport_variation_team_id')->constrained('assigned_teams')->onDelete('cascade'); // Foreign key to assigned_sports
             $table->string('rank')->nullable();
+            $table->integer('points')->nullable();
             $table->timestamps();
         });
     }
