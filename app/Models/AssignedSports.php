@@ -36,7 +36,7 @@ class AssignedSports extends Model
         return $this->hasMany(SportMatch::class, 'assigned_sport_id');
     }
 
-    public function assignedSport()
+    public function studentsPlayers()
     {
         return $this->hasMany(StudentPlayer::class, 'student_assigned_sport_id');
     }

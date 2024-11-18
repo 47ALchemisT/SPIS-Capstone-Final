@@ -21,7 +21,7 @@
     import { Head, useForm, router } from '@inertiajs/vue3';
     import { ref, onMounted, computed } from 'vue';
     import { route } from 'ziggy-js';
-    import AppLayout from '@/Layout/DashboardLayout.vue';
+    import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
 
     //--------------------------------------------------------------------------
 

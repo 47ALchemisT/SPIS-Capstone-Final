@@ -32,8 +32,9 @@ Route::resource('palakasan/details',PalakasanController::class);
 Route::post('/palakasan/details', [PalakasanController::class, 'store'])->name('palakasan.store');
 Route::resource('palakasan/team', PalakasanTeamController::class);
 Route::resource('palakasan/sportselection', PalakasanSportsController::class);
-Route::resource('studentplayer', StudentPalakasanController::class);
-Route::post('studentplayer/store', [StudentPalakasanController::class, 'store'])->name('player.store');
+Route::resource('studentplayer', StudentPalakasanController::class)->names([ 'store' => 'player.store',]);
+
+Route::post('/studentplayer/store', [StudentPalakasanController::class, 'store'])->name('studentplayer.store');
 
 //Log In
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -93,8 +94,10 @@ Route::post('student/import', [StudentController::class, 'import'])->name('stude
 
 Route::get('/admindashboard', function () {
     return Inertia::render('SSCAdmin/Dashboard');
+});
 
-
+Route::get('/cshdashboard', function () {
+    return Inertia::render('CSHCommittee/Dashboard');
 });
 
 

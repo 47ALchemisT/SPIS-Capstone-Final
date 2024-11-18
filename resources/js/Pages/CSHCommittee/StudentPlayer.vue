@@ -50,8 +50,28 @@
                 </div>
 
                 <!-- Main Content, List of Accounts -->
-                <div>
+                <div class="bg-white shadow-md rounded-lg p-4 mt-4">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Assigned Players</h2>
 
+                    <!-- Display Assigned Players -->
+                    <ul>
+                        <li v-for="player in studentPlayers" :key="player.id" class="border-b py-2">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-medium text-gray-700">{{ player.student.first_name }} {{ player.student.last_name }}</span> 
+                                    <span class="text-gray-500">
+                                        {{ player.assignedSports?.sport?.name || 'No sport assigned' }} 
+                                        ({{ player.assignedSports?.categories || 'N/A' }})
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Empty State -->
+                    <div v-if="!studentPlayers.length" class="text-center text-gray-500">
+                        No players have been assigned yet.
+                    </div>
                 </div>
             </div>
 
@@ -105,7 +125,7 @@
                                     :key="sport.id" 
                                     :value="sport.id"
                                 >
-                                    {{ sport.sport.name }}
+                                   {{ sport.sport.name }} {{ sport.categories }}
                                 </option>
                             </select>
                             <span v-if="form.errors.student_assigned_sport_id" class="text-red-500 text-sm">
@@ -128,7 +148,7 @@
                                 class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
                             >
                                 <span v-if="!form.processing">
-                                    Create Players
+                                    Assign Players
                                 </span>
                                 <span v-else>
                                     <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -214,13 +234,15 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
-import AppLayout from '@/Layout/DashboardLayout.vue';
+import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
 
 const props = defineProps({
     sports: Array,
     students: Array,
     assignedSports: Array,
+    studentPlayers: Array,
     errors: Object
+
 });
 
 // Form and data management
