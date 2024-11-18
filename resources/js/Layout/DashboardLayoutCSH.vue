@@ -11,7 +11,7 @@
                     <div class="ml-3 relative flex items-center gap-3">
                         <div>
                             <p class="text-white text-sm font-semibold ">Supreme Student Council</p>
-                            <p class="text-white text-xs text-right ">Admin</p>
+                            <p class="text-white text-xs text-right ">Sports College Committee Head</p>
                         </div>
                         <Menu as="div" class="relative inline-block text-left">
                                     <MenuButton class="mt-1.5 inline-flex items-center justify-center w-full rounded-lg  text-sm font-medium text-gray-700 ">
@@ -54,10 +54,10 @@
 
         <div class="flex pt-16">
             <!-- Sidebar -->
-            <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-e border-gray-300 pt-16">
+            <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-e border-gray-300 shadow pt-16">
                 <div class="h-full px-5 py-4 overflow-y-auto flex flex-col justify-between space-y-2">
                     <div>
-                        <div class="text-xs mb-2 mt-1 text-gray-800 font-medium">Dashboard</div>
+                        <span class="text-xs text-gray-800 font-medium">Menu</span>
                         <ul class="space-y-2" style="margin-bottom: 6px;">
                             <li>
                                 <Link 
@@ -70,75 +70,34 @@
                                 </Link>
                             </li>
                         </ul>
-                        <div class="text-xs mb-2 mt-1 text-gray-800 font-medium">Setup</div>
+                        <span class="text-xs text-gray-800 font-medium">Setup</span>
                         <ul class="space-y-2">
                             <li>
                                 <Link 
-                                    href="/sport" 
+                                    href="/sportcsh" 
                                     class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
                                     :class="{'bg-blue-700 text-white': currentRoute === '/sport', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/sport'}"
                                 >
                                     <i class="fa-solid fa-basketball"></i>
                                     <span class="ms-3">Sports</span>
                                 </Link>
+
                                 <Link 
-                                    href="/points" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/points', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/points'}"
-                                >
-                                    <i class="fa-solid fa-flag"></i>
-                                    <span class="ms-3">Points</span>
-                                </Link>
-                                <Link 
-                                    href="/venue" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/venue', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/venue'}"
-                                >
-                                    <i class="fa-solid fa-map-location-dot"></i>
-                                    <span class="ms-3">Venues</span>
-                                </Link>
-                                <Link 
-                                    href="/college" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/college', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/college'}"
-                                >
-                                    <i class="fa-solid fa-museum"></i>
-                                    <span class="ms-3">Colleges</span>
-                                </Link>
-                                <Link 
-                                    href="/student" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/student', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/student'}"
-                                >
-                                    <i class="fa-solid fa-graduation-cap"></i>
-                                    <span class="ms-3">Students</span>
-                                </Link>
+                                href="/players" 
+                                class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
+                                :class="{'bg-blue-700 text-white': currentRoute === '/players', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/account'}"
+                            >
+                                <i class="fa-solid fa-user-group"></i>
+                                <span class="ms-3">Players</span>
+                            </Link>
+
+    
+                             
                             </li>
                         </ul>
-                        <div class="text-xs mb-2 mt-1 text-gray-800 font-medium">Main</div>
                         <ul class="space-y-2" style="margin-bottom: 6px;">
                             <li>
-                                <Link 
-                                    href="/details" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
-                                    :class="{
-                                    'bg-blue-700 text-white': currentRoute.startsWith('/details'), 
-                                    'text-gray-700 hover:bg-blue-100 hover:text-blue-600': !currentRoute.startsWith('/details')
-                                    }"
-                                >
-                                    <i class="fa-solid fa-hand-fist"></i>                                
-                                    <span class="ms-3">Palakasan</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link 
-                                    href="/account" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/account', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/account'}"
-                                >
-                                    <i class="fa-solid fa-user-group"></i>
-                                    <span class="ms-3">Accounts</span>
-                                </Link>
+                              
                             </li>
                         </ul>
                     </div>
@@ -146,9 +105,9 @@
                         <ul class="space-y-2" style="margin-bottom: 6px;">
                             <li>
                                 <Link 
-                                    href="/login" 
+                                    href="/logout" 
                                     class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/login', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/logout'}"
+                                    :class="{'bg-blue-700 text-white': currentRoute === '/logout', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/logout'}"
                                 >
                                 <i class="fa-solid fa-right-from-bracket"></i>                                    
                                 <span class="ms-3">Log out</span>

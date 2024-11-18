@@ -54,8 +54,9 @@
                     <div v-if="studentAccounts.length" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <!-- Loop through each account -->
                         <div v-for="account in studentAccounts" :key="account.id" class="bg-white ring-1 ring-gray-300 p-4 rounded-lg shadow hover:shadow-lg transition">
-                            <h3 class="text-lg font-semibold text-gray-800">{{ account.student.fullname }}</h3>
+                            <h3 class="text-lg font-semibold text-gray-800">{{ account.student.first_name}} {{account.student.last_name}}</h3>
                             <p class="text-sm text-gray-600">Role: {{ account.role }}</p>
+                            <p class="text-sm text-gray-600">Username: {{ account.username }}</p>
                             <p class="text-sm text-gray-500">Status: <span :class="{'text-green-600': account.status, 'text-red-600': !account.status}">{{ account.status ? 'Active' : 'Inactive' }}</span></p>
                         </div>
                     </div>
@@ -98,6 +99,7 @@
                                 class="w-full border px-3 py-2 text-sm text-gray rounded-lg border-gray-300"
                             >
                                 <option value="" disabled>Select role...</option>
+                                <option value="Admin">Admin</option>
                                 <option value="Facilitator">Facilitator</option>
                                 <option value="College Sport Head">College Sport Head</option>
                             </select>
@@ -214,7 +216,7 @@ const selectedStudentName = ref('');
 const filteredStudents = computed(() => {
     const query = studentSearchQuery.value.toLowerCase();
     return availableStudents.value.filter(student =>
-        student.first_name.toLowerCase().includes(query)
+    student.first_name && student.first_name.toLowerCase().includes(query)
     );
 });
 
