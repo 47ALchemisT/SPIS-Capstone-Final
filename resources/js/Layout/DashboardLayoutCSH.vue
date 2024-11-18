@@ -83,9 +83,9 @@
                                 </Link>
 
                                 <Link 
-                                href="/players" 
+                                href="/studentplayer" 
                                 class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
-                                :class="{'bg-blue-700 text-white': currentRoute === '/players', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/account'}"
+                                :class="{'bg-blue-700 text-white': currentRoute === '/studentplayer', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/studentplayer'}"
                             >
                                 <i class="fa-solid fa-user-group"></i>
                                 <span class="ms-3">Players</span>

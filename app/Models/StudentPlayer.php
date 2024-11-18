@@ -10,15 +10,16 @@ class StudentPlayer extends Model
     use HasFactory;
 
     protected $table = 'student_players';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'student_player_id',
+        'student_id',
         'student_assigned_sport_id'
     ];
 
-    public function studentID()
+    public function student()
     {
-        return $this->belongsTo(Student::class, 'student_player_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
     public function assignedSport()
     {
