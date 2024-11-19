@@ -59,10 +59,6 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <span class="font-medium text-gray-700">{{ player.student.first_name }} {{ player.student.last_name }}</span> 
-                                    <span class="text-gray-500">
-                                        {{ player.assignedSports?.sport?.name || 'No sport assigned' }} 
-                                        ({{ player.assignedSports?.categories || 'N/A' }})
-                                    </span>
                                 </div>
                             </div>
                         </li>

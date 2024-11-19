@@ -10,6 +10,7 @@ use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\SportsVariations;
 use App\Models\SportsVariationsMatches;
+use App\Models\StudentAccount;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Exception;
@@ -23,7 +24,7 @@ class FreeForAllController extends Controller
 {
     public function index(AssignedSports $assignedSports)
     {
-        try {
+
             $points = Points::all();
             $colleges = College::all();
             $venues = Venue::all();
@@ -50,11 +51,40 @@ class FreeForAllController extends Controller
                 'points' => $points,
                 'venueRecords' => $venueRecords
             ]);
-        } catch (Exception $e) {
-            return redirect()
-                ->route('dashboard')
-                ->with('error', 'An error occurred while loading the match setup page. Please try again later.');
-        }
+
+    }
+
+    public function facilitatorIndex(AssignedSports $assignedSports, StudentAccount $facilitator)
+    {
+
+            $points = Points::all();
+            $colleges = College::all();
+            $venues = Venue::all();
+            $assignedSports->load('sport');
+            $tournaments = Palakasan::all();
+            $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+            $allMatches = SportMatch::all();
+            $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)
+                ->get();
+            $sportVariationMatches = SportsVariationsMatches::all();
+            $latestPalakasan = Palakasan::latest()->first();
+            $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
+    
+            return Inertia::render('Facilitator/SportSetup/FacilitatorFreeForAll', [
+                'sport' => $assignedSports,
+                'tournaments' => $tournaments,
+                'teams' => $teams,
+                'venues' => $venues,
+                'allMatches' => $allMatches,
+                'sportVariations' => $sportVariations,
+                'colleges' => $colleges,
+                'sportVariationMatches' => $sportVariationMatches,
+                'points' => $points,
+                'venueRecords' => $venueRecords,
+                'facilitator' => $facilitator
+            ]);
+
     }
 
     public function store(Request $request)

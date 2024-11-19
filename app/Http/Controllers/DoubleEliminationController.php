@@ -8,6 +8,7 @@ use App\Models\MatchResult;
 use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\SportMatch;
+use App\Models\StudentAccount;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Illuminate\Http\Request;
@@ -37,6 +38,32 @@ class DoubleEliminationController extends Controller
             'venues' => $venues,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords
+
+        ]);
+    }   
+
+    public function facilitatorIndex(AssignedSports $assignedSports,StudentAccount $facilitator)
+    {
+        $venues = Venue::all();
+        $assignedSports->load('sport');
+        $tournaments = Palakasan::all();
+        $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+        $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+        $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+        $allMatches = SportMatch::all();
+        $latestPalakasan = Palakasan::latest()->first();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
+        return Inertia::render('Facilitator/SportSetup/FacilitatorDoubleElimination', [
+            'sport' => $assignedSports,
+            'tournaments' => $tournaments,
+            'teams' => $teams,
+            'matches' => $matches,
+            'results' => $results,
+            'venues' => $venues,
+            'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords,
+            'facilitator' => $facilitator // Add this line to pass the facilitator data
 
         ]);
     }   

@@ -50,7 +50,7 @@ class LoginController extends Controller
             case 'Admin':
                 return redirect()->intended('/admindashboard');
             case 'Facilitator':
-                return redirect()->intended('/facidashboard');
+                return redirect()->intended('/facidashboard/' . $studentAccount->id);
             case 'College Sport Head':
                 return redirect()->intended('/cshdashboard');
             default:
