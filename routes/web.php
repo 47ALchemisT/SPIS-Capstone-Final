@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CollegeController;
 use App\Http\Controllers\DoubleEliminationController;
+use App\Http\Controllers\FacilitatorController;
 use App\Http\Controllers\FreeForAllController;
 use App\Http\Controllers\OnePalakasanController;
 use App\Http\Controllers\PalakasanController;
@@ -21,6 +22,9 @@ use App\Http\Controllers\StudentPalakasanController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\LoginController;
 use App\Models\AssignedSports;
+use App\Models\Student;
+use App\Models\StudentAccount;
+use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
 
 Route::resource('product', ProductController::class);
 Route::resource('college', CollegeController::class);
@@ -57,6 +61,29 @@ Route::get('details/sportview/{sport}', function ($sport) {
             abort(404, 'Invalid sport setup');
     }
 })->name('sportview.index');
+
+//Facilitator
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+
+Route::get('sportview/{sport}/{facilitator}', function ($sport, $facilitator) {
+    $sportModel = AssignedSports::findOrFail($sport);
+    $facilitatorModel = StudentAccount::findOrFail($facilitator);
+
+    switch ($sportModel->setup) {
+        case 'Single Elimination':
+            return app(SingleEliminationController::class)->facilitatorIndex($sportModel, $facilitatorModel);
+        case 'Double Elimination':
+            return app(DoubleEliminationController::class)->facilitatorIndex($sportModel, $facilitatorModel);
+        case 'Free for All':
+            return app(FreeForAllController::class)->facilitatorIndex($sportModel, $facilitatorModel);
+        case 'Round Robin':
+            return app(RoundRobinController::class)->facilitatorIndex($sportModel, $facilitatorModel);
+        default:
+            abort(404, 'Invalid sport setup');
+    }
+})->name('facilitator-sportview.index');
+Route::get('/facidashboard/{id}', [FacilitatorController::class, 'index'])->name('facilitator.show');
 
 //route for palakasan viewing
 Route::get('details/palakasan-history/{palakasan}', [PalakasanHistoryController::class, 'show'])->name('palakasanHistory.show');

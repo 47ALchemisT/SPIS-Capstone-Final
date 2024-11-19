@@ -7,6 +7,7 @@ use App\Models\AssignedTeams;
 use App\Models\MatchResult;
 use App\Models\Palakasan;
 use App\Models\SportMatch;
+use App\Models\StudentAccount;
 use App\Models\Venue;
 use App\Models\TeamStanding;
 use App\Models\UsedVenueRecord;
@@ -45,6 +46,36 @@ class RoundRobinController extends Controller
 
         ]);
     }   
+
+    public function facilitatorIndex(AssignedSports $assignedSports, StudentAccount $facilitator)
+    {
+        $venues = Venue::all();
+        $allMatches = SportMatch::all();
+        $assignedSports->load('sport');
+        $tournaments = Palakasan::all();
+        $latestPalakasan = Palakasan::latest()->first();
+        $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+        $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+        $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+        $standings = TeamStanding::where('assigned_sport_id', $assignedSports->id)
+                                 ->get();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
+
+        return Inertia::render('Facilitator/SportSetup/FacilitatorRoundRobin', [
+            'sport' => $assignedSports,
+            'tournaments' => $tournaments,
+            'teams' => $teams,
+            'matches' => $matches,
+            'results' => $results,
+            'venues' => $venues,
+            'standings' => $standings,
+            'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords,
+            'facilitator' => $facilitator
+
+        ]);
+    }  
 
     public function store_round_robin(Request $request)
     {
