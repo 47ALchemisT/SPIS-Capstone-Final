@@ -24,6 +24,7 @@ use App\Http\Controllers\LoginController;
 use App\Models\AssignedSports;
 use App\Models\Student;
 use App\Models\StudentAccount;
+use App\Http\Controllers\PlayerSportController;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
 
 Route::resource('product', ProductController::class);
@@ -37,6 +38,8 @@ Route::post('/palakasan/details', [PalakasanController::class, 'store'])->name('
 Route::resource('palakasan/team', PalakasanTeamController::class);
 Route::resource('palakasan/sportselection', PalakasanSportsController::class);
 Route::resource('studentplayer', StudentPalakasanController::class)->names([ 'store' => 'player.store',]);
+Route::get('/sports/{sport}', [StudentPalakasanController::class, 'show'])->name('sports.show');
+
 
 Route::post('/studentplayer/store', [StudentPalakasanController::class, 'store'])->name('studentplayer.store');
 
@@ -114,6 +117,7 @@ Route::post('team/store', [OnePalakasanController::class, 'store_teams'])->name(
 Route::put('/palakasan/{id}/update-status', [OnePalakasanController::class, 'updatePalakasanStatus'])->name('palakasan.updateStatus');
 Route::get('/selectedSport/{id}', [OnePalakasanController::class, 'showSport'])->name('sport.show');
 Route::post('/match-result', [OnePalakasanController::class, 'storeMatchResult'])->name('match.result.store');
+
 
 
 Route::resource('student', StudentController::class);

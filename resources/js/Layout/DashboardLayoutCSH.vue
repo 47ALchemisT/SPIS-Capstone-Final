@@ -74,17 +74,8 @@
                         <ul class="space-y-2">
                             <li>
                                 <Link 
-                                    href="/sportcsh" 
-                                    class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/sport', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/sport'}"
-                                >
-                                    <i class="fa-solid fa-basketball"></i>
-                                    <span class="ms-3">Sports</span>
-                                </Link>
-
-                                <Link 
-                                href="/studentplayer" 
-                                class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
+                                href="/studentplayer"
+                                class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
                                 :class="{'bg-blue-700 text-white': currentRoute === '/studentplayer', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/studentplayer'}"
                             >
                                 <i class="fa-solid fa-user-group"></i>
@@ -105,9 +96,9 @@
                         <ul class="space-y-2" style="margin-bottom: 6px;">
                             <li>
                                 <Link 
-                                    href="/logout" 
+                                    href="/login" 
                                     class="flex items-center py-2 px-3 text-md rounded-lg transition-all"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/logout', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/logout'}"
+                                    :class="{'bg-blue-700 text-white': currentRoute === '/login', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/login'}"
                                 >
                                 <i class="fa-solid fa-right-from-bracket"></i>                                    
                                 <span class="ms-3">Log out</span>
