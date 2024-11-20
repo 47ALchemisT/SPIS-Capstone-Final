@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('teamB_score');
             $table->foreignId('winning_team_id')->nullable()->constrained('assigned_teams')->onDelete('cascade');
             $table->foreignId('losing_team_id')->nullable()->constrained('assigned_teams')->onDelete('cascade');
+            //signature
             $table->timestamps();
         });
     }

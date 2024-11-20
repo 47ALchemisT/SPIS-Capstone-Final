@@ -30,12 +30,12 @@
         </div>
 
         <div class="flex items-center gap-2 mt-2">
-              <p class="text-sm"> {{ sport.setup }}</p>
-              <p class="text-xs">|</p>
-              <p class=" text-sm">{{ sport.type }}</p>
-              <p class="text-xs">|</p>
-              <p class=" text-sm">{{ sport.status }}</p>
-          </div>
+          <p class="text-sm">{{ sport.setup }}</p>
+          <p class="text-xs">|</p>
+          <p class="text-sm">{{ sport.type }}</p>
+          <p class="text-xs">|</p>
+          <p class="text-sm">{{ sport.status }}</p>
+        </div>
 
         <!-- Winner Display -->
         <div v-if="displayWinner" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -45,11 +45,13 @@
             @click="openRankingModal"
             type="button"
             class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            :disabled="isSubmittingRankings || rankingsSubmitted"
+            :disabled="matches.status === 'completed'"
           >
             {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
           </button>
         </div>
+
+        <Toast ref="toastRef" />
 
         <!-- Tabs Navigation -->
         <nav class="flex relative justify-between mt-4 items-center">
@@ -107,11 +109,8 @@
                       <input
                         v-model="team.rank"
                         type="text"
-                        min="1"
                         disabled
-                        :max="teams.length"
                         class="w-8 border text-center rounded px-2 py-1"
-                        placeholder="Rank"
                       />
                       <span class="font-medium">Points</span>
                       <input
@@ -145,12 +144,13 @@
 </template>
 
 <script setup>
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, useForm, router, usePage } from '@inertiajs/vue3';
 import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
 import Standing from '@/Components/StandingRR.vue';
 import GameSchedule from '@/Components/Facilitator/FGameScheduleRR.vue';
+import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
 
 const props = defineProps({
   sport: [Array, Object],
@@ -163,15 +163,20 @@ const props = defineProps({
   standings: Array,
   winner: Number,
   venueRecords: Array,
-  facilitator: Object
+  facilitator: Object,
+  errors: Object,
+  majorPoints: {
+    type: Array,
+    default: () => [],
+  },
+  minorPoints: {
+    type: Array,
+    default: () => [],
+  }
 });
 
 const activeTab = ref('matches');
-const selectedVenue = ref('');
-const error = ref('');
-const showCreateMatchesModal = ref(false);
-const createMatchesLoading = ref(false);
-const createMatchesError = ref('');
+
 const tournamentWinner = ref(null);
 const showRankingModal = ref(false);
 const isSubmittingRankings = ref(false);
@@ -182,6 +187,23 @@ const displayWinner = computed(() => {
   return tournamentWinner.value || props.winner;
 });
 
+const toastRef = ref(null);
+const page = usePage();
+
+// Watch for flash messages
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash.message) {
+            toastRef.value.addToast(flash.message, 'success');
+        }
+        if (flash.error) {
+            toastRef.value.addToast(flash.error, 'error');
+        }
+    },
+    { deep: true }
+);
+
 const returnToFacilitator = () => {
   router.visit(route('facilitator.show', { id: props.facilitator.id }));
 };
@@ -190,124 +212,27 @@ const hasExistingMatches = computed(() => {
   return props.matches.some(match => match.assigned_sport_id === props.sport.id);
 });
 
-const openCreateMatchesModal = () => {
-  if (hasExistingMatches.value) {
-    error.value = 'Tournament has already been started';
-    return;
-  }
-  showCreateMatchesModal.value = true;
-};
-
-const closeCreateMatchesModal = () => {
-  showCreateMatchesModal.value = false;
-  selectedVenue.value = '';
-  createMatchesError.value = '';
-};
-
-const generateRoundRobinMatches = (teams) => {
-  const venueId = parseInt(selectedVenue.value, 10);
-  if (!venueId) {
-    throw new Error('Please select a valid venue');
-  }
-
-  const numTeams = teams.length;
-  let matches = [];
-  let round = 1;
-
-  // If odd number of teams, add a "bye" team
-  if (numTeams % 2 !== 0) {
-    teams.push({ id: 'bye', name: 'BYE' });
-  }
-
-  const totalRounds = teams.length - 1;
-  const matchesPerRound = teams.length / 2;
-
-  for (let currentRound = 0; currentRound < totalRounds; currentRound++) {
-    for (let match = 0; match < matchesPerRound; match++) {
-      const home = teams[match];
-      const away = teams[teams.length - 1 - match];
-
-      // Only create a match if neither team is the "bye" team
-      if (home.id !== 'bye' && away.id !== 'bye') {
-        matches.push({
-          round: round,
-          game: `Game ${matches.length + 1}`,
-          teamA_id: home.id,
-          teamB_id: away.id,
-          assigned_sport_id: props.sport.id,
-          bracket_type: 'round_robin',
-          elimination_type: 'round_robin',
-          status: 'pending',
-          match_venue_id: venueId,
-          date: null,
-          time: null,
-        });
-      }
-    }
-
-    // Rotate teams for next round, keeping first team fixed
-    teams.splice(1, 0, teams.pop());
-    round++;
-  }
-
-  return matches;
-};
-
-const createRoundRobinMatches = async () => {
-  createMatchesError.value = '';
-
-  if (!selectedVenue.value) {
-    createMatchesError.value = 'Please select a venue';
-    return;
-  }
-
-  createMatchesLoading.value = true;
-
-  try {
-    const matches = generateRoundRobinMatches(props.teams);
-
-    if (!matches.length) {
-      throw new Error('No matches were generated');
-    }
-
-    console.log("Round-Robin match data being sent:", JSON.stringify(matches, null, 2));
-
-    const response = await router.post(route('round-robin.store'), matches, {
-      preserveScroll: true,
-      onSuccess: (page) => {
-        console.log('Success response:', page);
-        createMatchesLoading.value = false;
-        closeCreateMatchesModal();
-        router.visit(window.location.pathname);
-      },
-      onError: (errors) => {
-        console.error('Error creating matches:', errors);
-        createMatchesError.value = errors.message || 'Failed to create matches';
-      }
-    });
-  } catch (err) {
-    console.error('Error in createRoundRobinMatches:', err);
-    createMatchesLoading.value = false;
-    createMatchesError.value = err.message || 'Failed to create matches';
-  }
-};
-
 const getTeamName = (teamId) => {
   if (!teamId) return 'TBD';
   const team = props.teams.find(t => t.id === teamId);
   return team ? team.assigned_team_name : 'Unknown';
 };
 
+const sortedStandings = computed(() => {
+  return [...props.standings].sort((a, b) => {
+    if (b.won !== a.won) return b.won - a.won;
+    if (b.drawn !== a.drawn) return b.drawn - a.drawn;
+    return b.played - a.played;
+  });
+});
+
 const determineWinner = () => {
-  const sortedStandings = [...props.standings].sort((a, b) => b.points - a.points || b.won - a.won);
-  
-  if (sortedStandings.length > 0) {
-    if (sortedStandings[0].points > sortedStandings[1].points) {
-      tournamentWinner.value = sortedStandings[0].team_id;
+  if (sortedStandings.value.length > 0) {
+    if (sortedStandings.value[0].won > sortedStandings.value[1].won) {
+      tournamentWinner.value = sortedStandings.value[0].team_id;
     } else {
       // If there's a tie for first place, you might want to implement a tie-breaker logic here
       console.log('There is a tie for first place. Implement tie-breaker logic if needed.');
-      // For now, tournamentWinner.value = sortedStandings[0].won >= sortedStandings[1].won ? sortedStandings[0].team_id : sortedStandings[1].team_id;
     }
   }
 };
@@ -336,48 +261,27 @@ onMounted(() => {
   }
 });
 
-const calculateTeamRecords = () => {
-  const records = {};
-  props.teams.forEach(team => {
-    records[team.id] = { wins: 0, losses: 0, points: 0 };
-  });
-
-  props.results.forEach(result => {
-    if (result.winning_team_id) {
-      records[result.winning_team_id].wins++;
-      records[result.winning_team_id].points += result.winning_points || 0;
-    }
-    if (result.losing_team_id) {
-      records[result.losing_team_id].losses++;
-      records[result.losing_team_id].points += result.losing_points || 0;
-    }
-  });
-
-  return records;
-};
-
-const sortTeamsByRecord = (teams, records) => {
-  return [...teams].sort((a, b) => {
-    const teamA = records[a.id] || { wins: 0, losses: 0, points: 0 };
-    const teamB = records[b.id] || { wins: 0, losses: 0, points: 0 };
-
-    // Sort by wins first, then by points, then by losses
-    if (teamA.wins !== teamB.wins) return teamB.wins - teamA.wins;
-    if (teamA.points !== teamB.points) return teamB.points - teamA.points;
-    return teamA.losses - teamB.losses;
-  });
-};
+const pointsToUse = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
 
 const openRankingModal = () => {
   if (rankingsSubmitted.value) return;
 
-  const records = calculateTeamRecords();
-  const sortedTeams = sortTeamsByRecord(props.teams, records);
+  const sortedTeams = sortedStandings.value.map(standing => {
+    const team = props.teams.find(t => t.id === standing.team_id);
+    return {
+      ...team,
+      ...standing
+    };
+  });
+
+  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
 
   rankingTeams.value = sortedTeams.map((team, index) => ({
     ...team,
     rank: index + 1,
-    points: records[team.id].points || 0,
+    points: sortedPoints[index] ? sortedPoints[index].points : 0
   }));
 
   showRankingModal.value = true;

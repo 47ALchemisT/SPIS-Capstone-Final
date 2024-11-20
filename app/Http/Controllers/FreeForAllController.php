@@ -69,6 +69,8 @@ class FreeForAllController extends Controller
             $sportVariationMatches = SportsVariationsMatches::all();
             $latestPalakasan = Palakasan::latest()->first();
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+            $majorPoints = Points::where('type', 'Major')->get();
+            $minorPoints = Points::where('type', 'Minor')->get();
 
     
             return Inertia::render('Facilitator/SportSetup/FacilitatorFreeForAll', [
@@ -82,7 +84,9 @@ class FreeForAllController extends Controller
                 'sportVariationMatches' => $sportVariationMatches,
                 'points' => $points,
                 'venueRecords' => $venueRecords,
-                'facilitator' => $facilitator
+                'facilitator' => $facilitator,
+                'majorPoints' => $majorPoints,
+                'minorPoints' => $minorPoints
             ]);
 
     }

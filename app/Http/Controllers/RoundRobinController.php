@@ -6,6 +6,7 @@ use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
 use App\Models\MatchResult;
 use App\Models\Palakasan;
+use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\StudentAccount;
 use App\Models\Venue;
@@ -61,6 +62,9 @@ class RoundRobinController extends Controller
                                  ->get();
         $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
 
+        $majorPoints = Points::where('type', 'Major')->get();
+        $minorPoints = Points::where('type', 'Minor')->get();
+
 
         return Inertia::render('Facilitator/SportSetup/FacilitatorRoundRobin', [
             'sport' => $assignedSports,
@@ -72,7 +76,9 @@ class RoundRobinController extends Controller
             'standings' => $standings,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'facilitator' => $facilitator
+            'facilitator' => $facilitator,
+            'majorPoints' => $majorPoints,
+            'minorPoints' => $minorPoints
 
         ]);
     }  

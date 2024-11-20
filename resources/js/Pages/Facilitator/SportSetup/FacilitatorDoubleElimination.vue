@@ -35,6 +35,8 @@
                     <p class=" text-sm">{{ sport.status }}</p>
                 </div>
 
+                <Toast ref="toastRef" />
+
                 <!-- Tournament Winner Display -->
                 <div v-if="tournamentWinner" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                     <h2 class="text-lg font-semibold text-green-800">Game Winner</h2>
@@ -251,7 +253,9 @@
                                 type="number"
                                 min="0"
                                 class="w-16 border rounded px-2 py-1"
+                                placeholder="Points"
                                 required
+                                readonly
                                 />
                             </div>
                             </div>
@@ -275,13 +279,13 @@
  </template>
  
  <script setup>
-    import { Head, useForm, router } from '@inertiajs/vue3';
-    import { ref, onMounted, computed } from 'vue';
+    import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+    import { ref, onMounted, computed, watch } from 'vue';
     import { route } from 'ziggy-js';
     import AppLayout from '@/Layout/DashboardLayoutF.vue';
     import Standing from '@/Components/Standing.vue'
     import GameSchedule from '@/Components/Facilitator/FGameSchedule.vue';
-
+    import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
 
 const props = defineProps({
     sport: [Array, Object],
@@ -292,39 +296,38 @@ const props = defineProps({
     venues: Array,
     allMatches: Array,
     venueRecords: Array,
-    facilitator: Object
+    facilitator: Object,
+    majorPoints: {
+      type: Array,
+      default: () => []
+    },
+    minorPoints: {
+      type: Array,
+      default: () => []
+    },
 });
+const toastRef = ref(null);
+const page = usePage();
 
-const loading = ref(false);
-const error = ref('');
-const showScoreModal = ref(false);
-const scoreLoading = ref(false);
-const scoreError = ref('');
-const selectedMatch = ref(null);
-const selectedVenue = ref('');
-const shuffleTeams = ref(false);
-const showCreateMatchesModal = ref(false);
-const createMatchesLoading = ref(false);
-const createMatchesError = ref('');
-
-
-const closeCreateMatchesModal = () => {
-    showCreateMatchesModal.value = false;
-    shuffleTeams.value = false;
-    selectedVenue.value = '';
-    createMatchesError.value = '';
-};
+// Watch for flash messages
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash.message) {
+            toastRef.value.addToast(flash.message, 'success');
+        }
+        if (flash.error) {
+            toastRef.value.addToast(flash.error, 'error');
+        }
+    },
+    { deep: true }
+);
 
 
 const activeTab = ref('matches');  // Default to "Details" 
 const returnToFacilitator = () => {
   router.visit(route('facilitator.show', { id: props.facilitator.id }));
 };
-
-// Check if matches already exist for this sport
-const hasExistingMatches = computed(() => {
-    return props.matches.some(match => match.assigned_sport_id === props.sport.id);
-});
 
 
 const getTeamName = (teamId) => {
@@ -455,14 +458,55 @@ const showRankingModal = ref(false)
 const isSubmittingRankings = ref(false)
 const rankingTeams = ref([])
 
+
+const pointsToUse = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
+
 const openRankingModal = () => {
-  rankingTeams.value = props.teams.map((team, index) => ({
+  if (rankingsSubmitted.value) return;
+
+  // Create a map to track team performance
+  const teamPerformance = new Map(props.teams.map(team => [team.id, {
+    id: team.id,
+    assigned_team_name: team.assigned_team_name,
+    wins: 0,
+    losses: 0,
+  }]));
+
+  // Count wins and losses from results
+  props.results.forEach(result => {
+    if (result.winning_team_id) {
+      const winningTeam = teamPerformance.get(result.winning_team_id);
+      if (winningTeam) {
+        winningTeam.wins += 1;
+      }
+    }
+    if (result.losing_team_id) {
+      const losingTeam = teamPerformance.get(result.losing_team_id);
+      if (losingTeam) {
+        losingTeam.losses += 1;
+      }
+    }
+  });
+
+  const sortedTeams = Array.from(teamPerformance.values()).sort((a, b) => {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    if (a.losses !== b.losses) return a.losses - b.losses;
+    return 0;
+  });
+
+  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
+
+  // Assign ranks based on sorted standings
+  rankingTeams.value = sortedTeams.map((team, index) => ({
     ...team,
     rank: index + 1,
-    points: 0,
-  }))
-  showRankingModal.value = true
-}
+    points: sortedPoints[index] ? sortedPoints[index].points : 0
+  }));
+
+  showRankingModal.value = true;
+};
 
 const closeRankingModal = () => {
   showRankingModal.value = false
@@ -487,9 +531,11 @@ const submitRankings = () => {
     onSuccess: () => {
       closeRankingModal()
       isSubmittingRankings.value = false
+      rankingsSubmitted.value = true
     },
     onError: () => {
       isSubmittingRankings.value = false
+      showToast('Failed to submit rankings', 'error');
     },
   })
 }

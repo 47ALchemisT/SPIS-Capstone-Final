@@ -1,5 +1,6 @@
 <template>
     <div class="game-schedule">
+      <Toast ref="toastRef" />
       <h2 class="text-md font-medium mt-1 mb-4">Match Schedule</h2>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div v-for="match in sortedMatches" 
@@ -62,72 +63,139 @@
       </div>
     </div>
 
-                <!-- Score Setting Modal -->
-                <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-lg relative w-72">
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Add Score
-                        </h3>
-                        <button @click="closeScoreModal"  type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <div class="p-4 ">
-                        
-                        <form @submit.prevent="submitScore">
-                            <div class="mb-4">
-                                <label class="block mb-2 font-medium text-sm">
-                                    {{ getTeamName(selectedMatch.teamA_id) }}
-                                    <input 
-                                        v-model="scoreFormData.teamA_score"
-                                        type="number"
-                                        min="0"
-                                        required
-                                        class="border px-3 py-2 mt-2  rounded-lg border-gray-300  w-full"
-                                    />
-                                </label>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block mb-3 font-medium text-sm">
-                                    {{ getTeamName(selectedMatch.teamB_id) }}
-                                    <input 
-                                        v-model="scoreFormData.teamB_score"
-                                        type="number"
-                                        min="0"
-                                        required
-                                        class="border mt-2 rounded-lg border-gray-300 px-3 py-2 w-full"
-                                    />
-                                </label>
-                            </div>
-
-                            <p v-if="scoreError" class="text-red-600 mb-4">{{ scoreError }}</p>
-
-                            <div class="grid grid-cols-2 items-center gap-2">
-                                <button  
-                                    @click="closeScoreModal" 
-                                    type="button" class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                    Cancel
-                                </button>
-
-                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                    {{ scoreLoading ? 'Saving...' : 'Save Score' }}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-lg relative w-96">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Add Score
+          </h3>
+          <button @click="closeScoreModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        <div class="p-4">
+          <form @submit.prevent="openSignatureModal">
+            <div class="mb-4">
+              <label class="block mb-2 font-medium text-sm">
+                {{ getTeamName(selectedMatch.teamA_id) }}
+                <input 
+                  v-model="scoreFormData.teamA_score"
+                  type="number"
+                  min="0"
+                  required
+                  class="border px-3 py-2 mt-2 rounded-lg border-gray-300 w-full"
+                />
+              </label>
             </div>
+
+            <div class="mb-4">
+              <label class="block mb-3 font-medium text-sm">
+                {{ getTeamName(selectedMatch.teamB_id) }}
+                <input 
+                  v-model="scoreFormData.teamB_score"
+                  type="number"
+                  min="0"
+                  required
+                  class="border mt-2 rounded-lg border-gray-300 px-3 py-2 w-full"
+                />
+              </label>
+            </div>
+
+            <p v-if="scoreError" class="text-red-600 mb-4">{{ scoreError }}</p>
+
+            <div class="grid grid-cols-2 items-center gap-2">
+              <button  
+                @click="closeScoreModal" 
+                type="button" 
+                class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                Cancel
+              </button>
+
+              <button 
+                type="submit" 
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                Next: Signature
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+     <!-- Signature Modal -->
+     <div v-if="showSignatureModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg shadow-lg relative w-[500px]">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Confirm Signature
+          </h3>
+          <button @click="closeSignatureModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        <div class="p-4">
+          <div class="mb-4">
+            <label class="block mb-2 font-medium text-sm">
+              Signature
+              <div class="mt-2 rounded-lg  bg-white">
+                <canvas 
+                  ref="signatureCanvas"
+                  @mousedown="startDrawing"
+                  @mousemove="draw"
+                  @mouseup="stopDrawing"
+                  @mouseleave="stopDrawing"
+                  width="450"
+                  height="200"
+                  class="border-2 border-gray-300 rounded-lg w-full"
+                ></canvas>
+              </div>
+            </label>
+            <div class="flex justify-between mt-2">
+              <button 
+                type="button" 
+                @click="clearSignature"
+                class="text-sm text-red-600 hover:bg-red-50 px-3 py-1 rounded"
+              >
+                Clear Signature
+              </button>
+              <span class="text-xs text-gray-500">Sign within the box above</span>
+            </div>
+          </div>
+
+          <p v-if="signatureError" class="text-red-600 mb-4">{{ signatureError }}</p>
+
+          <div class="grid grid-cols-2 items-center gap-2">
+            <button  
+              @click="closeSignatureModal" 
+              type="button" 
+              class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+              Back
+            </button>
+
+            <button 
+              @click="submitScore"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+              {{ scoreLoading ? 'Saving...' : 'Confirm' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </template>
   
   <script setup>
-  import { ref, computed, watch } from 'vue';
+  import { ref, computed, watch, nextTick, onMounted } from 'vue';
   import { useForm, router } from '@inertiajs/vue3';
+  import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed
+
     
   const props = defineProps({
     matches: {
@@ -153,6 +221,10 @@
     venueRecords: {
       type: Array,
       required: true
+    },
+    majorPoints: {
+      type: Array,  
+      default: () => [] 
     }
   
   });
@@ -161,16 +233,99 @@
   const scoreLoading = ref(false);
     const scoreError = ref('');
     const selectedMatch = ref(null);
+    const signatureCanvas = ref(null);
+
+    // State for modals
+const showSignatureModal = ref(false);
+const signatureError = ref('');
+const isDrawing = ref(false);
+const lastX = ref(0);
+const lastY = ref(0);
+
+const toastRef = ref(null);
+
+
+const startDrawing = (e) => {
+  isDrawing.value = true;
+  [lastX.value, lastY.value] = [e.offsetX, e.offsetY];
+};
+
+const draw = (e) => {
+  if (!isDrawing.value) return;
+  
+  const canvas = signatureCanvas.value;
+  const ctx = canvas.getContext('2d');
+  
+  ctx.beginPath();
+  ctx.moveTo(lastX.value, lastY.value);
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  
+  [lastX.value, lastY.value] = [e.offsetX, e.offsetY];
+};
+
+const stopDrawing = () => {
+  isDrawing.value = false;
+};
+
+const clearSignature = () => {
+  const canvas = signatureCanvas.value;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+};
+
+const openSignatureModal = (e) => {
+  e.preventDefault();
+  
+  // Validate scores
+  const { teamA_score, teamB_score } = scoreFormData.value;
+  
+  if (!teamA_score || !teamB_score) {
+    scoreError.value = 'Please enter scores for both teams';
+    return;
+  }
+  
+  if (teamA_score === teamB_score) {
+    scoreError.value = 'Scores cannot be tied in this elimination bracket.';
+    return;
+  }
+  
+  // Close score modal and open signature modal
+  showScoreModal.value = false;
+  showSignatureModal.value = true;
+  signatureError.value = '';
+  
+  // Reset canvas for a fresh signature
+  nextTick(() => {
+    clearSignature();
+  });
+};
+
+const closeSignatureModal = () => {
+  showSignatureModal.value = false;
+  // Optionally reopen score modal if needed
+  // showScoreModal.value = true;
+  signatureError.value = '';
+};
 
 
 const getTeamName = (teamId) => {
+    // First, check if teamId is null or undefined
     if (!teamId) return 'TBD';
+
+    // Then handle the winner prefix case
     if (typeof teamId === 'string' && teamId.startsWith('winner:')) {
         const [, round, game] = teamId.split(':');
         return `Winner of R${round} G${game}`;
     }
-    const team = props.teams.find(t => t.id === teamId);
-    return team ? team.assigned_team_name : 'Unknown';
+
+    // Ensure props.teams exists and is an array before finding
+    if (props.teams && Array.isArray(props.teams)) {
+        const team = props.teams.find(t => t.id === teamId);
+        return team ? team.assigned_team_name : 'Unknown';
+    }
+
+    return 'Unknown';
 };
 
 const groupedMatches = computed(() => {
@@ -194,6 +349,31 @@ const groupedMatches = computed(() => {
     });
     
     return Object.values(rounds);
+});
+
+const sortedMatches = computed(() => {
+    return props.matches
+        .filter(match => match && match.id)  // Filter out invalid matches
+        .sort((a, b) => {
+            const getGameNumber = (game) => {
+                const number = parseInt(game.match(/\d+/));
+                return isNaN(number) ? 0 : number;
+            };
+            
+            const gameA = getGameNumber(a.game);
+            const gameB = getGameNumber(b.game);
+            
+            if (gameA !== gameB) {
+                return gameA - gameB;
+            }
+            
+            if (a.date && b.date) {
+                const dateCompare = new Date(a.date) - new Date(b.date);
+                if (dateCompare !== 0) return dateCompare;
+            }
+            
+            return a.round - b.round;
+        });
 });
 
 const canUpdateMatch = (match) => {
@@ -224,7 +404,8 @@ const openScoreModal = (match) => {
       teamA_score: existingResult ? existingResult.teamA_score : '',
       teamB_score: existingResult ? existingResult.teamB_score : '',
       winning_team_id: '',
-      losing_team_id: ''
+      losing_team_id: '',
+      signature: ''
     };
     
     showScoreModal.value = true;
@@ -234,54 +415,86 @@ const openScoreModal = (match) => {
 };
 
 const closeScoreModal = () => {
-    showScoreModal.value = false;
-    selectedMatch.value = null;
-    scoreFormData.value = {
-        sport_match_id: '',
-        teamA_score: '',
-        teamB_score: '',
-        winning_team_id: '',
-        losing_team_id: ''
-    };
-    scoreError.value = '';
+  showScoreModal.value = false;
+  showSignatureModal.value = false;
+  
+  // Reset all relevant states
+  selectedMatch.value = null;
+  scoreFormData.value = {
+    sport_match_id: '',
+    teamA_score: '',
+    teamB_score: '',
+    winning_team_id: '',
+    losing_team_id: '',
+    signature: ''
+  };
+  scoreError.value = '';
+  signatureError.value = '';
+  
+  // Clear signature canvas
+  if (signatureCanvas.value) {
+    const ctx = signatureCanvas.value.getContext('2d');
+    ctx.clearRect(0, 0, signatureCanvas.value.width, signatureCanvas.value.height);
+  }
 };
 
 const submitScore = async () => {
-    scoreLoading.value = true;
-    scoreError.value = '';
+  // Validate signature
+  const canvas = signatureCanvas.value;
+  const signatureData = canvas.toDataURL();
+  
+  // Check if signature is just a blank canvas
+  const blankCanvas = document.createElement('canvas');
+  blankCanvas.width = canvas.width;
+  blankCanvas.height = canvas.height;
+  
+  if (signatureData === blankCanvas.toDataURL()) {
+    signatureError.value = 'Please provide a signature';
+    return;
+  }
 
-    const { teamA_score, teamB_score } = scoreFormData.value;
-    const teamAId = selectedMatch.value.teamA_id;
-    const teamBId = selectedMatch.value.teamB_id;
+  // Set signature in form data
+  scoreFormData.value.signature = signatureData;
 
-    if (teamA_score === teamB_score) {
-        scoreError.value = 'Scores cannot be tied in this elimination bracket.';
+  // Determine winning and losing teams
+  const { teamA_score, teamB_score } = scoreFormData.value;
+  const teamAId = selectedMatch.value.teamA_id;
+  const teamBId = selectedMatch.value.teamB_id;
+  
+  scoreFormData.value.winning_team_id = teamA_score > teamB_score ? teamAId : teamBId;
+  scoreFormData.value.losing_team_id = teamA_score > teamB_score ? teamBId : teamAId;
+
+  // Submit score
+  scoreLoading.value = true;
+  signatureError.value = '';
+
+  try {
+    await router.post(route('results.store'), scoreFormData.value, {
+      onSuccess: () => {
+        console.log('Score updated successfully');
+        // Ensure both modals are closed
+        showSignatureModal.value = false;
+        showScoreModal.value = false;
+        
+        // Reset form and selected match
+        closeScoreModal();
+        
         scoreLoading.value = false;
-        return;
-    }
-
-    scoreFormData.value.winning_team_id = teamA_score > teamB_score ? teamAId : teamBId;
-    scoreFormData.value.losing_team_id = teamA_score > teamB_score ? teamBId : teamAId;
-
-    try {
-        await router.post(route('results.store'), scoreFormData.value, {
-            onSuccess: () => {
-                console.log('Score updated successfully');
-                closeScoreModal();
-                scoreLoading.value = false;
-            },
-            onError: (errors) => {
-                console.error('Error updating score:', errors);
-                scoreError.value = 'Failed to update score';
-                scoreLoading.value = false;
-            }
-        });
-    } catch (error) {
-        scoreError.value = 'Failed to update score';
-        console.error('Error updating score:', error);
+      },
+      onError: (errors) => {
+        console.error('Error updating score:', errors);
+        signatureError.value = errors.message || 'Failed to update score';
         scoreLoading.value = false;
-    }
+      }
+    });
+  } catch (error) {
+    console.error('Error updating score:', error);
+    signatureError.value = 'Failed to update score';
+    scoreLoading.value = false;
+  }
 };
+
+
   const getVenueName = (venueId) => {
     if (!venueId) return 'No venue assigned';
     const venue = props.venues.find(v => v.id === venueId);
@@ -331,25 +544,16 @@ const submitScore = async () => {
   };
   
   
-  const sortedMatches = computed(() => {
-    return [...props.matches].sort((a, b) => {
-      const getGameNumber = (game) => {
-        const number = parseInt(game.match(/\d+/));
-        return isNaN(number) ? 0 : number;
-      };
-      
-      const gameA = getGameNumber(a.game);
-      const gameB = getGameNumber(b.game);
-      
-      if (gameA !== gameB) {return gameA - gameB;
-      }
-      
-      if (a.date && b.date) {
-        const dateCompare = new Date(a.date) - new Date(b.date);
-        if (dateCompare !== 0) return dateCompare;
-      }
-      
-      return a.round - b.round;
-    });
-  });
+  // Configure canvas for drawing
+watch(signatureCanvas, (canvas) => {
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+  }
+});
+onMounted(() => {
+    console.log('Matches:', props.matches);
+});
   </script>
