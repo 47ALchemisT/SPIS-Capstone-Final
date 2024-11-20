@@ -2,6 +2,21 @@
     <Head :title="`Players in ${sport.sport.name}`" />
     <AppLayout>
         <template v-slot:default>
+              <!-- Flash Messages -->
+<div v-if="flash.success" class="bg-green-100 text-green-800 p-3 rounded mb-4">
+    {{ flash.success }}
+</div>
+<div v-if="flash.warnings" class="bg-yellow-100 text-yellow-800 p-3 rounded mb-4">
+    <ul>
+        <li v-for="(warning, index) in flash.warnings" :key="index">
+            {{ warning }}
+        </li>
+    </ul>
+</div>
+<div v-if="flash.error" class="bg-red-100 text-red-800 p-3 rounded mb-4">
+    {{ flash.error }}
+</div>
+
             <!-- Back Button -->
             <button
                 @click="goBack"
@@ -119,13 +134,15 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head} from '@inertiajs/vue3';
 import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
+
 
 const { props } = usePage();
 const sport = props.sport;
 const players = props.players;
+const { flash } = usePage().props; 
 
 const availableStudents = props.students; // List of students
 const isAssignModalOpen = ref(false);
@@ -146,8 +163,8 @@ const submitAssignPlayers = () => {
         onSuccess: () => {
             closeAssignModal();
             selectedStudentIds.value = []; // Clear selected IDs
-            form.reset();
-            router.reload();
+            closeAssignModal();
+                location.reload();
         },
     });
 };

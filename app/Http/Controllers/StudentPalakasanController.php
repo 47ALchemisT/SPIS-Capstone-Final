@@ -40,7 +40,7 @@ class StudentPalakasanController extends Controller
     {
         $validated = $request->validate([
             'student_ids' => 'required|array',
-            'student_ids.*' => 'exists:students,id',  // Ensure student IDs exist in the students table
+            'student_ids.*' => 'exists:students,id', // Ensure student IDs exist in the students table
             'student_assigned_sport_id' => 'required|exists:assigned_sports,id', // Validate assigned sport ID
         ]);
     
@@ -50,9 +50,19 @@ class StudentPalakasanController extends Controller
             // Get the assigned sport instance for the provided ID
             $assignedSport = AssignedSports::findOrFail($request->student_assigned_sport_id);
     
-            // Loop through each student ID and create or update the player assignment
+            $errors = []; // To track any students who can't be assigned
+    
             foreach ($request->student_ids as $studentId) {
-                // Using firstOrCreate to avoid duplicates in the StudentPlayer table
+                // Count the number of sports this student is already assigned to
+                $assignedSportsCount = StudentPlayer::where('student_id', $studentId)->count();
+    
+                if ($assignedSportsCount >= 2) {
+                    // If the student already has 2 sports assigned, add an error message
+                    $errors[] = "Student ID $studentId cannot be assigned to more than 2 sports.";
+                    continue;
+                }
+    
+                // Create the assignment if the student has less than 2 sports
                 StudentPlayer::firstOrCreate([
                     'student_id' => $studentId,
                     'student_assigned_sport_id' => $assignedSport->id,
@@ -60,6 +70,11 @@ class StudentPalakasanController extends Controller
             }
     
             DB::commit();
+    
+            // Redirect with success and any warnings about unassignable students
+            if (!empty($errors)) {
+                return redirect()->back()->with('success', 'Some students were assigned successfully.')->with('warnings', $errors);
+            }
     
             return redirect()->back()->with('success', 'Students added as players successfully.');
         } catch (\Exception $e) {
@@ -72,6 +87,7 @@ class StudentPalakasanController extends Controller
             return redirect()->back()->with('error', 'Failed to add students as players.');
         }
     }
+    
     
 public function show($sportId)
 {
