@@ -304,7 +304,7 @@
                         @click="viewSport(sport.id)"
                         class="bg-white ring-1 ring-gray-300 cursor-pointer rounded-lg p-4 transition-all duration-300 ease-in-out hover:bg-gray-50/80 hover:ring-gray-400 group relative"
                         >
-                        <!-- Status Circle -->
+                        <!-- Status Circle 
                         <div 
                             class="absolute top-2 right-2 w-2 h-2 rounded-full"
                             :class="{
@@ -312,6 +312,7 @@
                             'bg-green-500': sport.status.toLowerCase() === 'completed',
                             }"
                         ></div>
+                    -->
 
                         <div class="flex items-center justify-between">
                             <div class="w-full">

@@ -37,35 +37,61 @@ class StudentPalakasanController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'student_ids' => 'required|array',
-        'student_ids.*' => 'exists:students,id',
-       'student_assigned_sport_id' => 'required|exists:assigned_sports,id', 
-    ]);
-
-    try {
-        DB::beginTransaction();
-
-        foreach ($request->student_ids as $studentId) {
-            StudentPlayer::firstOrCreate([
-                'student_id' => $studentId,
-                'student_assigned_sport_id' => $request->student_assigned_sport_id,
-            ]);
-        }
-
-        DB::commit();
-        
-        return redirect()->back()->with('success', 'Students added as players successfully.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-         // Log the error for troubleshooting
-         Log::error('Failed to create student players:', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
+    {
+        $validated = $request->validate([
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'exists:students,id',  // Ensure student IDs exist in the students table
+            'student_assigned_sport_id' => 'required|exists:assigned_sports,id', // Validate assigned sport ID
         ]);
-        return redirect()->back()->with('error', 'Failed to add students as players.');
+    
+        try {
+            DB::beginTransaction();
+    
+            // Get the assigned sport instance for the provided ID
+            $assignedSport = AssignedSports::findOrFail($request->student_assigned_sport_id);
+    
+            // Loop through each student ID and create or update the player assignment
+            foreach ($request->student_ids as $studentId) {
+                // Using firstOrCreate to avoid duplicates in the StudentPlayer table
+                StudentPlayer::firstOrCreate([
+                    'student_id' => $studentId,
+                    'student_assigned_sport_id' => $assignedSport->id,
+                ]);
+            }
+    
+            DB::commit();
+    
+            return redirect()->back()->with('success', 'Students added as players successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log the error for troubleshooting
+            Log::error('Failed to create student players:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'Failed to add students as players.');
+        }
     }
+    
+public function show($sportId)
+{
+    // Fetch the sport details along with the assigned players
+    $sport = AssignedSports::with('sport')
+        ->where('id', $sportId)
+        ->firstOrFail();
+
+    $players = StudentPlayer::with('student')
+        ->where('student_assigned_sport_id', $sportId)
+        ->get();
+
+    $students = Student::all();
+
+    return Inertia::render('CSHCommittee/SportDetails', [
+        'sport' => $sport,
+        'players' => $players,
+        'students' => $students
+    ]);
 }
+
 
 }
