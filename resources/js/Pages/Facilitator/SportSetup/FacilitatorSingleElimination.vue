@@ -143,53 +143,54 @@
             <!-- Ranking Modal -->
             <div v-if="showRankingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div class="bg-white rounded-lg shadow-lg relative w-96 max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center justify-between p-4 border-b">
-                        <h3 class="text-lg font-semibold text-gray-900">Submit Rankings</h3>
-                        <button @click="closeRankingModal" class="text-gray-400 hover:text-gray-900">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Submit Rankings</h3>
+                    <button @click="closeRankingModal" class="text-gray-400 hover:text-gray-900">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <form @submit.prevent="submitRankings">
+                    <div v-for="team in rankingTeams" :key="team.id" class="mb-4">
+                        <div class="flex items-center justify-between">
+                        <span class="font-medium">{{ team.assigned_team_name }}</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-medium">Rank</span>
+                            <input
+                            v-model="team.rank"
+                            type="text"
+                            min="1"
+                            disabled
+                            :max="teams.length"
+                            class="w-8 border text-center rounded px-2 py-1"
+                            placeholder="Rank"
+                            />
+                            <span class="font-medium">Points</span>
+                            <input
+                            v-model="team.points"
+                            type="number"
+                            min="0"
+                            class="w-16 border rounded px-2 py-1"
+                            placeholder="Points"
+                            required
+                            readonly
+                            />
+                        </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        :disabled="isSubmittingRankings || rankingsSubmitted"
+                        >
+                        {{ isSubmittingRankings ? 'Submitting...' : (rankingsSubmitted ? 'Rankings Submitted' : 'Submit Rankings') }}
                         </button>
                     </div>
-                    <div class="p-4">
-                        <form @submit.prevent="submitRankings">
-                        <div v-for="(team) in rankingTeams" :key="team.id" class="mb-4">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium">{{ team.assigned_team_name }}</span>
-                                <div class="flex items-center space-x-2">
-                                    <span class="font-medium">Rank</span>
-                                    <input
-                                    v-model="team.rank"
-                                    type="text"
-                                    min="1"
-                                    disabled
-                                    :max="teams.length"
-                                    class="w-8 border text-center rounded px-2 py-1"
-                                    placeholder="Rank"
-                                    />
-                                    <span class="font-medium">Points</span>
-                                    <input
-                                    v-model="team.points"
-                                    type="number"
-                                    min="0"
-                                    class="w-16 border rounded px-2 py-1"
-                                    placeholder="Points"
-                                    required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex justify-end">
-                            <button
-                            type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                            :disabled="isSubmittingRankings || rankingsSubmitted"
-                            >
-                            {{ isSubmittingRankings ? 'Submitting...' : (rankingsSubmitted ? 'Rankings Submitted' : 'Submit Rankings') }}
-                            </button>
-                        </div>
-                        </form>
-                    </div>
+                    </form>
+                </div>
                 </div>
             </div>
         </template>
@@ -215,7 +216,15 @@ const props = defineProps({
     venues: Array,
     allMatches: Array,
     venueRecords: Array,
-    facilitator: Object // Add this line
+    facilitator: Object,
+    majorPoints: {
+      type: Array,
+      default: () => []
+    },
+    minorPoints: {
+      type: Array,
+      default: () => []
+    },
 
 });
 
@@ -326,48 +335,52 @@ const isSubmittingRankings = ref(false);
 const rankingTeams = ref([]);
 const rankingsSubmitted = ref(false);
 
-const calculateTeamRecords = () => {
-  const records = {};
-  props.teams.forEach(team => {
-    records[team.id] = { wins: 0, losses: 0, points: 0 };
-  });
-
-  props.results.forEach(result => {
-    if (result.winning_team_id) {
-      records[result.winning_team_id].wins++;
-      records[result.winning_team_id].points += result.winning_points || 0;
-    }
-    if (result.losing_team_id) {
-      records[result.losing_team_id].losses++;
-      records[result.losing_team_id].points += result.losing_points || 0;
-    }
-  });
-
-  return records;
-};
-
-const sortTeamsByRecord = (teams, records) => {
-  return [...teams].sort((a, b) => {
-    const teamA = records[a.id] || { wins: 0, losses: 0, points: 0 };
-    const teamB = records[b.id] || { wins: 0, losses: 0, points: 0 };
-
-    // Sort by wins first, then by points, then by losses
-    if (teamA.wins !== teamB.wins) return teamB.wins - teamA.wins;
-    if (teamA.points !== teamB.points) return teamB.points - teamA.points;
-    return teamA.losses - teamB.losses;
-  });
-};
+const pointsToUse = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
 
 const openRankingModal = () => {
   if (rankingsSubmitted.value) return;
 
-  const records = calculateTeamRecords();
-  const sortedTeams = sortTeamsByRecord(props.teams, records);
+  // Create a map to track team performance
+  const teamPerformance = new Map(props.teams.map(team => [team.id, {
+    id: team.id,
+    assigned_team_name: team.assigned_team_name,
+    wins: 0,
+    losses: 0,
+  }]));
 
+  // Count wins and losses from results
+  props.results.forEach(result => {
+    if (result.winning_team_id) {
+      const winningTeam = teamPerformance.get(result.winning_team_id);
+      if (winningTeam) {
+        winningTeam.wins += 1;
+      }
+    }
+    if (result.losing_team_id) {
+      const losingTeam = teamPerformance.get(result.losing_team_id);
+      if (losingTeam) {
+        losingTeam.losses += 1;
+      }
+    }
+  });
+
+  const sortedTeams = Array.from(teamPerformance.values()).sort((a, b) => {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    
+    if (a.losses !== b.losses) return a.losses - b.losses;
+    
+    return 0;
+  });
+
+  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
+
+  // Assign ranks based on sorted standings
   rankingTeams.value = sortedTeams.map((team, index) => ({
     ...team,
     rank: index + 1,
-    points: records[team.id].points || 0,
+    points: sortedPoints[index] ? sortedPoints[index].points : 0
   }));
 
   showRankingModal.value = true;

@@ -7,6 +7,7 @@ use App\Models\AssignedTeams;
 use App\Models\MatchResult;
 use App\Models\OverallResult;
 use App\Models\Palakasan;
+use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\StudentAccount;
 use App\Models\UsedVenueRecord;
@@ -54,6 +55,9 @@ class DoubleEliminationController extends Controller
         $latestPalakasan = Palakasan::latest()->first();
         $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
 
+        $majorPoints = Points::where('type', 'Major')->get();
+        $minorPoints = Points::where('type', 'Minor')->get();
+
         return Inertia::render('Facilitator/SportSetup/FacilitatorDoubleElimination', [
             'sport' => $assignedSports,
             'tournaments' => $tournaments,
@@ -63,7 +67,9 @@ class DoubleEliminationController extends Controller
             'venues' => $venues,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'facilitator' => $facilitator // Add this line to pass the facilitator data
+            'facilitator' => $facilitator, // Add this line to pass the facilitator data
+            'majorPoints' => $majorPoints,
+            'minorPoints' => $minorPoints
 
         ]);
     }   

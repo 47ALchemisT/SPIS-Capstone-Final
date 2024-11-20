@@ -15,21 +15,10 @@ class SportController extends Controller
     {
         $sports = Sport::all(); // Fetch from the database
         return Inertia::render('SSCAdmin/Sport', [
-            'sports' => $sports, // Pass to the view
+            'sports' => $sports,
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         // Validate the input fields in a single call
@@ -43,28 +32,9 @@ class SportController extends Controller
         Sport::create($validated);
                     
         // Redirect with a success message
-        return redirect()->route('sport.index')->with('success', 'College successfully added.');
+        return redirect()->back()->with('success', 'Sport successfully added.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $sports = Sport::findOrFail($id); // Find the product by ID
@@ -80,9 +50,6 @@ class SportController extends Controller
         return redirect()->route('sport.index')->with('success', 'Product updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Sport $sport)
     {
         $sport->delete();

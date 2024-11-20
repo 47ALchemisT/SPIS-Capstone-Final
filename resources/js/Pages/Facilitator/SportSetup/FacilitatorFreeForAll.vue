@@ -34,13 +34,12 @@
 
         <!-- Tags Section -->
         <div class="flex items-center gap-2 mt-2">
-              <p class="text-sm"> {{ sport.setup }}</p>
-              <p class="text-xs">|</p>
-              <p class=" text-sm">{{ sport.type }}</p>
-              <p class="text-xs">|</p>
-              <p class=" text-sm">{{ sport.status }}</p>
+          <p class="text-sm">{{ sport.setup }}</p>
+          <p class="text-xs">|</p>
+          <p class="text-sm">{{ sport.type }}</p>
+          <p class="text-xs">|</p>
+          <p class="text-sm">{{ sport.status }}</p>
         </div>
-
 
         <!-- Sport Variations List -->
         <div class="py-6 mb-6">
@@ -51,7 +50,7 @@
             No variations added yet.
           </div>
           <ul v-else class="space-y-4">
-            <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg ">
+            <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg">
               <div class="flex justify-between items-center">
                 <div class="flex justify-between w-full">
                   <div>
@@ -90,11 +89,11 @@
                     <button 
                       type="button"
                       @click="openRankModal(variation)" 
+                      :disabled="variation.status === 'completed' || sport.status === 'completed'"                      
                       class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                     >
                       <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>                    
                     </button>
-
                   </div>
                 </div>
               </div>
@@ -138,7 +137,7 @@
               
               <div class="p-4 pt-0">
                 <form @submit.prevent="updateRanks">
-                  <div class="mt-4">
+                  <div class="mt-4 p-2 bg-gray-100 rounded-md border border-gray-300">
                     <table class="w-full text-sm">
                       <thead>
                         <tr>
@@ -153,9 +152,9 @@
                           <td class="px-4 py-2 w-44">
                             <select 
                               v-model="rankUpdates[match.id].rank"
-                              class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                              <option value="" disabled>Select rank</option>
+                              <option value="">Select</option>
                               <option 
                                 v-for="rank in availableRanks(match.id)" 
                                 :key="rank"
@@ -170,13 +169,28 @@
                               type="number"
                               v-model="rankUpdates[match.id].points"
                               min="0"
-                              class=" px-2 py-1 border w-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="Enter points"
+                              readonly
+                              disabled
+                              class="px-2 py-2 border w-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Points"
                             />
                           </td>
                         </tr>
                       </tbody>
                     </table>
+                  </div>
+
+                  <!-- Signature Pad -->
+                  <div class="mt-4">
+                    <label for="signature" class="block text-sm font-medium text-gray-700">Signature</label>
+                    <div ref="signaturePadContainer" class="mt-2 border-2 border-gray-300 rounded-md"></div>
+                    <div class="flex justify-between mt-2">
+                      <button @click.prevent="clearSignature" class="text-sm text-red-600 hover:bg-red-50 px-3 py-1 rounded">
+                        Clear Signature
+                      </button>
+                      <span class="text-xs text-gray-500">Sign within the box above</span>
+                    </div>
+
                   </div>
 
                   <div v-if="rankUpdateError" class="mt-4 text-red-500 text-sm">{{ rankUpdateError }}</div>
@@ -209,7 +223,7 @@
 
 <script setup>
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
 
@@ -250,7 +264,15 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  facilitator: Object
+  facilitator: Object,
+  majorPoints: {
+    type: Array,
+    default: () => []
+  },
+  minorPoints: {
+    type: Array,
+    default: () => []
+  },
 });
 
 const showRankModal = ref(false);
@@ -262,23 +284,14 @@ const selectedVariation = ref(null);
 const totalMatches = computed(() => props.sportVariations.length);
 const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);
 const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMatches.value / totalMatches.value) * 100 : 0);
-
-
-const updateTimeForm = useForm({
-  sport_variation_id: '',
-  sport_variation_venue_id: '',
-  date: '',
-  time: '',
-});
+const hasValidSignature = ref(false);
+const signaturePadContainer = ref(null);
+const signaturePad = ref(null);
 
 const rankUpdateForm = useForm({
   matches: [],
 });
 
-
-onMounted(() => {
-  form.assigned_sport_id = props.sport.id;
-});
 
 const returnToFacilitator = () => {
   router.visit(route('facilitator.show', { id: props.facilitator.id }));
@@ -295,29 +308,204 @@ const getTeamName = (teamId) => {
   return team ? team.assigned_team_name : 'Unknown team';
 };
 
-// Add a new computed property to filter teams for the current sport
 const currentSportTeams = computed(() => {
   return props.teams.filter(team => team.palakasan_id === props.sport.palakasan_sport_id);
 });
 
+const pointsToUse = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
+
+const sortedMatches = computed(() => {
+  return [...selectedVariationMatches.value].sort((a, b) => {
+    const rankA = rankUpdates.value[a.id]?.rank || Infinity; // Use Infinity for unassigned ranks
+    const rankB = rankUpdates.value[b.id]?.rank || Infinity;
+    return rankA - rankB; // Sort by user-defined ranks
+  });
+});
+
+
+// SignaturePad class implementation
+class SignaturePad {
+  constructor(canvas, options = {}) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.points = [];
+    this.isDrawing = false;
+
+    this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
+    this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this));
+    this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this));
+    this.canvas.addEventListener('touchend', this.onTouchEnd.bind(this));
+    
+  }
+
+  onMouseDown(event) {
+    this.isDrawing = true;
+    const rect = this.canvas.getBoundingClientRect();
+    this.addPoint(event.clientX - rect.left, event.clientY - rect.top);
+  }
+
+  onMouseMove(event) {
+    if (!this.isDrawing) return;
+    const rect = this.canvas.getBoundingClientRect();
+    this.addPoint(event.clientX - rect.left, event.clientY - rect.top);
+  }
+
+  onMouseUp() {
+    this.isDrawing = false;
+    this.onEndCallback();
+  }
+
+  onTouchStart(event) {
+    event.preventDefault();
+    if (event.touches.length === 1) {
+      const touch = event.changedTouches[0];
+      const rect = this.canvas.getBoundingClientRect();
+      this.addPoint(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+  }
+
+  onTouchMove(event) {
+    event.preventDefault();
+    if (event.touches.length === 1) {
+      const touch = event.changedTouches[0];
+      const rect = this.canvas.getBoundingClientRect();
+      this.addPoint(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+  }
+
+  isEmpty() {
+    return this.points.length === 0;
+  }
+
+  isValid() {
+    return this.points.length > 10; // Adjust this threshold as needed
+  }
+
+  onTouchEnd(event) {
+    event.preventDefault();
+    this.onEndCallback();
+  }
+
+  addPoint(x, y) {
+    this.points.push({ x, y });
+    this.redraw();
+  }
+
+  redraw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.strokeStyle = 'black';
+    this.ctx.lineWidth = 2;
+    this.ctx.beginPath();
+    for (let i = 0; i < this.points.length; i++) {
+      const point = this.points[i];
+      if (i === 0) {
+        this.ctx.moveTo(point.x, point.y);
+      } else {
+        this.ctx.lineTo(point.x, point.y);
+      }
+    }
+    this.ctx.stroke();
+  }
+
+  clear() {
+    this.points = [];
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  isEmpty() {
+    return this.points.length === 0;
+  }
+
+  toDataURL() {
+    return this.canvas.toDataURL();
+  }
+}
+
+onMounted(() => {
+  nextTick(() => {
+    if (showRankModal.value) {
+      initSignaturePad();
+    }
+  });
+});
+
+
+const initSignaturePad = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 300;
+  canvas.height = 200;
+  signaturePadContainer.value.appendChild(canvas);
+  
+  signaturePad.value = new SignaturePad(canvas);
+  
+  // Add event listeners to update hasValidSignature
+  canvas.addEventListener('mouseup', checkSignatureValidity);
+  canvas.addEventListener('touchend', checkSignatureValidity);
+};
+
+const checkSignatureValidity = () => {
+  if (signaturePad.value) {
+    hasValidSignature.value = signaturePad.value.isValid();
+  }
+};
+
+const clearSignature = () => {
+  if (signaturePad.value) {
+    signaturePad.value.clear();
+    hasValidSignature.value = false;
+  }
+};
+//end
 
 const openRankModal = (variation) => {
-    selectedVariation.value = variation;
-    selectedVariationMatches.value = props.sportVariationMatches
-      .filter(m => m.sport_variation_id === variation.id)
-      .filter(m => currentSportTeams.value.some(team => team.id === m.sport_variation_team_id));
-    
-    rankUpdates.value = selectedVariationMatches.value.reduce((acc, match) => ({
-      ...acc,
-      [match.id]: {
-        rank: match.rank || '',
-        points: match.points || ''
-      }
-    }), {});
-    showRankModal.value = true;
-  };
+  selectedVariation.value = variation;
+  
+  // Get matches for the selected variation
+  selectedVariationMatches.value = props.sportVariationMatches
+    .filter(m => m.sport_variation_id === variation.id)
+    .filter(m => currentSportTeams.value.some(team => team.id === m.sport_variation_team_id));
+  
+  // Initialize rank updates 
+  rankUpdates.value = selectedVariationMatches.value.reduce((acc, match) => ({
+    ...acc,
+    [match.id]: {
+      rank: match.rank || '', 
+      points: match.points || ''
+    }
+  }), {});
 
-  const closeRankModal = () => {
+  showRankModal.value = true;
+  nextTick(() => {
+    initSignaturePad();
+  });
+};
+
+watch(() => rankUpdates.value, (newRankUpdates) => {
+  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
+  
+  // Get all selected ranks and sort them
+  const selectedRanks = Object.values(newRankUpdates)
+    .filter(match => match.rank !== '')
+    .map(match => parseInt(match.rank))
+    .sort((a, b) => a - b);
+
+  // Assign points based on rank order
+  Object.keys(newRankUpdates).forEach((matchId) => {
+    const rank = newRankUpdates[matchId].rank;
+    if (rank !== '') {
+      const rankIndex = selectedRanks.indexOf(parseInt(rank));
+      newRankUpdates[matchId].points = sortedPoints[rankIndex] 
+        ? sortedPoints[rankIndex].points 
+        : 0;
+    }
+  });
+}, { deep: true });
+
+const closeRankModal = () => {
   showRankModal.value = false;
   selectedVariation.value = null;
   selectedVariationMatches.value = [];
@@ -326,56 +514,75 @@ const openRankModal = (variation) => {
   rankUpdateForm.reset();
 };
 
-  const isValidRankSelection = computed(() => {
-    const selectedMatches = Object.values(rankUpdates.value);
-    const allFieldsFilled = selectedMatches.every(match => 
-      match.rank !== '' && match.points !== ''
-    );
-    const selectedRanks = new Set(selectedMatches.map(match => match.rank).filter(rank => rank !== ''));
-    return allFieldsFilled && selectedRanks.size === selectedVariationMatches.value.length;
-  });
+const isValidRankSelection = computed(() => {
+  const selectedMatches = Object.values(rankUpdates.value);
+  const allFieldsFilled = selectedMatches.every(match => 
+    match.rank !== '' && match.points !== ''
+  );
+  const selectedRanks = new Set(selectedMatches.map(match => match.rank).filter(rank => rank !== ''));
+  return allFieldsFilled && selectedRanks.size === selectedVariationMatches.value.length;
+});
 
-  const updateRanks = async () => {
-    const selectedRanks = Object.values(rankUpdates.value)
-      .filter(match => match.rank !== '')
-      .map(match => match.rank.toString());
-    
-    const uniqueRanks = new Set(selectedRanks);
-    
-    if (selectedRanks.length !== uniqueRanks.size) {
-      rankUpdateError.value = 'Each team must have a unique rank.';
-      return;
-    }
+const updateRanks = async () => {
+  if (!signaturePad.value || !signaturePad.value.isValid()) {
+    alert('Please provide a valid signature before submitting.');
+    return;
+  }
+  
+  const signatureData = signaturePad.value.toDataURL();
 
-    if (selectedRanks.length !== selectedVariationMatches.value.length) {
-      rankUpdateError.value = 'All teams must have a rank and points assigned.';
-      return;
-    }
+  const selectedRanks = Object.values(rankUpdates.value)
+    .filter(match => match.rank !== '')
+    .map(match => match.rank.toString());
+  
+  const uniqueRanks = new Set(selectedRanks);
+  
+  if (selectedRanks.length !== uniqueRanks.size) {
+    rankUpdateError.value = 'Each team must have a unique rank.';
+    return;
+  }
 
-    rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, data]) => ({
-      id: parseInt(id),
-      rank: parseInt(data.rank),
-      points: parseInt(data.points)
-    }));
+  if (selectedRanks.length !== selectedVariationMatches.value.length) {
+    rankUpdateError.value = 'All teams must have a rank and points assigned.';
+    return;
+  }
 
-    try {
-      await rankUpdateForm.patch(route('sport-variations.update-ranks', selectedVariation.value.id), {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: () => {
-          closeRankModal();
-        },
-        onError: (errors) => {
-          console.error('Update ranks errors:', errors);
-          rankUpdateError.value = 'Please correct the errors and try again.';
-        },
-      });
-    } catch (error) {
-      console.error('Update ranks error:', error);
-      rankUpdateError.value = 'An unexpected error occurred. Please try again.';
-    }
-  };
+  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
 
+  // Create a mapping of rank to points
+  const rankToPointsMap = selectedRanks
+    .sort((a, b) => parseInt(a) - parseInt(b))
+    .reduce((acc, rank, index) => {
+      acc[rank] = sortedPoints[index] ? sortedPoints[index].points : 0;
+      return acc;
+    }, {});
+
+  rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, data]) => ({
+    id: parseInt(id),
+    rank: parseInt(data.rank),
+    points: rankToPointsMap[data.rank] || 0
+  }));
+
+  // Add signature data to the form
+  rankUpdateForm.signature = signatureData;
+
+  try {
+    await rankUpdateForm.patch(route('sport-variations.update-ranks', selectedVariation.value.id), {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: () => {
+        closeRankModal();
+      },
+      onError: (errors) => {
+        console.error('Update ranks errors:', errors);
+        rankUpdateError.value = 'Please correct the errors and try again.';
+      },
+    });
+  } catch (error) {
+    console.error('Update ranks error:', error);
+    rankUpdateError.value = 'An unexpected error occurred. Please try again.';
+  }
+};
 const formatDateTime = (date, time) => {
   if (!date && !time) return 'Not scheduled';
   if (!date) return `Time: ${time}`;
@@ -400,9 +607,7 @@ const formatStatus = (status) => {
 const getStatusClass = (status) => {
   const statusClasses = {
     pending: 'text-yellow-600',
-    ongoing: 'text-green-600',
     completed: 'text-blue-600',
-    cancelled: 'text-red-600'
   };
   return statusClasses[status?.toLowerCase()] || 'text-gray-600';
 };
@@ -428,24 +633,20 @@ const getVariationMatches = (variationId) => {
     .filter(match => currentSportTeams.value.some(team => team.id === match.sport_variation_team_id));
 };
 
-// Update the availableRanks function
 const availableRanks = (matchId) => {
   const currentRanks = new Set();
   
-  // Collect all currently selected ranks except for the current match
   Object.entries(rankUpdates.value).forEach(([id, data]) => {
     if (id !== matchId.toString() && data.rank) {
       currentRanks.add(data.rank.toString());
     }
   });
   
-  // Generate all possible ranks
   const allRanks = Array.from(
     { length: selectedVariationMatches.value.length }, 
     (_, i) => (i + 1).toString()
   );
   
-  // Return ranks that are either unselected or currently selected by this match
   return allRanks.filter(rank => 
     !currentRanks.has(rank) || 
     rankUpdates.value[matchId]?.rank === rank
@@ -453,14 +654,6 @@ const availableRanks = (matchId) => {
 };
 
 
-
-const sortedMatches = computed(() => {
-  return [...selectedVariationMatches.value].sort((a, b) => {
-    const rankA = rankUpdates.value[a.id]?.rank || Infinity;
-    const rankB = rankUpdates.value[b.id]?.rank || Infinity;
-    return rankA - rankB;
-  });
-});
 watch(
   () => rankUpdates.value,
   () => {
@@ -475,7 +668,6 @@ const updateAssignedSportStatus = async () => {
       await router.patch(route('assigned-sports.update-status', props.sport.id), {
         status: 'completed'
       });
-      // Optionally, you can update the local state here if needed
       props.sport.status = 'completed';
     } catch (error) {
       console.error('Failed to update assigned sport status:', error);
@@ -489,3 +681,7 @@ watch(progressPercentage, (newValue) => {
   }
 });
 </script>
+
+<style scoped>
+/* Add any component-specific styles here */
+</style>

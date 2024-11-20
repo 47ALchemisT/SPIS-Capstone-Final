@@ -2,7 +2,7 @@
     <Head title="Palakasan"/>
     <AppLayout>
         <template v-slot:default>
-
+            <Toast ref="toastRef" />
             <!-- Tabs Navigation -->
             <nav class="flex relative justify-between  items-center">
                 <div class="flex gap-2 ">
@@ -66,22 +66,21 @@
                                 </div>
                                 <!--utility, history and creating-->
                                 <div class="flex gap-2.5">
-                                    <div>
+                                    <div>  <!-- Start Palakasan Button -->
                                             <button 
                                                 v-if="progressPercentage < 100"
-                                                @click="updatePalakasanStatus(latestPalakasan.id)"
+                                                @click="showModal = true"
                                                 type="button" 
                                                 :disabled="latestPalakasan.status === 'live'"
                                                 :class="[
-                                                'flex gap-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                                latestPalakasan.status === 'live'
-                                                    ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
+                                                    'flex gap-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                                    latestPalakasan.status === 'live'
+                                                    ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
                                                     : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                                 ]"
-                                            >
-         
+                                                >
                                                 <svg v-if="latestPalakasan.status !== 'live'" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="m18.42 2.797l.386.056c.6.095 1.272.254 1.685.667s.573 1.086.668 1.686l.056.385c.126.91.159 2.103-.056 3.427c-.424 2.613-1.815 5.73-5.308 8.145a5 5 0 0 0-.017.537l.017.543c.01.362.004.723-.096 1.07c-.19.66-.867 1.095-1.5 1.407l-.31.147l-.4.176l-.273.11c-.707.27-1.56.459-2.118-.1c-.253-.253-.37-.597-.464-.941l-.046-.172c-.16-.607-.341-1.21-.567-1.794a3 3 0 0 1-.198.218c-.545.544-1.284.818-2.023 1.03l-.491.135l-.49.13l-.478.12l-.432.1l-.517.11l-.323.063a1.01 1.01 0 0 1-1.177-1.177l.111-.551l.129-.578l.124-.51l.225-.845c.223-.82.494-1.665 1.1-2.27l.099-.095l-.763-.274l-.767-.264c-.449-.148-.921-.304-1.247-.63c-.596-.596-.343-1.526-.046-2.257l.166-.387l.137-.301c.317-.674.767-1.45 1.483-1.656c.347-.1.707-.106 1.07-.097l.543.018q.27.007.537-.017c2.414-3.493 5.532-4.884 8.145-5.308a11.7 11.7 0 0 1 3.426-.056m-3.106 2.03c-2.198.357-4.869 1.534-6.953 4.669c-.253.38-.68.561-1.115.63c-.246.04-.494.05-.743.05l-.747-.011q-.186-.001-.373.006c-.304.404-.516.884-.675 1.361l1.5.545l.617.233c1.128.442 2.22.977 3.06 1.817c1.415 1.415 2.134 3.266 2.654 5.157c.456-.16.914-.364 1.302-.655l.006-.373l-.011-.746c0-.248.01-.496.05-.744c.068-.435.25-.862.63-1.115c3.135-2.084 4.312-4.755 4.669-6.953c.18-1.11.15-2.102.049-2.833a5.4 5.4 0 0 0-.193-.895a5.4 5.4 0 0 0-.895-.192a9.7 9.7 0 0 0-2.832.05ZM7.05 15.535c-.35.423-.513.978-.644 1.528l-.108.468l-.055.226l.694-.163c.55-.13 1.106-.295 1.528-.645a1 1 0 1 0-1.415-1.414m5.657-7.07a2 2 0 1 1 2.829 2.828a2 2 0 0 1-2.829-2.829Z"/></g></svg>
-                                                <svg v-else class="w-5 h-5"  xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>
+                                                <svg v-else class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>
                                                 {{ latestPalakasan.status === 'live' ? 'Palakasan has started' : 'Start Palakasan' }}
                                             </button>
                                             <button 
@@ -193,7 +192,7 @@
                             :disabled="latestPalakasan?.status === 'live'"
                             :class="[
                             'flex gap-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                            latestPalakasan?.status === 'live'
+                            latestPalakasan?.status === 'live' 
                                 ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
                                 : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                             ]"                            
@@ -345,6 +344,24 @@
                                 </p>
                                 <p class="text-xs text-gray-400">Facilitator</p>
                                 </div>
+                                
+                            </div>
+                                                    <!-- Animated Arrow -->
+                            <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
+                                <svg 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    class="h-5 w-5 text-gray-500 group-hover:text-gray-800" 
+                                    fill="none" 
+                                    viewBox="0 0 24 24" 
+                                    stroke="currentColor"
+                                >
+                                    <path 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round" 
+                                        stroke-width="2" 
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                    />
+                                </svg>
                             </div>
                             </div>
                         </div>
@@ -760,19 +777,39 @@
                 </div>
                 </div>
             </div>
+
+            <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                <div class="bg-white p-5 rounded-lg shadow-xl max-w-md w-full">
+                    <h3 class="text-lg font-bold mb-4">Confirm Start Palakasan</h3>
+                    <p class="mb-4">Are you sure you want to start Palakasan? This action cannot be undone.</p>
+                    <div class="flex justify-end space-x-3">
+                    <button 
+                        @click="showModal = false"
+                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        @click="confirmStartPalakasan"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Confirm
+                    </button>
+                    </div>
+                </div>
+            </div>
         </template>
     </AppLayout>
 </template>
 
 <script setup>
-    import { Head, Link, useForm, router } from '@inertiajs/vue3';
+    import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
     import { ref, computed, onMounted, watch } from 'vue';
     import AppLayout from '@/Layout/DashboardLayout.vue';
     import { route } from 'ziggy-js';
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
     import Graph from '@/Components/BarGraph.vue';  // Adjust the path as necessary
-
-
+    import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
 
     const props = defineProps({
         colleges: Array,
@@ -798,6 +835,22 @@
     const isTeamsModalOpen = ref(false);
     const isStatusModalOpen = ref(false);
     const isHistoryModalOpen = ref(false);
+    const toastRef = ref(null);
+    const page = usePage();
+
+    // Watch for flash messages
+    watch(
+        () => page.props.flash,
+        (flash) => {
+            if (flash.message) {
+                toastRef.value.addToast(flash.message, 'success');
+            }
+            if (flash.error) {
+                toastRef.value.addToast(flash.error, 'error');
+            }
+        },
+        { deep: true }
+    );
 
     //this is for viewing the sport
     const viewSport = (sportId) => {
@@ -860,6 +913,12 @@
     }
     });
 
+    const showModal = ref(false);
+
+    const confirmStartPalakasan = () => {
+    updatePalakasanStatus(props.latestPalakasan.id);
+    showModal.value = false;
+    };
 
     const updatePalakasanStatus = (palakasanId) => {
         router.put(`/palakasan/${palakasanId}/update-status`, {

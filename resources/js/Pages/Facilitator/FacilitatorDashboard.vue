@@ -55,6 +55,7 @@
         </div>
 
 
+
         <div v-if="sports.length > 0">
           <ul class="space-y-4">
             <li v-for="sport in sports" :key="sport.id" class="bg-white ring-1 ring-gray-300 rounded-lg p-6 hover:bg-gray-50 hover:ring-gray-400 transition">
@@ -100,7 +101,7 @@
     sports: {
       type: Array,
       default: () => []
-    }
+    },
   });
 
   const completedSports = computed(() => 

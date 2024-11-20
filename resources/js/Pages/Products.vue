@@ -1,6 +1,9 @@
 <template>
     <DashboardLayout>
         <div class="mt-4 mx-6">
+            <div v-if="$page.props.flash.message" class="alert">
+                {{ $page.props.flash.message }}
+            </div>
             <h1 class="p-5 text-4xl font-bold">Product List</h1>
             <button @click="openModal(false)" class="p-3 rounded-full bg-gray-200 hover:bg-gray-300 transition">Add Product</button>
 
@@ -71,6 +74,7 @@ import DashboardLayout from '@/Layout/DashboardLayout.vue';
 
 const props = defineProps({
     products: Array,
+    errors:Object
 });
 
 const isModalOpen = ref(false);

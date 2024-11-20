@@ -40,11 +40,11 @@ class CollegeController extends Controller
             'description' => 'nullable|string',
         ]);
     
-        // Create a new college using the validated data
+        // Create a new college using the validated daata
         College::create($validated);
     
         // Redirect with a success message
-        return redirect()->back()->with('success', 'College successfully added.');
+        return redirect()->back()->with('message', 'College successfully added.');
     }
 
     /**

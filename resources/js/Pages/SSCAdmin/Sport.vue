@@ -6,6 +6,9 @@
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800">Sports</h1>
                 <h1 class="text-sm font-normal text-gray-700">List of Sports</h1>
+                <div v-if="$page.props.flash.message" class="alert">
+                    {{ $page.props.flash.message }}
+                </div>
             </div>
             
             <!--Content-->
@@ -14,30 +17,7 @@
                 <div class="utility">
                     <div class="flex justify-between items-center">
                         <div class="search flex space-x-2 items-center">
-                            <!-- Search Input -->
-                            <div class="relative">
-                                <!-- Search Icon (Left) -->
-                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                    <i class="fas fa-search"></i>
-                                </span>
-
-                                <!-- Input Field -->
-                                <input
-                                    v-model="searchQuery"
-                                    type="text"
-                                    placeholder="Search sport..."
-                                    class="w-64 pl-10 pr-10 py-2 bg-white shadow-sm border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                                >
-
-                                <!-- Clear Button (Right) -->
-                                <button
-                                    v-if="searchQuery"
-                                    @click="clearSearch"
-                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                                >
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
+      
 
                         </div>
                         <!--Buttons-->
@@ -49,6 +29,7 @@
                         </div>
                     </div>
                 </div>
+                <Toast ref="toastRef" />
 
                 <!--Main Content, List of Cards-->
                 <div>
@@ -176,14 +157,14 @@
  <script setup>
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-    import { Head, useForm, router } from '@inertiajs/vue3';
-    import { ref, onMounted } from 'vue';
+    import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+    import { ref, onMounted, watch } from 'vue';
     import AppLayout from '@/Layout/DashboardLayout.vue';
-    import Modal from '@/Components/Modal.vue';
+    import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
+
 
     const props = defineProps({
         sports: Array,
-        errors: Object,
     });
 
     const isModalOpen = ref(false);
@@ -194,6 +175,23 @@
         name: '',
         description: '',
     });
+
+    const toastRef = ref(null);
+    const page = usePage();
+
+    // Watch for flash messages
+    watch(
+        () => page.props.flash,
+        (flash) => {
+            if (flash.message) {
+            toastRef.value.addToast(flash.message, 'success');
+            }
+            if (flash.error) {
+            toastRef.value.addToast(flash.error, 'error');
+            }
+        },
+        { deep: true, immediate: true }
+    );
 
     const sportIdToDelete = ref(null);
 
@@ -218,7 +216,6 @@
     const submitSport = () => {
         if (isEditing.value) {
             form.put(route('sport.update', form.id), {
-                preserveState: false,
                 preserveScroll: true,
                 onSuccess: () => {
                     closeModal();
@@ -226,7 +223,6 @@
             });
         } else {
             form.post(route('sport.store'), {
-                preserveState: false,
                 preserveScroll: true,
                 onSuccess: () => {
                     closeModal();
@@ -253,32 +249,6 @@
         closeDeleteModal();
     };
     
-    //----------------------------------------------------------------
-    //tooltips
-    onMounted(() => {
-    const tooltip = document.querySelector('.tooltip');
-    const tooltipContent = tooltip.querySelector('.tooltip-content');
-
-    // Select all buttons with the 'tooltip-btn' class
-    const buttons = document.querySelectorAll('.tooltip-btn');
-
-    buttons.forEach(btn => {
-        btn.addEventListener('mouseenter', (e) => {
-        const tooltipText = e.target.getAttribute('data-tooltip');
-        const btnRect = e.target.getBoundingClientRect();
-
-        // Set the tooltip content and position
-        tooltipContent.textContent = tooltipText;
-        tooltip.classList.remove('invisible', 'opacity-0');
-        tooltip.style.top = `${btnRect.top - tooltip.offsetHeight - 6}px`;
-        tooltip.style.left = `${btnRect.left + (btnRect.width / 2) - (tooltip.offsetWidth / 2)}px`;
-        });
-
-        btn.addEventListener('mouseleave', () => {
-        tooltip.classList.add('invisible', 'opacity-0');
-        });
-    });
-    });
  </script>
  
  <style scoped>
