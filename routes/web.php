@@ -129,3 +129,12 @@ Route::middleware(['web', 'auth', 'subAdminMiddleware'])->group(function () {
     Route::get('/secretary', [SubAdminController::class, 'index']);
 });
 
+
+Route::get('/landing', function () {
+    return Inertia::render('SportsLandingPage/SportsLanding');
+});
+
+
+
+
+
