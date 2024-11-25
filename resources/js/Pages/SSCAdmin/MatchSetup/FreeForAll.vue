@@ -41,109 +41,128 @@
               <p class=" text-sm">{{ sport.status }}</p>
         </div>
 
+        <nav class="flex relative justify-between mt-4  items-center">
+          <div class="flex gap-2 rounded-lg ">
+              <div class=" flex gap-2 rounded-lg">
+                  <button 
+                      v-for="tab in ['sports', 'players']"
+                        :key="tab"
+                        @click="activeTab = tab"
+                        :class="[
+                          'px-5 py-2 text-sm',
+                          activeTab === tab
+                            ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
+                          ]"
+                          >
+                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                    </button>
+                  </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  @click="showModal = true"                 
+                  type="button"
+                  class="flex items-center gap-2 text-white bg-blue-700 font-medium hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
+                  >
+                  Add Variation
+                </button>
+              </div>
+        </nav>
 
-        <!-- Sport Variations List -->
-        <div class="py-6 mb-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold mb-4">Sport Variations</h2>
-            <div class="">
-              <button                 
-                @click="showModal = true"                 
-                type="button"                 
-                :disabled="sport.status === 'completed'"                 
-                class="text-white bg-blue-700 flex items-center gap-2 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"               
-              >                 
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                    <path d="M15 12v6m-3-3h6"/>
-                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                  </g>
-                </svg>                 
-                Variation               
-              </button>
-            </div>
-          </div>
-          <div v-if="sportVariations.length === 0" class="text-gray-500">
-            No variations added yet.
-          </div>
-          <ul v-else class="space-y-4">
-            <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg ">
-              <div class="flex justify-between items-center">
-                <div class="flex justify-between w-full">
-                  <div>
-                    <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
-                    <div class="flex items-center mt-1 gap-2.5">
-                      <div class="text-xs text-gray-600">
-                        <div class="flex items-center gap-1.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
+        <div class="mt-4">
+          <div v-if="activeTab === 'sports'">
+            <!-- Sport Variations List -->
+            <div class=" mb-6">
+              <h2 class="text-md font-semibold mb-4">Sport Variations</h2>
+              <div v-if="sportVariations.length === 0" class="text-gray-500">
+                No variations added yet.
+              </div>
+              <ul v-else class="space-y-4">
+                <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg ">
+                  <div class="flex justify-between items-center">
+                    <div class="flex justify-between w-full">
+                      <div>
+                        <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
+                        <div class="flex items-center mt-1 gap-2.5">
+                          <div class="text-xs text-gray-600">
+                            <div class="flex items-center gap-1.5">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
+                            </div>
+                          </div>
+                          <p class="text-xs text-gray-400">|</p>
+                          <div class="text-xs text-gray-600">
+                            <div class="flex items-center gap-1.5">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span :class="{'text-red-500': !variation.date || !variation.time}">
+                                {{ formatDateTime(variation.date, variation.time) }}
+                              </span>
+                            </div>
+                          </div>
+                          <p class="text-xs text-gray-400">|</p>
+                          <div class="text-xs flex justify-between gap-1.5 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
+                            <span :class="getStatusClass(variation.status)">
+                              {{ formatStatus(variation.status) }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <p class="text-xs text-gray-400">|</p>
-                      <div class="text-xs text-gray-600">
-                        <div class="flex items-center gap-1.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span :class="{'text-red-500': !variation.date || !variation.time}">
-                            {{ formatDateTime(variation.date, variation.time) }}
-                          </span>
-                        </div>
-                      </div>
-                      <p class="text-xs text-gray-400">|</p>
-                      <div class="text-xs flex justify-between gap-1.5 items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
-                        <span :class="getStatusClass(variation.status)">
-                          {{ formatStatus(variation.status) }}
-                        </span>
+                      <div>
+                        <button 
+                          type="button"
+                          @click="openRankModal(variation)" 
+                          class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                        >
+                          <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>                    
+                        </button>
+                        <button 
+                          @click="openUpdateTimeModal(variation)"
+                          type="button" 
+                          class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                        >
+                          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <button 
-                      type="button"
-                      @click="openRankModal(variation)" 
-                      class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                    >
-                      <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>                    
-                    </button>
-                    <button 
-                      @click="openUpdateTimeModal(variation)"
-                      type="button" 
-                      class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                    >
-                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
-                    </button>
+                  
+                  <!-- Variation Matches -->
+                  <div v-if="getVariationMatches(variation.id).length > 0" class="mt-4">
+                    <table class="w-full text-sm">
+                      <thead>
+                        <tr>
+                          <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
+                          <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="match in getSortedMatches(getVariationMatches(variation.id))" 
+                            :key="match.id" 
+                            class="border-b">
+                          <td class="px-4 py-2">{{ getTeamName(match.sport_variation_team_id) }}</td>
+                          <td class="px-4 py-2 text-center">{{ match.rank || '--' }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                </div>
-              </div>
-              
-              <!-- Variation Matches -->
-              <div v-if="getVariationMatches(variation.id).length > 0" class="mt-4">
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr>
-                      <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
-                      <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="match in getSortedMatches(getVariationMatches(variation.id))" 
-                        :key="match.id" 
-                        class="border-b">
-                      <td class="px-4 py-2">{{ getTeamName(match.sport_variation_team_id) }}</td>
-                      <td class="px-4 py-2 text-center">{{ match.rank || '--' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </li>
-          </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div v-if="activeTab === 'players'">
+            <PlayersDisplay class="mt-1" :players="players" :teams="teams" />
+          </div>
         </div>
+
+
+
 
         <!-- Sport Variation Modal -->
         <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -407,6 +426,7 @@ import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayout.vue';
+import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 const props = defineProps({
   sport: {
@@ -444,7 +464,9 @@ const props = defineProps({
   venueRecords: {
     type: Array,
     default: () => []
-  }
+  },
+  players: Array
+
 });
 
 const showModal = ref(false);
@@ -455,6 +477,7 @@ const rankUpdateError = ref('');
 const rankUpdates = ref({});
 const showUpdateTimeModal = ref(false);
 const selectedVariation = ref(null);
+const activeTab = ref('sports');
 
 const totalMatches = computed(() => props.sportVariations.length);
 const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);

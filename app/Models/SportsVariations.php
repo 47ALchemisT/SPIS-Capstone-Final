@@ -33,4 +33,10 @@ class SportsVariations extends Model
         return $this->hasMany(SportsVariationsMatches::class, 'sport_variation_id');
     }
 
+    
+    public function ffo_matchResult()
+    {
+        return $this->hasMany(FfoFacilitatorSubmits::class, 'match_id');
+    }
+
 }

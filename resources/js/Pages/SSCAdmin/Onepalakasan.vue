@@ -14,37 +14,27 @@
                             :class="[
                             'px-5 py-2 text-sm',
                             activeTab === tab
-                                ? 'text-gray-800 ring-1 ring-gray-300 bg-gray-100 rounded-lg'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg border-transparent'
+                                ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-lg'
+                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 font-medium rounded-lg border-transparent'
                             ]"
                         >
                             {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
                         </button>
                     </div>
                 </div>
-                <div class="flex space-x-2">
-
-                    <button 
-                        @click="openPalakasanModal" 
-                        :disabled="latestPalakasan?.status === 'live'"                        
-                        :class="[
-                        'flex gap-1.5 text-sm focus:outline-none focus:ring-4 items-center focus:ring-gray-300 rounded-lg px-4 py-2',
-                        latestPalakasan?.status === 'live'
-                        ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
-                        : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
-                        ]"
-                        >
-                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" fill-rule="evenodd" d="M6.5 23a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11m0-8.993a.5.5 0 0 1 .5.5V17h2.493a.5.5 0 1 1 0 1H7v2.493a.5.5 0 1 1-1 0V18H3.507a.5.5 0 0 1 0-1H6v-2.493a.5.5 0 0 1 .5-.5" clip-rule="evenodd"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.292 10.25v-4a3.5 3.5 0 0 1 3.5-3.5h2.448a3.5 3.5 0 0 1 1.447.313M13.75 21.25h2.458a3.5 3.5 0 0 0 3.5-3.5v-5.53c0-.505-.109-.999-.314-1.45m-7.706-7.707a3.5 3.5 0 0 1 1.027.712l5.968 5.97c.3.3.54.647.711 1.026m-7.706-7.708V8.77a2 2 0 0 0 2 2h5.706"/></g></svg>                    
-                        Create                    
-                    </button>
+                <div class="flex space-x-3">
                     <button 
                         @click="openHistoryModal" 
                         type="button" 
-                        class="text-gray-600 ring-1 flex items-center gap-1.5 ring-gray-300  hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-3 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 transition"
+                        class="text-gray-600 ring-1 font-medium flex items-center gap-1.5 ring-gray-300  hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-3 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 transition"
                     >
-                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4 0 0 1 4-4h8.5a4 4 0 0 1 4 4v8.5a4 4 0 0 1-4 4h-8.5a4 4 0 0 1-4-4zm0 1h16.5"/></svg>                        
-                    History
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4.5 0 0 1 4-4h8.5a4 4.5 0 0 1 4 4v8.5a4 4.5 0 0 1-4 4h-8.5a4 4.5 0 0 1-4-4zm0 1h16.5"/></svg>                        
+                        Archive
                     </button>
+                    <HowToStartModal
+                        :is-open="showHowToStart"
+                        @close="showHowToStart = false"
+                    />
                 </div>
             </nav>
 
@@ -56,32 +46,38 @@
                         <div class="p-5 ring-1 ring-gray-300 rounded-lg">
                             <!--head-->
                             <div class="flex justify-between border-b pb-3 border-gray-300">
-                                <div>
-                                    <div class="flex gap-2 items-center">
-                                        <h1  class="text-2xl font-semibold text-gray-800">Palakasan {{ latestPalakasan.year }}</h1>
+                                <div class="flex gap-2">
+                                    <div>
+                                        <div class="flex gap-2 items-center">
+                                            <h1  class="text-2xl font-semibold text-gray-800">Palakasan {{ latestPalakasan.year }}</h1>
+                                        </div>
+                                        <p v-if="latestPalakasan" class="text-xs text-gray-500">
+                                            {{ formatDate(latestPalakasan.start_date) }} - {{ formatDate(latestPalakasan.end_date) }}
+                                        </p>
                                     </div>
-                                    <p v-if="latestPalakasan" class="text-xs text-gray-500">
-                                        {{ latestPalakasan.start_date }} - {{ latestPalakasan.end_date }}
-                                    </p>
+                                    <div>
+                                        <p :class="['text-xs px-2.5 py-1 rounded-xl mt-1', statusColor]">
+                                            {{ capitalizedStatus }}
+                                        </p>
+                                    </div>
+
                                 </div>
                                 <!--utility, history and creating-->
-                                <div class="flex gap-2.5">
+                                <div class="flex">
                                     <div>  <!-- Start Palakasan Button -->
                                             <button 
                                                 v-if="progressPercentage < 100"
                                                 @click="showModal = true"
                                                 type="button" 
-                                                :disabled="latestPalakasan.status === 'live'"
+                                                :disabled="latestPalakasan.status === 'live' || assignedSports === 0 || assignedTeams.length < 4"
                                                 :class="[
-                                                    'flex gap-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                                    latestPalakasan.status === 'live'
-                                                    ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
+                                                'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                                latestPalakasan.status === 'live'
+                                                    ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
                                                     : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                                 ]"
                                                 >
-                                                <svg v-if="latestPalakasan.status !== 'live'" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="m18.42 2.797l.386.056c.6.095 1.272.254 1.685.667s.573 1.086.668 1.686l.056.385c.126.91.159 2.103-.056 3.427c-.424 2.613-1.815 5.73-5.308 8.145a5 5 0 0 0-.017.537l.017.543c.01.362.004.723-.096 1.07c-.19.66-.867 1.095-1.5 1.407l-.31.147l-.4.176l-.273.11c-.707.27-1.56.459-2.118-.1c-.253-.253-.37-.597-.464-.941l-.046-.172c-.16-.607-.341-1.21-.567-1.794a3 3 0 0 1-.198.218c-.545.544-1.284.818-2.023 1.03l-.491.135l-.49.13l-.478.12l-.432.1l-.517.11l-.323.063a1.01 1.01 0 0 1-1.177-1.177l.111-.551l.129-.578l.124-.51l.225-.845c.223-.82.494-1.665 1.1-2.27l.099-.095l-.763-.274l-.767-.264c-.449-.148-.921-.304-1.247-.63c-.596-.596-.343-1.526-.046-2.257l.166-.387l.137-.301c.317-.674.767-1.45 1.483-1.656c.347-.1.707-.106 1.07-.097l.543.018q.27.007.537-.017c2.414-3.493 5.532-4.884 8.145-5.308a11.7 11.7 0 0 1 3.426-.056m-3.106 2.03c-2.198.357-4.869 1.534-6.953 4.669c-.253.38-.68.561-1.115.63c-.246.04-.494.05-.743.05l-.747-.011q-.186-.001-.373.006c-.304.404-.516.884-.675 1.361l1.5.545l.617.233c1.128.442 2.22.977 3.06 1.817c1.415 1.415 2.134 3.266 2.654 5.157c.456-.16.914-.364 1.302-.655l.006-.373l-.011-.746c0-.248.01-.496.05-.744c.068-.435.25-.862.63-1.115c3.135-2.084 4.312-4.755 4.669-6.953c.18-1.11.15-2.102.049-2.833a5.4 5.4 0 0 0-.193-.895a5.4 5.4 0 0 0-.895-.192a9.7 9.7 0 0 0-2.832.05ZM7.05 15.535c-.35.423-.513.978-.644 1.528l-.108.468l-.055.226l.694-.163c.55-.13 1.106-.295 1.528-.645a1 1 0 1 0-1.415-1.414m5.657-7.07a2 2 0 1 1 2.829 2.828a2 2 0 0 1-2.829-2.829Z"/></g></svg>
-                                                <svg v-else class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>
-                                                {{ latestPalakasan.status === 'live' ? 'Palakasan has started' : 'Start Palakasan' }}
+                                                Start Palakasan
                                             </button>
                                             <button 
                                                 v-else
@@ -95,24 +91,30 @@
                                                     : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                                 ]"
                                             >
-                                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 25 25"><path fill="currentColor" d="M6.273 3.41a.75.75 0 1 0-1.5 0v18.5a.75.75 0 0 0 1.5 0v-6h5.25a2.25 2.25 0 0 0 2.25 2.25h5.25a.75.75 0 0 0 .684-1.058l-1.973-4.384a.75.75 0 0 1 0-.616l1.973-4.384a.75.75 0 0 0-.684-1.058h-6a2.25 2.25 0 0 0-2.25-2.25h-4.5zm0 2.5h4.5a.75.75 0 0 1 .75.75v7.75h-5.25zm6.75 2.25h4.84l-1.497 3.327a2.25 2.25 0 0 0 0 1.847l1.497 3.326h-4.09a.75.75 0 0 1-.75-.75z"/></svg>
                                                 {{ latestPalakasan.status === 'completed' ? 'Palakasan has finished' : 'Conclude Palakasan' }}
 
                                             </button>
+                                        </div>
+                                        <div>
+                                            <div v-if="latestPalakasan?.status !== 'live' && latestPalakasan?.status !== 'pending'">
+                                                <button 
+                                                    @click="openPalakasanModal" 
+                                                    type="button"
+                                                    class="flex gap-1.5 text-sm ml-2 font-medium focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                                                >
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" fill-rule="evenodd" d="M6.5 23a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11m0-8.993a.5.5 0 0 1 .5.5V17h2.493a.5.5 0 1 1 0 1H7v2.493a.5.5 0 1 1-1 0V18H3.507a.5.5 0 0 1 0-1H6v-2.493a.5.5 0 0 1 .5-.5" clip-rule="evenodd"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.292 10.25v-4a3.5 3.5 0 0 1 3.5-3.5h2.448a3.5 3.5 0 0 1 1.447.313M13.75 21.25h2.458a3.5 3.5 0 0 0 3.5-3.5v-5.53c0-.505-.109-.999-.314-1.45m-7.706-7.707a3.5 3.5 0 0 1 1.027.712l5.968 5.97c.3.3.54.647.711 1.026m-7.706-7.708V8.77a2 2 0 0 0 2 2h5.706"/></g></svg>                    
+                                                    Create New Palakasan            
+                                                </button>
+                                            </div>
                                         </div>
                                 </div>
                             </div>
 
                             <!--content-->
-                            <div class="mt-5 grid grid-cols-6 gap-4">
+                            <div class="mt-5 grid grid-cols-6 gap-6">
                                 <div class="col-span-3 flex flex-col justify-between">
                                     <div>
-                                        <div class="flex justify-between">
-                                            <p class="text-lg font-semibold text-gray-800">{{ latestPalakasan.theme }}</p>
-                                            <p :class="['text-sm px-2 py-1 rounded-md', statusColor]">
-                                                {{ capitalizedStatus }}
-                                            </p>
-                                        </div>
+                                        <p class="text-lg font-semibold text-gray-800">{{ latestPalakasan.theme }}</p>
                                         <p class="text-sm text-gray-700">{{ latestPalakasan.tagline }}</p>
                                         <p class="text-sm text-gray-700 mt-2">{{ latestPalakasan.description }}</p>
 
@@ -131,24 +133,22 @@
                                     <div class="grid grid-cols-3 mt-4 gap-4">
                                         <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'lineups'">
                                             <div>
-                                                <h1 class="text-md font-semibold text-blue-700">Teams</h1>
+                                                <h1 class="text-sm font-semibold text-blue-700">Lineups</h1>
                                             </div>
-                                            <p class="mt-4 text-center text-3xl font-semibold text-blue-700 mb-3">{{ teamsCount }}</p>
-                                            <p class="text-xs text-blue-700 text-center mb-3">total number of teams</p>
+                                            <p class="mt-4 text-3xl font-semibold text-blue-700 mb-3">{{ teamsCount }}</p>
                                         </div>
 
                                         <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'leagues'">
                                             <div>
-                                                <h1 class="text-md font-semibold text-blue-700">Sports</h1>
+                                                <h1 class="text-sm font-semibold text-blue-700">Leagues</h1>
                                             </div>
-                                            <p class="mt-4 text-center text-3xl font-semibold text-blue-700 mb-3">{{ sportsCount }}</p>
-                                            <p class="text-xs text-blue-700 text-center mb-3">total number of sports</p>
+                                            <p class="mt-4  text-3xl font-semibold text-blue-700 mb-3">{{ sportsCount }}</p>
                                         </div>
 
                                     </div>
                                 </div>
                                 <!--display the accumolated points and ranking of all the teams here-->
-                                <div class="col-span-3 rounded-lg">
+                                <div class="col-span-3 rounded-lg h-full">
                                     <Graph
                                         :teams="assignedTeams"
                                         :overallResult="overallResult"
@@ -158,7 +158,7 @@
 
                             </div>
                         </div>
-                        <div class=" p-5 ring-1 ring-gray-300 rounded-lg mt-5">
+                        <div class=" mt-5">
                             <PalakasanRankings :teams="assignedTeams" :overallResult="overallResult" :variationResult="variationResult" />
                         </div>
 
@@ -191,17 +191,15 @@
                             @click="openTeamsModal" 
                             :disabled="latestPalakasan?.status === 'live'"
                             :class="[
-                            'flex gap-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                            'flex gap-1.5 text-sm focus:outline-none focus:ring-4 font-medium focus:ring-gray-300 rounded-lg px-4 py-2',
                             latestPalakasan?.status === 'live' 
                                 ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
                                 : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                             ]"                            
                             >
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M17.5 12a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11m0 2l-.09.007a.5.5 0 0 0-.402.402L17 14.5V17h-2.502l-.09.008a.5.5 0 0 0-.402.402l-.008.09l.008.09a.5.5 0 0 0 .402.402l.09.008H17v2.503l.008.09a.5.5 0 0 0 .402.402l.09.008l.09-.008a.5.5 0 0 0 .402-.402l.008-.09V18l2.504.001l.09-.008a.5.5 0 0 0 .402-.402l.008-.09l-.008-.09a.5.5 0 0 0-.403-.402l-.09-.008H18v-2.5l-.008-.09a.5.5 0 0 0-.402-.403zm-3.246-4a2.25 2.25 0 0 1 1.951 1.13a6.4 6.4 0 0 0-1.518.509a.74.74 0 0 0-.433-.139H9.752a.75.75 0 0 0-.75.75v4.249c0 1.41.974 2.594 2.286 2.915a6.4 6.4 0 0 0 .735 1.587l-.02-.001a4.5 4.5 0 0 1-4.501-4.501V12.25A2.25 2.25 0 0 1 9.752 10zm-6.848 0a3.24 3.24 0 0 0-.817 1.5H4.25a.75.75 0 0 0-.75.75v2.749a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V12.25a2.25 2.25 0 0 1 2.096-2.245L4.25 10zm12.344 0A2.25 2.25 0 0 1 22 12.25v.56A6.48 6.48 0 0 0 17.5 11l-.245.005A3.2 3.2 0 0 0 16.6 10zM18.5 4a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6M5.5 4a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m13 1.5a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-6.5-1a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m-6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2"/></svg>
-                                Add Team
+                                Create
                             </button>
                         </div>
-                        <!-- Sort Button -->
                         <div class="flex items-center justify-end border border-gray-300 px-2.5 shadow rounded-lg">
                             <label for="sort" class="text-sm font-semibold">Sort By:</label>
                             <select v-model="sortOrderTeams" id="sort" class=" text-sm rounded-lg  cursor-pointer p-2 outline-none">
@@ -230,12 +228,12 @@
 
                     <!-- Display assigned teams as cards -->
                     <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div v-for="(team, index) in filteredAndSortedTeams" :key="index" class="bg-white ring-1 ring-gray-300 shadow rounded-lg hover:ring-gray-400 hover:bg-gray-50/80 transition p-4">
+                        <div v-for="(team, index) in filteredAndSortedTeams" :key="index" class="bg-white ring-1 ring-gray-300 shadow rounded-lg hover:ring-blue-400 hover:bg-blue-50/80 transition p-4 group">
                             <div class="flex items-center">
                                 <div class="">
-                                    <svg class="w-7 h-7 mb-3" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"/></svg>
+                                    <svg class="w-8 h-8 mb-3 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"/></svg>
                                     <h3 class="text-xl font-semibold">{{ team.assigned_team_name }}</h3>
-                                    <p class="text-sm mt-1 text-gray-600">{{ team.college.name }}</p>
+                                    <p class="text-sm text-gray-600">{{ team.college.name }}</p>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +241,7 @@
                 </div>
 
                 <!-- Sports Tab Content -->
-                <div v-if="activeTab === 'leagues'" class="mt-4">
+                <div v-if="activeTab === 'leagues' && hasEnoughTeams" class="mt-4">
                     <div class="flex mb-4 items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <!-- Search Input -->
@@ -257,29 +255,40 @@
                             </div>
                             <button 
                                 @click="openSportsModal" 
-                                :disabled="latestPalakasan?.status === 'live'"
+                                :disabled="latestPalakasan?.status === 'live' || assignedTeams.length < 4"
                                 :class="[
-                                    'flex gap-1.5 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                    'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
                                     latestPalakasan?.status === 'live'
                                         ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
                                         : 'flex items-center gap-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                 ]"      
                             >
                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.035 15.096a6.5 6.5 0 0 1-2.154 1.128q.118.745.119 1.524a8.003 8.003 0 0 0-.12-15.526A8.003 8.003 0 0 0 6.252 8q.778 0 1.523.119a6.5 6.5 0 0 1 1.128-2.154zm1.06-1.06L15.062 10l.761-.761a4.23 4.23 0 0 0 2.428.76a4.23 4.23 0 0 0 2.22-.624q.03.308.03.625a6.47 6.47 0 0 1-1.404 4.035M16.225 3.89c.66.24 1.27.585 1.811 1.014l-2.187 2.187A2.74 2.74 0 0 1 15.5 5.75c0-.717.274-1.37.724-1.86M14.76 8.178l-.76.761l-4.035-4.035a6.47 6.47 0 0 1 4.66-1.374A4.23 4.23 0 0 0 14 5.75c0 .903.281 1.74.761 2.428m5.349-.402a2.74 2.74 0 0 1-1.86.724c-.487 0-.944-.127-1.34-.349l2.186-2.186a6.5 6.5 0 0 1 1.014 1.81M4.25 10.5a.75.75 0 0 0-.75.75v2a7.25 7.25 0 0 0 7.25 7.25h2a.75.75 0 0 0 .75-.75v-2a7.25 7.25 0 0 0-7.25-7.25zM2 11.25A2.25 2.25 0 0 1 4.25 9h2A8.75 8.75 0 0 1 15 17.75v2A2.25 2.25 0 0 1 12.75 22h-2A8.75 8.75 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/></svg>
-                                Select Sport
+                                Create League
                             </button>
                         </div>
-                        <!-- Sort Button -->
-                        <div class="flex items-center justify-end border border-gray-300 px-2.5 shadow rounded-lg">
-                            <label for="sort" class="text-sm font-semibold">Sort By:</label>
-                            <select v-model="sortOrderSports" id="sort" class="text-sm rounded-lg cursor-pointer p-2 outline-none">
-                                <option value="default">Default</option>
-                                <option value="az">A-Z</option>
-                                <option value="za">Z-A</option>
-                            </select>
+                        <div class="flex items-center gap-2">
+                            <button 
+                                @click="openLogsModal"
+                                class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-gray-300 ring-1 focus:ring-gray-300 rounded-lg px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
+                            >
+                                Logs
+                            </button>
+                            <button 
+                                @click="toggleSelectionMode"
+                                class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-gray-300 ring-1 focus:ring-gray-300 rounded-lg px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
+                            >
+                                {{ isSelectionMode ? 'Cancel Selection' : 'Delete' }}
+                            </button>
+                            <button 
+                                v-if="isSelectionMode && selectedSports.length > 0"
+                                @click="deleteSelectedSports"
+                                class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-red-300 ring-1 focus:ring-red-300 rounded-lg px-4 py-2 text-red-700 font-medium hover:bg-red-100 hover:text-red-800 hover:ring-red-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
+                            >
+                                Delete ({{ selectedSports.length }})
+                            </button>
                         </div>
                     </div>
-
                     <!-- Empty State -->
                     <div v-if="filteredAndSortedSports.length === 0" class="flex flex-col items-center justify-center border-2 border-dashed border-blue-400 text-center p-6 bg-blue-50 rounded-lg">
                         <i class="fa-solid fa-basketball text-blue-700 text-6xl mb-4"></i>
@@ -296,31 +305,47 @@
                     </div>
 
                     <!-- Sports Grid -->
-                    <!-- Sports Grid -->
-                    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <div
                         v-for="(sport, index) in filteredAndSortedSports"
                         :key="index"
-                        @click="viewSport(sport.id)"
-                        class="bg-white ring-1 ring-gray-300 cursor-pointer rounded-lg p-4 transition-all duration-300 ease-in-out hover:bg-gray-50/80 hover:ring-gray-400 group relative"
+                        @click="isSelectionMode ? toggleSportSelection(sport) : viewSport(sport.id)"
+                        class="bg-white ring-1 ring-gray-300 cursor-pointer rounded-lg p-4 transition-all duration-300 ease-in-out hover:bg-blue-50/80 hover:ring-blue-400 group relative"
+                        :class="{ 'ring-2 ring-blue-500 bg-blue-50': isSelectionMode && selectedSports.includes(sport) }"
                         >
-                        <!-- Status Circle 
+                        <!-- Selection Checkbox -->
+                        <div v-if="isSelectionMode" class="absolute top-2 right-2">
+                            <div class="w-5 h-5 rounded border-2" :class="[
+                                selectedSports.includes(sport) 
+                                    ? 'bg-blue-500 border-blue-500' 
+                                    : 'border-gray-300'
+                            ]">
+                                <svg v-if="selectedSports.includes(sport)" class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </div>
                         <div 
-                            class="absolute top-2 right-2 w-2 h-2 rounded-full"
-                            :class="{
-                            'bg-gray-300': sport.status.toLowerCase() === 'pending',
-                            'bg-green-500': sport.status.toLowerCase() === 'completed',
-                            }"
-                        ></div>
-                    -->
+                            class="absolute top-2" 
+                            :class="{ 'right-9': isSelectionMode, 'right-2': !isSelectionMode }"
+                        >
+                            <div
+                                class="w-2.5 h-2.5 rounded-full"
+                                :class="{
+                                    'bg-gray-300': sport.status === 'pending',
+                                    'bg-green-500': sport.status === 'completed'
+                                }"
+                                :title="sport.status"
+                            ></div>
+                        </div>
 
                         <div class="flex items-center justify-between">
                             <div class="w-full">
-                            <svg class="w-6 h-6 mb-3" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 2048 2048">
-                                <path fill="currentColor" d="M1792 256q27 0 50 10t40 27t28 41t10 50v192q0 86-30 163t-85 137t-127 98t-159 48q-19 62-51 116t-76 98t-97 77t-114 56q35 34 58 76t35 91h70q40 0 75 15t61 41t41 61t15 75v192H384v-192q0-40 15-75t41-61t61-41t75-15h70q11-48 34-90t59-77q-61-22-114-55t-96-78t-76-98t-52-116q-86-9-159-47t-127-99t-84-137T0 576V384q0-27 10-50t27-40t41-28t50-10h256V128h1152v128zm-1280 0v128h896V256zM128 576q0 57 19 109t53 93t81 71t103 41V384H128zm1280 1152q0-26-19-45t-45-19H576q-26 0-45 19t-19 45v64h896zm-267-192q-10-29-28-52t-42-41t-52-26t-59-9q-30 0-58 9t-53 26t-42 40t-28 53zm-181-256q81 0 161-27t144-76t103-121t40-160V512H512v384q0 89 39 160t103 120t144 77t162 27m832-896h-256v506q56-12 103-41t81-70t53-94t19-109z"/>
+                            <svg class="w-6 h-6 mb-3 group-hover:text-blue-600 transition" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 2048 2048">
+                                <path fill="currentColor" d="M1792 256q27 0 50 10t40 27t28 41t10 50v192q0 86-30 163t-85 137t-127 98t-159 48q-19 62-51 116t-76 98t-97 77t-114 56q35 34 58 76t35 91h70q40 0 75 15t61 41t41 61t15 75v192H384v-192q0-40 15-75t41-61t61-41t75-15h70q11-48 34-90t59-77q-61-22-114-55t-96-78t-76-98t-52-116q-86-9-159-47t-127-99t-84-137T0 576V384q0-27 10-50t27-40t41-28t50-10h256V128h1152v128zm-1280 0v128h896V256zM128 576q0 57 19 109t53 93t81 71t103 41V384H128zm1280 1152q0-26 19-45t45-19H576q-26 0-45 19t-19 45v64h896zm-267-192q-10-29-28-52t-42-41t-52-26t-59-9q-30 0-58 9t-53 26t-42 40t-28 53zm-181-256q81 0 161-27t144-76t103-121t40-160V512H512v384q0 89 39 160t103 120t144 77t162 27m832-896h-256v506q56-12 103-41t81-70t53-94t19-109z"/>
                             </svg>
                             <div class="flex justify-between items-center">
-                                <h3 class="text-xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h3>
+                                <h3 class="text-xl font-semibold">{{ sport.sport?.name }} {{ sport.categories }}</h3>
                             </div>
 
                             <div class="flex border-b pb-2 border-gray-300 text-gray-700 items-center gap-2 mt-2">
@@ -336,22 +361,22 @@
                             </div>
                             <!-- Facilitator information -->
                             <div class="flex items-center mt-3 gap-2">
-                                <div class="p-2 bg-gray-200/80 rounded-md">
-                                <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="currentColor"/><path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/></svg>
+                                <div class="p-2 bg-gray-200/80 rounded-md group-hover:bg-blue-200/50">
+                                <svg class="w-5 h-5 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="currentColor"/><path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/></svg>
                                 </div>
                                 <div>
                                 <p class="text-sm text-gray-800 font-semibold">
                                     {{ getFacilitatorName(sport.facilitator_id) }}
                                 </p>
-                                <p class="text-xs text-gray-400">Facilitator</p>
+                                <p class="text-xs text-gray-400 group-hover:text-blue-400">Facilitator</p>
                                 </div>
                                 
                             </div>
-                                                    <!-- Animated Arrow -->
+                            <!-- Animated Arrow -->
                             <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
                                 <svg 
                                     xmlns="http://www.w3.org/2000/svg" 
-                                    class="h-5 w-5 text-gray-500 group-hover:text-gray-800" 
+                                    class="h-5 w-5 text-gray-500 group-hover:text-gray-800 group-hover:text-blue-600" 
                                     fill="none" 
                                     viewBox="0 0 24 24" 
                                     stroke="currentColor"
@@ -369,6 +394,25 @@
                         </div>
                     </div>
                 </div>
+                <!-- Not Enough Teams State -->
+                    <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4">
+                        <div class="flex flex-col items-center justify-center text-center p-10 bg-yellow-50 rounded-lg">
+                            <svg class="w-16 h-16 text-yellow-400 mb-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
+                            <h3 class="text-xl font-semibold text-yellow-700 mb-2">Not Enough Teams</h3>
+                            <p class="text-gray-600 text-sm mb-4">
+                                You need at least 4 teams to create leagues and start matches. <br>
+                                Currently you have {{ filteredAndSortedTeams.length }} team{{ filteredAndSortedTeams.length !== 1 ? 's' : '' }}. <br>
+                                Please add more teams in the Teams tab.
+                            </p>
+                            <button 
+                                @click="activeTab = 'lineups'" 
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                            >
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
+                                Go to Teams
+                            </button>
+                        </div>
+                    </div>
             </div>
 
             <!--Modals for palakasan-->
@@ -550,9 +594,14 @@
                                         class="w-full border px-3 py-2 rounded-lg border-gray-300"
                                     >
                                         <option value="" disabled>Select a category</option>
-                                        <option value="Men">Men</option>
-                                        <option value="Women">Women</option>
-                                        <option value="Mixed">Mixed</option>
+                                        <option 
+                                            v-for="category in availableCategories" 
+                                            :key="category.value"
+                                            :value="category.value"
+                                            :disabled="category.disabled"
+                                        >
+                                            {{ category.value }}{{ category.disabled ? ' (Already Selected)' : '' }}
+                                        </option>
                                     </select>
                                     <div 
                                     class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
@@ -614,6 +663,7 @@
                     </form>
                 </div>
             </div>
+
             <!-- Modal for adding new team -->
             <div v-if="isTeamsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
@@ -649,8 +699,9 @@
                                         v-for="college in availableColleges"
                                         :key="college.id"
                                         :value="college.id"
+                                        :disabled="isCollegeAssigned(college.id)"
                                         >
-                                        {{ college.shortName }}
+                                        {{ college.shortName }} {{ isCollegeAssigned(college.id) ? '(Already Assigned)' : '' }}
                                         </option>
                                     </select>
                                     <div 
@@ -660,11 +711,13 @@
                                     </div>
                                 </div>
                                 <span v-if="form2.errors.college_id" class="text-red-500">{{ form2.errors.college_id }}</span>
+                                <p v-if="unassignedCollegesCount === 0" class="mt-2 text-sm text-red-500">
+                                    All colleges have been assigned teams
+                                </p>
                             </div>
 
                             <!-- Input for Team Name -->
                             <div class="mb-4">
-                                <label for="teamName" class="block text-sm mb-2 font-medium">Team Name</label>
                                 <input
                                     v-model="form2.assigned_team_name"
                                     id="teamName"
@@ -683,8 +736,8 @@
                                 <button type="button" @click="closeTeamsModal" class="mr-2 px-5 text-sm py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg">Cancel</button>
                                 <button
                                     type="submit"
-                                    :disabled="form2.processing"
-                                    class="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm transition relative"
+                                    :disabled="form2.processing || unassignedCollegesCount === 0"
+                                    class="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm transition relative disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span v-if="!form2.processing">
                                         Confirm
@@ -702,6 +755,7 @@
                     </form>
                 </div>
             </div>
+            
             <!-- Status Update Modal -->
             <div v-if="isStatusModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
@@ -741,61 +795,203 @@
 
             <!-- History Modal -->
             <div v-if="isHistoryModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg w-full max-w-7xl">
-                <h3 class="text-lg font-semibold mb-4 border-b p-5">Palakasan History</h3>
-                <div class="max-h-96 overflow-y-auto px-4 pt-2">
-                    <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr v-for="palakasan in completedPalakasans" :key="palakasan.id">
-                        <td class="px-6 py-4 whitespace-nowrap">{{ palakasan.year }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ palakasan.theme }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(palakasan.start_date) }} - {{ formatDate(palakasan.end_date) }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            {{ palakasan.status }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <button @click="viewPalakasanDetails(palakasan.id)" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                            View
-                            </button>
-                        </td>
-                        </tr>
-                    </tbody>
-                    </table>
-                </div>
-                <div class="mt-4 p-4 flex justify-end">
-                    <button @click="closeHistoryModal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Close</button>
-                </div>
+                <div class="flex items-end justify-center min-h-2xl  text-center sm:block ">
+                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="closeHistoryModal"></div>
+
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                    <div class="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
+                        <div class="bg-white p-5">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Palakasan History
+                            </h3>
+                            <div class="mt-4">
+                                <div class="overflow-x-auto h-96">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr v-for="palakasan in completedPalakasans" :key="palakasan.id" class="hover:bg-gray-50 transition-colors duration-200">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ palakasan.year }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600">{{ palakasan.theme }} <br> <span class="text-xs text-gray-500 font-normal">{{ palakasan.tagline }}</span></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(palakasan.start_date) }} - {{ formatDate(palakasan.end_date) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-50 text-green-800">
+                                            {{ palakasan.status }}
+                                        </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button @click="viewPalakasanDetails(palakasan.id)" class="text-blue-600 hover:text-blue-900 transition-colors duration-200">
+                                            View
+                                        </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button @click="closeHistoryModal" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Close
+                        </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Start Palakasan Modal -->
             <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white p-5 rounded-lg shadow-xl max-w-md w-full">
-                    <h3 class="text-lg font-bold mb-4">Confirm Start Palakasan</h3>
-                    <p class="mb-4">Are you sure you want to start Palakasan? This action cannot be undone.</p>
-                    <div class="flex justify-end space-x-3">
-                    <button 
-                        @click="showModal = false"
-                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                    >
-                        Cancel
-                    </button>
-                    <button 
-                        @click="confirmStartPalakasan"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        Confirm
-                    </button>
+                    <h3 class="text-lg font-bold mb-6">Start Palakasan</h3>
+                    <p class="mb-6">Are you sure you want to start Palakasan? This action cannot be undone.</p>
+                    <div class="flex justify-end space-x-2">
+                        <button  @click="showModal = false" type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            No, not ready yet
+                        </button>
+
+                        <button @click="confirmStartPalakasan" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            Yes, get started
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Modal -->
+            <div v-if="isLogsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl">
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <h3 class="text-lg font-semibold text-gray-900">Activity Logs</h3>
+                        <button 
+                            @click="closeLogsModal" 
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center"
+                        >
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="p-4">
+                        <!-- Tabs for Match Results and Rankings -->
+                        <div class="flex space-x-4 mb-4">
+                            <button 
+                                @click="activeLogTab = 'results'"
+                                :class="[
+                                'px-4 py-2 text-sm rounded-lg',
+                                activeLogTab === 'results' 
+                                    ? 'bg-blue-100 text-blue-700' 
+                                    : 'text-gray-600 hover:bg-gray-100'
+                                ]"
+                            >
+                                Match Results
+                            </button>
+                            <button 
+                                @click="activeLogTab = 'rankings'"
+                                :class="[
+                                'px-4 py-2 text-sm rounded-lg',
+                                activeLogTab === 'rankings' 
+                                    ? 'bg-blue-100 text-blue-700' 
+                                    : 'text-gray-600 hover:bg-gray-100'
+                                ]"
+                            >
+                                Rankings Updates
+                            </button>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div class="h-96 overflow-y-auto">
+                            <!-- Match Results Tab -->
+                            <div v-if="activeLogTab === 'results'" class="space-y-4">
+                                <div v-for="submit in facilitatorSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="text-xs font-medium px-2 py-1 bg-purple-100 text-purple-800 rounded">
+                                                    {{ submit.match_result?.sport_match?.assigned_sport?.sport?.name || 'Unknown Sport' }}
+                                                </span>
+                                                <span class="text-xs font-medium px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                                                    Round {{ submit.match_result?.sport_match?.round || 'N/A' }}
+                                                </span>
+                                                <span class="text-xs font-medium px-2 py-1 bg-green-100 text-green-800 rounded">
+                                                    {{ submit.match_result?.sport_match?.game || 'N/A' }}
+                                                </span>
+                                            </div>
+                                            <p class="text-sm font-medium text-gray-900">
+                                                {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} vs {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
+                                            </p>
+                                            <!-- Add Official Name -->
+                                            <p class="text-xs text-gray-500 mt-2">
+                                                Official Name: {{ submit.official_name }}
+                                            </p>
+                                            <!-- Add Signature -->
+                                            <div class="mt-3">
+                                                <p class="text-xs text-gray-500 mb-1">Signature:</p>
+                                                <img 
+                                                    :src="submit.signature" 
+                                                    alt="Official Signature" 
+                                                    class="border border-gray-200 rounded-lg bg-white p-2"
+                                                    style="max-width: 200px; max-height: 100px; object-fit: contain;"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rankings Tab -->
+                            <div v-if="activeLogTab === 'rankings'" class="space-y-4">
+                                <div v-for="submit in facilitatorRankSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <h3 class="text-sm font-semibold text-gray-900 mb-2">
+                                                        {{ submit.overall_result?.assignedSportID?.sport?.name || 'Unknown Sport' }}
+                                                    </h3>
+                                                    <p class="text-sm font-medium text-gray-900">
+                                                        {{ submit.overall_result?.assignedTeamID?.assigned_team_name || 'Unknown Team' }}
+                                                        <span class="text-xs text-gray-500 ml-2">
+                                                            ({{ submit.overall_result?.assignedTeamID?.college?.name || 'Unknown College' }})
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div class="flex gap-4">
+                                                    <span class="text-xs text-gray-500">
+                                                        Rank: {{ submit.overall_result?.rank }}
+                                                    </span>
+                                                    <span class="text-xs text-gray-500">
+                                                        Points: {{ submit.overall_result?.points }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -811,6 +1007,9 @@
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
     import Graph from '@/Components/BarGraph.vue';  // Adjust the path as necessary
     import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
+    import HowToStartModal from '@/Components/HowToStart.vue';
+    
+    
 
     const props = defineProps({
         colleges: Array,
@@ -821,6 +1020,10 @@
         overallResult: Array,  
         variationResult: Array,  
         facilitator: Array,
+        matchResults: Array,
+        matchRankings: Array,
+        facilitatorSubmits: Array,
+        facilitatorRankSubmits: Array,
         latestPalakasan: {
             type: Object,
             default: () => ({})
@@ -1121,7 +1324,7 @@
         // Filter sports based on search query
         if (searchQuerySports.value) {
             filteredSports = filteredSports.filter(sport =>
-                sport.sport.name.toLowerCase().includes(searchQuerySports.value.toLowerCase()) ||
+                sport.sport?.name.toLowerCase().includes(searchQuerySports.value.toLowerCase()) ||
                 sport.description.toLowerCase().includes(searchQuerySports.value.toLowerCase())
             );
         }
@@ -1129,11 +1332,11 @@
         // Sort sports based on sort order
         if (sortOrderSports.value === 'az') {
             return filteredSports.sort((a, b) =>
-                a.sport.name.localeCompare(b.sport.name)
+                a.sport?.name.localeCompare(b.sport?.name)
             );
         } else if (sortOrderSports.value === 'za') {
             return filteredSports.sort((a, b) =>
-                b.sport.name.localeCompare(a.sport.name)
+                b.sport?.name.localeCompare(a.sport?.name)
             );
         }
 
@@ -1193,7 +1396,99 @@
     return facilitatorMap.value[facilitatorId] || 'Not Assigned';
     };
 
+    // Add these refs
+    const isLogsModalOpen = ref(false);
+    const activeLogTab = ref('results');
+    
+    // Add these methods
+    const openLogsModal = () => {
+        isLogsModalOpen.value = true;
+    };
+    
+    const closeLogsModal = () => {
+        isLogsModalOpen.value = false;
+        activeLogTab.value = 'results';
+    };
+    
+    const formatDateTime = (dateString) => {
+        const options = { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit'
+        };
+        return new Date(dateString).toLocaleString(undefined, options);
+    };
 
+    const showHowToStart = ref(false);
+
+    // Selection mode state
+    const isSelectionMode = ref(false);
+    const selectedSports = ref([]);
+    const showDeleteConfirmation = ref(false);
+
+    const toggleSelectionMode = () => {
+        isSelectionMode.value = !isSelectionMode.value;
+        if (!isSelectionMode.value) {
+            selectedSports.value = [];
+        }
+    };
+
+    const toggleSportSelection = (sport) => {
+        const index = selectedSports.value.indexOf(sport);
+        if (index === -1) {
+            selectedSports.value.push(sport);
+        } else {
+            selectedSports.value.splice(index, 1);
+        }
+    };
+
+    const deleteSelectedSports = () => {
+        if (selectedSports.value.length === 0) {
+            alert('Please select sports to delete');
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete the selected sports?')) {
+            router.post(route('onepalakasan.delete-sports'), {
+                sportIds: selectedSports.value.map(sport => sport.id)
+            }, {
+                onSuccess: () => {
+                    selectedSports.value = [];
+                    isSelectionMode.value = false;
+                },
+            });
+        }
+    };
+
+    const isCollegeAssigned = (collegeId) => {
+        return props.assignedTeams.some(team => team.college_id === collegeId);
+    };
+
+    const unassignedCollegesCount = computed(() => {
+        return props.colleges.filter(college => !isCollegeAssigned(college.id)).length;
+    });
+
+    const hasEnoughTeams = computed(() => {
+        return filteredAndSortedTeams.value.length >= 4;
+    });
+
+    const getUsedCategories = computed(() => {
+        if (!form1.sport_id) return [];
+        return filteredAndSortedSports.value
+            .filter(sport => sport.sport?.id === form1.sport_id)
+            .map(sport => sport.categories);
+    });
+
+    const availableCategories = computed(() => {
+        const allCategories = ['Men', 'Women', 'Mixed'];
+        const usedCategories = getUsedCategories.value;
+        return allCategories.map(category => ({
+            value: category,
+            disabled: usedCategories.includes(category)
+        }));
+    });
 </script>
 
 <style scoped>

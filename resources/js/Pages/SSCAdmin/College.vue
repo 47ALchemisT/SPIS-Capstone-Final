@@ -12,7 +12,7 @@
             </div>
             <Toast ref="toastRef" />
             <!--Content-->
-            <div class="mt-3 space-y-3">
+            <div class="mt-3 space-y-4">
                 <!--Utility-->
                 <div class="utility">
                     <div class="flex justify-between items-center">
@@ -41,13 +41,17 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
+                            <p class="text-2xl text-gray-400 mb-1">|</p>
+                            <div class="text-sm font-medium text-gray-700">
+                                <p>Number of colleges: <span>{{ colleges.length }}</span></p>
+                            </div>
 
                         </div>
                         <!--Buttons-->
                         <div class="flex items-center space-x-2.5">
-                            <button @click="openModal(false)" class="tooltip-btn bg-blue-800 text-white py-2 px-3 rounded-lg text-sm font-medium shadow hover:bg-blue-800/90 transition-colors" data-tooltip="Add new venue">
-                                <i class="fa-solid fa-square-plus mr-1"></i>    
-                                College                           
+                            <button @click="openModal(false)" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
+                                College
                             </button>
                         </div>
                     </div>
@@ -58,12 +62,12 @@
                     <div
                         v-for="college in filteredColleges"
                         :key="college.id"  
-                        class="bg-white rounded-lg ring-1 ring-gray-300 shadow overflow-hidden transition-all duration-300 hover:shadow-lg"
+                        class="bg-white rounded-lg ring-1 ring-gray-300 shadow overflow-hidden transition-all duration-300 hover:ring-blue-400 hover:bg-blue-50 group"
                     >
                         <div class="relative flex-grow p-6">
                             <div class="absolute right-3 top-3">
                                 <Menu as="div" class="relative inline-block text-left">
-                                    <MenuButton class="inline-flex items-center justify-center w-full rounded-lg px-2.5 py-2.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    <MenuButton class="inline-flex items-center justify-center w-full rounded-lg px-2.5 py-2.5 text-sm font-medium text-gray-700 ">
                                         <i class="fa-solid fa-ellipsis"></i>                                    
                                     </MenuButton>
                                     <transition
@@ -91,14 +95,10 @@
                                     </transition>
                                 </Menu>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-800">{{ college.shortName }}</h3>
-                            <p class="text-gray-600 font-medium text-md mb-4">{{ college.name }}</p>
-                            <p class="text-gray-600 text-sm mb-4">{{ college.description }}</p>
-                            <div class="flex gap-2 text-bottom items-center">
-                                <span class="text-xs px-2 py-1 bg-blue-100 rounded-md font-medium text-blue-600">
-                                    <i class="fa-regular fa-flag mr-1"></i>{{ college.teamName }}
-                                </span>
-                            </div>
+                            <svg class="h-8 w-8 mb-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M4.75 22a.75.75 0 0 1-.75-.75v-17A2.25 2.25 0 0 1 6.25 2h8a2.25 2.25 0 0 1 2.25 2.25V9.5h1.25A2.25 2.25 0 0 1 20 11.75v1.3a2.5 2.5 0 0 0-1.5.95v-2.25a.75.75 0 0 0-.75-.75h-2a.75.75 0 0 1-.75-.75v-6a.75.75 0 0 0-.75-.75h-8a.75.75 0 0 0-.75.75V20.5h5.528a4 4 0 0 0 .478 1.5zM7.5 6.5a1 1 0 1 1 2 0a1 1 0 0 1-2 0m0 7a1 1 0 1 1 2 0a1 1 0 0 1-2 0M12 9a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-1-2.5a1 1 0 1 1 2 0a1 1 0 0 1-2 0M8.5 9a1 1 0 1 0 0 2a1 1 0 0 0 0-2m7 8a2 2 0 1 0 0-4a2 2 0 0 0 0 4m0 6c2.567 0 3.5-1.52 3.5-3a2 2 0 0 0-2-2h-3a2 2 0 0 0-2 2c0 1.48.933 3 3.5 3m4.007-1.022q.234.021.493.022c2.2 0 3-1.216 3-2.4a1.6 1.6 0 0 0-1.6-1.6h-2.164c.475.53.764 1.232.764 2c0 .656-.144 1.35-.493 1.978M22 15.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0"/></svg>
+                            <h3 class="text-xl font-semibold text-gray-800">{{ college.shortName }}</h3>
+                            <p class="text-gray-700 text-sm mb-4">{{ college.name }}</p>
+                            <p class="text-gray-600 text-sm">{{ college.description }}</p>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
             <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
                 <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal"></div>
                 <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full">
-                    <h2 class="text-xl font-bold mb-4">{{ isEditing ? 'Edit Product' : 'Add Product' }}</h2>
+                    <h2 class="text-xl font-bold mb-4">{{ isEditing ? 'Edit College' : 'Add College' }}</h2>
                     <form @submit.prevent="submitCollege">
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm mb-1.5 font-medium">College Name</label>

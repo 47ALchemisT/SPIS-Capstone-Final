@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
 use App\Models\College;
+use App\Models\FacilitatorRankSubmitions;
+use App\Models\FacilitatorSubmits;
 use App\Models\MatchResult;
 use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\Sport;
-use App\Models\SportMatch; // Include SportMatch model
+use App\Models\SportMatch; 
 use App\Models\SportsVariationsMatches;
 use App\Models\StudentAccount;
 use Dotenv\Exception\ValidationException;
@@ -47,6 +49,52 @@ class OnePalakasanController extends Controller
         
         $palakasans = Palakasan::all();
 
+        $matchResults = MatchResult::with(['sportMatch.assignedSport', 'winning_team', 'losing_team'])
+            ->whereHas('sportMatch.assignedSport', function($query) use ($latestPalakasan) {
+                $query->where('palakasan_sport_id', $latestPalakasan->id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $matchRankings = OverallResult::with(['assignedSportID', 'assignedTeamID'])
+            ->whereHas('assignedSportID', function($query) use ($latestPalakasan) {
+                $query->where('palakasan_sport_id', $latestPalakasan->id);
+            })
+            ->orderBy('updated_at', 'desc')
+            ->get();
+        
+        $facilitatorRankSubmits = FacilitatorRankSubmitions::with([
+                'overallResult.assignedSportID',
+                'overallResult.assignedSportID.sport:id,name',
+                'overallResult.assignedTeamID',
+                'overallResult.assignedTeamID.college:id,name',
+                'facilitator.student:id,first_name,last_name'
+            ])
+                ->whereHas('overallResult.assignedSportID', function($query) use ($latestPalakasan) {
+                    $query->where('palakasan_sport_id', $latestPalakasan->id);
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+        \Log::info('Debugging Sport Data:', [
+            'first_submit_id' => $facilitatorRankSubmits->first()?->id,
+            'overall_result' => $facilitatorRankSubmits->first()?->overallResult,
+            'assigned_sport' => $facilitatorRankSubmits->first()?->overallResult?->assignedSportID,
+            'sport_details' => $facilitatorRankSubmits->first()?->overallResult?->assignedSportID?->sport,
+        ]);
+            
+        $facilitatorSubmits = FacilitatorSubmits::with([
+                'matchResult.sportMatch.assignedSport.sport', 
+                'matchResult.winning_team.college', 
+                'matchResult.losing_team.college',
+                'facilitator.student'
+            ])
+                ->whereHas('matchResult.sportMatch.assignedSport', function($query) use ($latestPalakasan) {
+                    $query->where('palakasan_sport_id', $latestPalakasan->id);
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+
         return Inertia::render('SSCAdmin/Onepalakasan', [
             'colleges' => $colleges,
             'sports' => $sports,
@@ -56,7 +104,11 @@ class OnePalakasanController extends Controller
             'latestPalakasan' => $latestPalakasan, // Pass the latest Palakasan (could be null) to the view
             'overallResult' => $overallResult,
             'variationResult' => $variationResult,
-            'facilitator' => $facilitator
+            'facilitator' => $facilitator,
+            'matchResults' => $matchResults,
+            'matchRankings' => $matchRankings,
+            'facilitatorSubmits' => $facilitatorSubmits,
+            'facilitatorRankSubmits' => $facilitatorRankSubmits
         ]);
     }
 
@@ -164,6 +216,24 @@ class OnePalakasanController extends Controller
  
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update Palakasan status: ' . $e->getMessage());
+        }
+    }
+
+    public function deleteSports(Request $request)
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'sportIds' => 'required|array',
+                'sportIds.*' => 'exists:assigned_sports,id'
+            ]);
+
+            // Delete the selected sports
+            AssignedSports::whereIn('id', $request->sportIds)->delete();
+
+            return redirect()->back()->with('success', 'Sports deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error deleting sports: ' . $e->getMessage());
         }
     }
 }

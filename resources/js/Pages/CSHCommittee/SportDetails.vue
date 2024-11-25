@@ -147,7 +147,7 @@ const submitAssignPlayers = () => {
             closeAssignModal();
             selectedStudentIds.value = []; // Clear selected IDs
             form.reset();
-            router.reload();
+            location.reload();
         },
     });
 };

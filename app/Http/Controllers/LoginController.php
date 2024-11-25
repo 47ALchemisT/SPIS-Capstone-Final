@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;  // Import Hash for password verification
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Crypt;
 
 class LoginController extends Controller
 {
@@ -15,7 +16,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return Inertia::render('Login');  // Your custom Vue component
+        return Inertia::render('Login');
     }
 
     public function login(Request $request)
@@ -42,78 +43,89 @@ class LoginController extends Controller
             return back()->withErrors(['password' => 'Incorrect password. Please try again.']);
         }
         
-        // Login and redirect
-        Auth::login($studentAccount);
+        // Set role-specific session with additional security data
+        $sessionData = [
+            'user_id' => $studentAccount->id,
+            'role' => $studentAccount->role,
+            'login_time' => now(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ];
+
+        switch ($studentAccount->role) {
+            case 'Admin':
+                $request->session()->put('admin_session', $sessionData);
+                break;
+            case 'Facilitator':
+                $request->session()->put('facilitator_session', $sessionData);
+                break;
+            case 'College Sport Head':
+                $request->session()->put('committee_head_session', $sessionData);
+                break;
+        }
+
+        // Login with the web guard
+        Auth::login($studentAccount, true);
+        
+        // Regenerate session ID for security
         $request->session()->regenerate();
+        
+        // Set a longer session lifetime (30 days in minutes)
+        config(['session.lifetime' => 10]);
+    
+        // Store the active role in session
+        $request->session()->put('active_role', $studentAccount->role);
     
         switch ($studentAccount->role) {
             case 'Admin':
-                return redirect()->intended('/admindashboard');
+                return redirect()->intended('/admin');
             case 'Facilitator':
-                return redirect()->intended('/facidashboard/' . $studentAccount->id);
+                $encryptedId = Crypt::encryptString($studentAccount->id);
+                return redirect()->intended('/facidashboard/' . $encryptedId);
             case 'College Sport Head':
-                return redirect()->intended('/cshdashboard');
+                $encryptedId = Crypt::encryptString($studentAccount->id);
+                return redirect()->intended('/cshdashboard/' . $encryptedId);
+            case 'Sub Admin':
+                return redirect()->intended('/secretary');
             default:
-                return redirect()->intended('/login');
+                return redirect()->intended('/');
         }
     }
     
-      
-
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
+        // Get the active role from session
+        $activeRole = $request->session()->get('active_role');
+        
+        // Remove the specific role session
+        switch ($activeRole) {
+            case 'Admin':
+                $request->session()->forget('admin_session');
+                break;
+            case 'Facilitator':
+                $request->session()->forget('facilitator_session');
+                break;
+            case 'College Sport Head':
+                $request->session()->forget('committee_head_session');
+                break;
+        }
+        
+        // Remove the active role
+        $request->session()->forget('active_role');
+        
+        // Check if any other role sessions exist
+        $hasOtherSessions = $request->session()->has('admin_session') || 
+                           $request->session()->has('facilitator_session') || 
+                           $request->session()->has('committee_head_session');
+        
+        // If no other active sessions, perform full logout
+        if (!$hasOtherSessions) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+        
         return redirect('/');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

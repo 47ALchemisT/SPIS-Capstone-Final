@@ -9,7 +9,7 @@
             </div>
 
             <!--Content-->
-            <div class="mt-3 space-y-3">
+            <div class="mt-3 space-y-4">
                 <!--Utility-->
                 <div class="utility">
                     <div class="flex justify-between items-center">
@@ -41,9 +41,9 @@
                         </div>
                         <!--Buttons-->
                         <div class="flex items-center space-x-2.5">
-                            <button @click="openModal(true)" class="bg-blue-800 text-white py-2 px-3 rounded-lg text-sm font-medium shadow hover:bg-blue-800/90 transition-colors">
-                                <i class="fa-solid fa-square-plus mr-1"></i>   
-                                Account                      
+                            <button @click="openModal(false)" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
+                                Create Account
                             </button>
                         </div>
                     </div>
@@ -53,11 +53,12 @@
                 <div>
                     <div v-if="studentAccounts.length" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <!-- Loop through each account -->
-                        <div v-for="account in studentAccounts" :key="account.id" class="bg-white ring-1 ring-gray-300 p-4 rounded-lg shadow hover:shadow-lg transition">
+                        <div v-for="account in studentAccounts" :key="account.id" class="group bg-white ring-1 ring-gray-300 p-4 rounded-lg shadow hover:ring-blue-400 hover:bg-blue-50 transition">
+                            <div class="mb-2">
+                                <svg class="w-8 h-8 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a5 5 0 1 0 5 5a5 5 0 0 0-5-5m0 8a3 3 0 1 1 3-3a3 3 0 0 1-3 3m9 11v-1a7 7 0 0 0-7-7h-4a7 7 0 0 0-7 7v1h2v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1z"/></svg>
+                            </div>
                             <h3 class="text-lg font-semibold text-gray-800">{{ account.student.first_name}} {{account.student.last_name}}</h3>
-                            <p class="text-sm text-gray-600">Role: {{ account.role }}</p>
-                            <p class="text-sm text-gray-600">Username: {{ account.username }}</p>
-                            <p class="text-sm text-gray-500">Status: <span :class="{'text-green-600': account.status, 'text-red-600': !account.status}">{{ account.status ? 'Active' : 'Inactive' }}</span></p>
+                            <p class="text-xs text-gray-600">{{ account.role }}</p>
                         </div>
                     </div>
                     <p v-else class="text-gray-500 text-center">No accounts found.</p>
@@ -100,6 +101,7 @@
                             >
                                 <option value="" disabled>Select role...</option>
                                 <option value="Admin">Admin</option>
+                                <option value="Sub Admin">Sub Admin</option>
                                 <option value="Facilitator">Facilitator</option>
                                 <option value="College Sport Head">College Sport Head</option>
                             </select>

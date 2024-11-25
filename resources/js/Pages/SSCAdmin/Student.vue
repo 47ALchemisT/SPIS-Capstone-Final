@@ -44,7 +44,7 @@
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Search student..."
-                                    class="w-64 pl-10 pr-10 py-2 bg-white shadow border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                                    class="w-64 pl-10 pr-10 py-2 bg-white border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                                 >
                                 <button
                                     v-if="searchQuery"
@@ -59,13 +59,10 @@
                         <!-- Buttons -->
                         <div class="flex items-center space-x-2.5">
                             <!-- Import Button to open the modal -->
-                            <button @click="showModal = true" class="bg-blue-800 text-white py-2 px-3 rounded-lg text-sm font-medium shadow hover:bg-blue-800/90 transition-colors">
-                                <i class="fa-solid fa-file-import mr-1"></i> 
-                                Import                             
-                            </button>
-  
-                            <button class="tooltip-btn bg-white text-gray-800 p-2 text-sm rounded-lg ring-1 ring-gray-300 shadow hover:bg-gray-100 transition-colors" data-tooltip="Logs">
-                                <i class="fa-solid fa-envelopes-bulk"></i>
+   
+                            <button @click="showModal = true" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg class="h-5 w-5 " xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25z"/><path d="M9.657 15.874L7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0M17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2z"/></g></svg>                                
+                                Import
                             </button>
                         </div>
                     </div>
@@ -73,22 +70,21 @@
 
                 <!-- Updated table with pagination -->
                 <div>
-                    <div class="border rounded-lg border-gray-300 shadow">
+                    <div class="border rounded-lg border-gray-300">
                     <table class="min-w-full">
                         <thead>
-                            <tr class=" text-blue-700">                                    
+                            <tr class=" text-gray-700 font-normal">                                    
                                 <th class="py-2 px-4 text-left border-b rounded-t-lg">ID</th>
                                 <th class="py-2 px-4 text-left border-b">Name</th>
                                 <th class="py-2 px-4 text-left border-b">Student ID</th>
                                 <th class="py-2 px-4 text-left border-b">University Email</th>    
                                 <th class="py-2 px-4 text-left border-b">College</th>   
                                 <th class="py-2 px-4 text-left border-b">Contact</th>                                    
-                                <th class="py-2 px-4 text-left border-b  rounded-t-lg">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="paginatedStudents.length === 0">
-                                <td colspan="7" class="py-4 px-4 text-center text-gray-600">No student found.</td>
+                                <td colspan="6" class="py-4 px-4 text-center text-gray-600">No student found.</td>
                             </tr>
                             <tr v-else v-for="student in paginatedStudents" :key="student.id" class="bg-white hover:bg-gray-50">
                                 <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.id }}</td>
@@ -97,42 +93,6 @@
                                 <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.univ_email }}</td>
                                 <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.college }}</td>
                                 <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.contact }}</td>
-
-                                <td class="py-2 px-4 text-sm text-gray-600 border-b">
-                                    <Menu as="div" class="relative inline-block text-left">
-                                        <MenuButton class="tooltip-btn inline-flex items-center justify-center w-full rounded-lg px-2.5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50" data-tooltip="Sort">
-                                            <i class="fa-solid fa-ellipsis"></i>                                    
-                                        </MenuButton>
-                                        <transition
-                                        enter-active-class="transition ease-out duration-100"
-                                        enter-from-class="transform opacity-0 scale-95"
-                                        enter-to-class="transform opacity-100 scale-100"
-                                        leave-active-class="transition ease-in duration-75"
-                                        leave-from-class="transform opacity-100 scale-100"
-                                        leave-to-class="transform opacity-0 scale-95"
-                                        >
-                                        <MenuItems class="origin-top-right absolute right-0 z-10 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                            <div class="py-1">
-                                            <MenuItem v-slot="{ active }">
-                                                <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                                Default
-                                                </a>
-                                            </MenuItem>
-                                            <MenuItem v-slot="{ active }">
-                                                <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                                A-Z
-                                                </a>
-                                            </MenuItem>
-                                            <MenuItem v-slot="{ active }">
-                                                <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                                Z-A
-                                                </a>
-                                            </MenuItem>
-                                            </div>
-                                        </MenuItems>
-                                        </transition>
-                                    </Menu>
-                                </td>
                             </tr>
                         </tbody>
                     </table>

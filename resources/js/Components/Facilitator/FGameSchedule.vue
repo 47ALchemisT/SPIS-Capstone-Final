@@ -1,14 +1,13 @@
 <template>
     <div class="game-schedule">
       <Toast ref="toastRef" />
-      <h2 class="text-md font-medium mt-1 mb-4">Match Schedule</h2>
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div v-for="match in sortedMatches" 
           :key="match.id" 
-          class="bg-white rounded-lg p-4 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 group">
+          class="bg-white rounded-lg p-4 border border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 group">
           <div class="flex justify-between items-center mb-3">
             <div class="flex flex-col">
-              <span class="font-semibold text-md">{{ match.game }}</span>
+              <span class="font-semibold text-md group-hover:text-blue-600">{{ match.game }}</span>
               <div class=" text-xs flex justify-between gap-1.5 items-center">
                 <span :class="getStatusClass(match.status)">Status : {{ formatStatus(match.status) }}</span>
               </div>          
@@ -17,7 +16,7 @@
                 <button 
                     @click="openScoreModal(match)"
                     type="button" 
-                    class="p-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 group-hover:bg-gray-800 group-hover:text-white transition duration-200"
+                    class="p-2 text-sm font-medium text-gray-600 focus:outline-none hover:text-blue-800 rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-100 transition duration-200"
                     :disabled="match.status === 'completed'"
                     >
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20"><path fill="currentColor" d="M3.005 14.176A3 3 0 0 0 6 17h2.003q.01-.171.054-.347L8.22 16H6l-.15-.005A2 2 0 0 1 4 14v-4h3l.176-.005A3 3 0 0 0 10 7V4h4l.15.005A2 2 0 0 1 16 6v2.003a2.9 2.9 0 0 1 1 .13V6l-.005-.176A3 3 0 0 0 14 3H9.621l-.176.008a2 2 0 0 0-1.238.578L3.586 8.207l-.12.13A2 2 0 0 0 3 9.62V14zM7 9l-2.782-.001q.034-.045.075-.085l4.621-4.621L9 4.219V7l-.005.15A2 2 0 0 1 7 9m2.98 5.377l4.83-4.83a1.87 1.87 0 1 1 2.644 2.646l-4.83 4.829a2.2 2.2 0 0 1-1.02.578l-1.498.374a.89.89 0 0 1-1.079-1.078l.375-1.498a2.2 2.2 0 0 1 .578-1.02"/></svg>
@@ -26,11 +25,11 @@
           </div>
   
           <div class="grid grid-cols-4 gap-3 items-center">
-            <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center group-hover:bg-gray-200 transition ">
+            <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center group-hover:bg-blue-200 transition ">
               <span class="font-medium mr-3">{{ getTeamName(match.teamA_id) }}</span>
               <span :class="getScoreClass(match, 'teamA')">{{ getScore(match, 'teamA') }}</span>
             </div>
-            <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center group-hover:bg-gray-200 transition ">
+            <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center group-hover:bg-blue-200 transition ">
               <span :class="getScoreClass(match, 'teamB')">{{ getScore(match, 'teamB') }}</span>
               <span class="font-medium ml-3">{{ getTeamName(match.teamB_id) }}</span>
             </div>
@@ -142,6 +141,19 @@
           </button>
         </div>
         <div class="p-4">
+          <!-- Official Name Input -->
+          <div class="mb-4">
+            <label class="block mb-2 font-medium text-sm">
+              Official Name
+              <input 
+                v-model="scoreFormData.official_name"
+                type="text"
+                required
+                placeholder="Enter your official name"
+                class="mt-2 border-2 border-gray-300 rounded-lg w-full px-3 py-2"
+              />
+            </label>
+          </div>
           <div class="mb-4">
             <label class="block mb-2 font-medium text-sm">
               Signature
@@ -386,7 +398,9 @@ const scoreFormData = ref({
     teamA_score: '',
     teamB_score: '',
     winning_team_id: '',
-    losing_team_id: ''
+    losing_team_id: '',
+    official_name: '',
+    signature: '',
 });
 
 const getMatchResult = (matchId) => {
@@ -426,6 +440,7 @@ const closeScoreModal = () => {
     teamB_score: '',
     winning_team_id: '',
     losing_team_id: '',
+    official_name: '',
     signature: ''
   };
   scoreError.value = '';
@@ -439,16 +454,22 @@ const closeScoreModal = () => {
 };
 
 const submitScore = async () => {
+  // Validate official name
+  if (!scoreFormData.value.official_name.trim()) {
+    signatureError.value = 'Please enter your official name';
+    return;
+  }
+
   // Validate signature
   const canvas = signatureCanvas.value;
-  const signatureData = canvas.toDataURL();
+  const signatureData = canvas.toDataURL('image/png');
   
   // Check if signature is just a blank canvas
   const blankCanvas = document.createElement('canvas');
   blankCanvas.width = canvas.width;
   blankCanvas.height = canvas.height;
   
-  if (signatureData === blankCanvas.toDataURL()) {
+  if (signatureData === blankCanvas.toDataURL('image/png')) {
     signatureError.value = 'Please provide a signature';
     return;
   }

@@ -1,36 +1,49 @@
 <template>
-  <div class="space-y-6">
-    <div class="rounded-lg">
-      <h1 class="font-medium text-blue-700">Standings</h1>
-      <div class="relative overflow-x-auto mt-3">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-blue-700 uppercase bg-blue-100">
-            <tr>
-              <th scope="col" class="px-6 py-3">Rank</th>
-              <th scope="col" class="px-6 py-3">Team</th>
-              <th scope="col" class="px-6 py-3">College</th>
-              <th scope="col" class="px-6 py-3">Total Points</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(team, index) in teamRankings" :key="team.id">
-              <th scope="row" class="px-6 py-4 text-blue-700 whitespace-nowrap dark:text-white">
-                {{ index + 1 }}
-              </th>
-              <td class="px-6 py-4 font-medium text-blue-700">
-                {{ team.assigned_team_name }}
-              </td>
-              <td class="px-6 py-4">
-                {{ team.college?.name }}
-              </td>
-              <td class="px-6 py-4">
-                {{ team.totalPoints }} Points
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="bg-white rounded-xl shadow-sm space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-700">Tournament Standings</h2>
+      <div class="text-sm text-gray-500">Total Teams: {{ teamRankings.length }}</div>
+    </div>
+    
+    <div class="relative overflow-hidden rounded-lg border border-gray-300">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50 ">
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rank</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Team</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">College</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Points</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr v-for="(team, index) in teamRankings" 
+              :key="team.id"
+              class="hover:bg-blue-50/50 transition-colors duration-150 ease-in-out">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <span :class="[
+                  'flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold',
+                  index < 3 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                ]">
+                  {{ index + 1 }}
+                </span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-medium text-gray-900">{{ team.assigned_team_name }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+              {{ team.college?.name }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center space-x-2">
+                <span class="font-semibold text-blue-700">{{ team.totalPoints }}</span>
+                <span class="text-gray-500 text-sm">pts</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>

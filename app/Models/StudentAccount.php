@@ -20,6 +20,10 @@ class StudentAccount extends Authenticatable
         'password',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     public function student()
     {
@@ -31,6 +35,22 @@ class StudentAccount extends Authenticatable
     }
     public function facilitatorID(){
         return $this->hasMany(AssignedSports::class, 'facilitator_id');
+    }
+
+    public function facilitator(){
+        return $this->hasMany(FacilitatorSubmits::class, 'facilitator_id');
+    }
+
+    public function ffo_facilitator(){
+        return $this->hasMany(FfoFacilitatorSubmits::class, 'facilitator_id');
+    }
+
+    public function facilitatorSubmition(){
+        return $this->hasMany(FacilitatorRankSubmitions::class, 'facilitator_id');
+    }
+
+    public function com_head(){
+        return $this->hasMany(ComHeadColleges::class, 'com_head_id');
     }
 
 }

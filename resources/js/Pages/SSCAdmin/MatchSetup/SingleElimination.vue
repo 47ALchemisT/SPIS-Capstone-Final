@@ -34,39 +34,57 @@
                 <p class=" text-sm">{{ sport.status }}</p>
             </div>
             <Toast ref="toastRef" />
-            <div v-if="tournamentWinner" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h2 class="text-lg font-semibold text-green-800">Game Winner</h2>
-                <p class="text-xl font-bold text-green-700 mt-2">🏆 {{ getTeamName(tournamentWinner) }}</p>
-                <button
-                    @click="openRankingModal"
-                    type="button"
-                    class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    :disabled="isSubmittingRankings || rankingsSubmitted"
-                    >
-                    {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
-                </button>
+
+            <div v-if="tournamentWinner" class="mt-6 p-8 bg-blue-100 flex justify-center items-center flex-col rounded-lg">
+                    <h2 class="text-xs font-semibold mb-2 text-blue-700">Game Winner</h2>
+
+                    <div class="flex gap-4">
+                        <div class="text-center flex gap-4">
+                            <svg class="w-10 h-10 mt-5 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                            <svg class="w-14 h-14 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                            <svg class="w-16 h-16 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                            <svg class="w-20 h-20 mt-3 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                        </div>
+                        <div class="relative">
+                            <svg class="w-36 h-36 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.987 9.492L5.678 7.514C4.155 6.204 4.15 4.302 3.988 3.02c1.666.08 2.956.23 4.08 1.18l1.176 1.336l1.273 1.428m8.941 11.455l-2.964-3m-2.471 3c.022-.272.2-.978 1.019-1.734c.734-.679 2.327-2.305 3.042-3.01c.406-.4 1.07-.68 1.374-.679m-3.889-.187l1.337 1.479m-3.229.15l1.495 1.313m5.29 2.23c.83.002 1.54.615 1.538 1.445c-.001.83-.707 1.557-1.538 1.556c-.83-.002-1.47-.732-1.469-1.562c.054-.826.665-1.328 1.47-1.439m-15.867.412l2.958-2.892m-2.992-2.514c.273.022 1.032.204 1.712 1.054c.625.78 2.31 2.29 3.017 3.004c.4.404.68 1.044.68 1.348M7.266 14.23l8.239-9.566c1.34-1.496 3.214-1.528 4.5-1.666c-.112 1.664-.288 2.95-1.26 4.055L8.55 15.927m-3.543 3.572a1.503 1.503 0 1 1-3.006 0a1.503 1.503 0 0 1 3.006 0" />
+                            </svg>
+                            <div class="absolute inset-0 bottom-2 flex items-center justify-center">
+                            <p class="text-md font-bold text-blue-700 bg-blue-100 w-32 rounded-md text-center break-words max-w-full">
+                                {{ getTeamName(tournamentWinner) }}
+                            </p>
+                            </div>
+                        </div>
+                        <div class="text-center flex gap-4">
+                            <svg class="w-20 h-20 mt-3 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                            <svg class="w-16 h-16 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                            <svg class="w-14 h-14 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+                            <svg class="w-10 h-10 mt-5 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
+
+                        </div>
+                    </div>
             </div>
 
             <!-- Tabs Navigation -->
             <nav class="flex relative justify-between mt-4  items-center">
-                <div class="bg-gray-100 flex gap-2 rounded-lg p-1.5">
-                    <div class="bg-gray-100 flex gap-2 rounded-lg">
-                        <button 
-                            v-for="tab in ['matches', 'standing', 'brackets', 'players']"
-                            :key="tab"
-                            @click="activeTab = tab"
-                            :class="[
-                            'px-5 py-1 text-sm',
-                            activeTab === tab
-                                ? 'text-gray-800 ring-1 ring-gray-300 bg-white rounded-md'
-                                : 'text-gray-500 hover:text-gray-700 border-transparent'
-                            ]"
-                        >
-                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                        </button>
-                        </div>
-                </div>
-                <div class="flex items-center gap-2">
+                    <div class="flex gap-2 rounded-lg ">
+                        <div class=" flex gap-2 rounded-lg">
+                            <button 
+                                v-for="tab in ['matches', 'standing', 'brackets', 'players']"
+                                :key="tab"
+                                @click="activeTab = tab"
+                                :class="[
+                                'px-5 py-2 text-sm',
+                                activeTab === tab
+                                    ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
+                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
+                                ]"
+                            >
+                                {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                            </button>
+                            </div>
+                    </div>
+                    <div class="flex items-center gap-2">
                     <button
                         @click="openCreateMatchesModal"
                         type="button"
@@ -149,7 +167,7 @@
                     </div>
                 </div>
                 <div v-if="activeTab === 'players'">
-                    <!--to be displayed-->
+                    <PlayersDisplay class="mt-1" :players="players" :teams="teams" />
                 </div>
             </div>
 
@@ -356,6 +374,7 @@ import AppLayout from '@/Layout/DashboardLayout.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/GameSchedule.vue';
 import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed
+import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 
 const props = defineProps({
@@ -366,7 +385,8 @@ const props = defineProps({
     results: Array,
     venues: Array,
     allMatches: Array,
-    venueRecords: Array
+    venueRecords: Array,
+    players: Array
 });
 
 const toastRef = ref(null);

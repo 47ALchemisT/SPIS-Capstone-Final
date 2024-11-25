@@ -1,8 +1,7 @@
 <template>
   <div class="space-y-6">
-    <div class="p-6 rounded-xl bg-blue-50">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">Team Rankings</h2>
-      <div class="h-80 w-full">
+    <div class="rounded-xl">
+      <div class="h-96 w-full">
         <Bar
           :data="chartData"
           :options="chartOptions"
@@ -87,16 +86,16 @@ const chartData = computed(() => ({
   labels: teamRankings.value.map(team => team.assigned_team_name),
   datasets: [
     {
-      label: 'Total Points',
+      label: 'Overall Points',
       data: teamRankings.value.map(team => team.totalPoints),
       backgroundColor: function(context) {
         const chart = context.chart;
         const {ctx} = chart;
-        return generateGradient(ctx, 'rgba(99, 102, 241, 0.9)', 'rgba(129, 140, 248, 0.2)');
+        return generateGradient(ctx, 'rgba(29, 78, 216, 0.9)', 'rgba(29, 78, 216, 0.2)');
       },
       borderRadius: 8,
       borderSkipped: false,
-      barThickness: 48,
+      barThickness: 60,
       maxBarThickness: 64
     }
   ]

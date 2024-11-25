@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
+use App\Models\FacilitatorRankSubmitions;
+use App\Models\FacilitatorSubmits;
 use App\Models\MatchResult;
 use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\StudentAccount;
+use App\Models\StudentPlayer;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -29,6 +33,9 @@ class DoubleEliminationController extends Controller
         $allMatches = SportMatch::all();
         $latestPalakasan = Palakasan::latest()->first();
         $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
 
         return Inertia::render('SSCAdmin/MatchSetup/DoubleElimination', [
             'sport' => $assignedSports,
@@ -38,41 +45,94 @@ class DoubleEliminationController extends Controller
             'results' => $results,
             'venues' => $venues,
             'allMatches' => $allMatches,
-            'venueRecords' => $venueRecords
-
-        ]);
-    }   
-
-    public function facilitatorIndex(AssignedSports $assignedSports,StudentAccount $facilitator)
-    {
-        $venues = Venue::all();
-        $assignedSports->load('sport');
-        $tournaments = Palakasan::all();
-        $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
-        $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
-        $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
-        $allMatches = SportMatch::all();
-        $latestPalakasan = Palakasan::latest()->first();
-        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
-
-        $majorPoints = Points::where('type', 'Major')->get();
-        $minorPoints = Points::where('type', 'Minor')->get();
-
-        return Inertia::render('Facilitator/SportSetup/FacilitatorDoubleElimination', [
-            'sport' => $assignedSports,
-            'tournaments' => $tournaments,
-            'teams' => $teams,
-            'matches' => $matches,
-            'results' => $results,
-            'venues' => $venues,
-            'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'facilitator' => $facilitator, // Add this line to pass the facilitator data
-            'majorPoints' => $majorPoints,
-            'minorPoints' => $minorPoints
+            'players' => $players
 
         ]);
     }   
+     public function facilitatorIndex(AssignedSports $assignedSports, $encryptedFacilitatorId)
+    {
+        try {
+            $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
+            $facilitator = StudentAccount::with('student')->findOrFail($facilitatorId);
+
+            $venues = Venue::all();
+            $assignedSports->load('sport');
+            $tournaments = Palakasan::all();
+            $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+            $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+            $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+            $allMatches = SportMatch::all();
+            $latestPalakasan = Palakasan::latest()->first();
+            $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
+            $majorPoints = Points::where('type', 'Major')->get();
+            $minorPoints = Points::where('type', 'Minor')->get();
+
+            $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
+
+            return Inertia::render('Facilitator/SportSetup/FacilitatorDoubleElimination', [
+                'sport' => $assignedSports,
+                'tournaments' => $tournaments,
+                'teams' => $teams,
+                'matches' => $matches,
+                'results' => $results,
+                'venues' => $venues,
+                'allMatches' => $allMatches,
+                'venueRecords' => $venueRecords,
+                'facilitator' => $facilitator,
+                'majorPoints' => $majorPoints,
+                'minorPoints' => $minorPoints,
+                'players' => $players
+            ]);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            abort(403, 'Invalid or tampered facilitator ID');
+        }
+    }
+    public function SubAdminIndex(AssignedSports $assignedSports, $encryptedFacilitatorId)
+    {
+        try {
+            $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
+            $facilitator = StudentAccount::with('student')->findOrFail($facilitatorId);
+
+            $venues = Venue::all();
+            $assignedSports->load('sport');
+            $tournaments = Palakasan::all();
+            $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+            $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+            $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+            $allMatches = SportMatch::all();
+            $latestPalakasan = Palakasan::latest()->first();
+            $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+
+            $majorPoints = Points::where('type', 'Major')->get();
+            $minorPoints = Points::where('type', 'Minor')->get();
+
+            $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
+
+            return Inertia::render('Facilitator/SportSetup/FacilitatorDoubleElimination', [
+                'sport' => $assignedSports,
+                'tournaments' => $tournaments,
+                'teams' => $teams,
+                'matches' => $matches,
+                'results' => $results,
+                'venues' => $venues,
+                'allMatches' => $allMatches,
+                'venueRecords' => $venueRecords,
+                'facilitator' => $facilitator,
+                'majorPoints' => $majorPoints,
+                'minorPoints' => $minorPoints,
+                'players' => $players
+            ]);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            abort(403, 'Invalid or tampered facilitator ID');
+        }
+    }
+
 
     public function store(Request $request)
     {
@@ -101,6 +161,7 @@ class DoubleEliminationController extends Controller
                     $matches[] = $createdMatch;
                 }
             }
+            
 
             DB::commit();
             return redirect()->back()->with(['message' => 'Matches created successfully', 'matches' => $matches]);
@@ -147,12 +208,20 @@ class DoubleEliminationController extends Controller
     
             $match = SportMatch::find($request->sport_match_id);
             
-            MatchResult::create([
+            $matchResult = MatchResult::create([
                 'sport_match_id' => $request->sport_match_id,
                 'teamA_score' => $request->teamA_score,
                 'teamB_score' => $request->teamB_score,
                 'winning_team_id' => $request->winning_team_id,
                 'losing_team_id' => $request->losing_team_id
+            ]);
+
+            // Store facilitator submission
+            FacilitatorSubmits::create([
+                'facilitator_id' => auth()->user()->id,
+                'match_id' => $matchResult->id,
+                'official_name' => $request->official_name,
+                'signature' => $request->signature,
             ]);
             
             $match->update(['status' => 'completed']);
@@ -304,7 +373,6 @@ class DoubleEliminationController extends Controller
         return $lastLosersBracketMatch !== null;
     }
 
-
     protected function createDecidingMatch($previousMatch, $teamFromLosersBracket, $teamFromWinnersBracket)
     {
         SportMatch::create([
@@ -326,7 +394,6 @@ class DoubleEliminationController extends Controller
     {
         SportMatch::where('assigned_sport_id', $assignedSportId)
             ->update(['status' => 'completed']);
-
     }
 
     protected function isFinalMatch($match)
@@ -355,7 +422,7 @@ class DoubleEliminationController extends Controller
     
             foreach ($request->rankings as $ranking) {
                 // Update or create the overall result
-                OverallResult::updateOrCreate(
+                $overallResult = OverallResult::updateOrCreate(
                     [
                         'assigned_sport_id' => $ranking['assigned_sport_id'],
                         'assigned_team_id' => $ranking['assigned_team_id'],
@@ -365,6 +432,12 @@ class DoubleEliminationController extends Controller
                         'points' => $ranking['points'],
                     ]
                 );
+
+                // Store facilitator rank submission
+                FacilitatorRankSubmitions::create([
+                    'facilitator_id' => auth()->user()->id,
+                    'overall_result_id' => $overallResult->id
+                ]);
     
                 // Update the status of the assigned sport to 'completed'
                 AssignedSports::where('id', $ranking['assigned_sport_id'])

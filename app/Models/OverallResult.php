@@ -25,5 +25,10 @@ class OverallResult extends Model
     {
         return $this->belongsTo(AssignedTeams::class, 'assigned_team_id');
     }
+
+    public function OverallResult()
+    {
+        return $this->hasMany(FacilitatorRankSubmitions::class, 'overall_result_id');
+    }
     
 }

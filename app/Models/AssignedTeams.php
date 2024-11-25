@@ -47,6 +47,16 @@ class AssignedTeams extends Model
          );
      }
  
+     public function comHeadColleges()
+     {
+         return $this->hasMany(ComHeadColleges::class, 'assigned_team_id');
+     }
+
+     public function student_players()
+     {
+         return $this->hasMany(StudentPlayer::class, 'assigned_team_id');
+     }
+
      public function winning_team()
      {
          return $this->hasMany(MatchResult::class, 'winning_team_id');
@@ -71,6 +81,9 @@ class AssignedTeams extends Model
      {
          return $this->hasMany(OverallResult::class, 'assigned_team_id');
      }
-    
-}
 
+     public function assigned_team()
+     {
+         return $this->hasMany(ComheadColleges::class, 'assigned_team_id');
+     }
+}

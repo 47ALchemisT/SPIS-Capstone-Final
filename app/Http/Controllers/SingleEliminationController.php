@@ -10,12 +10,14 @@ use App\Models\Palakasan;
 use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\StudentAccount;
+use App\Models\StudentPlayer;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Crypt;
 
 class SingleEliminationController extends Controller
 {
@@ -32,6 +34,10 @@ class SingleEliminationController extends Controller
 
         $allMatches = SportMatch::all();
         $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+        ->where('student_assigned_sport_id', $assignedSports->id)
+        ->get();
+
         return Inertia::render('SSCAdmin/MatchSetup/SingleElimination', [
             'sport' => $assignedSports,
             'tournaments' => $tournaments,
@@ -40,12 +46,16 @@ class SingleEliminationController extends Controller
             'results' => $results,
             'venues' => $venues,
             'allMatches' => $allMatches,
-            'venueRecords' => $venueRecords
+            'venueRecords' => $venueRecords,
+            'players' => $players
         ]);
     }  
     
-    public function facilitatorIndex(AssignedSports $assignedSports, StudentAccount $facilitator)
+    public function facilitatorIndex(AssignedSports $assignedSports,  $encryptedFacilitatorId)
     {
+        $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
+        $facilitator = StudentAccount::with('student')->findOrFail($facilitatorId);
+
         $venues = Venue::all();
         $assignedSports->load('sport');
         $tournaments = Palakasan::all();
@@ -60,6 +70,10 @@ class SingleEliminationController extends Controller
 
         $majorPoints = Points::where('type', 'Major')->get();
         $minorPoints = Points::where('type', 'Minor')->get();
+
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+        ->where('student_assigned_sport_id', $assignedSports->id)
+        ->get();
     
         return Inertia::render('Facilitator/SportSetup/FacilitatorSingleElimination', [
             'sport' => $assignedSports,
@@ -72,7 +86,8 @@ class SingleEliminationController extends Controller
             'venueRecords' => $venueRecords,
             'facilitator' => $facilitator, // Add this line to pass the facilitator data
             'majorPoints' => $majorPoints,
-            'minorPoints' => $minorPoints
+            'minorPoints' => $minorPoints,
+            'players' => $players
         ]);
     }
 

@@ -4,122 +4,152 @@
     <AppLayout :facilitator="facilitator">
       <template v-slot:default>
         <!-- Header Section -->
-        <div class="flex items-center gap-2">
-          <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-          <div>
-            <button
-              @click="returnToFacilitator"
-              type="button"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-              <i class="fa-solid fa-right-to-bracket mr-2"></i>
-              Return
-            </button>
-          </div>
-        </div>
+        <div class="flex items-center justify-between gap-2 pt-4">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                    <div>
+                        <button 
+                            @click="returnToFacilitator" 
+                            type="button" 
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            >
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
+                            Return
+                        </button>
+                    </div>
+                </div>
+
+
+        <!-- Tags Section -->
+        <div class="flex items-center text-gray-600 gap-2">
+                    <p class="text-sm"> {{ sport.setup }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.type }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.status }}</p>
+                </div>
 
         <!-- Progress Bar -->
-        <div class="mt-2 space-y-2">
-          <div class="flex items-center text-xs">
-            <h2 class="text-gray-600">Sport Progress :</h2>
-            <span class="font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
-          </div>
+        <div class="mt-3 space-y-2">
           <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div 
               class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" 
               :style="{ width: `${progressPercentage}%` }"
             ></div>
           </div>
+          <div class="flex items-center text-xs">
+            <h2 class="text-gray-600">Sport Progress :</h2>
+            <span class="font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
+          </div>
+
         </div>
 
-        <!-- Tags Section -->
-        <div class="flex items-center gap-2 mt-2">
-          <p class="text-sm">{{ sport.setup }}</p>
-          <p class="text-xs">|</p>
-          <p class="text-sm">{{ sport.type }}</p>
-          <p class="text-xs">|</p>
-          <p class="text-sm">{{ sport.status }}</p>
-        </div>
+        <nav class="flex relative justify-between mt-4  items-center">
+          <div class="flex gap-2 rounded-lg ">
+              <div class=" flex gap-2 rounded-lg">
+                  <button 
+                      v-for="tab in ['sports', 'players']"
+                        :key="tab"
+                        @click="activeTab = tab"
+                        :class="[
+                          'px-5 py-2 text-sm',
+                          activeTab === tab
+                            ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
+                          ]"
+                          >
+                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                    </button>
+                  </div>
+              </div>
+        </nav>
 
-        <!-- Sport Variations List -->
-        <div class="py-6 mb-6">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold mb-4">Sport Variations</h2>
-          </div>
-          <div v-if="sportVariations.length === 0" class="text-gray-500">
-            No variations added yet.
-          </div>
-          <ul v-else class="space-y-4">
-            <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg">
-              <div class="flex justify-between items-center">
-                <div class="flex justify-between w-full">
-                  <div>
-                    <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
-                    <div class="flex items-center mt-1 gap-2.5">
-                      <div class="text-xs text-gray-600">
-                        <div class="flex items-center gap-1.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
+        <div class="mt-4">
+          <div v-if="activeTab === 'sports'">
+            <!-- Sport Variations List -->
+            <!-- Sport Variations List -->
+            <div class=" mb-6">
+              <div v-if="sportVariations.length === 0" class="text-gray-500">
+                No variations added yet.
+              </div>
+              <ul v-else class="space-y-4">
+                <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg">
+                  <div class="flex justify-between items-center">
+                    <div class="flex justify-between w-full">
+                      <div>
+                        <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
+                        <div class="flex items-center mt-1 gap-2.5">
+                          <div class="text-xs text-gray-600">
+                            <div class="flex items-center gap-1.5">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
+                            </div>
+                          </div>
+                          <p class="text-xs text-gray-400">|</p>
+                          <div class="text-xs text-gray-600">
+                            <div class="flex items-center gap-1.5">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span :class="{'text-red-500': !variation.date || !variation.time}">
+                                {{ formatDateTime(variation.date, variation.time) }}
+                              </span>
+                            </div>
+                          </div>
+                          <p class="text-xs text-gray-400">|</p>
+                          <div class="text-xs flex justify-between gap-1.5 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
+                            <span :class="getStatusClass(variation.status)">
+                              {{ formatStatus(variation.status) }}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <p class="text-xs text-gray-400">|</p>
-                      <div class="text-xs text-gray-600">
-                        <div class="flex items-center gap-1.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span :class="{'text-red-500': !variation.date || !variation.time}">
-                            {{ formatDateTime(variation.date, variation.time) }}
-                          </span>
-                        </div>
-                      </div>
-                      <p class="text-xs text-gray-400">|</p>
-                      <div class="text-xs flex justify-between gap-1.5 items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
-                        <span :class="getStatusClass(variation.status)">
-                          {{ formatStatus(variation.status) }}
-                        </span>
+                      <div>
+                        <button 
+                          type="button"
+                          @click="openRankModal(variation)" 
+                          :disabled="variation.status === 'completed' || sport.status === 'completed'"                      
+                          class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                        >
+                          <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>                    
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <button 
-                      type="button"
-                      @click="openRankModal(variation)" 
-                      :disabled="variation.status === 'completed' || sport.status === 'completed'"                      
-                      class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                    >
-                      <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>                    
-                    </button>
+                  
+                  <!-- Variation Matches -->
+                  <div v-if="getVariationMatches(variation.id).length > 0" class="mt-4">
+                    <table class="w-full text-sm">
+                      <thead>
+                        <tr>
+                          <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
+                          <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="match in getSortedMatches(getVariationMatches(variation.id))" 
+                            :key="match.id" 
+                            class="border-b">
+                          <td class="px-4 py-2">{{ getTeamName(match.sport_variation_team_id) }}</td>
+                          <td class="px-4 py-2 text-center">{{ match.rank || '--' }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-                </div>
-              </div>
-              
-              <!-- Variation Matches -->
-              <div v-if="getVariationMatches(variation.id).length > 0" class="mt-4">
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr>
-                      <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
-                      <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="match in getSortedMatches(getVariationMatches(variation.id))" 
-                        :key="match.id" 
-                        class="border-b">
-                      <td class="px-4 py-2">{{ getTeamName(match.sport_variation_team_id) }}</td>
-                      <td class="px-4 py-2 text-center">{{ match.rank || '--' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </li>
-          </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div v-if="activeTab === 'players'">
+            <PlayersDisplay class="mt-1" :players="players" :teams="teams" />
+          </div>
         </div>
+
+
+
 
         <div v-if="showRankModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div class="relative p-4 w-full max-w-[32rem] max-h-full">
@@ -180,17 +210,33 @@
                     </table>
                   </div>
 
+                  <!-- Official Name Input -->
+                  <div class="mt-4">
+                    <label for="official_name" class="block text-sm font-medium text-gray-700">Official Name</label>
+                    <input 
+                      type="text"
+                      id="official_name"
+                      v-model="rankUpdateForm.official_name"
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      placeholder="Enter official name"
+                      required
+                    />
+                  </div>
+
                   <!-- Signature Pad -->
                   <div class="mt-4">
-                    <label for="signature" class="block text-sm font-medium text-gray-700">Signature</label>
-                    <div ref="signaturePadContainer" class="mt-2 border-2 border-gray-300 rounded-md"></div>
+                    <label class="block text-sm font-medium text-gray-700">Signature</label>
+                    <div ref="signaturePadContainer" class="mt-2 border-2 border-gray-300 rounded-md bg-white"></div>
                     <div class="flex justify-between mt-2">
-                      <button @click.prevent="clearSignature" class="text-sm text-red-600 hover:bg-red-50 px-3 py-1 rounded">
+                      <button 
+                        type="button"
+                        @click.prevent="clearSignature" 
+                        class="text-sm text-red-600 hover:bg-red-50 px-3 py-1 rounded"
+                      >
                         Clear Signature
                       </button>
                       <span class="text-xs text-gray-500">Sign within the box above</span>
                     </div>
-
                   </div>
 
                   <div v-if="rankUpdateError" class="mt-4 text-red-500 text-sm">{{ rankUpdateError }}</div>
@@ -226,8 +272,13 @@ import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
+import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 const props = defineProps({
+  players: {
+    type: Array,
+    default: () => []
+  },
   sport: {
     type: [Array, Object],
     required: true
@@ -280,6 +331,7 @@ const selectedVariationMatches = ref([]);
 const rankUpdateError = ref('');
 const rankUpdates = ref({});
 const selectedVariation = ref(null);
+const activeTab = ref('sports');
 
 const totalMatches = computed(() => props.sportVariations.length);
 const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);
@@ -290,11 +342,18 @@ const signaturePad = ref(null);
 
 const rankUpdateForm = useForm({
   matches: [],
+  official_name: '',
+  signature: '',
+  facilitator_id: props.facilitator?.id,
 });
 
 
 const returnToFacilitator = () => {
-  router.visit(route('facilitator.show', { id: props.facilitator.id }));
+  const currentPath = window.location.pathname;
+  const matches = currentPath.match(/sportview\/\d+\/(.+)$/);
+  if (matches && matches[1]) {
+    router.visit(route('facilitator.show', { id: matches[1] }));
+  }
 };
 
 const getVenueName = (venueId) => {
@@ -339,7 +398,6 @@ class SignaturePad {
     this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this));
     this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this));
     this.canvas.addEventListener('touchend', this.onTouchEnd.bind(this));
-    
   }
 
   onMouseDown(event) {
@@ -356,7 +414,6 @@ class SignaturePad {
 
   onMouseUp() {
     this.isDrawing = false;
-    this.onEndCallback();
   }
 
   onTouchStart(event) {
@@ -377,17 +434,8 @@ class SignaturePad {
     }
   }
 
-  isEmpty() {
-    return this.points.length === 0;
-  }
-
-  isValid() {
-    return this.points.length > 10; // Adjust this threshold as needed
-  }
-
   onTouchEnd(event) {
     event.preventDefault();
-    this.onEndCallback();
   }
 
   addPoint(x, y) {
@@ -416,12 +464,12 @@ class SignaturePad {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  isEmpty() {
-    return this.points.length === 0;
+  isValid() {
+    return this.points.length > 10;
   }
 
   toDataURL() {
-    return this.canvas.toDataURL();
+    return this.canvas.toDataURL('image/png');
   }
 }
 
@@ -528,54 +576,51 @@ const updateRanks = async () => {
     alert('Please provide a valid signature before submitting.');
     return;
   }
-  
-  const signatureData = signaturePad.value.toDataURL();
 
-  const selectedRanks = Object.values(rankUpdates.value)
-    .filter(match => match.rank !== '')
-    .map(match => match.rank.toString());
-  
-  const uniqueRanks = new Set(selectedRanks);
-  
-  if (selectedRanks.length !== uniqueRanks.size) {
-    rankUpdateError.value = 'Each team must have a unique rank.';
+  if (!rankUpdateForm.official_name) {
+    alert('Please enter your official name.');
     return;
   }
-
-  if (selectedRanks.length !== selectedVariationMatches.value.length) {
-    rankUpdateError.value = 'All teams must have a rank and points assigned.';
-    return;
-  }
-
-  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
-
-  // Create a mapping of rank to points
-  const rankToPointsMap = selectedRanks
-    .sort((a, b) => parseInt(a) - parseInt(b))
-    .reduce((acc, rank, index) => {
-      acc[rank] = sortedPoints[index] ? sortedPoints[index].points : 0;
-      return acc;
-    }, {});
-
-  rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, data]) => ({
-    id: parseInt(id),
-    rank: parseInt(data.rank),
-    points: rankToPointsMap[data.rank] || 0
-  }));
-
-  // Add signature data to the form
-  rankUpdateForm.signature = signatureData;
 
   try {
+    // Log the data being sent
+    console.log('Form data:', {
+      matches: Object.entries(rankUpdates.value).map(([id, data]) => ({
+        id: parseInt(id),
+        rank: parseInt(data.rank),
+        points: parseInt(data.points)
+      })),
+      official_name: rankUpdateForm.official_name,
+      facilitator_id: props.facilitator?.id,
+      signature: signaturePad.value.toDataURL('image/png')
+    });
+
+    // Prepare the form data
+    rankUpdateForm.signature = signaturePad.value.toDataURL('image/png');
+    rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, data]) => ({
+      id: parseInt(id),
+      rank: parseInt(data.rank),
+      points: parseInt(data.points)
+    }));
+
     await rankUpdateForm.patch(route('sport-variations.update-ranks', selectedVariation.value.id), {
-      preserveState: true,
       preserveScroll: true,
       onSuccess: () => {
         closeRankModal();
+        // Refresh the page to show updated data
+        window.location.reload();
       },
       onError: (errors) => {
         console.error('Update ranks errors:', errors);
-        rankUpdateError.value = 'Please correct the errors and try again.';
+        if (errors.signature) {
+          rankUpdateError.value = 'Please provide a valid signature.';
+        } else if (errors.official_name) {
+          rankUpdateError.value = 'Please provide your official name.';
+        } else if (errors.matches) {
+          rankUpdateError.value = 'Please ensure all ranks and points are properly assigned.';
+        } else {
+          rankUpdateError.value = errors.error || 'An error occurred while updating ranks. Please try again.';
+        }
       },
     });
   } catch (error) {
@@ -583,6 +628,7 @@ const updateRanks = async () => {
     rankUpdateError.value = 'An unexpected error occurred. Please try again.';
   }
 };
+
 const formatDateTime = (date, time) => {
   if (!date && !time) return 'Not scheduled';
   if (!date) return `Time: ${time}`;

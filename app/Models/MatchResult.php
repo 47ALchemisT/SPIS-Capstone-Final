@@ -15,6 +15,7 @@ class MatchResult extends Model
         'teamB_score',
         'winning_team_id',
         'losing_team_id',
+        'assigned_sport_id',
     ];
 
     /**
@@ -25,6 +26,11 @@ class MatchResult extends Model
         return $this->belongsTo(SportMatch::class, 'sport_match_id');
     }
 
+    public function assignedSport()
+    {
+        return $this->belongsTo(AssignedSports::class, 'assigned_sport_id');
+    }
+
     public function winning_team()
     {
         return $this->belongsTo(AssignedTeams::class, 'winning_team_id');
@@ -33,5 +39,10 @@ class MatchResult extends Model
     public function losing_team()
     {
         return $this->belongsTo(AssignedTeams::class, 'losing_team_id');
+    }
+
+    public function matchResult()
+    {
+        return $this->hasMany(FacilitatorSubmits::class, 'match_id');
     }
 }

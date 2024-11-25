@@ -1,12 +1,11 @@
 <template>
   <div class="game-schedule">
-    <h2 class="text-md font-medium mt-1 mb-4">Match Schedule</h2>
-    <div v-for="(roundMatches, round) in matchesByRound" :key="round" class="mb-8 p-5 border rounded-lg border-gray-200 bg-gray-50">
+    <div v-for="(roundMatches, round) in matchesByRound" :key="round" class="mb-8 p-5 rounded-lg bg-gray-50">
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
       <div class="flex justify-center gap-4 ">
         <div v-for="match in roundMatches" 
             :key="match.id" 
-            class="bg-white shadow rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+            class="bg-white shadow-sm rounded-lg p-4 border border-gray-200 hover:shadow transition-all duration-200">
           <div class="flex justify-between items-center mb-3">
             <div class="flex flex-col">
               <span class="font-semibold text-md">{{ match.game }}</span>
@@ -119,6 +118,20 @@
           </button>
         </div>
         <div class="p-4">
+          <!-- Add Official Name Field -->
+          <div class="mb-4">
+            <label class="block mb-2 text-sm font-medium text-gray-900">
+              Official Name
+              <input 
+                type="text"
+                v-model="scoreFormData.official_name"
+                class="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter your official name"
+                required
+              />
+            </label>
+          </div>
+
           <div class="mb-4">
             <label class="block mb-2 font-medium text-sm">
               Signature
@@ -365,12 +378,12 @@ const getResult = (match, team) => {
   const result = props.results.find(r => r.sport_match_id === match.id);
   if (!result) return '-';
   
-  if (result.teamA_score === result.teamB_score) return 'TIE';
+  if (result.teamA_score === result.teamB_score) return 'Tie';
   
   if (team === 'teamA') {
-    return result.teamA_score > result.teamB_score ? 'WIN' : 'LOSE';
+    return result.teamA_score > result.teamB_score ? 'Win' : 'Lose';
   }
-  return result.teamB_score > result.teamA_score ? 'WIN' : 'LOSE';
+  return result.teamB_score > result.teamA_score ? 'Win' : 'Lose';
 };
 
 const getResultClass = (match, team) => {
@@ -380,7 +393,7 @@ const getResultClass = (match, team) => {
   if (result.teamA_score === result.teamB_score) return 'font-medium text-blue-600';
   
   const resultText = getResult(match, team);
-  return resultText === 'WIN' ? 'font-bold text-green-600' : 'font-medium text-red-600';
+  return resultText === 'Win' ? 'font-bold text-green-600' : 'font-medium text-red-600';
 };
 
 const getStatusClass = (status) => {
@@ -417,6 +430,12 @@ const closeWinnerModal = () => {
 };
 
 const submitResult = () => {
+  // Validate official name
+  if (!scoreFormData.value.official_name.trim()) {
+    signatureError.value = 'Please provide your official name';
+    return;
+  }
+
   // Validate signature
   const canvas = signatureCanvas.value;
   const ctx = canvas.getContext('2d');
@@ -441,6 +460,7 @@ const submitResult = () => {
     winning_team_id: null,
     losing_team_id: null,
     is_draw: false,
+    official_name: scoreFormData.value.official_name, // Add the official name from scoreFormData
     signature: canvas.toDataURL('image/png')
   };
 

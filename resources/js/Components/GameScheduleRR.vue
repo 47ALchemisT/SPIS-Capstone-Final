@@ -127,6 +127,12 @@
             <label class="text-sm font-medium text-gray-900 mt-5 dark:text-white mb-2 block">
               Pick your date
             </label>
+            <div class="text-xs p-3 bg-blue-50  text-blue-700 rounded-lg border mb-3 border-blue-400">
+              <h1 class="font-semibold mb-1">
+                Note
+              </h1>
+              <p>All the time that is available can be selected, the time that are not available will be grayed out and cannot be selected. This is a first come first serve, so make sure you set the time correctly</p>
+            </div>
             <div class="mx-auto sm:mx-0 flex justify-center mb-5">
               <input
                 type="date"
@@ -136,10 +142,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <label class="text-sm font-medium text-gray-900 dark:text-white mb-2 block">
-              Pick your time
-            </label>
-            <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
+            <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-4">
               <li v-for="slot in availableTimeSlots" :key="slot.value">
                 <input 
                   type="radio" 

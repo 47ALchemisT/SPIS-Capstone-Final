@@ -1,121 +1,228 @@
 <template>
-    <AppLayout :facilitator="facilitator">
-      <Head title="Facilitator Dashboard" />
-      <div class="">
-        
-        <h1 class="text-xl font-bold">Facilitator Dashboard</h1>
-        
-        <!--COntent-->
-        <div class="grid grid-cols-3 gap-4 my-3">
-          <div class="ring-1 ring-gray-300 rounded-lg p-6">
-            <p class="text-sm text-gray-700">Assigned Sports</p>
-            <p class="text-3xl font-medium mt-4">{{ sports.length }}</p>
+  <AppLayout :facilitator="facilitator">
+    <Head title="Facilitator Dashboard" />
+    <div class="container px-4">
+      <!-- Tabs Navigation -->
+      <div class="sticky top-[4rem] py-2 z-40 bg-white/80 backdrop-blur-sm">
+        <nav class="flex relative justify-between items-center py-1">
+          <div class="">
+            <h1 class="text-lg font-medium text-gray-700">Facilitator Dashboard</h1>
           </div>
-          <div class="ring-1 ring-gray-300 rounded-lg p-6">
-            <p class="text-sm text-gray-700">Completed Sports</p>
-            <p class="text-3xl font-medium mt-4">{{ completedSports.length }}</p>
-          </div>
-          <div class="ring-1 ring-gray-300 rounded-lg p-6">
-            <p class="text-sm text-gray-700">Incomplete Sports</p>
-            <p class="text-3xl font-medium mt-4">{{ incompleteSports.length }}</p>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center">
-          <!-- Search Input -->
-          <div class="mb-4 pt-3 flex gap-3 items-center">
-            <div class="relative">
-          <!-- Search Icon (Left) -->
-            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <i class="fas fa-search"></i>
-            </span>
-
-            <!-- Input Field -->
-              <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search sport..."
-              class="w-64 pl-10 pr-10 py-2 bg-white shadow-sm border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-              >
-
-            <!-- Clear Button (Right) -->
-              <button
-              v-if="searchQuery"
-              @click="clearSearch"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-              >
-              <i class="fas fa-times"></i>
-              </button>
+          <div class="flex gap-2 rounded-lg">
+            <div class="flex gap-2 rounded-lg">
+              <button 
+                v-for="tab in ['home', 'sports', 'What to Know']"
+                  :key="tab"
+                  @click="activeTab = tab"
+                  :class="[
+                    'px-5 py-2 text-sm',
+                     activeTab === tab
+                      ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-lg'
+                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 font-medium border-transparent'
+                    ]"
+                    >
+                      {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                </button>
             </div>
-            <h2 class="text-md font-meedium">Assigned Sports</h2>
           </div>
-          <button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-            Sort
-          </button>
-        </div>
+        </nav>
+      </div>
 
+      <!-- Tabs Content -->
+      <div>
+        <div v-if="activeTab === 'home'">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 py-5">
+            <div class="bg-white rounded-lg flex flex-col justify-between">
+              <div>
+                <p class="text-2xl text-gray-800 mb-1">Welcome, <span class="font-semibold">{{ facilitator.student.first_name }} {{ facilitator.student.last_name }}</span> !</p>
+                <p class="text-md text-gray-600">It's great to see you in the Facilitator Dashboard</p>
+              </div>
 
+              <div class="w-96 h-96">
+                <img class="w-full h-full object-cover rounded-lg" src="/resources/assets/facilitator.jpg" alt="Facilitator">
+              </div>
 
-        <div v-if="sports.length > 0">
-          <ul class="space-y-4">
-            <li v-for="sport in sports" :key="sport.id" class="bg-white ring-1 ring-gray-300 rounded-lg p-6 hover:bg-gray-50 hover:ring-gray-400 transition">
-              <div class="flex justify-between">
-                <div>
-                  <h3 class="text-xl font-medium mb-1">{{ sport.sport.name }} {{ sport.categories }}</h3>
-                  <div class="flex items-center gap-2 text-sm text-gray-500">
-                    <span>{{ sport.setup }}</span>
-                    <span class="text-xs">|</span>
-                    <span>{{ sport.type }}</span>
+            </div>
+            <div class="bg-white flex flex-col justify-between rounded-lg h-full">
+              <div>
+                <h2 class="text-md font-medium text-gray-800">Task List</h2>
+                <p class="text-xs text-gray-600 mb-4">You are assigned to manage these sports</p>
+                <div class="overflow-y-auto h-64">
+                  <div v-for="sport in assignedSports" :key="sport.id" class="flex items-center px-4 py-2 hover:bg-gray-50 rounded-md transition-colors duration-150">
+                    <div class="w-2.5 h-2.5 rounded-full mr-3" :class="{
+                      'bg-green-500': sport.status === 'completed',
+                      'bg-gray-400': sport.status === 'pending'
+                    }"></div>
+                    <span class="text-sm text-gray-700">{{ sport.sport.name }} {{ sport.categories }}</span>
                   </div>
                 </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-10">
+                <div class=" col-span-2 w-full py-4">
+                  <h3 class="text-sm font-medium text-gray-700 mb-2">Task Progress</h3>
+                  <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                    <div class="bg-blue-600 h-2.5 rounded-full" :style="{ width: `${progressPercentage}%` }"></div>
+                  </div>
+                  <p class="text-xs text-gray-600">{{ completedSports.length }} of {{ assignedSports.length }} tasks completed</p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-6">
+                  <p class="text-sm text-blue-600 mb-3 font-medium">Assigned Sports</p>
+                  <p class="text-2xl font-bold text-blue-700">{{ assignedSports.length }}</p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-6">
+                  <p class="text-sm text-blue-600 mb-3 font-medium">Completed Sports</p>
+                  <p class="text-2xl font-bold text-blue-700">{{ completedSports.length }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <div>
+        <div v-if="activeTab === 'sports'">
+          <div class="py-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+              <div class="relative w-full sm:w-64 mb-4 sm:mb-0">
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search sport..."
+                  class="w-full pl-10 pr-10 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                >
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <button
+                    v-if="searchQuery"
+                    @click="clearSearch"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  >
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+              </div>
+              <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                Sort
+              </button>
+            </div>
+
+            <div v-if="filteredSports.length > 0" class="space-y-4">
+              <div v-for="sport in filteredSports" :key="sport.id" class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-600">{{ sport.sport.name }} {{ sport.categories }}</h3>
+                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                      <span>{{ sport.setup }}</span>
+                      <span class="text-xs">•</span>
+                      <span>{{ sport.type }}</span>
+                      <span class="text-xs">•</span>
+                      <span :class="{
+                        'text-green-600': sport.status === 'Completed',
+                        'text-yellow-600': sport.status === 'In Progress',
+                        'text-gray-600': sport.status === 'Pending'
+                      }">{{ sport.status }}</span>
+                    </div>
+                  </div>
                   <button 
-                    type="button" 
-                    class="text-white flex items-center gap-2 bg-gray-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 transition duration-300 ease-in-out"
                     @click="navigateToSportView(sport.id)"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 flex items-center gap-2"
                   >
                     View Sport
-                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M17.92 11.62a1 1 0 0 0-.21-.33l-5-5a1 1 0 0 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l5-5a1 1 0 0 0 .21-.33a1 1 0 0 0 0-.76"/></svg>
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
                   </button>
                 </div>
               </div>
-            </li>
-          </ul>
+            </div>
+            <p v-else class="text-gray-500 text-center py-8">No sports assigned yet.</p>
+          </div>
         </div>
-        <p v-else class="text-gray-500">No sports assigned yet.</p>
+
+        <div v-if="activeTab === 'What to Know'">
+        </div>
       </div>
-    </AppLayout>
-  </template>
-  
-  <script setup>
-  import { Head, router } from '@inertiajs/vue3';
-  import { ref, computed } from 'vue';
-  import AppLayout from '@/Layout/DashboardLayoutF.vue';
-  
-  const props = defineProps({
-    facilitator: {
-      type: Object,
-      required: true
-    },
-    sports: {
-      type: Array,
-      default: () => []
-    },
-  });
 
-  const completedSports = computed(() => 
-    props.sports.filter(sport => sport.status === 'Completed')
-  );
+    </div>
+  </AppLayout>
+</template>
 
-  const incompleteSports = computed(() => 
-    props.sports.filter(sport => sport.status !== 'Completed')
+<script setup>
+import { Head, router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import AppLayout from '@/Layout/DashboardLayoutF.vue';
+
+const props = defineProps({
+  facilitator: {
+    type: Object,
+    required: true
+  },
+  assignedSports: {
+    type: Array,
+    default: () => []
+  },
+  palakasan: {
+    type: Object,
+    default: () => ({})
+  } 
+});
+
+const searchQuery = ref('');
+const activeTab = ref('home');  // Default to "Details" 
+
+const filteredSports = computed(() => {
+  if (props.palakasan?.status !== 'live') return [];
+  
+  if (!searchQuery.value) return props.assignedSports;
+  
+  const query = searchQuery.value.toLowerCase();
+  return props.assignedSports.filter(sport => 
+    sport.sport.name.toLowerCase().includes(query) ||
+    sport.categories.toLowerCase().includes(query) ||
+    sport.setup.toLowerCase().includes(query) ||
+    sport.type.toLowerCase().includes(query)
   );
-    
-  const navigateToSportView = (sportId) => {
-    router.visit(route('facilitator-sportview.index', { 
-      sport: sportId, 
-      facilitator: props.facilitator.id 
-    }));
-  };
-  </script>
+});
+
+const completedSports = computed(() => 
+  props.assignedSports.filter(sport => sport.status === 'completed')
+);
+
+const progressPercentage = computed(() => {
+  if (props.assignedSports.length === 0) return 0;
+  return Math.round((completedSports.value.length / props.assignedSports.length) * 100);
+});
+
+const navigateToSportView = (sportId) => {
+  const url = window.location.pathname;
+  const encryptedFacilitatorId = url.split('/').pop();
+  
+  router.visit(`/sportview/${sportId}/${encryptedFacilitatorId}`);
+};
+
+const clearSearch = () => {
+  searchQuery.value = '';
+};
+</script>
+
+<style scoped>
+.space-y-2 {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.space-y-2::-webkit-scrollbar {
+  width: 6px;
+}
+
+.space-y-2::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.space-y-2::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}
+</style>
+

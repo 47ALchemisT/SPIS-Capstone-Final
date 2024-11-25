@@ -12,19 +12,45 @@
             </div>
             
             <!--Content-->
-            <div class="mt-3 space-y-3">
+            <div class="mt-3 space-y-4">
                 <!--Utility-->
                 <div class="utility">
                     <div class="flex justify-between items-center">
                         <div class="search flex space-x-2 items-center">
-      
+                             <!-- Search Input -->
+                            <div class="relative">
+                                <!-- Search Icon (Left) -->
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    <i class="fas fa-search"></i>
+                                </span>
 
-                        </div>
+                                <!-- Input Field -->
+                                <input
+                                    v-model="searchQuery"
+                                    type="text"
+                                    placeholder="Search college..."
+                                    class="w-64 pl-10 pr-10 py-2 bg-white shadow-sm border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                                >
+
+                                <!-- Clear Button (Right) -->
+                                <button
+                                    v-if="searchQuery"
+                                    @click="clearSearch"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                >
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <p class="text-2xl text-gray-400 mb-1">|</p>
+                            <div class="text-sm font-medium text-gray-700">
+                                <p>Number of sports: <span>{{ sports.length }}</span></p>
+                            </div>                       
+                         </div>
                         <!--Buttons-->
                         <div class="flex items-center space-x-2.5">
-                            <button @click="openModal(false)" class=" bg-blue-800 text-white py-2 px-3 rounded-lg text-sm font-medium shadow hover:bg-blue-800/90 transition-colors" >
-                                <i class="fa-solid fa-square-plus mr-1"></i>   
-                                Sport                             
+                            <button @click="openModal(false)" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
+                                Sport
                             </button>
                         </div>
                     </div>
@@ -34,11 +60,11 @@
                 <!--Main Content, List of Cards-->
                 <div>
                     <div  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-4">
-                        <div v-for="sport in sports" :key="sport.id" class="bg-white rounded-lg shadow hover:shadow-lg transition-all ring-1 ring-gray-300">
+                        <div v-for="sport in sports" :key="sport.id" class="bg-white rounded-lg shadow  transition-all ring-1 ring-gray-300 hover:ring-blue-400 hover:bg-blue-50 transition group">
                             <div class="p-4 relative">
                                 <div class="absolute right-3 top-3">
                                     <Menu as="div" class="relative inline-block text-left">
-                                        <MenuButton class="inline-flex items-center justify-center w-full rounded-lg  px-2.5 py-2.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" >
+                                        <MenuButton class="inline-flex items-center justify-center w-full rounded-lg  px-2.5 py-2.5 text-sm font-medium text-gray-700 " >
                                             <i class="fa-solid fa-ellipsis"></i>                                    
                                         </MenuButton>
                                         <transition
@@ -67,17 +93,13 @@
                                         </transition>
                                     </Menu>
                                 </div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <h2 class="text-gray-800 text-2xl font-bold">{{ sport.name }}</h2>
-                                    <i class="fa-solid fa-cube rounded-full text-blue-900 text-xl"></i>
+                                <svg class="h-8 w-8 mb-2 group-hover:text-blue-600 transition-colors" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.035 15.096a6.5 6.5 0 0 1-2.154 1.128q.118.745.119 1.524a8.003 8.003 0 0 0-.12-15.526A8.003 8.003 0 0 0 6.252 8q.778 0 1.523.119a6.5 6.5 0 0 1 1.128-2.154zm1.06-1.06L15.062 10l.761-.761a4.23 4.23 0 0 0 2.428.76a4.23 4.23 0 0 0 2.22-.624q.03.308.03.625a6.47 6.47 0 0 1-1.404 4.035M16.225 3.89c.66.24 1.27.585 1.811 1.014l-2.187 2.187A2.74 2.74 0 0 1 15.5 5.75c0-.717.274-1.37.724-1.86M14.76 8.178l-.76.761l-4.035-4.035a6.47 6.47 0 0 1 4.66-1.374A4.23 4.23 0 0 0 14 5.75c0 .903.281 1.74.761 2.428m5.349-.402a2.74 2.74 0 0 1-1.86.724c-.487 0-.944-.127-1.34-.349l2.186-2.186a6.5 6.5 0 0 1 1.014 1.81M4.25 10.5a.75.75 0 0 0-.75.75v2a7.25 7.25 0 0 0 7.25 7.25h2a.75.75 0 0 0 .75-.75v-2a7.25 7.25 0 0 0-7.25-7.25zM2 11.25A2.25 2.25 0 0 1 4.25 9h2A8.75 8.75 0 0 1 15 17.75v2A2.25 2.25 0 0 1 12.75 22h-2A8.75 8.75 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/></svg>
+                                <div class="flex items-center justify-between mb-2">
+
+                                    <h2 class="text-gray-800 text-xl font-semibold">{{ sport.name }}</h2>
                                 </div>
 
                                 <p class="text-gray-600 text-sm mb-4">{{ sport.description }}</p>
-                                <div class="flex flex-wrap bottom-0 gap-2">
-                                    <span v-for="type in sport.types" :key="type" class="bg-blue-100 text-blue-600 text-xs font-medium px-2.5 py-0.5 rounded">
-                                        {{ type }}
-                                    </span>
-                                </div>
                             </div>
                         </div>
                     </div>

@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\AssignedSports;
 use App\Models\AssignedTeams;
 use App\Models\College;
+use App\Models\FfoFacilitatorSubmits;
 use App\Models\Palakasan;
 use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\SportsVariations;
 use App\Models\SportsVariationsMatches;
+use App\Models\StudentPlayer;
 use App\Models\StudentAccount;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -37,6 +41,9 @@ class FreeForAllController extends Controller
             $sportVariationMatches = SportsVariationsMatches::all();
             $latestPalakasan = Palakasan::latest()->first();
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+            $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
 
     
             return Inertia::render('SSCAdmin/MatchSetup/FreeForAll', [
@@ -49,13 +56,18 @@ class FreeForAllController extends Controller
                 'colleges' => $colleges,
                 'sportVariationMatches' => $sportVariationMatches,
                 'points' => $points,
-                'venueRecords' => $venueRecords
+                'venueRecords' => $venueRecords,
+                'players' => $players
+
             ]);
 
     }
 
-    public function facilitatorIndex(AssignedSports $assignedSports, StudentAccount $facilitator)
+    public function facilitatorIndex(AssignedSports $assignedSports, $encryptedFacilitatorId)
     {
+        try {
+            $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
+            $facilitator = StudentAccount::with('student')->findOrFail($facilitatorId);
 
             $points = Points::all();
             $colleges = College::all();
@@ -71,6 +83,9 @@ class FreeForAllController extends Controller
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
             $majorPoints = Points::where('type', 'Major')->get();
             $minorPoints = Points::where('type', 'Minor')->get();
+            $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
 
     
             return Inertia::render('Facilitator/SportSetup/FacilitatorFreeForAll', [
@@ -86,9 +101,14 @@ class FreeForAllController extends Controller
                 'venueRecords' => $venueRecords,
                 'facilitator' => $facilitator,
                 'majorPoints' => $majorPoints,
-                'minorPoints' => $minorPoints
+                'minorPoints' => $minorPoints,
+                'players' => $players
+
             ]);
 
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'An unexpected error occurred while decrypting the facilitator ID.');
+        }
     }
 
     public function store(Request $request)
@@ -104,6 +124,9 @@ class FreeForAllController extends Controller
             ]);
     
             DB::beginTransaction();
+
+            // Get the assigned sport to get the palakasan_sport_id
+            $assignedSport = AssignedSports::findOrFail($validated['assigned_sport_id']);
     
             $sportVariation = SportsVariations::create([
                 'assigned_sport_id' => $validated['assigned_sport_id'],
@@ -114,8 +137,11 @@ class FreeForAllController extends Controller
                 'status' => $validated['status'],
             ]);
     
-            // Automatically generate teams for the new sport variation
-            $teams = AssignedTeams::pluck('id')->toArray();
+            // Only get teams for the current Palakasan event
+            $teams = AssignedTeams::where('palakasan_id', $assignedSport->palakasan_sport_id)
+                ->pluck('id')
+                ->toArray();
+
             foreach ($teams as $teamId) {
                 SportsVariationsMatches::create([
                     'sport_variation_id' => $sportVariation->id,
@@ -141,7 +167,7 @@ class FreeForAllController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                ->with('error', 'An unexpected error occurred while creating the sport variation. Please try again.')
+                ->with('error', 'An unexpected error occurred while creating the sport variation.')
                 ->withInput();
         }
     }
@@ -154,36 +180,41 @@ class FreeForAllController extends Controller
                 'teams' => 'required|array',
                 'teams.*' => 'exists:assigned_teams,id',
             ]);
-    
+
             DB::beginTransaction();
-    
+
+            $sportVariation = SportsVariations::findOrFail($validated['sport_variation_id']);
             $sportVariationId = $validated['sport_variation_id'];
-    
+
             // Delete existing teams for this sport variation
             SportsVariationsMatches::where('sport_variation_id', $sportVariationId)->delete();
-    
-            // Create new entries for each team
+
+            // Only create entries for the teams that were specifically selected
             foreach ($validated['teams'] as $teamId) {
-                SportsVariationsMatches::create([
-                    'sport_variation_id' => $sportVariationId,
-                    'sport_variation_team_id' => $teamId,
-                    'rank' => null,
-                    'points' => null,
-                ]);
+                // Verify that this team belongs to the correct Palakasan event
+                $team = AssignedTeams::where('id', $teamId)
+                    ->where('palakasan_id', $sportVariation->assignedSport->palakasan_sport_id)
+                    ->first();
+
+                if ($team) {
+                    SportsVariationsMatches::create([
+                        'sport_variation_id' => $sportVariationId,
+                        'sport_variation_team_id' => $teamId,
+                        'rank' => null,
+                        'points' => null,
+                    ]);
+                }
             }
-    
+
             DB::commit();
-    
             return redirect()->back()->with('success', 'Teams generated and saved successfully');
-    
+
         } catch (ValidationException $e) {
             DB::rollBack();
             return redirect()->back()->withErrors($e->errors())->withInput();
-    
         } catch (QueryException $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Database error occurred while generating teams.')->withInput();
-    
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'An unexpected error occurred while generating teams.')->withInput();
@@ -262,50 +293,75 @@ class FreeForAllController extends Controller
     public function updateRanks(Request $request, SportsVariations $sportVariation)
     {
         try {
+            Log::info('Rank update request received', ['request' => $request->all()]);
+            
             $validated = $request->validate([
                 'matches' => 'required|array',
                 'matches.*.id' => 'required|exists:sports_variations_matches,id',
                 'matches.*.rank' => 'required|integer|min:1',
-                'matches.*.points' => 'required|integer|min:1'
+                'matches.*.points' => 'required|integer|min:0',
+                'signature' => 'required|string',
+                'official_name' => 'required|string',
+                'facilitator_id' => 'required|exists:student_accounts,id'
             ]);
 
             DB::beginTransaction();
 
-            foreach ($validated['matches'] as $match) {
-                SportsVariationsMatches::where('id', $match['id'])
-                    ->where('sport_variation_id', $sportVariation->id)
-                    ->update([
+            try {
+                // Create facilitator submit record
+                $submitRecord = FfoFacilitatorSubmits::create([
+                    'facilitator_id' => $validated['facilitator_id'],
+                    'match_id' => $sportVariation->id,
+                    'official_name' => $validated['official_name'],
+                    'signature' => $validated['signature']
+                ]);
+
+                Log::info('Created facilitator submit record', ['record_id' => $submitRecord->id]);
+
+                // Update match ranks and points
+                foreach ($validated['matches'] as $match) {
+                    $updateResult = SportsVariationsMatches::where('id', $match['id'])
+                        ->update([
+                            'rank' => $match['rank'],
+                            'points' => $match['points']
+                        ]);
+                    
+                    Log::info('Updated match ranking', [
+                        'match_id' => $match['id'],
                         'rank' => $match['rank'],
-                        'points' => $match['points']  // Add points update
+                        'points' => $match['points'],
+                        'update_result' => $updateResult
                     ]);
-            }
+                }
 
-            // Update the variation status to completed if it wasn't already
-            if ($sportVariation->status === 'pending') {
+                // Update sport variation status to completed
                 $sportVariation->update(['status' => 'completed']);
+                Log::info('Updated sport variation status', ['variation_id' => $sportVariation->id]);
+
+                DB::commit();
+                return response()->json(['message' => 'Ranks updated successfully']);
+
+            } catch (Exception $e) {
+                DB::rollBack();
+                Log::error('Error in database transaction', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
             }
-
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Rankings updated successfully');
 
         } catch (ValidationException $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->withErrors($e->errors())
-                ->withInput();
-
-        } catch (QueryException $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->with('error', 'Database error occurred while updating rankings.')
-                ->withInput();
-
+            Log::warning('Validation failed', ['errors' => $e->errors()]);
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (Exception $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->with('error', 'An unexpected error occurred while updating rankings.')
-                ->withInput();
+            Log::error('Unexpected error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'error' => 'An error occurred while updating ranks',
+                'details' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         }
     }
 

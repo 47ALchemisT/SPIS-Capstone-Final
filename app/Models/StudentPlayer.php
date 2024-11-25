@@ -14,15 +14,22 @@ class StudentPlayer extends Model
 
     protected $fillable = [
         'student_id',
-        'student_assigned_sport_id'
+        'student_assigned_sport_id',
+        'assigned_team_id'
     ];
 
     public function student()
     {
         return $this->belongsTo(Student::class, 'student_id');
     }
+
     public function assignedSport()
     {
         return $this->belongsTo(AssignedSports::class, 'student_assigned_sport_id');
+    }
+
+    public function assignedTeam()
+    {
+        return $this->belongsTo(AssignedTeams::class, 'assigned_team_id');
     }
 }

@@ -2,37 +2,40 @@
     <Head title="College"/>
     <AppLayout :facilitator="facilitator">
         <template v-slot:default>
-            <div class="flex items-center gap-2">
-                    <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+            <div class="flex items-center justify-between gap-2 pt-4">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                     <div>
                         <button 
                             @click="returnToFacilitator" 
                             type="button" 
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
                     </div>
-            </div>
-            <!-- Progress Bar -->
-            <div class="flex mt-2 flex-col">
-                <div class="flex items-center mb-2">
-                    <h2 class="text-xs text-gray-600">Sport Progress  </h2>
-                    <h2 class="text-xs text-gray-600 px-2">:</h2>
-                    <span class="text-xs font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
                 </div>
-                <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                    <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
+
+                <div class="flex items-center text-gray-600 gap-2 ">
+                    <p class="text-sm"> {{ sport.setup }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.type }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.status }}</p>
                 </div>
-            </div>
-            <div class="flex text-gray-600 items-center gap-2 mt-2">
-                <p class="text-sm"> {{ sport.setup }}</p>
-                <p class="text-xs">|</p>
-                <p class=" text-sm">{{ sport.type }}</p>
-                <p class="text-xs">|</p>
-                <p class=" text-sm">{{ sport.status }}</p>
-            </div>
+                
+                <!-- Progress Bar -->
+                <div class="flex mt-3 flex-col">
+                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
+                    </div>
+                    <div class="flex items-center mt-2">
+                        <h2 class="text-xs text-gray-600">Sport Progress  </h2>
+                        <h2 class="text-xs text-gray-600 px-2">:</h2>
+                        <span class="text-xs font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
+                    </div>
+                </div>
+
             <Toast ref="toastRef" />
             <div v-if="tournamentWinner" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h2 class="text-lg font-semibold text-green-800">Game Winner</h2>
@@ -47,25 +50,25 @@
                 </button>
             </div>
 
-            <!-- Tabs Navigation -->
+            <!--tab navigation-->
             <nav class="flex relative justify-between mt-4  items-center">
-                <div class="bg-gray-100 flex gap-2 rounded-lg p-1.5">
-                    <div class="bg-gray-100 flex gap-2 rounded-lg">
-                        <button 
-                            v-for="tab in ['matches', 'standing', 'brackets', 'players']"
-                            :key="tab"
-                            @click="activeTab = tab"
-                            :class="[
-                            'px-5 py-1 text-sm',
-                            activeTab === tab
-                                ? 'text-gray-800 ring-1 ring-gray-300 bg-white rounded-md'
-                                : 'text-gray-500 hover:text-gray-700 border-transparent'
-                            ]"
-                        >
-                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                        </button>
+                    <div class="flex gap-2 rounded-lg ">
+                        <div class=" flex gap-2 rounded-lg">
+                            <button 
+                                v-for="tab in ['matches', 'standing', 'brackets', 'players']"
+                                :key="tab"
+                                @click="activeTab = tab"
+                                :class="[
+                                'px-5 py-2 text-sm',
+                                activeTab === tab
+                                    ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
+                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
+                                ]"
+                            >
+                                {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                            </button>
                         </div>
-                </div>
+                    </div>
             </nav>
 
             <div class="mt-4">
@@ -136,7 +139,7 @@
                     </div>
                 </div>
                 <div v-if="activeTab === 'players'">
-                    <!--to be displayed-->
+                    <PlayersDisplay class="mt-1" :players="players" :teams="teams" />
                 </div>
             </div>
 
@@ -205,6 +208,7 @@ import AppLayout from '@/Layout/DashboardLayoutF.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/Facilitator/FGameSchedule.vue';
 import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
+import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 
 const props = defineProps({
@@ -217,6 +221,7 @@ const props = defineProps({
     allMatches: Array,
     venueRecords: Array,
     facilitator: Object,
+    players: Array,
     majorPoints: {
       type: Array,
       default: () => []
@@ -249,7 +254,14 @@ watch(
 const activeTab = ref('matches');
 
 const returnToFacilitator = () => {
-  router.visit(route('facilitator.show', { id: props.facilitator.id }));
+  const currentPath = window.location.pathname;
+  // Extract everything after "sportview/NUMBER/"
+  const matches = currentPath.match(/sportview\/\d+\/([^/]+)$/);
+  if (matches && matches[1]) {
+    const encryptedId = matches[1];
+    // Use the encrypted ID directly without any modification
+    router.visit(route('facilitator.show', { id: encryptedId }));
+  }
 };
 
 
@@ -293,7 +305,7 @@ const getMatchResult = (matchId) => {
 
 const getTeamBackgroundColor = (matchId, teamId) => {
     const result = getMatchResult(matchId);
-    if (!result || !teamId) return 'bg-gray-200';
+    if (!result || !teamId) return 'bg-gray-200'
 
     if (result.winning_team_id === teamId) {
         return 'bg-green-200 text-green-600';

@@ -8,7 +8,7 @@
                 <h1 class="text-sm font-normal text-gray-700">List of venue that can be used for palakasan sports</h1>
             </div>
             <!--Content-->
-            <div class="mt-3 space-y-3">
+            <div class="mt-3 space-y-4">
                 <!--Utility-->
                 <div class="utility">
                     <div class="flex justify-between items-center">
@@ -45,9 +45,9 @@
                         </div>
                         <!--Buttons-->
                         <div class="flex items-center space-x-2.5">
-                            <button @click="openModal(false)" class=" bg-blue-800 text-white py-2 px-3 rounded-lg text-sm font-medium shadow hover:bg-blue-800/90 transition-colors">
-                                <i class="fa-solid fa-square-plus mr-1"></i>    
-                                Venue                             
+                            <button @click="openModal(false)" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
+                                Venue
                             </button>
                         </div>
                     </div>
@@ -56,11 +56,11 @@
                 <!--Main Content, List of Venue Cards-->
                 <div v-if="filteredVenues.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
                     <!-- Venue Card -->
-                    <div v-for="venue in filteredVenues" :key="venue.id" class="bg-white rounded-lg ring-1 ring-gray-300 shadow overflow-hidden transition-all duration-300 hover:shadow-lg">
+                    <div v-for="venue in filteredVenues" :key="venue.id" class="bg-white rounded-lg ring-1 ring-gray-300 overflow-hidden transition-all duration-300 hover:ring-blue-400 hover:bg-blue-50 group">
                         <div class="relative p-6">
                             <div class="absolute right-3 top-3">
                                 <Menu as="div" class="relative inline-block text-left">
-                                    <MenuButton class="inline-flex items-center justify-center w-full rounded-lg  px-2.5 py-2.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" >
+                                    <MenuButton class="inline-flex items-center justify-center w-full rounded-lg  px-2.5 py-2.5 text-sm font-medium text-gray-700 " >
                                         <i class="fa-solid fa-ellipsis"></i>                                    
                                     </MenuButton>
                                     <transition
@@ -89,11 +89,13 @@
                                     </transition>
                                 </Menu>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ venue.name }}</h3>
+                            <svg class="h-8 w-8 mb-4 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M22 10.5v-.783c0-1.94 0-2.909-.586-3.512c-.586-.602-1.528-.602-3.414-.602h-2.079c-.917 0-.925-.002-1.75-.415L10.84 3.521c-1.391-.696-2.087-1.044-2.828-1.02S6.6 2.918 5.253 3.704l-1.227.716c-.989.577-1.483.866-1.754 1.346C2 6.246 2 6.83 2 7.999v8.217c0 1.535 0 2.303.342 2.73c.228.285.547.476.9.54c.53.095 1.18-.284 2.478-1.042c.882-.515 1.73-1.05 2.785-.905c.884.122 1.705.68 2.495 1.075M8 2.5v15m7-12v4"/><path d="M17.5 12c2.435 0 4.5 2.017 4.5 4.463c0 2.485-2.098 4.23-4.036 5.415a.94.94 0 0 1-.927 0C15.102 20.681 13 18.957 13 16.463C13 14.016 15.065 12 17.5 12m0 4.5h.009"/></g></svg>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-1.5">{{ venue.name }}</h3>
                             <p class="text-gray-600 text-sm mb-4">{{ venue.description }}</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-blue-600">
-                                    <i class="fas fa-map-marker-alt mr-2"></i>{{ venue.location }}
+                                <span class="text-xs flex items-center font-medium text-blue-600 px-2 py-1 bg-blue-100 rounded-md group-hover:bg-blue-200">
+                                    <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.325q-.35 0-.7-.125t-.625-.375Q9.05 19.325 7.8 17.9t-2.087-2.762t-1.275-2.575T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 1.125-.437 2.363t-1.275 2.575T16.2 17.9t-2.875 2.925q-.275.25-.625.375t-.7.125M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12"/></svg>                                    
+                                    {{ venue.location }}
                                 </span>
                             </div>
                         </div>

@@ -9,13 +9,17 @@ use App\Models\Palakasan;
 use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\StudentAccount;
+use App\Models\StudentPlayer;
 use App\Models\Venue;
 use App\Models\TeamStanding;
 use App\Models\UsedVenueRecord;
+use App\Models\FacilitatorSubmits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Crypt;
+
 
 class RoundRobinController extends Controller
 {
@@ -32,6 +36,9 @@ class RoundRobinController extends Controller
         $standings = TeamStanding::where('assigned_sport_id', $assignedSports->id)
                                  ->get();
         $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+        ->where('student_assigned_sport_id', $assignedSports->id)
+        ->get();
 
 
         return Inertia::render('SSCAdmin/MatchSetup/RoundRobin', [
@@ -43,13 +50,17 @@ class RoundRobinController extends Controller
             'venues' => $venues,
             'standings' => $standings,
             'allMatches' => $allMatches,
-            'venueRecords' => $venueRecords
+            'venueRecords' => $venueRecords,
+            'players' => $players
 
         ]);
     }   
 
-    public function facilitatorIndex(AssignedSports $assignedSports, StudentAccount $facilitator)
+    public function facilitatorIndex(AssignedSports $assignedSports, $encryptedFacilitatorId)
     {
+        $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
+        $facilitator = StudentAccount::with('student')->findOrFail($facilitatorId);
+
         $venues = Venue::all();
         $allMatches = SportMatch::all();
         $assignedSports->load('sport');
@@ -64,6 +75,9 @@ class RoundRobinController extends Controller
 
         $majorPoints = Points::where('type', 'Major')->get();
         $minorPoints = Points::where('type', 'Minor')->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+        ->where('student_assigned_sport_id', $assignedSports->id)
+        ->get();
 
 
         return Inertia::render('Facilitator/SportSetup/FacilitatorRoundRobin', [
@@ -78,7 +92,8 @@ class RoundRobinController extends Controller
             'venueRecords' => $venueRecords,
             'facilitator' => $facilitator,
             'majorPoints' => $majorPoints,
-            'minorPoints' => $minorPoints
+            'minorPoints' => $minorPoints,
+            'players' => $players
 
         ]);
     }  
@@ -256,6 +271,15 @@ class RoundRobinController extends Controller
                     'losing_team_id' => $request->losing_team_id,
                 ]
             );
+
+            // Store facilitator submission
+            FacilitatorSubmits::create([
+                'facilitator_id' => auth()->user()->id,
+                'match_id' => $result->id,
+                'official_name' => $request->official_name,
+                'signature' => $request->signature,
+
+            ]);
 
             $match->update(['status' => 'completed']);
 

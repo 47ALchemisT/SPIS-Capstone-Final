@@ -1,12 +1,10 @@
 <template>
     <div class="bg-white rounded-lg overflow-hidden">
-      <div class="">
-        <h2 class="text-md font-medium mt-1 text-gray-800">Team Standings</h2>
-      </div>
-      <div class="mt-4">
+
+      <div>
         <table class="w-full">
           <thead>
-            <tr class="text-left text-sm font-medium bg-gray-100 text-gray-500 uppercase tracking-wider">
+            <tr class="text-left text-sm font-medium bg-gray-100 text-gray-700">
               <th class="p-3">Teams</th>
               <th class="p-3 text-center">Wins</th>
               <th class="p-3 text-center">Losses</th>
