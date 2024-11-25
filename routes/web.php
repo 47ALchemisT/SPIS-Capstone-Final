@@ -136,6 +136,10 @@ Route::get('/cshdashboard', function () {
 });
 
 
+Route::get('/landing', function () {
+    return Inertia::render('SportsLandingPage/SportsLanding');
+});
+
 
 
 
