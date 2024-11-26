@@ -86,4 +86,9 @@ class AssignedTeams extends Model
      {
          return $this->hasMany(ComheadColleges::class, 'assigned_team_id');
      }
+
+     public function matchResults()
+     {
+         return $this->hasMany(MatchResult::class, 'team_id', 'id');
+     }
 }
