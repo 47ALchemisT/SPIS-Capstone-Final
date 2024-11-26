@@ -1,16 +1,16 @@
 <template>
+   <Head title="Landing" />
   <div>
     <!-- Navigation -->
-    <nav id="mainNav" class="bg-white border-gray-200 dark:bg-gray-900 shadow-2xl fixed top-0 w-full z-50">
+    <nav id="mainNav" class="bg-white border-gray-200 dark:bg-gray-900 shadow-2xl fixed top-0 w-full z-50 transition-transform duration-300" :class="{ '-translate-y-full': !showNav }">
       <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
         <a href="#" class="flex items-center">
-          <img src="../img/msun.png" class="w-12 h-12 rounded-full mr-3" alt="Logo">
-          <img src="../img/logo.jpg" class="w-12 h-12 rounded-full mr-3" alt="Logo">
-          <span class="text-2xl font-bold dark:text-white">Supreme Student Council: Palakasan 2024</span>
+          <img src="/resources/assets/logoMSU.png" class="w-12 h-12 rounded-full mr-3" alt="Logo">
+          <img src="/resources/assets/Logo.png" class="w-12 h-12 rounded-full mr-3" alt="Logo">
+<span class="text-2xl font-bold dark:text-white">Supreme Student Council: Palakasan {{palakasanYear }}</span>
         </a>
         <div class="flex items-center space-x-6 rtl:space-x-reverse">
-          <a href="tel:5541251234" class="text-sm text-gray-500 dark:text-white hover:underline">(+639)777-88-6642</a>
-          <a href="Login.vue" class="text-white bg-blue-700 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-xl text-sm px-5 py-2.5 text-center me-2">Login</a>
+          <Link :href="route('login')" class="text-white bg-blue-700 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-xl text-sm px-5 py-2.5 text-center me-2">Login</Link>
         </div>
       </div>
     
@@ -22,30 +22,51 @@
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
             </svg>
           </button>
-      
+    
           <div :class="{ 'hidden': !isMenuOpen }" class="w-full md:block md:w-auto" id="navbar">
             <ul class="flex flex-col md:flex-row md:space-x-8 pl-5 m-2">
-              <li class="relative">
-                <a href="(2)homepage.html" class="block py-2 px-3 text-blue-700 dark:text-white hover:bg-gray-200 rounded-full dark:hover:bg-gray-700 font-semibold">Home</a>
-              </li>
-              <li>
-                <a href="(3)schedule.html" class="block py-2 px-3 text-black dark:text-white hover:bg-gray-200 rounded-full dark:hover:bg-gray-700 font-semibold">Schedule</a>
-              </li>
-              <li>
-                <a href="(4)ranking.html" class="block py-2 px-3 text-black dark:text-white hover:bg-gray-200 rounded-full dark:hover:bg-gray-700 font-semibold">Ranking</a>
-              </li>
-              <li class="relative">
-                <button @click="toggleDropdown" id="dropdownButtonCollege" data-dropdown-toggle="dropdownCollege" class="block py-2 px-3 text-gray-900 dark:text-white hover:bg-gray-200 rounded-full dark:hover:bg-gray-700 font-semibold">Teams</button>
-                <div v-if="isDropdownOpen" id="dropdownCollege" class="z-10 w-44 bg-white shadow-md rounded-md dark:bg-gray-700">
-                  <ul class="py-1 text-gray-700 dark:text-gray-200">
-                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">CMAS</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">CBAA</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">CAFES</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">SMFT</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">CESS-IDS</a></li>
-                  </ul>
-                </div>
-              </li>
+       <li class="relative">
+         <a href="#" @click.prevent="scrollToHome" 
+         :class="[
+           'block py-2 px-3 rounded-full font-semibold transition-colors duration-200',
+           activeNav === 'home' ? 'text-blue-700 bg-blue-50' : 'text-black dark:text-white hover:text-blue-700 hover:bg-blue-50'
+         ]">Home</a>
+       </li>
+       <li class="relative">
+         <a href="#" @click.prevent="scrollToSchedule" 
+         :class="[
+           'block py-2 px-3 rounded-full font-semibold transition-colors duration-200',
+           activeNav === 'schedule' ? 'text-blue-700 bg-blue-50' : 'text-black dark:text-white hover:text-blue-700 hover:bg-blue-50'
+         ]">Schedule</a>
+       </li>
+       <li class="relative">
+         <a href="#" @click.prevent="scrollToRank"
+         :class="[
+           'block py-2 px-3 rounded-full font-semibold transition-colors duration-200',
+           activeNav === 'rank' ? 'text-blue-700 bg-blue-50' : 'text-black dark:text-white hover:text-blue-700 hover:bg-blue-50'
+         ]">Rank</a>
+       </li>
+       <li class="relative">
+         <button @click="toggleDropdown" 
+           :class="[
+             'block py-2 px-3 rounded-full font-semibold transition-colors duration-200',
+             activeNav === 'teams' ? 'text-blue-700 bg-blue-50' : 'text-black dark:text-white hover:text-blue-700 hover:bg-blue-50'
+           ]">
+           {{ selectedTeam ? selectedTeam.acronym : 'Teams' }}
+         </button>
+         <div v-if="isDropdownOpen" 
+              class="absolute z-10 w-48 bg-white shadow-lg rounded-lg mt-2 py-2 dark:bg-gray-700">
+           <div class="max-h-60 overflow-y-auto">
+             <button v-for="team in activeTeams" 
+                     :key="team.id"
+                     @click="selectTeam(team)"
+                     class="w-full text-left px-4 py-2 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-600 flex items-center space-x-2 transition-colors duration-200">
+               <img v-if="team.logo" :src="team.logo" :alt="team.name" class="w-6 h-6 rounded-full">
+               <span>{{ team.name }}</span>
+             </button>
+           </div>
+         </div>
+       </li>
               <li>
                 <a href="#" class="block py-2 px-3 text-gray-900 dark:text-white hover:bg-gray-200 rounded-full dark:hover:bg-gray-700 font-semibold">History</a>
               </li>
@@ -68,22 +89,74 @@
     </nav>
 
     <section>
-      <div class="h-24"></div>
+      <!-- Team Filter Dropdown -->
+      <div class="mb-4 w-full max-w-xs mx-auto">
+        <label for="teamFilter" class="block text-sm font-medium text-gray-700 mb-2">Filter by Team</label>
+        <select
+          id="teamFilter"
+          v-model="selectedTeamId"
+          @change="viewTeamMatches"
+          class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">All Teams</option>
+          <option v-for="team in props.activeTeams" :key="team.id" :value="team.id">
+            {{ team.name }}
+          </option>
+        </select>
+      </div>
+      
+      <!-- Team Matches Display -->
+      <div v-if="selectedTeam" class="mb-8">
+        <h3 class="text-xl font-bold mb-4">{{ selectedTeam.name }}'s Matches</h3>
+        <div v-if="selectedTeam.matches.length === 0" class="text-center text-gray-500 py-4">
+          No matches scheduled for this team.
+        </div>
+        <div v-else class="grid gap-4">
+          <div v-for="match in selectedTeam.matches" :key="match.id" 
+               class="border rounded-lg p-4 hover:bg-gray-50">
+            <div class="flex justify-between items-center mb-2">
+              <div>
+                <span class="font-medium">{{ match.sport }}</span>
+                <span class="text-gray-500"> • Game {{ match.game }}</span>
+                <span class="text-gray-500"> • Round {{ match.round }}</span>
+              </div>
+              <span :class="match.statusClass">{{ match.status }}</span>
+            </div>
+            
+            <div class="flex justify-between items-center mb-2">
+              <div class="text-center flex-1">
+                <span :class="match.team1.color">{{ match.team1.name }}</span>
+              </div>
+              <div class="text-center px-4">
+                <span class="text-xl font-bold">VS</span>
+              </div>
+              <div class="text-center flex-1">
+                <span :class="match.team2.color">{{ match.team2.name }}</span>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-500 mt-2">
+              <div>{{ match.date }} at {{ match.time }}</div>
+              <div>{{ match.venue }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Hero Section -->
     <section class="relative bg-cover bg-center h-screen text-white" style="background-image: url('https://example.com/sports-hero.jpg');">
       <!-- Overlay Picture -->
-      <img src="../img/arnis.jpg" class="rounded-xl blur-none shadow-lg absolute inset-0 w-full h-full object-cover opacity-30">
+      <img src="/resources/assets/torches.png" class="rounded-xl shadow-lg absolute inset-0 w-full h-full object-cover opacity-100">
     
       <!-- Gradient and Content -->
-      <div class="relative flex items-center justify-center h-full bg-gradient-to-t from-black via-black bg-opacity-80">
-        <div class="text-center px-8 md:px-0">
-          <!-- Heading with stronger shadow -->
-          <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl dark:text-white" 
-              style="text-shadow: 12px 10px 15px rgba(0, 0, 0, 0.9); display: inline-block; padding: 10px; border-radius: 5px;">
-            WELCOME TO PALAKASAN
-          </h1>
+      <div class="relative flex items-center justify-center h-full bg-gradient-to-t from-black/30 via-transparent">
+              <div class="text-center px-8 md:px-0">
+                <!-- Heading with stronger shadow -->
+                <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-white" 
+                    style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); display: inline-block; padding: 10px; border-radius: 5px;">
+                  WELCOME TO PALAKASAN
+                </h1>
     
           <!-- Paragraph with enhanced visibility -->
           <p class="text-lg md:text-xl mb-8 max-w-md mx-auto text-gray-300" style="text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8); background-color: rgba(0, 0, 0, 0.5); padding: 10px; border-radius: 100px;">
@@ -98,125 +171,259 @@
       </div>
     </section>
 
-    <!-- Upcoming Events Section -->
+    <!-- Upcoming Schedule -->
     <section id="sched" class="mx-auto bg-blue-50 pt-2">
       <div class="text-center mb-12 mt-2">
         <h2 id="featured" class="text-4xl font-medium">Sports Schedules</h2>
         <p class="text-gray-600">Check out the schedules in the palakasan competition.</p>
       </div>
-      <!-- Game Info: Sport, Game Number, and Round -->
-      <div class="flex flex-wrap justify-center space-x-4 mt-1">
-        <!-- Game cards -->
-        <div v-for="(game, index) in games" :key="index" class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md p-6 m-4">
-          <!-- Game Info: Sport, Game Number, and Round -->
-          <div class="mb-4">
-            <span class="block text-xl font-bold text-gray-900">{{ game.sport }}</span>
-            <span class="block text-md text-gray-500">{{ game.gameInfo }}</span>
+      
+     <!-- Sports List with Swiper -->
+     <div class="relative px-4">
+       <Swiper
+         :modules="modules"
+         :slides-per-view="3"
+         :space-between="24"
+         :pagination="{ clickable: true }"
+         :navigation="true"
+         :breakpoints="{
+           '320': {
+             slidesPerView: 1,
+             spaceBetween: 20
+           },
+           '640': {
+             slidesPerView: 2,
+             spaceBetween: 20
+           },
+           '1024': {
+             slidesPerView: 3,
+             spaceBetween: 24
+           }
+         }"
+         class="mySwiper"
+       >
+         <SwiperSlide v-for="sport in activeSports" :key="sport.id">
+           <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+             <div class="p-6">
+               <div class="mb-4">
+                 <h3 class="text-2xl font-bold text-gray-900">{{ sport.name }}</h3>
+                 <p class="text-gray-600">{{ sport.category }}</p>
+               </div>
+               
+               <div class="flex justify-between items-center mb-4">
+                 <span class="text-sm font-medium text-gray-600">{{ sport.setup }}</span>
+                 <span :class="sport.statusClass">{{ sport.status }}</span>
+               </div>
+     
+               <button @click="viewMatches(sport.id)" 
+                       class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                 View Matches
+               </button>
+             </div>
+           </div>
+         </SwiperSlide>
+       </Swiper>
+     </div>
+    
+      <!-- Match Details Modal -->
+      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-2xl font-bold">Match Schedule</h3>
+              <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+    
+            <div class="space-y-4">
+              <div v-if="matches.length === 0" class="text-center py-8 text-gray-600">
+                No matches scheduled yet.
+              </div>
+              
+              <div v-else v-for="match in matches" :key="match.id" 
+                   class="border rounded-lg p-4 hover:bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-medium">{{ match.game }}</span>
+                  <span class="font-medium">Round {{ match.round }}</span>
+                  <span :class="match.statusClass">{{ match.status }}</span>
+                </div>
+                
+                <div class="flex justify-between items-center mb-2">
+                  <div class="text-center flex-1">
+                    <p :class="match.team1.color">{{ match.team1.name }}</p>
+                    <p class="text-gray-600">{{ match.team1.score }}</p>
+                  </div>
+                  <div class="mx-4">
+                    <span class="text-gray-400">vs</span>
+                  </div>
+                  <div class="text-center flex-1">
+                    <p :class="match.team2.color">{{ match.team2.name }}</p>
+                    <p class="text-gray-600">{{ match.team2.score }}</p>
+                  </div>
+                </div>
+                
+                <div class="text-sm text-gray-600">
+                  <p>Venue: {{ match.venue }}</p>
+                  <p>Date: {{ match.date }} - {{ match.time }}</p>
+                </div>
+              </div>
+            </div>
           </div>
-        
-          <!-- Date Section -->
-          <div class="flex items-center justify-between mb-4 space-x-4">
-            <span class="text-base font-semibold text-gray-900">{{ game.date }}</span>
-            <span class="text-sm text-gray-500">{{ game.time }}</span>
-          </div>
-        
-          <!-- Teams Section -->
-          <div class="flex items-center justify-between mb-4 ">
-            <div :class="game.team1.color">{{ game.team1.name }}</div>
-            <span class="text-gray-500">vs</span>
-            <div :class="game.team2.color">{{ game.team2.name }}</div>
-          </div>
-
-          <!-- Teams Section with Scores-->
-          <div class="flex items-center justify-center mb-4 space-x-8">
-            <div :class="game.team1.color">{{ game.team1.score }}</div>
-            <div :class="game.team2.color">{{ game.team2.score }}</div>
-          </div>
-        
-          <!-- Venue Section -->
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-md font-medium text-gray-700">Venue:</span>
-            <span class="text-md text-gray-600">{{ game.venue }}</span>
-          </div>
-        
-          <!-- Category Section -->
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-md font-medium text-gray-700">Category:</span>
-            <span class="text-md text-gray-600">{{ game.category }}</span>
-          </div>
-        
-          <!-- Status Section -->
-          <div class="mb-4 flex justify-center">
-            <span :class="game.statusClass">
-              {{ game.status }}
-            </span>
-          </div>
-        
-          <!-- Action Button -->
-          <a :href="game.detailsLink" class="block text-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">
-            View Details
-          </a>
         </div>
       </div>
     </section>
 
-    <!-- Ranking Section -->
-    <section id="ranking" class="container mx-auto py-16 mt-4 flex flex-col items-center justify-center text-center">
-      <div class="text-center mb-12 mt-2">
-        <h2 class="text-4xl font-bold text-black">Ranking</h2>
-        <p class="text-gray-500">Explore the top rankings for each sport and the overall points tally.</p>
-      </div>
+   <!-- Overall Sports Ranking -->
+   <section id="ranking" class="mx-auto bg-blue-50 pt-2">
+     <div class="text-center mb-12 mt-2">
+       <h2 class="text-4xl font-medium">Sports Rankings</h2>
+       <p class="text-gray-600">Check out the current standings in each sport.</p>
+     </div>
+   
+     <!-- Sports Rankings with Swiper -->
+     <div class="relative px-4">
+       <Swiper
+         :modules="modules"
+         :slides-per-view="3"
+         :space-between="24"
+         :pagination="{ clickable: true }"
+         :navigation="true"
+         :breakpoints="{
+           '320': {
+             slidesPerView: 1,
+             spaceBetween: 20
+           },
+           '640': {
+             slidesPerView: 2,
+             spaceBetween: 20
+           },
+           '1024': {
+             slidesPerView: 3,
+             spaceBetween: 24
+           }
+         }"
+         class="mySwiper"
+       >
+         <SwiperSlide v-for="sport in activeSports" :key="sport.id">
+           <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+             <div class="p-6">
+               <div class="mb-4">
+                 <h3 class="text-2xl font-bold text-gray-900">{{ sport.name }}</h3>
+                 <p class="text-gray-600">{{ sport.category }}</p>
+               </div>
+               
+               <div class="flex justify-between items-center mb-4">
+                 <span class="text-sm font-medium text-gray-600">{{ sport.setup }}</span>
+                 <span :class="sport.statusClass">{{ sport.status }}</span>
+               </div>
+   
+               <button @click="viewStandings(sport.id)" 
+                       class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                 View Standings
+               </button>
+             </div>
+           </div>
+         </SwiperSlide>
+       </Swiper>
+     </div>
+   
+     <!-- Standings Modal -->
+     <div v-if="showStandingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+       <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+         <div class="p-6">
+           <div class="flex justify-between items-center mb-6">
+             <div>
+               <h2 class="text-2xl font-bold" v-if="currentStandings">
+                 {{ currentStandings.sport.name }} - {{ currentStandings.sport.category }}
+               </h2>
+               <p class="text-gray-600">Team Standings</p>
+             </div>
+             <button @click="closeStandingsModal" class="text-gray-500 hover:text-gray-700">
+               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+               </svg>
+             </button>
+           </div>
+   
+           <div class="overflow-x-auto">
+             <table class="min-w-full divide-y divide-gray-200">
+               <thead class="bg-gray-50">
+                 <tr>
+                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
+                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">W</th>
+                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">L</th>
+                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Games</th>
+                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Win %</th>
+                 </tr>
+               </thead>
+               <tbody class="bg-white divide-y divide-gray-200">
+                 <tr v-for="(team, index) in currentStandings?.standings" :key="team.team_id">
+                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ index + 1 }}</td>
+                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                     {{ team.team_name }}
+                     <span class="text-gray-500">({{ team.team_acronym }})</span>
+                   </td>
+                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ team.wins }}</td>
+                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ team.losses }}</td>
+                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ team.total_games }}</td>
+                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ team.win_percentage }}%</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+         </div>
+       </div>
+     </div>
+   </section>
 
-      <!-- Sport Rankings -->
-      <div class="inline-flex gap-8 p-4 justify-items-center">
-        <!-- Ranking cards -->
-        <div v-for="(ranking, index) in rankings" :key="index" class="bg-gradient-to-r from-blue-100 to-blue-200 border border-gray-300 rounded-lg shadow-lg p-8 transition-transform transform hover:scale-105 hover:rotate-1 hover:shadow-xl">
-          <div class="mb-4 flex items-center justify-between">
-            <span class="text-2xl font-bold text-gray-900">{{ ranking.sport }}</span>
-          </div>
-
-          <div class="flex items-center justify-start mb-4 space-x-2">
-            <span class="text-md font-medium text-gray-700">Category:</span>
-            <span class="text-md text-gray-600">{{ ranking.category }}</span>
-          </div>
-          
-          <ol class="list-decimal list-inside space-y-3">
-            <li v-for="(team, teamIndex) in ranking.teams" :key="teamIndex" class="text-lg flex justify-between items-center">
-              <span :class="team.color">{{ team.name }}</span> 
-              <span :class="team.badgeClass">{{ team.place }}</span>
-            </li>
-          </ol>
-          <div class="mt-4">
-            <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-gray-800">
-              {{ ranking.status }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Overall Sports Ranking -->
-    <div class="mt-12 bg-blue-50">
+    <<!-- Overall Sports Ranking -->
+    <div class="mt-12 bg-blue-50 p-8">
       <h3 class="text-2xl font-bold text-center pt-4 pb-4">Overall Sports Ranking</h3>
       
-      <!-- Flex container for table and chart, closer and centered -->
-      <div class="w-1/3 flex justify-center gap-5 items-start space-x-1 ">
+      <!-- Flex container for table and chart -->
+      <div class="flex flex-col md:flex-row justify-center gap-8 max-w-7xl mx-auto">
         <!-- Table section -->
-        <div class="w-auto h-full">
-          <div class="overflow-x-auto">
-            <table class="min-w-full bg-white rounded-fullshadow-lg">
-              <thead>
-                <tr class="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-                  <th class="py-4 px-6 border-b border-gray-200 text-left rounded-tl-lg">Team</th>
-                  <th class="py-4 px-6 border-b border-gray-200 text-left">Place</th>
-                  <th class="py-4 px-6 border-b border-gray-200 text-center">Total Points</th>
+        <div class="w-full md:w-1/2">
+          <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <table class="min-w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rank</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Team</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">W/L</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr v-for="(team, index) in overallRanking" :key="index" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'" class="hover:bg-gray-100 transition-all">
-                  <td class="py-4 px-6 border-b border-gray-200">{{ team.name }}</td>
-                  <td class="py-4 px-6 border-b border-gray-200">{{ team.place }}</td>
-                  <td class="py-4 px-6 border-b border-gray-200 text-center">{{ team.points }}</td>
+              <tbody class="divide-y divide-gray-200">
+                <tr v-for="(team, index) in props.overallRankings" :key="team.team_id" 
+                    class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-sm font-medium" :class="getRankClass(index + 1)">
+                      {{ index + 1 }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">
+                          {{ team.name }}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                          {{ team.acronym }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="text-sm font-medium text-gray-900">{{ team.points }}</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ team.wins }}/{{ team.losses }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -224,55 +431,9 @@
         </div>
     
         <!-- Chart section -->
-        <div class="max-w-sm w-full h- bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-2 flex-1">
-          <div class="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-            <div class="flex items-center">
-              <div class="w-16 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center me-3">
-                <svg class="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 19">
-                  <path d="M14.5 0A3.987 3.987 0 0 0 11 2.1a4.977 4.977 0 0 1 3.9 5.858A3.989 3.989 0 0 0 14.5 0ZM9 13h2a4 4 0 0 1 4 4v2H5v-2a4 4 0 0 1 4-4Z"/>
-                  <path d="M5 19h10v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2ZM5 7a5.008 5.008 0 0 1 4-4.9 3.988 3.988 0 1 0-3.9 5.859A4.974 4.974 0 0 1 5 7Zm5 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm5-1h-.424a5.016 5.016 0 0 1-1.942 2.232A6.007 6.007 0 0 1 17 17h2a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5ZM5.424 9H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h2a6.007 6.007 0 0 1 4.366-5.768A5.016 5.016 0 0 1 5.424 9Z"/>
-                </svg>
-              </div>
-              <div>
-                <h5 class="leading-none text-2xl font-bold text-gray-900 dark:text-white pb-1">College Teams</h5>
-                <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Overall Sports Partial Ranking</p>
-              </div>
-            </div>
-            <div>
-              <span class="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-1 rounded-md dark:bg-green-900 dark:text-green-300">
-                <svg class="w-2.5 h-2.5 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
-                </svg>
-                Ongoing
-              </span>
-            </div>
-          </div>
-      
-          <!-- Column Chart -->
-          <div id="column-chart"></div>
-      
-          <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
-            <div class="flex justify-between items-center pt-5">
-              <!-- Button -->
-              <button
-                id="dropdownDefaultButton"
-                @click="toggleDateDropdown"
-                class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
-                type="button">
-                Date
-                <svg class="w-2.5 m-2.5 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                </svg>
-              </button>
-              <!-- Dropdown menu -->
-              <div v-if="isDateDropdownOpen" id="lastDaysdropdown" class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                  <li v-for="date in dates" :key="date">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ date }}</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div class="w-full md:w-1/2">
+          <div class="bg-white rounded-lg shadow-lg p-4">
+            <div id="rankingChart"></div>
           </div>
         </div>
       </div>
@@ -294,12 +455,99 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import ApexCharts from 'apexcharts'
 
+import { ref, onMounted, defineProps } from 'vue'
+import ApexCharts from 'apexcharts'
+import { Link, router, Head } from '@inertiajs/vue3'
+// Import Swiper Vue.js components
+import { Swiper, SwiperSlide } from 'swiper/vue'
+// Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
+// Import required Swiper modules
+import { Pagination, Navigation } from 'swiper/modules'
+
+// Add Swiper modules to the component
+const modules = [Pagination, Navigation]
+
+const props = defineProps({
+  palakasanYear: {
+    type: Number,
+    required: true
+  },
+  activeSports: {
+    type: Array,
+    required: true
+  },
+  activeTeams: {
+    type: Array,
+    required: true
+  },
+  matches: {
+    type: Array,
+    default: () => []
+  },
+  selectedSportId: {
+    type: Number,
+    default: null
+  },
+  selectedSport: {
+    type: Object,
+    default: () => null
+  },
+  standings: {
+    type: Array,
+    default: () => []
+  },
+  overallRankings: {
+    type: Array,
+    default: () => []
+  }
+
+});
+const showNav = ref(true)
+const lastScrollPosition = ref(0)
+const showModal = ref(false)
 const isMenuOpen = ref(false)
 const isDropdownOpen = ref(false)
 const isDateDropdownOpen = ref(false)
+const showStandingsModal = ref(false)
+const currentStandings = ref(null)
+
+const activeNav = ref('home')
+
+const scrollToSchedule = () => {
+  const scheduleSection = document.getElementById('sched')
+  if (scheduleSection) {
+    scheduleSection.scrollIntoView({ behavior: 'smooth' })
+    activeNav.value = 'schedule'
+  }
+}
+
+const scrollToRank = () => {
+  const scheduleSection = document.getElementById('ranking')
+  if (scheduleSection) {
+    scheduleSection.scrollIntoView({ behavior: 'smooth' })
+    activeNav.value = 'rank'
+  }
+}
+
+const scrollToHome = () => {
+  const scheduleSection = document.getElementById('mainNav')
+  if (scheduleSection) {
+    scheduleSection.scrollIntoView({ behavior: 'smooth' })
+  activeNav.value = 'home'
+}
+}
+
+const handleScroll = () => {
+  const currentScrollPosition = window.scrollY
+  showNav.value = currentScrollPosition < lastScrollPosition.value || currentScrollPosition < 50
+  lastScrollPosition.value = currentScrollPosition
+}
+
+
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -313,168 +561,171 @@ const toggleDateDropdown = () => {
   isDateDropdownOpen.value = !isDateDropdownOpen.value
 }
 
-const games = ref([
-  {
-    sport: 'Basketball',
-    gameInfo: 'Game 1 - Round 1',
-    date: 'October 15, 2024',
-    time: '3:00 PM',
-    team1: { name: 'SMFT', color: 'text-lg font-bold text-blue-600', score: '--' },
-    team2: { name: 'CMAS', color: 'text-lg font-bold text-red-600', score: '--' },
-    venue: 'OVAL',
-    category: 'Women',
-    status: 'Ongoing',
-    statusClass: 'inline-block px-3 py-1 text-sm font-medium rounded-full bg-orange-100 text-orange-800',
-    detailsLink: '(3)schedule.html'
-  },
-  // Add more game objects here
-])
-
-const rankings = ref([
-  {
-    sport: 'Basketball',
-    category: 'Men',
-    teams: [
-      { name: 'CMAS', color: 'font-semibold text-red-600', place: '1st Place', badgeClass: 'px-3 py-1 bg-yellow-300 text-gray-800 rounded-full text-sm' },
-      { name: 'CBAA', color: 'font-semibold text-yellow-300', place: '2nd Place', badgeClass: 'px-3 py-1 bg-gray-300 text-gray-800 rounded-full text-sm' },
-      { name: 'SMFT', color: 'font-semibold text-blue-600', place: '3rd Place', badgeClass: 'px-3 py-1 bg-orange-300 text-gray-800 rounded-full text-sm' },
-      { name: 'CAFES', color: 'font-semibold text-green-600', place: '4th Place', badgeClass: 'px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm' },
-      { name: 'CESS-IDS', color: 'font-semibold text-pink-400', place: '5th Place', badgeClass: 'px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm' }
-    ],
-    status: 'Completed'
-  },
-  // Add more ranking objects here
-])
-
-const overallRanking = ref([
-  { name: 'CMAS', place: '1st Place', points: 259 },
-  { name: 'SMFT', place: '2nd Place', points: 243 },
-  { name: 'CBAA', place: '3rd Place', points: 231 },
-  { name: 'CESS-IDS', place: '4th Place', points: 229 },
-  { name: 'CAFES', place: '5th Place', points: 199 }
-])
-
-const dates = ref([
-  'Nov. 21, 2024',
-  'Nov. 22, 2024',
-  'Nov. 23, 2024',
-  'Nov. 24, 2024',
-  'Nov. 25, 2024'
-])
-
 onMounted(() => {
-  const navbar = document.getElementById("mainNav")
-  let prevScrollPos = window.pageYOffset
-
-  window.onscroll = function () {
-    const currentScrollPos = window.pageYOffset
-    if (prevScrollPos > currentScrollPos) {
-      navbar.style.transform = "translateY(0)" // Show navbar
-    } else {
-      navbar.style.transform = "translateY(-80px)" // Hide navbar
-    }
-    prevScrollPos = currentScrollPos
-  }
-
-  const options = {
-    colors: ["#1A56DB", "#FDBA8C"],
-    series: [
-      {
-        name: "Total Points",
-        color: "#1A56DB",
-        data: [
-          { x: "CMAS", y: 123 },
-          { x: "SMFT", y: 122 },
-          { x: "CBAA", y: 63 },
-          { x: "CESS IDS", y: 421 },
-          { x: "CAFES", y: 122 },
-        ],
-      },
-    ],
-    chart: {
-      type: "bar",
-      height: "320px",
-      fontFamily: "Inter, sans-serif",
-      toolbar: {
-        show: false,
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: "70%",
-        borderRadiusApplication: "end",
-        borderRadius: 8,
-      },
-    },
-    tooltip: {
-      shared: true,
-      intersect: false,
-      style: {
-        fontFamily: "Inter, sans-serif",
-      },
-    },
-    states: {
-      hover: {
-        filter: {
-          type: "darken",
-          value: 1,
-        },
-      },
-    },
-    stroke: {
-      show: true,
-      width: 0,
-      colors: ["transparent"],
-    },
-    grid: {
-      show: false,
-      strokeDashArray: 4,
-      padding: {
-        left: 2,
-        right: 2,
-        top: -14
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    xaxis: {
-      floating: false,
-      labels: {
-        show: true,
-        style: {
-          fontFamily: "Inter, sans-serif",
-          cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
-        }
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false,
-    },
-    fill: {
-      opacity: 1,
-    },
-  }
-
-  if(document.getElementById("column-chart") && typeof ApexCharts !== 'undefined') {
-    const chart = new ApexCharts(document.getElementById("column-chart"), options)
-    chart.render()
+  window.addEventListener('scroll', handleScroll)
+  if (props.selectedSportId) {
+    showModal.value = true
   }
 })
+
+const selectedTeam = ref(null)
+
+const selectTeam = (team) => {
+  selectedTeam.value = team
+  isDropdownOpen.value = false
+  activeNav.value = 'teams'
+}
+
+const viewMatches = (sportId) => {
+  router.get(`/sports/${sportId}/matches`, {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      showModal.value = true
+    }
+  })
+}
+
+const closeModal = () => {
+  showModal.value = false
+  // Reset the URL without the matches
+  router.get('/landing', {}, {
+    preserveState: true,
+    preserveScroll: true
+  })
+}
+
+const viewStandings = (sportId) => {
+  router.get(`/sports/${sportId}/standings`, {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: (page) => {
+      if (page.props.selectedSport && page.props.standings) {
+        currentStandings.value = {
+          sport: page.props.selectedSport,
+          standings: page.props.standings
+        };
+        showStandingsModal.value = true;
+      }
+    },
+    onError: (errors) => {
+      console.error('Error:', errors);
+    }
+  });
+};
+
+const closeStandingsModal = () => {
+  router.get('/landing', {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      showStandingsModal.value = false;
+      currentStandings.value = null;
+      const rankingSection = document.getElementById('ranking');
+      if (rankingSection) {
+        rankingSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+};
+
+const getRankClass = (rank) => {
+  switch(rank) {
+    case 1: return 'text-yellow-500 font-bold';
+    case 2: return 'text-gray-400 font-bold';
+    case 3: return 'text-amber-600 font-bold';
+    default: return 'text-gray-700';
+  }
+};
+
+
+
+onMounted(() => {
+  if (props.overallRankings.length > 0) {
+    const options = {
+      chart: {
+        type: 'bar',
+        height: 350
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          distributed: true,
+          dataLabels: {
+            position: 'top'
+          }
+        }
+      },
+      colors: ['#FCD34D', '#9CA3AF', '#D97706', ...Array(props.overallRankings.length - 3).fill('#1F2937')],
+      dataLabels: {
+        enabled: true,
+        textAnchor: 'start',
+        style: {
+          colors: ['#000']
+        },
+        formatter: function(val) {
+          return val + ' pts';
+        },
+        offsetX: 0
+      },
+      series: [{
+        name: 'Points',
+        data: props.overallRankings.map(team => ({
+          x: team.name,
+          y: team.points
+        }))
+      }],
+      xaxis: {
+        categories: props.overallRankings.map(team => team.name)
+      },
+      yaxis: {
+        title: {
+          text: 'Points'
+        }
+      }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#rankingChart"), options);
+    chart.render();
+  }
+});
 </script>
 
 <style scoped>
 #mainNav {
   transition: transform 0.3s ease-in-out;
 }
+/* Swiper custom styles */
+.swiper {
+  padding: 20px 40px !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #2563eb !important;
+  background: white;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 20px !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #2563eb !important;
+}
+
+/* Add some padding to accommodate navigation buttons */
+.swiper-slide {
+  padding: 0 5px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 </style>

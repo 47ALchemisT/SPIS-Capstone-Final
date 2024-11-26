@@ -29,6 +29,7 @@ use App\Models\Student;
 use App\Models\StudentAccount;
 use App\Http\Controllers\PlayerSportController;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
+use App\Http\Controllers\SportsLandingController;
 
 // Login routes (accessible without authentication)
 Route::get('/', function () {return Inertia::render('Login');})->name('login');
@@ -124,17 +125,13 @@ Route::middleware(['web', 'auth', 'comHeadMiddleware'])->group(function () {
     Route::resource('studentplayer', StudentPalakasanController::class);
 });
 
-
+// Sub Admin routes
 Route::middleware(['web', 'auth', 'subAdminMiddleware'])->group(function () {
     Route::get('/secretary', [SubAdminController::class, 'index']);
 });
 
-
-Route::get('/landing', function () {
-    return Inertia::render('SportsLandingPage/SportsLanding');
-});
-
-
-
-
-
+// Sports Landing Page Routes
+Route::get('/landing', [SportsLandingController::class, 'index'])->name('sports.landing');
+Route::get('/sports/{sportId}/matches', [SportsLandingController::class, 'getSportMatches'])->name('sports.matches');
+Route::get('/sports/{sportId}/standings', [SportsLandingController::class, 'getSportStandings'])->name('sports.standings');
+Route::get('/teams/{teamId}/matches', [SportsLandingController::class, 'getTeamMatches'])->name('teams.matches');
