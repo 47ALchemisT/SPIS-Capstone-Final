@@ -31,7 +31,7 @@
       <!-- Tabs Content -->
       <div>
         <div v-if="activeTab === 'home'">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 py-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-5">
             <div class="bg-white rounded-lg flex flex-col justify-between">
               <div>
                 <p class="text-2xl text-gray-800 mb-1">Welcome, <span class="font-semibold">{{ facilitator.student.first_name }} {{ facilitator.student.last_name }}</span> !</p>

@@ -1,7 +1,6 @@
 <template>
   <div class="game-schedule">
-    <h2 class="text-md font-medium mt-1 mb-4">Match Schedule</h2>
-    <div v-for="(roundMatches, round) in matchesByRound" :key="round" class="mb-8 p-5 border rounded-lg border-gray-200 bg-gray-50">
+    <div v-for="(roundMatches, round) in matchesByRound" :key="round" class="mb-8 p-5 rounded-lg bg-gray-50">
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
       <div class="flex justify-center gap-4 ">
         <div v-for="match in roundMatches" 

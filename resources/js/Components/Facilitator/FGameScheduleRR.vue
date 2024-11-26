@@ -1,6 +1,18 @@
 <template>
   <div class="game-schedule">
-    <div v-for="(roundMatches, round) in matchesByRound" :key="round" class="mb-8 p-5 rounded-lg bg-gray-50">
+    <div v-for="(roundMatches, round) in matchesByRound" :key="round" 
+      :class="[
+        'mb-8 p-5 rounded-lg transition-all duration-200',
+        canUpdateRound(round) ? 'bg-gray-50' : 'bg-gray-100 opacity-75'
+      ]">
+      <div class="flex items-center justify-between mb-4">
+        <div v-if="!canUpdateRound(round)" class="flex items-center text-sm text-gray-600">
+          <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/>
+          </svg>
+          Locked: Complete previous round first
+        </div>
+      </div>
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
       <div class="flex justify-center gap-4 ">
         <div v-for="match in roundMatches" 
@@ -92,11 +104,13 @@
               <div v-if="form.errors.length" class="mt-2 text-sm text-red-600">
                 <div v-for="(error, index) in form.errors" :key="index">{{ error }}</div>
               </div>
-              <button 
+              <div class="flex items-center justify-end">
+                <button 
                 type="submit" 
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Next: Signature
-              </button>            
+                Next: Validate
+              </button>
+              </div>
             </form>
           </div>
         </div>
@@ -182,7 +196,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
@@ -227,12 +240,11 @@ const isDrawing = ref(false);
 const lastX = ref(0);
 const lastY = ref(0);
 const signatureCanvas = ref(null);
+const scoreFormData = ref({
+  official_name: '',
+});
 
 // Form data for scores
-const scoreFormData = ref({
-  teamA_score: '',
-  teamB_score: '',
-});
 const scoreError = ref('');
 const handleWinnerSelection = (e) => {
   e.preventDefault();
@@ -417,7 +429,22 @@ const formatDateTime = (date, time) => {
 };
 
 // Winner modal functions
+const canUpdateRound = (round) => {
+  // Check if all matches in previous rounds are completed
+  for (let r = 1; r < round; r++) {
+    const previousRoundMatches = matchesByRound.value[r] || [];
+    const allMatchesCompleted = previousRoundMatches.every(match => match.status === 'completed');
+    if (!allMatchesCompleted) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const openWinnerModal = (match) => {
+  if (!canUpdateRound(match.round)) {
+    return;
+  }
   selectedMatch.value = match;
   isWinnerModalOpen.value = true;
   winnerFormData.value = { result: '' };
@@ -460,7 +487,7 @@ const submitResult = () => {
     winning_team_id: null,
     losing_team_id: null,
     is_draw: false,
-    official_name: scoreFormData.value.official_name, // Add the official name from scoreFormData
+    official_name: scoreFormData.value.official_name,
     signature: canvas.toDataURL('image/png')
   };
 
@@ -495,5 +522,4 @@ const submitResult = () => {
     }
   });
 };
-
 </script>

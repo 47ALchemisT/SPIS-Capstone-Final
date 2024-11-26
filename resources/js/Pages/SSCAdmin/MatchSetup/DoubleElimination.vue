@@ -3,67 +3,57 @@
     <AppLayout>
         <template v-slot:default>
             <div class="flex flex-col">
-                <div class="flex items-center gap-2">
-                    <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                <div class="flex items-center justify-between gap-2">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                     <div>
                         <button 
                             @click="returnToPalakasan" 
                             type="button" 
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
                     </div>
                 </div>
+
+                <div class="flex items-center text-gray-600 gap-2 ">
+                    <p class="text-sm"> {{ sport.setup }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.type }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.status }}</p>
+                </div>
+                
                 <!-- Progress Bar -->
-                <div class="flex mt-2 flex-col">
-                    <div class="flex items-center mb-2">
+                <div class="flex mt-3 flex-col">
+                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
+                    </div>
+                    <div class="flex items-center mt-2">
                         <h2 class="text-xs text-gray-600">Sport Progress  </h2>
                         <h2 class="text-xs text-gray-600 px-2">:</h2>
                         <span class="text-xs font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
                     </div>
-                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 mt-2">
-                    <p class="text-sm"> {{ sport.setup }}</p>
-                    <p class="text-xs">|</p>
-                    <p class=" text-sm">{{ sport.type }}</p>
-                    <p class="text-xs">|</p>
-                    <p class=" text-sm">{{ sport.status }}</p>
                 </div>
 
                 <div v-if="tournamentWinner" class="mt-6 p-8 bg-blue-100 flex justify-center items-center flex-col rounded-lg">
-                    <h2 class="text-xs font-semibold mb-2 text-blue-700">Game Winner</h2>
-
+                    <h2 class="text-sm font-semibold mb-2 text-blue-700">Game Winner</h2>
                     <div class="flex gap-4">
-                        <div class="text-center flex gap-4">
-                            <svg class="w-10 h-10 mt-5 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                            <svg class="w-14 h-14 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                            <svg class="w-16 h-16 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                            <svg class="w-20 h-20 mt-3 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                        </div>
                         <div class="relative">
-                            <svg class="w-36 h-36 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.987 9.492L5.678 7.514C4.155 6.204 4.15 4.302 3.988 3.02c1.666.08 2.956.23 4.08 1.18l1.176 1.336l1.273 1.428m8.941 11.455l-2.964-3m-2.471 3c.022-.272.2-.978 1.019-1.734c.734-.679 2.327-2.305 3.042-3.01c.406-.4 1.07-.68 1.374-.679m-3.889-.187l1.337 1.479m-3.229.15l1.495 1.313m5.29 2.23c.83.002 1.54.615 1.538 1.445c-.001.83-.707 1.557-1.538 1.556c-.83-.002-1.47-.732-1.469-1.562c.054-.826.665-1.328 1.47-1.439m-15.867.412l2.958-2.892m-2.992-2.514c.273.022 1.032.204 1.712 1.054c.625.78 2.31 2.29 3.017 3.004c.4.404.68 1.044.68 1.348M7.266 14.23l8.239-9.566c1.34-1.496 3.214-1.528 4.5-1.666c-.112 1.664-.288 2.95-1.26 4.055L8.55 15.927m-3.543 3.572a1.503 1.503 0 1 1-3.006 0a1.503 1.503 0 0 1 3.006 0" />
-                            </svg>
-                            <div class="absolute inset-0 bottom-2 flex items-center justify-center">
-                            <p class="text-md font-bold text-blue-700 bg-blue-100 w-32 rounded-md text-center break-words max-w-full">
-                                {{ getTeamName(tournamentWinner) }}
-                            </p>
+                            <div class="flex items-center justify-center flex-col">
+                                <p class="text-2xl font-bold text-blue-700 bg-blue-100 w-32 rounded-md text-center break-words max-w-full mb-2">
+                                    {{ getTeamName(tournamentWinner) }}
+                                </p>
+                                <div class="text-sm text-blue-700 font-medium">
+                                    <span>W: {{ calculateTeamRecords()[tournamentWinner]?.wins || 0 }}</span>
+                                    <span class="mx-2">-</span>
+                                    <span>L: {{ calculateTeamRecords()[tournamentWinner]?.losses || 0 }}</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="text-center flex gap-4">
-                            <svg class="w-20 h-20 mt-3 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                            <svg class="w-16 h-16 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                            <svg class="w-14 h-14 mt-4 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-                            <svg class="w-10 h-10 mt-5 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
-
-                        </div>
                     </div>
-                </div>
+            </div>
 
                 <!-- Tabs Navigation -->
                 <nav class="flex relative justify-between mt-4  items-center">
@@ -106,8 +96,7 @@
                         </div>
                     </div>
                     <div v-if="activeTab === 'brackets'">
-                        <div class="overflow-hidden mt-1">
-                            <h2 class="text-md font-semibold mb-4">Tournament Bracket</h2>
+                        <div class="overflow-hidden">
                             <div class="overflow-hidden max-w-full">
                                 <div v-if="Object.keys(groupedBrackets).length > 0" class="overflow-x-auto overflow-y-hidden">
                                     <div class="space-y-8">
@@ -967,9 +956,26 @@ const checkWinsAndLosses = (teamId) => {
   return { wins, losses };
 };
 
-const winnerStats = computed(() => {
-  return checkWinsAndLosses(props.tournamentWinner);
-});
+const calculateTeamRecords = () => {
+  const records = {};
+  props.teams.forEach(team => {
+    records[team.id] = { wins: 0, losses: 0, points: 0 };
+  });
+
+  props.results.forEach(result => {
+    if (result.winning_team_id) {
+      records[result.winning_team_id].wins++;
+      records[result.winning_team_id].points += result.winning_points || 0;
+    }
+    if (result.losing_team_id) {
+      records[result.losing_team_id].losses++;
+      records[result.losing_team_id].points += result.losing_points || 0;
+    }
+  });
+
+  return records;
+};
+
  </script>
  
  <style scoped>

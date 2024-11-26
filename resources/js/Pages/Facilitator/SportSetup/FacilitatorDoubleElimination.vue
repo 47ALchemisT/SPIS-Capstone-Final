@@ -242,19 +242,15 @@
                                 <span class="font-medium">Rank</span>
                                 <input
                                 v-model="team.rank"
-                                type="number"
-                                min="1"
                                 :max="rankingTeams.length"
-                                class="w-16 border rounded px-2 py-1"
+                                class="w-8 border text-center rounded px-2 py-1"
                                 required
                                 disabled
                                 />
                                 <span class="font-medium">Points</span>
                                 <input
                                 v-model="team.points"
-                                type="number"
-                                min="0"
-                                class="w-16 border rounded px-2 py-1"
+                                class="w-10 border text-center rounded px-2 py-1"
                                 placeholder="Points"
                                 required
                                 readonly
@@ -262,10 +258,10 @@
                             </div>
                             </div>
                         </div>
-                        <div class="mt-4 flex justify-end">
+                        <div class="mt-8 flex justify-end">
                             <button
                             type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700"
                             :disabled="isSubmittingRankings"
                             >
                             {{ isSubmittingRankings ? 'Submitting...' : 'Submit Rankings' }}

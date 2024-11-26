@@ -21,12 +21,12 @@
 
         <!-- Tags Section -->
         <div class="flex items-center text-gray-600 gap-2">
-                    <p class="text-sm"> {{ sport.setup }}</p>
-                    <span class="text-sm">•</span>
-                    <p class=" text-sm">{{ sport.type }}</p>
-                    <span class="text-sm">•</span>
-                    <p class=" text-sm">{{ sport.status }}</p>
-                </div>
+            <p class="text-sm"> {{ sport.setup }}</p>
+            <span class="text-sm">•</span>
+            <p class=" text-sm">{{ sport.type }}</p>
+            <span class="text-sm">•</span>
+            <p class=" text-sm">{{ sport.status }}</p>
+        </div>
 
         <!-- Progress Bar -->
         <div class="mt-3 space-y-2">
@@ -72,7 +72,13 @@
                 No variations added yet.
               </div>
               <ul v-else class="space-y-4">
-                <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg">
+                <li v-for="variation in sportVariations" 
+                  :key="variation.id" 
+                  class="pb-4 border p-4 border-gray-300 rounded-lg"
+                  :class="{
+                    'bg-gray-50': latestPalakasan?.status?.toLowerCase() === 'completed',
+                    'bg-green-50 border-green-400': variation.status?.toLowerCase() === 'completed'
+                  }">
                   <div class="flex justify-between items-center">
                     <div class="flex justify-between w-full">
                       <div>
@@ -125,8 +131,8 @@
                     <table class="w-full text-sm">
                       <thead>
                         <tr>
-                          <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
-                          <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
+                          <th class="px-4 py-2 text-left" :class="{ 'bg-green-100': variation.status?.toLowerCase() === 'completed' }">Team</th>
+                          <th class="px-4 py-2 text-center" :class="{ 'bg-green-100': variation.status?.toLowerCase() === 'completed' }">Rank</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -148,9 +154,7 @@
           </div>
         </div>
 
-
-
-
+        <!-- Ranking Modal -->
         <div v-if="showRankModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div class="relative p-4 w-full max-w-[32rem] max-h-full">
             <div class="relative bg-white rounded-lg shadow">
@@ -166,98 +170,132 @@
               </div>
               
               <div class="p-4 pt-0">
-                <form @submit.prevent="updateRanks">
-                  <div class="mt-4 p-2 bg-gray-100 rounded-md border border-gray-300">
-                    <table class="w-full text-sm">
-                      <thead>
-                        <tr>
-                          <th class="px-4 py-2 font-medium text-left">Team</th>
-                          <th class="px-4 py-2 font-medium text-left">Rank</th>
-                          <th class="px-4 py-2 font-medium text-left">Points</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="match in sortedMatches" :key="match.id">
-                          <td class="px-4 py-2 w-72">{{ getTeamName(match.sport_variation_team_id) }}</td>
-                          <td class="px-4 py-2 w-44">
-                            <select 
-                              v-model="rankUpdates[match.id].rank"
-                              class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                <div class="mt-4 p-2 bg-gray-100 rounded-md border border-gray-300">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr>
+                        <th class="px-4 py-2 font-medium text-left">Team</th>
+                        <th class="px-4 py-2 font-medium text-left">Rank</th>
+                        <th class="px-4 py-2 font-medium text-left">Points</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="match in sortedMatches" :key="match.id">
+                        <td class="px-4 py-2 w-72">{{ getTeamName(match.sport_variation_team_id) }}</td>
+                        <td class="px-4 py-2 w-44">
+                          <select 
+                            v-model="rankUpdates[match.id].rank"
+                            class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select</option>                              
+                            <option value="10">Desqualified</option>
+                            <option 
+                              v-for="rank in availableRanks(match.id)" 
+                              :key="rank"
+                              :value="rank"
                             >
-                              <option value="">Select</option>
-                              <option 
-                                v-for="rank in availableRanks(match.id)" 
-                                :key="rank"
-                                :value="rank"
-                              >
-                                {{ formatRank(rank) }}
-                              </option>
-                            </select>
-                          </td>
-                          <td class="px-4 py-2 w-12">
-                            <input 
-                              type="number"
-                              v-model="rankUpdates[match.id].points"
-                              min="0"
-                              readonly
-                              disabled
-                              class="px-2 py-2 border w-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="Points"
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                              {{ formatRank(rank) }}
+                            </option>
+                          </select>
+                        </td>
+                        <td class="px-4 py-2 w-12">
+                          <input 
+                            type="number"
+                            v-model="rankUpdates[match.id].points"
+                            min="0"
+                            class="px-2 py-2 border w-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Points"
+                            readonly
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
-                  <!-- Official Name Input -->
-                  <div class="mt-4">
-                    <label for="official_name" class="block text-sm font-medium text-gray-700">Official Name</label>
-                    <input 
-                      type="text"
-                      id="official_name"
-                      v-model="rankUpdateForm.official_name"
-                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      placeholder="Enter official name"
-                      required
-                    />
-                  </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                  <button 
+                    type="button"
+                    @click="closeRankModal"
+                    class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    @click="openValidationModal"
+                    :disabled="!isValidRankSelection"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 disabled:opacity-50"
+                  >
+                    Next: Validate
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                  <!-- Signature Pad -->
-                  <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700">Signature</label>
-                    <div ref="signaturePadContainer" class="mt-2 border-2 border-gray-300 rounded-md bg-white"></div>
-                    <div class="flex justify-between mt-2">
-                      <button 
-                        type="button"
-                        @click.prevent="clearSignature" 
-                        class="text-sm text-red-600 hover:bg-red-50 px-3 py-1 rounded"
-                      >
-                        Clear Signature
-                      </button>
-                      <span class="text-xs text-gray-500">Sign within the box above</span>
-                    </div>
-                  </div>
+        <!-- Validation Modal -->
+        <div v-if="showValidationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="relative p-4 w-full max-w-[32rem] max-h-full">
+            <div class="relative bg-white rounded-lg shadow">
+              <div class="flex items-center justify-between p-4 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Validate Rankings
+                </h3>
+                <button @click="closeValidationModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center">
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="p-4">
+                <!-- Official Name Input -->
+                <div class="mt-4">
+                  <label for="official_name" class="block text-sm font-medium text-gray-700">Official Name</label>
+                  <input 
+                    type="text"
+                    id="official_name"
+                    v-model="rankUpdateForm.official_name"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Enter official name"
+                    required
+                  />
+                </div>
 
-                  <div v-if="rankUpdateError" class="mt-4 text-red-500 text-sm">{{ rankUpdateError }}</div>
-
-                  <div class="grid grid-cols-2 gap-2 mt-4">
+                <!-- Signature Pad -->
+                <div class="mt-4">
+                  <label class="block text-sm font-medium text-gray-700">Signature</label>
+                  <div ref="signaturePadContainer" class="mt-2 border-2 border-gray-300 rounded-md bg-white"></div>
+                  <div class="flex justify-between mt-2">
                     <button 
                       type="button"
-                      @click="closeRankModal"
-                      class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                      @click="clearSignature" 
+                      class="text-sm text-red-600 hover:bg-red-50 px-3 py-1 rounded"
                     >
-                      Cancel
+                      Clear Signature
                     </button>
-                    <button 
-                      type="submit"
-                      :disabled="!isValidRankSelection"
-                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 disabled:opacity-50"
-                    >
-                      {{ rankUpdateForm.processing ? 'Saving...' : 'Save' }}
-                    </button>
+                    <span class="text-xs text-gray-500">Sign within the box above</span>
                   </div>
-                </form>
+                </div>
+
+                <div v-if="rankUpdateError" class="mt-4 text-red-500 text-sm">{{ rankUpdateError }}</div>
+
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                  <button 
+                    type="button"
+                    @click="backToRankModal"
+                    class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100"
+                  >
+                    Back
+                  </button>
+                  <button 
+                    @click="updateRanks"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2"
+                  >
+                    {{ rankUpdateForm.processing ? 'Saving...' : 'Save' }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -324,6 +362,9 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  latestPalakasan: {
+    type: Array
+  }
 });
 
 const showRankModal = ref(false);
@@ -346,6 +387,37 @@ const rankUpdateForm = useForm({
   signature: '',
   facilitator_id: props.facilitator?.id,
 });
+//new added
+const showValidationModal = ref(false);
+
+const openValidationModal = () => {
+  showRankModal.value = false;
+  showValidationModal.value = true;
+  nextTick(() => {
+    initSignaturePad();
+  });
+};
+
+const closeValidationModal = () => {
+  showValidationModal.value = false;
+  rankUpdateError.value = '';
+};
+
+const backToRankModal = () => {
+  showValidationModal.value = false;
+  showRankModal.value = true;
+};
+
+const closeRankModal = () => {
+  showRankModal.value = false;
+  showValidationModal.value = false;
+  selectedVariation.value = null;
+  selectedVariationMatches.value = [];
+  rankUpdates.value = {};
+  rankUpdateError.value = '';
+  rankUpdateForm.reset();
+};
+//
 
 
 const returnToFacilitator = () => {
@@ -535,9 +607,9 @@ const openRankModal = (variation) => {
 watch(() => rankUpdates.value, (newRankUpdates) => {
   const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
   
-  // Get all selected ranks and sort them
+  // Get all selected ranks and sort them, excluding Desqualified
   const selectedRanks = Object.values(newRankUpdates)
-    .filter(match => match.rank !== '')
+    .filter(match => match.rank !== '' && match.rank !== '10')  // Exclude Desqualified rank
     .map(match => parseInt(match.rank))
     .sort((a, b) => a - b);
 
@@ -545,22 +617,19 @@ watch(() => rankUpdates.value, (newRankUpdates) => {
   Object.keys(newRankUpdates).forEach((matchId) => {
     const rank = newRankUpdates[matchId].rank;
     if (rank !== '') {
-      const rankIndex = selectedRanks.indexOf(parseInt(rank));
-      newRankUpdates[matchId].points = sortedPoints[rankIndex] 
-        ? sortedPoints[rankIndex].points 
-        : 0;
+      // If rank is 10 (Desqualified), set points to 0
+      if (rank === '10') {
+        newRankUpdates[matchId].points = 0;
+      } else {
+        const rankIndex = selectedRanks.indexOf(parseInt(rank));
+        newRankUpdates[matchId].points = sortedPoints[rankIndex] 
+          ? sortedPoints[rankIndex].points 
+          : 0;
+      }
     }
   });
 }, { deep: true });
 
-const closeRankModal = () => {
-  showRankModal.value = false;
-  selectedVariation.value = null;
-  selectedVariationMatches.value = [];
-  rankUpdates.value = {};
-  rankUpdateError.value = '';
-  rankUpdateForm.reset();
-};
 
 const isValidRankSelection = computed(() => {
   const selectedMatches = Object.values(rankUpdates.value);

@@ -37,18 +37,19 @@
                 </div>
 
             <Toast ref="toastRef" />
-            <div v-if="tournamentWinner" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h2 class="text-lg font-semibold text-green-800">Game Winner</h2>
-                <p class="text-xl font-bold text-green-700 mt-2">🏆 {{ getTeamName(tournamentWinner) }}</p>
-                <button
-                    @click="openRankingModal"
-                    type="button"
-                    class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    :disabled="isSubmittingRankings || rankingsSubmitted"
-                    >
-                    {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
-                </button>
-            </div>
+                <!-- Tournament Winner Display -->
+                <div v-if="tournamentWinner" class="mt-6 p-6 bg-green-50 flex justify-center flex-col items-center border border-green-200 rounded-lg">
+                    <h2 class="text-md font-medium text-green-800">Game Winner</h2>
+                    <p class="text-3xl font-bold text-green-700 mt-2">{{ getTeamName(tournamentWinner) }}</p>
+                    <button
+                        @click="openRankingModal"
+                        type="button"
+                        class="text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        :disabled="isSubmittingRankings || rankingsSubmitted"
+                        >
+                        {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
+                    </button>
+                </div>
 
             <!--tab navigation-->
             <nav class="flex relative justify-between mt-4  items-center">
@@ -160,7 +161,7 @@
                         <div class="flex items-center justify-between">
                         <span class="font-medium">{{ team.assigned_team_name }}</span>
                         <div class="flex items-center space-x-2">
-                            <span class="font-medium">Rank</span>
+                            <span class="">Rank</span>
                             <input
                             v-model="team.rank"
                             type="text"
@@ -170,12 +171,11 @@
                             class="w-8 border text-center rounded px-2 py-1"
                             placeholder="Rank"
                             />
-                            <span class="font-medium">Points</span>
+                            <span class="">Points</span>
                             <input
                             v-model="team.points"
-                            type="number"
-                            min="0"
-                            class="w-16 border rounded px-2 py-1"
+                            disabled
+                            class="w-10 border rounded text-center px-2 py-1"
                             placeholder="Points"
                             required
                             readonly
@@ -183,10 +183,10 @@
                         </div>
                         </div>
                     </div>
-                    <div class="mt-4 flex justify-end">
+                    <div class="mt-8 flex justify-end">
                         <button
                         type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        class="px-4 py-2 bg-blue-600 text-sm font-medium text-white rounded-md hover:bg-blue-700"
                         :disabled="isSubmittingRankings || rankingsSubmitted"
                         >
                         {{ isSubmittingRankings ? 'Submitting...' : (rankingsSubmitted ? 'Rankings Submitted' : 'Submit Rankings') }}

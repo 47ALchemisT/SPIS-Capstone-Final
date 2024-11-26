@@ -4,42 +4,41 @@
     <AppLayout>
       <template v-slot:default>
         <!-- Header Section -->
-        <div class="flex items-center gap-2">
-          <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-          <div>
-            <button
-              @click="returnToPalakasan"
-              type="button"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-              <i class="fa-solid fa-right-to-bracket mr-2"></i>
-              Return
-            </button>
-          </div>
-        </div>
+        <div class="flex flex-col">
+                <div class="flex items-center justify-between gap-2">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                    <div>
+                        <button 
+                            @click="returnToPalakasan" 
+                            type="button" 
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            >
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
+                            Return
+                        </button>
+                    </div>
+                </div>
 
-        <!-- Progress Bar -->
-        <div class="mt-2 space-y-2">
-          <div class="flex items-center text-xs">
-            <h2 class="text-gray-600">Sport Progress :</h2>
-            <span class="font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
-          </div>
-          <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div 
-              class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" 
-              :style="{ width: `${progressPercentage}%` }"
-            ></div>
-          </div>
-        </div>
-
-        <!-- Tags Section -->
-        <div class="flex items-center gap-2 mt-2">
-              <p class="text-sm"> {{ sport.setup }}</p>
-              <p class="text-xs">|</p>
-              <p class=" text-sm">{{ sport.type }}</p>
-              <p class="text-xs">|</p>
-              <p class=" text-sm">{{ sport.status }}</p>
-        </div>
+                <div class="flex items-center text-gray-600 gap-2 ">
+                    <p class="text-sm"> {{ sport.setup }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.type }}</p>
+                    <span class="text-sm">•</span>
+                    <p class=" text-sm">{{ sport.status }}</p>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="flex mt-3 flex-col">
+                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
+                    </div>
+                    <div class="flex items-center mt-2">
+                        <h2 class="text-xs text-gray-600">Sport Progress  </h2>
+                        <h2 class="text-xs text-gray-600 px-2">:</h2>
+                        <span class="text-xs font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
+                    </div>
+                </div>
+                </div>
 
         <nav class="flex relative justify-between mt-4  items-center">
           <div class="flex gap-2 rounded-lg ">
@@ -63,7 +62,8 @@
                 <button
                   @click="showModal = true"                 
                   type="button"
-                  class="flex items-center gap-2 text-white bg-blue-700 font-medium hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
+                  :disabled="latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed'"
+                  class="flex items-center gap-2 text-white bg-blue-700 font-medium hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700"
                   >
                   Add Variation
                 </button>
@@ -74,12 +74,16 @@
           <div v-if="activeTab === 'sports'">
             <!-- Sport Variations List -->
             <div class=" mb-6">
-              <h2 class="text-md font-semibold mb-4">Sport Variations</h2>
               <div v-if="sportVariations.length === 0" class="text-gray-500">
                 No variations added yet.
               </div>
               <ul v-else class="space-y-4">
-                <li v-for="variation in sportVariations" :key="variation.id" class="pb-4 border p-4 border-gray-300 rounded-lg ">
+                <li v-for="variation in sportVariations" :key="variation.id" 
+                  class="pb-4 p-4 rounded-lg"
+                  :class="{ 
+                    'bg-blue-50 border border-blue-400': variation.status?.toLowerCase() === 'completed',
+                    'border border-gray-300': variation.status?.toLowerCase() !== 'completed'
+                  }">
                   <div class="flex justify-between items-center">
                     <div class="flex justify-between w-full">
                       <div>
@@ -116,13 +120,6 @@
                       </div>
                       <div>
                         <button 
-                          type="button"
-                          @click="openRankModal(variation)" 
-                          class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                        >
-                          <svg  class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 18c0-1.414 0-2.121.44-2.56C4.378 15 5.085 15 6.5 15H7c.943 0 1.414 0 1.707.293S9 16.057 9 17v5H3.5zM15 19c0-.943 0-1.414.293-1.707S16.057 17 17 17h.5c1.414 0 2.121 0 2.56.44c.44.439.44 1.146.44 2.56v2H15zM2 22h20M9 16c0-1.414 0-2.121.44-2.56C9.878 13 10.585 13 12 13s2.121 0 2.56.44c.44.439.44 1.146.44 2.56v6H9zm3.691-13.422l.704 1.42a.87.87 0 0 0 .568.423l1.276.213c.816.137 1.008.734.42 1.323l-.992 1a.88.88 0 0 0-.208.73l.284 1.238c.224.98-.292 1.359-1.152.847l-1.196-.714a.86.86 0 0 0-.792 0l-1.196.714c-.856.512-1.376.129-1.152-.847l.284-1.238a.88.88 0 0 0-.208-.73l-.991-1c-.584-.589-.396-1.186.42-1.323l1.275-.213a.87.87 0 0 0 .564-.424l.704-1.42c.384-.77 1.008-.77 1.388 0" color="currentColor"/></svg>                    
-                        </button>
-                        <button 
                           @click="openUpdateTimeModal(variation)"
                           type="button" 
                           class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -138,8 +135,8 @@
                     <table class="w-full text-sm">
                       <thead>
                         <tr>
-                          <th class="px-4 py-2 bg-gray-100 text-left">Team</th>
-                          <th class="px-4 py-2 bg-gray-100 text-center">Rank</th>
+                          <th class="px-4 py-2 text-left" :class="{ 'bg-blue-100': variation.status?.toLowerCase() === 'completed' }">Team</th>
+                          <th class="px-4 py-2 text-center" :class="{ 'bg-blue-100': variation.status?.toLowerCase() === 'completed' }">Rank</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -465,7 +462,11 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  players: Array
+  players: Array,
+  latestPalakasan: {
+    type: Object,
+    default: () => ({})
+  },
 
 });
 

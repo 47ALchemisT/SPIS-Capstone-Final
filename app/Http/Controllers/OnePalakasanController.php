@@ -7,6 +7,7 @@ use App\Models\AssignedTeams;
 use App\Models\College;
 use App\Models\FacilitatorRankSubmitions;
 use App\Models\FacilitatorSubmits;
+use App\Models\FfoFacilitatorSubmits;
 use App\Models\MatchResult;
 use App\Models\OverallResult;
 use App\Models\Palakasan;
@@ -76,13 +77,19 @@ class OnePalakasanController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-        \Log::info('Debugging Sport Data:', [
-            'first_submit_id' => $facilitatorRankSubmits->first()?->id,
-            'overall_result' => $facilitatorRankSubmits->first()?->overallResult,
-            'assigned_sport' => $facilitatorRankSubmits->first()?->overallResult?->assignedSportID,
-            'sport_details' => $facilitatorRankSubmits->first()?->overallResult?->assignedSportID?->sport,
-        ]);
-            
+        $ffofacilitatorSubmits = FfoFacilitatorSubmits::join('sports_variations', 'ffo_facilitator_submits.match_id', '=', 'sports_variations.id')
+                ->join('assigned_sports', 'sports_variations.assigned_sport_id', '=', 'assigned_sports.id')
+                ->with([
+                    'facilitator.student:id,first_name,last_name',
+                    'match:id,sport_variation_name,assigned_sport_id',
+                    'match.sport_id:id,sport_id,categories',
+                    'match.sport_id.sport:id,name'
+                ])
+                ->where('assigned_sports.palakasan_sport_id', $latestPalakasan->id)
+                ->select('ffo_facilitator_submits.*')
+                ->orderBy('ffo_facilitator_submits.created_at', 'desc')
+                ->get();
+                
         $facilitatorSubmits = FacilitatorSubmits::with([
                 'matchResult.sportMatch.assignedSport.sport', 
                 'matchResult.winning_team.college', 
@@ -108,7 +115,8 @@ class OnePalakasanController extends Controller
             'matchResults' => $matchResults,
             'matchRankings' => $matchRankings,
             'facilitatorSubmits' => $facilitatorSubmits,
-            'facilitatorRankSubmits' => $facilitatorRankSubmits
+            'facilitatorRankSubmits' => $facilitatorRankSubmits,
+            'ffofacilitatorSubmits' => $ffofacilitatorSubmits
         ]);
     }
 

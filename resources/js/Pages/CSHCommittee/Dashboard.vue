@@ -8,12 +8,25 @@
                     <div class="text-center max-w-md">
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome {{ comHead.student.first_name }} {{ comHead.student.last_name }} !</h2>
                         <p class="text-gray-600 text-sm mb-8">To get started, please select the college you'll be managing during the Palakasan.</p>
-                        <button
-                            @click="openAssignModal"
-                            class="inline-flex items-center text-sm px-6 py-2.5 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Select Team
-                        </button>
+                        <div v-if="assignedTeams.some(team => !team.is_assigned)" class="space-y-4">
+                            <button
+                                @click="openAssignModal"
+                                class="inline-flex items-center text-sm px-6 py-2.5 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                Select Team
+                            </button>
+                        </div>
+                        <div v-else class="space-y-4">
+                            <div class="p-4 bg-yellow-50 rounded-lg">
+                                <p class="text-yellow-800 text-sm">All teams have already been assigned to committee heads.</p>
+                            </div>
+                            <button
+                                disabled
+                                class="inline-flex items-center text-sm px-6 py-2.5 border border-transparent text-base font-medium rounded-md text-white bg-gray-400 cursor-not-allowed"
+                            >
+                                No Teams Available
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -88,10 +101,9 @@
                                             </div>
                                         </div>
                                         <div class="h-[28rem] w-full ">
-                                            <img class="w-full h-full object-cover" src="/resources/assets/cohead.png" alt="com head">
+                                            <img class="w-full h-full object-cover" src="/resources/assets/comhead.png" alt="com head">
                                         </div>
                                     </div>
-
 
                                     <div class="grid grid-cols-3 gap-4 h-full">
                                         <div class="bg-blue-50 rounded-lg p-6">
@@ -105,7 +117,7 @@
                                             <p class="text-2xl font-bold text-blue-700">{{ students.length }}</p>
                                         </div>
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 13c2.396 0 4.575.694 6.178 1.672c.8.488 1.484 1.064 1.978 1.69c.486.615.844 1.351.844 2.138c0 .845-.411 1.511-1.003 1.986c-.56.45-1.299.748-2.084.956c-1.578.417-3.684.558-5.913.558s-4.335-.14-5.913-.558c-.785-.208-1.524-.506-2.084-.956C3.41 20.01 3 19.345 3 18.5c0-.787.358-1.523.844-2.139c.494-.625 1.177-1.2 1.978-1.69C7.425 13.695 9.605 13 12 13m0 2c-2.023 0-3.843.59-5.136 1.379c-.647.394-1.135.822-1.45 1.222c-.324.41-.414.72-.414.899c0 .122.037.251.255.426c.249.2.682.407 1.344.582C7.917 19.858 9.811 20 12 20c2.19 0 4.083-.143 5.4-.492c.663-.175 1.096-.382 1.345-.582c.218-.175.255-.304.255-.426c0-.18-.09-.489-.413-.899c-.316-.4-.804-.828-1.451-1.222C15.843 15.589 14.023 15 12 15m0-13a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/></g></svg>                                    
+                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 13c2.396 0 4.575.694 6.178 1.672c.8.488 1.484 1.064 1.978 1.69c.486.615.844 1.351.844 2.138c0 .845-.411 1.511-1.003 1.986c-.56.45-1.299.748-2.084.956c-1.578.417-3.684.558-5.913.558s-4.335-.14-5.913-.558c-.785-.208-1.524-.506-2.084-.956C3.41 20.01 3 19.345 3 18.5c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z" clip-rule="evenodd" /></g></svg>                                    
                                             <p class="text-sm text-blue-600 mb-1.5">Assigned Students</p>
                                             <p class="text-2xl font-bold text-blue-700">{{ assignedPlayers.length }}</p>
                                         </div>
@@ -265,7 +277,7 @@
                                             <div class="flex items-start gap-3">
                                                 <div class="flex-shrink-0 w-6 h-6 text-blue-600">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                                                        <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.694 3.397 1.672c.8.488 1.484 1.064 1.978 1.69c.486.615.844 1.351.844 2.138c0 .845-.411 1.511-1.003 1.986c-.56.45-1.299.748-2.084.956c-1.578.417-3.684.558-5.913.558s-4.335-.14-5.913-.558c-.785-.208-1.524-.506-2.084-.956C3.41 20.01 3 19.345 3 18.5c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z" clip-rule="evenodd" />
                                                     </svg>
                                                 </div>
                                                 <div>
@@ -425,18 +437,20 @@
                                                 <div class="mt-4">
                                                     <div class="space-y-2">
                                                         <div v-for="team in assignedTeams" :key="team.id" 
-                                                            class="flex items-center p-4 rounded-lg cursor-pointer"
+                                                            class="flex items-center p-4 rounded-lg"
                                                             :class="{
                                                                 'bg-blue-50 border border-blue-200': selectedTeam === team.id,
-                                                                'hover:bg-gray-50 border border-gray-200': selectedTeam !== team.id
+                                                                'hover:bg-gray-50 border border-gray-200': selectedTeam !== team.id && !team.is_assigned,
+                                                                'opacity-50 border border-gray-200 cursor-not-allowed': team.is_assigned
                                                             }"
-                                                            @click="selectTeam(team.id)"
+                                                            @click="!team.is_assigned && selectTeam(team.id)"
                                                         >
                                                             <div class="flex-1">
                                                                 <h4 class="text-base font-medium text-gray-900">{{ team.assigned_team_name }}</h4>
                                                                 <p class="text-sm text-gray-500">{{ team.college.name }}</p>
+                                                                <span v-if="team.is_assigned" class="text-sm text-gray-500 italic">(Already assigned)</span>
                                                             </div>
-                                                            <div v-if="selectedTeam === team.id" class="text-blue-600">
+                                                            <div v-if="selectedTeam === team.id && !team.is_assigned" class="text-blue-600">
                                                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                                                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
                                                                 </svg>
@@ -450,14 +464,14 @@
                                                         @click="closeAssignModal"
                                                         class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-md"
                                                     >
-                                                        Cancel
+                                                        No, cancel
                                                     </button>
                                                     <button
                                                         @click="assignTeam"
                                                         :disabled="!selectedTeam"
                                                         class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
-                                                        Assign Team
+                                                        Select, let's get started
                                                     </button>
                                                 </div>
                                             </DialogPanel>
