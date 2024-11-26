@@ -1,6 +1,5 @@
 <template>
   <div class="game-schedule">
-    <h2 class="text-md font-medium mt-1 mb-4">Match Schedule</h2>
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div v-for="match in sortedMatches" 
         :key="match.id" 

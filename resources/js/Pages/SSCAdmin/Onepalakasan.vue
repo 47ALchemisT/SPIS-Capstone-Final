@@ -8,7 +8,7 @@
                 <div class="flex gap-2 ">
                     <div class="flex gap-2">
                         <button 
-                            v-for="tab in ['details', 'lineups', 'leagues']"
+                            v-for="tab in ['details', 'line ups', 'leagues']"
                             :key="tab"
                             @click="setActiveTab(tab)"
                             :class="[
@@ -23,13 +23,15 @@
                     </div>
                 </div>
                 <div class="flex space-x-3">
-                    <button 
+                    <button
                         @click="openHistoryModal" 
-                        type="button" 
-                        class="text-gray-600 ring-1 font-medium flex items-center gap-1.5 ring-gray-300  hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-3 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 transition"
+                        type="button"
+                        class="text-gray-600 ring-1 font-medium flex items-center ring-gray-300 hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-2 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 group transition-all duration-500 ease-in-out"
                     >
                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4.5 0 0 1 4-4h8.5a4 4.5 0 0 1 4 4v8.5a4 4.5 0 0 1-4 4h-8.5a4 4.5 0 0 1-4-4zm0 1h16.5"/></svg>                        
+                        <span class="max-w-0 overflow-hidden group-hover:ml-1.5 group-hover:max-w-[200px] whitespace-nowrap transition-all duration-500 ease-in-out">
                         Archive
+                        </span>
                     </button>
                     <HowToStartModal
                         :is-open="showHowToStart"
@@ -175,7 +177,7 @@
                 </div>
 
                 <!-- Teams Tab Content -->
-                <div v-if="activeTab === 'lineups'">
+                <div v-if="activeTab === 'line ups'">
                     <div class="flex mb-4 items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <!-- Search Input -->
@@ -274,15 +276,20 @@
                             >
                                 Logs
                             </button>
-                            <button 
+                            <button
                                 @click="toggleSelectionMode"
-                                class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-gray-300 ring-1 focus:ring-gray-300 rounded-lg px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
+                                :disabled="latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed'"
+                                class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-gray-300 ring-1 focus:ring-gray-300 rounded-lg px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
+                                :class="{
+                                'bg-gray-100': true,
+                                'ring-0': latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed',
+                                'opacity-50 cursor-not-allowed': latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed'
+                                }"
                             >
                                 {{ isSelectionMode ? 'Cancel Selection' : 'Delete' }}
                             </button>
                             <button 
                                 v-if="isSelectionMode && selectedSports.length > 0"
-                                @click="deleteSelectedSports"
                                 class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-red-300 ring-1 focus:ring-red-300 rounded-lg px-4 py-2 text-red-700 font-medium hover:bg-red-100 hover:text-red-800 hover:ring-red-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
                             >
                                 Delete ({{ selectedSports.length }})
@@ -373,10 +380,10 @@
                                 
                             </div>
                             <!-- Animated Arrow -->
-                            <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
+                            <div class="absolute bottom-6  right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
                                 <svg 
                                     xmlns="http://www.w3.org/2000/svg" 
-                                    class="h-5 w-5 text-gray-500 group-hover:text-gray-800 group-hover:text-blue-600" 
+                                    class="h-5 w-5 text-gray-500  group-hover:text-blue-600" 
                                     fill="none" 
                                     viewBox="0 0 24 24" 
                                     stroke="currentColor"
@@ -793,61 +800,54 @@
                 </div>
             </div>
 
-            <!-- History Modal -->
             <div v-if="isHistoryModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="flex items-end justify-center min-h-2xl  text-center sm:block ">
-                    <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="closeHistoryModal"></div>
-
-                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                    <div class="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
-                        <div class="bg-white p-5">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Palakasan History
-                            </h3>
-                            <div class="mt-4">
-                                <div class="overflow-x-auto h-96">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr v-for="palakasan in completedPalakasans" :key="palakasan.id" class="hover:bg-gray-50 transition-colors duration-200">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ palakasan.year }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600">{{ palakasan.theme }} <br> <span class="text-xs text-gray-500 font-normal">{{ palakasan.tagline }}</span></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(palakasan.start_date) }} - {{ formatDate(palakasan.end_date) }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-50 text-green-800">
-                                            {{ palakasan.status }}
-                                        </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button @click="viewPalakasanDetails(palakasan.id)" class="text-blue-600 hover:text-blue-900 transition-colors duration-200">
-                                            View
-                                        </button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button @click="closeHistoryModal" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                            Close
-                        </button>
-                        </div>
-                    </div>
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
+                <div class="p-6 border-b border-gray-200 sticky top-0 bg-white z-10 flex justify-between items-center rounded-t-lg">
+                    <h3 class="text-2xl font-semibold text-gray-900" id="modal-title">
+                    Palakasan History
+                    </h3>
+                    <button @click="closeHistoryModal" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    </button>
+                </div>
+                
+                <div class="overflow-y-auto flex-grow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50 sticky top-0">
+                        <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr v-for="palakasan in completedPalakasans" :key="palakasan.id" class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ palakasan.year }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ palakasan.theme }}</div>
+                            <div class="text-sm text-gray-500">{{ palakasan.tagline }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ formatDate(palakasan.start_date) }} - {{ formatDate(palakasan.end_date) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            {{ palakasan.status }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button @click="viewPalakasanDetails(palakasan.id)" class="text-blue-600 hover:text-blue-900 transition-colors duration-200">
+                            View
+                            </button>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
                 </div>
             </div>
 
@@ -870,7 +870,7 @@
 
             <!-- Logs Modal -->
             <div v-if="isLogsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl">
+                <div class="bg-white rounded-lg shadow-lg w-[62rem]">
                     <div class="flex items-center justify-between p-4 border-b">
                         <h3 class="text-lg font-semibold text-gray-900">Activity Logs</h3>
                         <button 
@@ -911,87 +911,115 @@
                         </div>
 
                         <!-- Content Area -->
-                        <div class="h-96 overflow-y-auto">
-                            <!-- Match Results Tab -->
+                        <div class="max-h-[32rem] overflow-y-auto">
                             <div v-if="activeLogTab === 'results'" class="space-y-4">
-                                <div v-for="submit in facilitatorSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <div class="flex items-center gap-2 mb-2">
-                                                <span class="text-xs font-medium px-2 py-1 bg-purple-100 text-purple-800 rounded">
-                                                    {{ submit.match_result?.sport_match?.assigned_sport?.sport?.name || 'Unknown Sport' }}
-                                                </span>
-                                                <span class="text-xs font-medium px-2 py-1 bg-blue-100 text-blue-800 rounded">
-                                                    Round {{ submit.match_result?.sport_match?.round || 'N/A' }}
-                                                </span>
-                                                <span class="text-xs font-medium px-2 py-1 bg-green-100 text-green-800 rounded">
-                                                    {{ submit.match_result?.sport_match?.game || 'N/A' }}
-                                                </span>
-                                            </div>
-                                            <p class="text-sm font-medium text-gray-900">
-                                                {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} vs {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
-                                            </p>
-                                            <p class="text-xs text-gray-500">
-                                                Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
-                                            </p>
-                                            <p class="text-xs text-gray-500">
-                                                Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
-                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
-                                            </p>
-                                            <!-- Add Official Name -->
-                                            <p class="text-xs text-gray-500 mt-2">
-                                                Official Name: {{ submit.official_name }}
-                                            </p>
-                                            <!-- Add Signature -->
-                                            <div class="mt-3">
-                                                <p class="text-xs text-gray-500 mb-1">Signature:</p>
-                                                <img 
-                                                    :src="submit.signature" 
-                                                    alt="Official Signature" 
-                                                    class="border border-gray-200 rounded-lg bg-white p-2"
-                                                    style="max-width: 200px; max-height: 100px; object-fit: contain;"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Rankings Tab -->
-                            <div v-if="activeLogTab === 'rankings'" class="space-y-4">
-                                <div v-for="submit in facilitatorRankSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
-                                    <div class="flex justify-between items-center">
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <h3 class="text-sm font-semibold text-gray-900 mb-2">
-                                                        {{ submit.overall_result?.assignedSportID?.sport?.name || 'Unknown Sport' }}
-                                                    </h3>
-                                                    <p class="text-sm font-medium text-gray-900">
-                                                        {{ submit.overall_result?.assignedTeamID?.assigned_team_name || 'Unknown Team' }}
-                                                        <span class="text-xs text-gray-500 ml-2">
-                                                            ({{ submit.overall_result?.assignedTeamID?.college?.name || 'Unknown College' }})
-                                                        </span>
+                                <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
+                                    <!-- Regular Match Result -->
+                                    <template v-if="submit.type === 'regular'">
+                                        <div class="flex justify-between items-center">
+                                            <div class="w-full">
+                                                <div class="flex w-full justify-between gap-2 mb-2">
+                                                    <div class="flex items-center text-gray-600 gap-2 ">
+                                                        <p class="text-sm"> {{  submit.match_result?.sport_match?.assigned_sport?.sport?.name }} {{ submit.match_result?.sport_match?.assigned_sport?.categories }}</p>
+                                                        <span class="text-sm">•</span>
+                                                        <p class=" text-sm">Round {{  submit.match_result?.sport_match?.round }}</p>
+                                                        <span class="text-sm">•</span>
+                                                        <p class=" text-sm">{{  submit.match_result?.sport_match?.game }}</p>
+                                                    </div>
+                                                    <p class="text-xs text-right text-gray-500">
+                                                        <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
                                                     </p>
+
                                                 </div>
-                                                <div class="flex gap-4">
-                                                    <span class="text-xs text-gray-500">
-                                                        Rank: {{ submit.overall_result?.rank }}
-                                                    </span>
-                                                    <span class="text-xs text-gray-500">
-                                                        Points: {{ submit.overall_result?.points }}
-                                                    </span>
+
+                                                <p class="text-sm font-medium text-gray-800">
+                                                    Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
+                                                </p>
+                                                <p class="text-sm text-gray-600">
+                                                    {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} won against {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
+                                                </p>
+                                                <div class="flex justify-between">
+                                                    <div class="mt-3 flex gap-2">
+                                                        <p class="text-xs text-gray-500">
+                                                            Submitted by : {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                        </p>
+                                                        <span class="text-xs text-gray-500">•</span>
+                                                        <p class="text-xs text-gray-500">
+                                                            Validated by : {{ submit.official_name }}
+                                                        </p>
+                                                    </div>
+                                                    <button 
+                                                        @click="openSignature(submit.signature)"
+                                                        class="mt-2 py-1.5 px-2.5 rounded-full bg-blue-100 text-xs hover:bg-blue-200  text-blue-600 hover:text-blue-800 font-medium"
+                                                    >
+                                                        View Signature
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                        </div>
+                                    </template>
+
+                                    <!-- FFO Match Result -->
+                                    <template v-else>
+                                        <div class="flex w-full justify-between gap-2 mb-2">
+                                            <div class="flex items-center text-gray-600 gap-2 ">
+                                                <p class="text-sm">{{ submit.match?.sport_id?.sport?.name }} {{ submit.match?.sport_id?.categories }}</p>
+                                                <span class="text-sm">•</span>
+                                                <p class="text-sm">{{ submit.match?.sport_variation_name }}</p>
+                                            </div>
+                                            <p class="text-xs text-right text-gray-500">
                                                 <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
                                             </p>
+
                                         </div>
-                                    </div>
+                                        <h1 class="text-sm font-semibold text-gray-800">Game has been completed</h1>
+                                        <p class="text-sm text-gray-600">
+                                            You can now check the {{ submit.match?.sport_id?.sport?.name }} to see the results
+                                        </p>
+                                        <div class="flex justify-between">
+                                            <div class="mt-3 flex gap-2">
+                                                <p class="text-xs text-gray-500">
+                                                    Submitted by : {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                </p>
+                                                <span class="text-xs text-gray-500">•</span>
+                                                <p class="text-xs text-gray-500">
+                                                    Validated by : {{ submit.official_name }}
+                                                </p>
+                                            </div>
+                                            <button 
+                                                @click="openSignature(submit.signature)"
+                                                class="mt-2 text-xs text-blue-600 py-1.5 px-2.5 rounded-full bg-blue-100 hover:bg-blue-200 hover:text-blue-800 font-medium"
+                                            >
+                                                View Signature
+                                            </button>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Signature Modal -->
+            <div v-if="showSignature" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Official Signature</h3>
+                        <button 
+                            @click="closeSignature"
+                            class="text-gray-400 hover:text-gray-600"
+                        >
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex justify-center">
+                        <img 
+                            :src="selectedSignature" 
+                            alt="Official Signature" 
+                            class="max-w-full max-h-[300px] object-contain border border-gray-200 rounded-lg bg-white p-2"
+                        />
                     </div>
                 </div>
             </div>
@@ -1022,8 +1050,9 @@
         facilitator: Array,
         matchResults: Array,
         matchRankings: Array,
-        facilitatorSubmits: Array,
         facilitatorRankSubmits: Array,
+        facilitatorSubmits: Array,
+        ffofacilitatorSubmits: Array,
         latestPalakasan: {
             type: Object,
             default: () => ({})
@@ -1041,6 +1070,18 @@
     const isHistoryModalOpen = ref(false);
     const toastRef = ref(null);
     const page = usePage();
+    const showSignature = ref(false);
+    const selectedSignature = ref(null);
+
+    const openSignature = (signature) => {
+        selectedSignature.value = signature;
+        showSignature.value = true;
+    };
+
+    const closeSignature = () => {
+        showSignature.value = false;
+        selectedSignature.value = null;
+    };
 
     // Watch for flash messages
     watch(
@@ -1055,6 +1096,20 @@
         },
         { deep: true }
     );
+
+    const allSubmits = computed(() => {
+        const combined = [
+            ...(props.facilitatorSubmits || []).map(submit => ({
+                ...submit,
+                type: 'regular'
+            })),
+            ...(props.ffofacilitatorSubmits || []).map(submit => ({
+                ...submit,
+                type: 'ffo'
+            }))
+        ];
+        return combined.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    });
 
     //this is for viewing the sport
     const viewSport = (sportId) => {

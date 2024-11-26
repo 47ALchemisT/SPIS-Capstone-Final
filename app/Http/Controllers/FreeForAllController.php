@@ -57,7 +57,8 @@ class FreeForAllController extends Controller
                 'sportVariationMatches' => $sportVariationMatches,
                 'points' => $points,
                 'venueRecords' => $venueRecords,
-                'players' => $players
+                'players' => $players,
+                'latestPalakasan' => $latestPalakasan,
 
             ]);
 
@@ -83,6 +84,7 @@ class FreeForAllController extends Controller
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
             $majorPoints = Points::where('type', 'Major')->get();
             $minorPoints = Points::where('type', 'Minor')->get();
+            $latestPalakasan = Palakasan::latest()->first();
             $players = StudentPlayer::with(['student', 'assignedTeam'])
             ->where('student_assigned_sport_id', $assignedSports->id)
             ->get();
@@ -102,7 +104,8 @@ class FreeForAllController extends Controller
                 'facilitator' => $facilitator,
                 'majorPoints' => $majorPoints,
                 'minorPoints' => $minorPoints,
-                'players' => $players
+                'players' => $players,
+                'latestPalakasan' => $latestPalakasan,
 
             ]);
 
@@ -316,8 +319,6 @@ class FreeForAllController extends Controller
                     'signature' => $validated['signature']
                 ]);
 
-                Log::info('Created facilitator submit record', ['record_id' => $submitRecord->id]);
-
                 // Update match ranks and points
                 foreach ($validated['matches'] as $match) {
                     $updateResult = SportsVariationsMatches::where('id', $match['id'])
@@ -336,10 +337,9 @@ class FreeForAllController extends Controller
 
                 // Update sport variation status to completed
                 $sportVariation->update(['status' => 'completed']);
-                Log::info('Updated sport variation status', ['variation_id' => $sportVariation->id]);
 
                 DB::commit();
-                return response()->json(['message' => 'Ranks updated successfully']);
+                return redirect()->back()->with('message', 'Rank submitted successfully');
 
             } catch (Exception $e) {
                 DB::rollBack();
@@ -352,16 +352,13 @@ class FreeForAllController extends Controller
 
         } catch (ValidationException $e) {
             Log::warning('Validation failed', ['errors' => $e->errors()]);
-            return response()->json(['errors' => $e->errors()], 422);
+            return redirect()->back()->with('message', 'Error');
         } catch (Exception $e) {
             Log::error('Unexpected error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return response()->json([
-                'error' => 'An error occurred while updating ranks',
-                'details' => config('app.debug') ? $e->getMessage() : null
-            ], 500);
+            return redirect()->back()->with('message', 'An error occurred while updating ranks');
         }
     }
 

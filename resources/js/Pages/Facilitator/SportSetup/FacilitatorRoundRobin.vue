@@ -107,29 +107,28 @@
                   <div class="flex items-center justify-between">
                     <span class="font-medium">{{ team.assigned_team_name }}</span>
                     <div class="flex items-center space-x-2">
-                      <span class="font-medium">Rank</span>
+                      <span class="">Rank</span>
                       <input
                         v-model="team.rank"
                         type="text"
                         disabled
                         class="w-8 border text-center rounded px-2 py-1"
                       />
-                      <span class="font-medium">Points</span>
+                      <span class="">Points</span>
                       <input
                         v-model="team.points"
-                        type="number"
-                        min="0"
-                        class="w-16 border rounded px-2 py-1"
+                        disabled
+                        class="w-10 text-center border rounded px-2 py-1"
                         placeholder="Points"
                         required
                       />
                     </div>
                   </div>
                 </div>
-                <div class="mt-4 flex justify-end">
+                <div class="mt-8 flex justify-end">
                   <button
                     type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="form.processing || rankingsSubmitted"
                   >
                     {{ form.processing ? 'Submitting...' : (rankingsSubmitted ? 'Rankings Submitted' : 'Submit Rankings') }}
