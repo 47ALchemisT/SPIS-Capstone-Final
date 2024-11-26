@@ -210,6 +210,13 @@ class OnePalakasanController extends Controller
             $palakasan->update([
                 'status' => $validated['status']
             ]);
+
+            // If palakasan is set to live, update all pending sports to ongoing
+            if ($validated['status'] === 'live') {
+                AssignedSports::where('palakasan_sport_id', $id)
+                    ->where('status', 'pending')
+                    ->update(['status' => 'ongoing']);
+            }
     
             $statusMessage = $validated['status'] === 'live' ? 'live' : 'completed';
             return redirect()->back()->with('success', "Palakasan status updated to {$statusMessage} successfully.");
