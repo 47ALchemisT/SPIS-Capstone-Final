@@ -125,17 +125,19 @@
             
             <div class="flex justify-between items-center mb-2">
               <div class="text-center flex-1">
-                <span :class="match.team1.color">{{ match.team1.name }}</span>
+                <p :class="match.team1.color">{{ match.team1.name }}</p>
+                <p class="text-gray-600">{{ match.team1.score }}</p>
               </div>
               <div class="text-center px-4">
-                <span class="text-xl font-bold">VS</span>
+                <span class="text-gray-400">vs</span>
               </div>
               <div class="text-center flex-1">
-                <span :class="match.team2.color">{{ match.team2.name }}</span>
+                <p :class="match.team2.color">{{ match.team2.name }}</p>
+                <p class="text-gray-600">{{ match.team2.score }}</p>
               </div>
             </div>
             
-            <div class="text-sm text-gray-500 mt-2">
+            <div class="text-sm text-gray-600 mt-2">
               <div>{{ match.date }} at {{ match.time }}</div>
               <div>{{ match.venue }}</div>
             </div>
@@ -242,7 +244,6 @@
               <div v-if="matches.length === 0" class="text-center py-8 text-gray-600">
                 No matches scheduled yet.
               </div>
-              
               <div v-else v-for="match in matches" :key="match.id" 
                    class="border rounded-lg p-4 hover:bg-gray-50">
                 <div class="flex justify-between items-center mb-2">
@@ -252,16 +253,26 @@
                 </div>
                 
                 <div class="flex justify-between items-center mb-2">
-                  <div class="text-center flex-1">
-                    <p :class="match.team1.color">{{ match.team1.name }}</p>
-                    <p class="text-gray-600">{{ match.team1.score }}</p>
+                  <div class="text-center flex-1" :class="{ 'bg-green-100 rounded-lg p-2': match.team1.isWinner && match.status === 'completed' }">
+                    <p :class="match.team1.color">
+                      {{ match.team1.name }}
+                      <span v-if="match.team1.isWinner && match.status === 'completed'" class="text-sm text-green-600 block">Winner!</span>
+                    </p>
+                    <p class="text-3xl font-bold mt-2" :class="{ 'text-green-600': match.team1.isWinner && match.status === 'completed' }">
+                      {{ match.team1.score }}
+                    </p>
                   </div>
                   <div class="mx-4">
-                    <span class="text-gray-400">vs</span>
+                    <span class="text-gray-400 text-xl">VS</span>
                   </div>
-                  <div class="text-center flex-1">
-                    <p :class="match.team2.color">{{ match.team2.name }}</p>
-                    <p class="text-gray-600">{{ match.team2.score }}</p>
+                  <div class="text-center flex-1" :class="{ 'bg-green-100 rounded-lg p-2': match.team2.isWinner && match.status === 'completed' }">
+                    <p :class="match.team2.color">
+                      {{ match.team2.name }}
+                      <span v-if="match.team2.isWinner && match.status === 'completed'" class="text-sm text-green-600 block">Winner!</span>
+                    </p>
+                    <p class="text-3xl font-bold mt-2" :class="{ 'text-green-600': match.team2.isWinner && match.status === 'completed' }">
+                      {{ match.team2.score }}
+                    </p>
                   </div>
                 </div>
                 
@@ -440,7 +451,7 @@
     </div>
 
     <footer class="m-auto w-full p-1 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" class="hover:underline">Supreme Student Council</a>. All Rights Reserved.
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400"> 2023 <a href="https://flowbite.com/" class="hover:underline">Supreme Student Council</a>. All Rights Reserved.
       </span>
       <ul class="flex flex-wrap items-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0 p-0 mt-0">
         <li>

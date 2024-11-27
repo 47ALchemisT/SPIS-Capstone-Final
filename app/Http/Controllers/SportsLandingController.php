@@ -21,15 +21,21 @@ class SportsLandingController extends Controller
         $activeSports = AssignedSports::with(['sport'])
             ->where('palakasan_sport_id', $latestPalakasan->id)
             ->get()
-            ->map(function($assignedSport) {
+            ->map(function($assignedSport) use ($latestPalakasan) {
+                $status = $assignedSport->status;
+                // If palakasan is live and sport is pending, show it as ongoing
+                if ($latestPalakasan->status === 'live' && $status === 'pending') {
+                    $status = 'ongoing';
+                }
+                
                 return [
                     'id' => $assignedSport->id,
                     'name' => $assignedSport->sport->name,
                     'category' => $assignedSport->categories,
                     'setup' => $assignedSport->setup,
-                    'status' => $assignedSport->status,
+                    'status' => $status,
                     'type' => $assignedSport->type,
-                    'statusClass' => $this->getStatusClass($assignedSport->status)
+                    'statusClass' => $this->getStatusClass($status)
                 ];
             });
 
@@ -80,10 +86,21 @@ class SportsLandingController extends Controller
 
     public function getSportMatches(Request $request, $sportId)
     {
-        $matches = SportMatch::with(['assignedSport.sport', 'teamA.college', 'teamB.college', 'matchVenue'])
+        $matches = SportMatch::with(['assignedSport.sport', 'teamA.college', 'teamB.college', 'matchVenue', 'match_result'])
             ->where('assigned_sport_id', $sportId)
             ->get()
             ->map(function($match) {
+                // Get the match result if it exists
+                $matchResult = $match->match_result;
+                
+                // Get team scores from the facilitator's input
+                $team1Score = $matchResult ? $matchResult->teamA_score : '--';
+                $team2Score = $matchResult ? $matchResult->teamB_score : '--';
+
+                // Determine winners based on scores
+                $team1IsWinner = $matchResult && $matchResult->teamA_score > $matchResult->teamB_score;
+                $team2IsWinner = $matchResult && $matchResult->teamB_score > $matchResult->teamA_score;
+
                 return [
                     'id' => $match->id,
                     'game' => $match->game,
@@ -92,13 +109,15 @@ class SportsLandingController extends Controller
                     'time' => $match->time,
                     'team1' => [
                         'name' => $match->teamA ? $match->teamA->college->name : 'TBD',
-                        'color' => 'text-lg font-bold text-blue-600',
-                        'score' => '--'
+                        'color' => $team1IsWinner ? 'text-lg font-bold text-green-600' : 'text-lg font-bold text-blue-600',
+                        'score' => $team1Score,
+                        'isWinner' => $team1IsWinner
                     ],
                     'team2' => [
                         'name' => $match->teamB ? $match->teamB->college->name : 'TBD',
-                        'color' => 'text-lg font-bold text-red-600',
-                        'score' => '--'
+                        'color' => $team2IsWinner ? 'text-lg font-bold text-green-600' : 'text-lg font-bold text-red-600',
+                        'score' => $team2Score,
+                        'isWinner' => $team2IsWinner
                     ],
                     'venue' => $match->matchVenue->name,
                     'status' => $match->status,
