@@ -21,7 +21,7 @@
         "@inertiajs/progress": "^0.2.7",
         "@inertiajs/vue3": "^1.2.0",
         "@vitejs/plugin-vue": "^5.1.4",
-        "apexcharts": "^4.0.0",
+        "apexcharts": "^4.1.0",
         "chart.js": "^4.4.6",
         "lucide-vue-next": "^0.460.0",
         "swiper": "^11.1.15",

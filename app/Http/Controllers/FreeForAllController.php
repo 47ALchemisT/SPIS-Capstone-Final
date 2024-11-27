@@ -366,7 +366,12 @@ class FreeForAllController extends Controller
     {
         $assignedSport = AssignedSports::findOrFail($id);
         $assignedSport->update(['status' => $request->input('status')]);
-        return redirect()->back()->with('success', 'status updated succesfully');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated successfully',
+            'sport' => $assignedSport
+        ]);
     }
 
 }

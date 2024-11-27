@@ -18,6 +18,7 @@ use App\Models\StudentAccount;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class OnePalakasanController extends Controller
 {
@@ -206,24 +207,40 @@ class OnePalakasanController extends Controller
     public function updatePalakasanStatus(Request $request, $id)
     {
         try {
-            // Validate the incoming request
-            $validated = $request->validate([
-                'status' => 'required|in:live,completed',
+            \Log::info('Updating Palakasan status', [
+                'palakasan_id' => $id,
+                'status' => $request->input('status')
             ]);
-    
-            // Find the Palakasan record
+
+            DB::beginTransaction();
+
+            // Update Palakasan status
             $palakasan = Palakasan::findOrFail($id);
-            
-            // Update the status
-            $palakasan->update([
-                'status' => $validated['status']
-            ]);
-    
-            $statusMessage = $validated['status'] === 'live' ? 'live' : 'completed';
-            return redirect()->back()->with('success', "Palakasan status updated to {$statusMessage} successfully.");
- 
+            $palakasan->update(['status' => $request->input('status')]);
+
+            // If Palakasan is being set to live, update all its sports to live as well
+            if ($request->input('status') === 'live') {
+                $updated = AssignedSports::where('palakasan_sport_id', $id)
+                    ->update(['status' => 'live']);
+                
+                \Log::info('Updated all sports statuses', [
+                    'palakasan_id' => $id,
+                    'sports_updated' => $updated
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Palakasan and sports updated successfully.');
+
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update Palakasan status: ' . $e->getMessage());
+            DB::rollBack();
+            \Log::error('Failed to update Palakasan status', [
+                'palakasan_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
         }
     }
 
@@ -242,6 +259,44 @@ class OnePalakasanController extends Controller
             return redirect()->back()->with('success', 'Sports deleted successfully');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error deleting sports: ' . $e->getMessage());
+        }
+    }
+
+    public function updateSportStatus(Request $request, $id)
+    {
+        try {
+            \Log::info('Updating sport status', [
+                'sport_id' => $id,
+                'status' => $request->input('status')
+            ]);
+
+            $assignedSport = AssignedSports::findOrFail($id);
+            $oldStatus = $assignedSport->status;
+            
+            $updated = $assignedSport->update([
+                'status' => $request->input('status')
+            ]);
+
+            \Log::info('Sport status update result', [
+                'sport_id' => $id,
+                'old_status' => $oldStatus,
+                'new_status' => $assignedSport->fresh()->status,
+                'update_success' => $updated
+            ]);
+
+            if (!$updated) {
+                throw new \Exception('Failed to update sport status');
+            }
+
+            return redirect()->back()->with('success', 'Sport status updated successfully');
+        } catch (\Exception $e) {
+            \Log::error('Failed to update sport status', [
+                'sport_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to update sport status: ' . $e->getMessage());
         }
     }
 }

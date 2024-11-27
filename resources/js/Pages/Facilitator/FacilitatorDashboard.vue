@@ -51,7 +51,7 @@
                   <div v-for="sport in assignedSports" :key="sport.id" class="flex items-center px-4 py-2 hover:bg-gray-50 rounded-md transition-colors duration-150">
                     <div class="w-2.5 h-2.5 rounded-full mr-3" :class="{
                       'bg-green-500': sport.status === 'completed',
-                      'bg-gray-400': sport.status === 'pending'
+                      'bg-gray-400': sport.status === 'live'
                     }"></div>
                     <span class="text-sm text-gray-700">{{ sport.sport.name }} {{ sport.categories }}</span>
                   </div>

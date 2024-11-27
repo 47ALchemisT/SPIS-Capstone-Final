@@ -62,13 +62,28 @@
                 <button
                   @click="showModal = true"                 
                   type="button"
-                  :disabled="latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed'"
+                  :disabled="sport?.status !== 'pending'"
                   class="flex items-center gap-2 text-white bg-blue-700 font-medium hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700"
                   >
                   Add Variation
                 </button>
+                <button
+                    v-if="sport.status === 'pending'"
+                      type="button"
+                      class="flex items-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
+                      :disabled="!allMatchesScheduled"
+                      @click="handleScheduleClick"
+                      >
+                    {{ allMatchesScheduled ? 'Save Schedule' : 'Set All Schedules First' }}
+                  </button>
               </div>
         </nav>
+
+        
+        <div v-if="sport.status === 'pending'" class="mt-4 p-6 rounded-lg bg-blue-50 text-sm text-center text-blue-700">
+            <i class="fa-solid fa-circle-info mr-2"></i>
+          <span class="font-medium">Important:</span> All matches must be scheduled with date and time before the sport can be marked as scheduled, this is required to start the Palakasan.
+        </div>
 
         <div class="mt-4">
           <div v-if="activeTab === 'sports'">
@@ -484,6 +499,23 @@ const totalMatches = computed(() => props.sportVariations.length);
 const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);
 const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMatches.value / totalMatches.value) * 100 : 0);
 
+const allMatchesScheduled = computed(() => {
+  return props.sportVariations.every(variation => 
+    variation.date && variation.time && variation.sport_variation_venue_id
+  );
+});
+
+const handleScheduleClick = async () => {
+  try {
+    await router.patch(route('assigned-sports.update-status', props.sport.id), {
+      status: 'scheduled'
+    });
+    // Update local state
+    props.sport.status = 'scheduled';
+  } catch (error) {
+    console.error('Failed to update sport status:', error);
+  }
+};
 
 const updateTimeForm = useForm({
   sport_variation_id: '',

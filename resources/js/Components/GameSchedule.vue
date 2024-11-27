@@ -9,7 +9,8 @@
             <span class="font-semibold text-md">{{ match.game }}</span>
             <div class=" text-xs flex justify-between gap-1.5 items-center">
               <span :class="getStatusClass(match.status)">Status : {{ formatStatus(match.status) }}</span>
-            </div>          </div>
+            </div>          
+          </div>
           <div class="flex items-center gap-2">
 
             <button 

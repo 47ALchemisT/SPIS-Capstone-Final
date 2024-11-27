@@ -88,8 +88,22 @@
                     >
                         {{ hasExistingMatches ? 'Game Already Started' : 'Start Game' }}
                     </button>
+                    <button
+                            v-if="sport.status === 'pending'"
+                            type="button"
+                            class="flex items-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
+                            :disabled="!allMatchesScheduled"
+                            @click="handleScheduleClick"
+                        >
+                        {{ allMatchesScheduled ? 'Save Scheduled' : 'Not Scheduled' }}
+                    </button>
                 </div>
             </nav>
+
+            <div v-if="sport.status === 'pending'" class="mt-4 p-6 rounded-lg bg-blue-50 text-sm text-center text-blue-700">
+                    <i class="fa-solid fa-circle-info mr-2"></i>
+                    <span class="font-medium">Important:</span> All matches must be scheduled with date and time before the sport can be marked as scheduled, this is required to start the Palakasan.
+                </div>
 
         <div class="mt-4">
           <div v-if="activeTab === 'matches'">
@@ -340,8 +354,6 @@ const createRoundRobinMatches = async () => {
       throw new Error('No matches were generated');
     }
 
-    console.log("Round-Robin match data being sent:", JSON.stringify(matches, null, 2));
-
     const response = await router.post(route('round-robin.store'), matches, {
       preserveScroll: true,
       onSuccess: (page) => {
@@ -377,6 +389,28 @@ const determineWinner = () => {
       // For now, tournamentWinner.value = sortedStandings[0].won >= sortedStandings[1].won ? sortedStandings[0].team_id : sortedStandings[1].team_id;
     }
   }
+};
+
+const allMatchesScheduled = computed(() => {
+    const sportMatches = props.matches.filter(match => match.assigned_sport_id === props.sport.id);
+    return sportMatches.length > 0 && sportMatches.every(match => match.date && match.time);
+});
+
+const handleScheduleClick = () => {
+    router.patch(route('assigned-sports.update-status', props.sport.id), {
+        status: 'scheduled'
+    }, {
+        onSuccess: () => {
+            if (toastRef.value) {
+                toastRef.value.addToast('Sport status updated to scheduled', 'success');
+            }
+        },
+        onError: (errors) => {
+            if (toastRef.value) {
+                toastRef.value.addToast('Failed to update sport status', 'error');
+            }
+        }
+    });
 };
 
 const totalMatches = computed(() => props.matches.length);

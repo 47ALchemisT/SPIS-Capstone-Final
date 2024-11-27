@@ -380,7 +380,7 @@
      </div>
    </section>
 
-    <<!-- Overall Sports Ranking -->
+    <!-- Overall Sports Ranking -->
     <div class="mt-12 bg-blue-50 p-8">
       <h3 class="text-2xl font-bold text-center pt-4 pb-4">Overall Sports Ranking</h3>
       

@@ -73,6 +73,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('team/store', [OnePalakasanController::class, 'store_teams'])->name('team.store');
     Route::post('sport/delete', [OnePalakasanController::class, 'deleteSports'])->name('onepalakasan.delete-sports');
     Route::put('/palakasan/{id}/update-status', [OnePalakasanController::class, 'updatePalakasanStatus'])->name('palakasan.updateStatus');
+    Route::patch('/assigned-sports/{id}/update-status', [OnePalakasanController::class, 'updateSportStatus'])->name('assigned-sports.update-status');
     Route::post('/match-result', [OnePalakasanController::class, 'storeMatchResult'])->name('match.result.store');
 
     Route::resource('student', StudentController::class);

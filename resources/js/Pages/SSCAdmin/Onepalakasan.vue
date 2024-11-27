@@ -104,7 +104,7 @@
                                                     type="button"
                                                     class="flex gap-1.5 text-sm ml-2 font-medium focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                                                 >
-                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" fill-rule="evenodd" d="M6.5 23a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11m0-8.993a.5.5 0 0 1 .5.5V17h2.493a.5.5 0 1 1 0 1H7v2.493a.5.5 0 1 1-1 0V18H3.507a.5.5 0 0 1 0-1H6v-2.493a.5.5 0 0 1 .5-.5" clip-rule="evenodd"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.292 10.25v-4a3.5 3.5 0 0 1 3.5-3.5h2.448a3.5 3.5 0 0 1 1.447.313M13.75 21.25h2.458a3.5 3.5 0 0 0 3.5-3.5v-5.53c0-.505-.109-.999-.314-1.45m-7.706-7.707a3.5 3.5 0 0 1 1.027.712l5.968 5.97c.3.3.54.647.711 1.026m-7.706-7.708V8.77a2 2 0 0 0 2 2h5.706"/></g></svg>                    
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" fill-rule="evenodd" d="M6.5 23a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11m0-8.993a.5.5 0 0 1 .5.5V17h2.493a.5.5 0 1 1 0 1H7v2.493a.5.5 0 0 1-1 0V18H3.507a.5.5 0 0 1 0-1H6v-2.493a.5.5 0 0 1 .5-.5" clip-rule="evenodd"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.292 10.25v-4a3.5 3.5 0 0 1 3.5-3.5h2.448a3.5 3.5 0 0 1 1.447.313M13.75 21.25h2.458a3.5 3.5 0 0 0 3.5-3.5v-5.53c0-.505-.109-.999-.314-1.45m-7.706-7.707a3.5 3.5 0 0 1 1.027.712l5.968 5.97c.3.3.54.647.711 1.026m-7.706-7.708V8.77a2 2 0 0 0 2 2h5.706"/></g></svg>                    
                                                     Create New Palakasan            
                                                 </button>
                                             </div>
@@ -233,7 +233,7 @@
                         <div v-for="(team, index) in filteredAndSortedTeams" :key="index" class="bg-white ring-1 ring-gray-300 shadow rounded-lg hover:ring-blue-400 hover:bg-blue-50/80 transition p-4 group">
                             <div class="flex items-center">
                                 <div class="">
-                                    <svg class="w-8 h-8 mb-3 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"/></svg>
+                                    <svg class='w-7 h-7 mb-2' xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"/></svg>
                                     <h3 class="text-xl font-semibold">{{ team.assigned_team_name }}</h3>
                                     <p class="text-sm text-gray-600">{{ team.college.name }}</p>
                                 </div>
@@ -290,6 +290,7 @@
                             </button>
                             <button 
                                 v-if="isSelectionMode && selectedSports.length > 0"
+                                @click="deleteSelectedSports"
                                 class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-red-300 ring-1 focus:ring-red-300 rounded-lg px-4 py-2 text-red-700 font-medium hover:bg-red-100 hover:text-red-800 hover:ring-red-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
                             >
                                 Delete ({{ selectedSports.length }})
@@ -340,6 +341,8 @@
                                 class="w-2.5 h-2.5 rounded-full"
                                 :class="{
                                     'bg-gray-300': sport.status === 'pending',
+                                    'bg-yellow-400': sport.status === 'scheduled',
+                                    'bg-red-500': sport.status === 'live',
                                     'bg-green-500': sport.status === 'completed'
                                 }"
                                 :title="sport.status"
@@ -491,6 +494,7 @@
                         </form>
                     </div>
             </div>
+
             <!-- Modal for adding sport -->
             <div v-if="isSportsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
@@ -513,110 +517,172 @@
                             <!-- Hidden Palakasan ID input -->
                             <input type="text" v-model="form1.palakasan_sport_id" class="hidden" />
                             
-                            <!-- Select Sport -->
-                            <div class="mb-4">
-                                <label for="sport" class="block text-sm font-medium mb-2">Select Sport</label>
-                                <div class="relative">
-                                    <select 
-                                        v-model="form1.sport_id" 
-                                        id="sport" 
-                                        class="w-full border px-3 py-2 rounded-lg border-gray-300"
-                                        @change="updateAvailableCategories"
-                                    >
-                                        <option value="" disabled>Select a sport</option>
-                                        <option 
-                                        v-for="sport in availableSports" 
-                                        :key="sport.id" 
-                                        :value="sport.id"
-                                        :disabled="isDisabled(sport.id)"
+                            <div class="grid grid-cols-3 gap-2 mb-4">
+                                <label for="sport" class="col-span-3 block text-sm font-medium">Select Sport</label>
+                                <!-- Select Sport -->
+                                <div class="col-span-2 ">
+                                    <div class="relative" ref="dropdownContainer">
+                                        <div class="relative">
+                                            <input
+                                                type="text"
+                                                :value="selectedSportName"
+                                                readonly
+                                                placeholder="Select a sport..."
+                                                class="w-full border px-3 py-2 rounded-lg border-gray-300 cursor-pointer"
+                                                @click="showSportDropdown = true"
+                                            />
+                                            <div 
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            </div>
+                                            
+                                            <!-- Dropdown with Search -->
+                                            <div 
+                                                v-show="showSportDropdown"
+                                                class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg"
+                                            >
+                                                <!-- Search input within dropdown -->
+                                                <div class="p-2 border-b border-gray-200">
+                                                    <div class="relative">
+                                                        <input
+                                                            type="text"
+                                                            v-model="sportSearch"
+                                                            placeholder="Search sports..."
+                                                            class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
+                                                            @input="filterSports"
+                                                        />
+                                                        <button
+                                                            v-if="sportSearch"
+                                                            @click="clearSearch"
+                                                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Sports list -->
+                                                <div class="max-h-48 overflow-y-auto">
+                                                    <div 
+                                                        v-for="sport in filteredSports" 
+                                                        :key="sport.id"
+                                                        @mousedown.prevent="selectSport(sport)"
+                                                        class="px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between"
+                                                        :class="{
+                                                            'opacity-50 cursor-not-allowed': isDisabled(sport.id),
+                                                            'bg-blue-50': form1.sport_id === sport.id
+                                                        }"
+                                                    >
+                                                        <span>{{ sport.name }}</span>
+                                                        <span v-if="form1.sport_id === sport.id" class="text-blue-500">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        </span>
+                                                    </div>
+                                                    <div v-if="filteredSports.length === 0" class="px-3 py-2 text-gray-500 text-sm">
+                                                        No sports found
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Select Category -->
+                                <div class="">
+                                    <div class="relative">
+                                        <select 
+                                            v-model="form1.categories" 
+                                            id="category" 
+                                            class="w-full border px-3 py-2 rounded-lg border-gray-300"
                                         >
-                                        {{ sport.name }}
-                                        </option>
-                                    </select>
-                                    <div 
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                    </div>
-                                </div>
-
-                                <span v-if="form1.errors.sport_id" class="text-red-500">{{ form1.errors.sport_id }}</span>
-                            </div>
-
-                            <!-- Select Setup -->
-                            <div class="mb-4">
-                                <label for="setup" class="block text-sm font-medium mb-2">Select Setup</label>
-                                <div class="relative">
-                                    <select 
-                                        v-model="form1.setup" 
-                                        id="setup" 
-                                        class="w-full border px-3 py-2 rounded-lg border-gray-300"
-                                        @change="updateCategoryForFreeForAll"
-                                    >
-                                        <option value="" disabled>Select a setup</option>
-                                        <option value="Single Elimination">Single Elimination</option>
-                                        <option value="Double Elimination">Double Elimination</option>
-                                        <option value="Free for All">Free for All</option>
-                                        <option value="Round Robin">Round Robin</option>
-                                    </select>
-                                    <div 
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                    </div>
-                                </div>
-                                
-                                <span v-if="form1.errors.setup" class="text-red-500">{{ form1.errors.setup }}</span>
-                            </div>
-
-                            <!-- Select Type -->
-                            <div class="mb-4">
-                                <label for="type" class="block text-sm font-medium mb-2">Select Type</label>
-                                <div class="relative">
-                                    <select 
-                                        v-model="form1.type" 
-                                        id="type" 
-                                        class="w-full border px-3 py-2 rounded-lg border-gray-300"
-                                    >
-                                        <option value="" disabled>Select type</option>
-                                        <option value="Major">Major</option>
-                                        <option value="Minor">Minor</option>
-                                    </select>
-                                    <div 
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                    </div>
-                                </div>
-                                <span v-if="form1.errors.type" class="text-red-500">{{ form1.errors.type }}</span>
-                            </div>
-
-                            <!-- Select Category -->
-                            <div class="mb-4">
-                                <label for="category" class="block text-sm font-medium mb-2">Select Category</label>
-                                <div class="relative">
-                                    <select 
-                                        v-model="form1.categories" 
-                                        id="category" 
-                                        class="w-full border px-3 py-2 rounded-lg border-gray-300"
-                                    >
-                                        <option value="" disabled>Select a category</option>
-                                        <option 
-                                            v-for="category in availableCategories" 
-                                            :key="category.value"
-                                            :value="category.value"
-                                            :disabled="category.disabled"
+                                            <option value="" disabled>Category</option>
+                                            <option 
+                                                v-for="category in availableCategories" 
+                                                :key="category.value"
+                                                :value="category.value"
+                                                :disabled="category.disabled"
+                                            >
+                                                {{ category.value }}{{ category.disabled ? ' (Already Selected)' : '' }}
+                                            </option>
+                                        </select>
+                                        <div 
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
                                         >
-                                            {{ category.value }}{{ category.disabled ? ' (Already Selected)' : '' }}
-                                        </option>
-                                    </select>
-                                    <div 
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </div>
                                     </div>
                                 </div>
-                                <span v-if="form1.errors.categories" class="text-red-500">{{ form1.errors.categories }}</span>
+                                <div class="col-span-3 flex gap-2">
+                                    <span v-if="form1.errors.sport_id" class="text-red-500 text-xs">{{ form1.errors.sport_id }}</span>
+                                    <span v-if="form1.errors.categories" class="text-red-500 text-xs">{{ form1.errors.categories }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4 p-3 bg-gray-100/60 rounded-lg">
+                                <label for="setup" class="block text-sm font-medium mb-1">Sport Configuration</label>
+                                <div class="">
+                                    <label for="setup" class="block text-xs text-gray-700 font-medium mb-2">Sport Setup</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label 
+                                            v-for="setup in ['Single Elimination', 'Double Elimination', 'Free for All', 'Round Robin']" 
+                                            :key="setup"
+                                            class="relative cursor-pointer"
+                                        >
+                                            <input 
+                                                type="radio" 
+                                                :value="setup" 
+                                                v-model="form1.setup"
+                                                name="setup"
+                                                class="peer sr-only hidden"
+                                                @change="updateCategoryForFreeForAll"
+                                            />
+                                            <div class="p-3 rounded-lg ring-1 ring-gray-300 peer-checked:ring-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all duration-300">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">{{ setup }}</span>
+                                                </div>
+                                                <div class="mt-1 text-xs text-gray-500 peer-checked:text-blue-600">
+                                                    {{ getSetupDescription(setup) }}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <span v-if="form1.errors.setup" class="text-red-500 text-xs mt-1">{{ form1.errors.setup }}</span>
+                                </div>
+
+                                <!-- Select Type -->
+                                <div class="mt-4">
+                                    <label class="block text-xs text-gray-700 font-medium mb-3">Pointing System</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label 
+                                            v-for="type in ['Major', 'Minor']" 
+                                            :key="type"
+                                            class="relative cursor-pointer"
+                                        >
+                                            <input 
+                                                type="radio" 
+                                                :value="type" 
+                                                v-model="form1.type"
+                                                name="type"
+                                                class="peer sr-only"
+                                            />
+                                            <div class="p-3 rounded-lg ring-1 ring-gray-300 peer-checked:ring-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all duration-300">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">{{ type }}</span>
+                                                </div>
+                                                <div class="mt-1 text-xs text-gray-500 peer-checked:text-blue-600">
+                                                    {{ getTypeDescription(type) }}
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <span v-if="form1.errors.type" class="text-red-500 text-xs mt-1">{{ form1.errors.type }}</span>
+                                </div>
                             </div>
 
                             <!-- Select Facilitator -->
@@ -643,7 +709,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </div>
                                 </div>
-                                <span v-if="form1.errors.facilitator_id" class="text-red-500">{{ form1.errors.facilitator_id }}</span>
+                                <span v-if="form1.errors.facilitator_id" class="text-red-500 text-xs">{{ form1.errors.facilitator_id }}</span>
                             </div>
 
                             <!-- Modal Buttons -->
@@ -725,11 +791,12 @@
 
                             <!-- Input for Team Name -->
                             <div class="mb-4">
+                                <label for="college" class="block text-sm mb-2 font-medium">Team Name</label>
                                 <input
                                     v-model="form2.assigned_team_name"
                                     id="teamName"
                                     type="text"
-                                    placeholder="Enter the team name..."
+                                    placeholder="Assign a team name..."
                                     class="w-full border border-gray-300 px-3 py-2 rounded-lg"
                                 />
                                 <span v-if="form2.errors.assigned_team_name" class="text-red-500">{{ form2.errors.assigned_team_name }}</span>
@@ -763,42 +830,6 @@
                 </div>
             </div>
             
-            <!-- Status Update Modal -->
-            <div v-if="isStatusModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Update Palakasan Status</h2>
-
-                    <form @submit.prevent="updateStatus">
-                        <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                            <select v-model="statusForm.status" id="status" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                                <option :value="true">Activate</option>
-                                <option :value="false">Deactivate</option>
-                            </select>
-                        </div>
-
-                        <div class="flex justify-end space-x-2">
-                            <button @click="closeStatusModal" type="button" class="bg-gray-100 text-gray-700 py-1.5 px-3 rounded-md hover:bg-gray-200">Cancel</button>
-                            <button
-                                type="submit"
-                                :disabled="statusForm.processing"
-                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
-                            >
-                                <span v-if="!statusForm.processing">
-                                    Update
-                                </span>
-                                <span v-else>
-                                    <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Processing...
-                                </span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
 
             <div v-if="isHistoryModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
@@ -807,7 +838,7 @@
                     Palakasan History
                     </h3>
                     <button @click="closeHistoryModal" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                     </button>
@@ -855,19 +886,35 @@
             <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white p-5 rounded-lg shadow-xl max-w-md w-full">
                     <h3 class="text-lg font-bold mb-6">Start Palakasan</h3>
-                    <p class="mb-6">Are you sure you want to start Palakasan? This action cannot be undone.</p>
+                    <div v-if="!allSportsScheduled" class="mb-4">
+                        <div class="p-4 bg-yellow-50 rounded-lg">
+                            <div class="space-y-3">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 p-3 bg-yellow-200/50 rounded-md mr-2"></i>
+                                <p class="text-sm text-yellow-700">All sports must be scheduled before starting the Palakasan.</p>
+                            </div>
+                            <ul class="mt-4 ml-6 text-sm text-yellow-600 list-disc">
+                                <li v-for="sport in unscheduledSports" :key="sport.id">
+                                    <span class="font-medium">{{ sport.sport?.name }} {{ sport.categories }}</span> is not yet scheduled
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p v-else class="mb-6">Are you sure you want to start Palakasan? This action cannot be undone.</p>
                     <div class="flex justify-end space-x-2">
-                        <button  @click="showModal = false" type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                            No, not ready yet
+                        <button @click="showModal = false" type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            {{ allSportsScheduled ? 'No, not ready yet' : 'Close' }}
                         </button>
-
-                        <button @click="confirmStartPalakasan" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <button 
+                            v-if="allSportsScheduled"
+                            @click="confirmStartPalakasan" 
+                            type="button" 
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        >
                             Yes, get started
                         </button>
                     </div>
                 </div>
             </div>
-
             <!-- Logs Modal -->
             <div v-if="isLogsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white rounded-lg shadow-lg w-[62rem]">
@@ -878,7 +925,7 @@
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center"
                         >
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
                         </button>
                     </div>
@@ -1029,7 +1076,7 @@
 
 <script setup>
     import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
-    import { ref, computed, onMounted, watch } from 'vue';
+    import { ref, computed, onMounted, watch, watchEffect } from 'vue';
     import AppLayout from '@/Layout/DashboardLayout.vue';
     import { route } from 'ziggy-js';
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
@@ -1142,7 +1189,6 @@
     }
     });
 
-    // Add these functions inside your script setup
     const animateValue = (start, end, duration, setValue) => {
         let startTimestamp = null;
         const step = (timestamp) => {
@@ -1174,26 +1220,40 @@
 
     const showModal = ref(false);
 
-    const confirmStartPalakasan = () => {
-    updatePalakasanStatus(props.latestPalakasan.id);
-    showModal.value = false;
-    };
-
-    const updatePalakasanStatus = (palakasanId) => {
-        router.put(`/palakasan/${palakasanId}/update-status`, {
-            status: 'live'
-        }, {
-            preserveScroll: true,
-            onSuccess: () => {
-            console.log('Status updated successfully')
-            },
-            onError: (errors) => {
-            // Optional: Handle errors
-            }
-        })
+    const confirmStartPalakasan = async () => {
+        if (!allSportsScheduled.value) {
+            return;
         }
 
-        const concludePalakasan = (palakasanId) => {
+        try {
+            console.log('Starting Palakasan update process...');
+            
+            // Update Palakasan status which will also update all sports
+            await router.put(`/palakasan/${props.latestPalakasan.id}/update-status`, {
+                status: 'live'
+            }, {
+                preserveScroll: true,
+                preserveState: false,
+                onSuccess: () => {
+                    console.log('Palakasan and sports updated successfully');
+                    showModal.value = false;
+                    router.visit(window.location.href, {
+                        preserveScroll: true,
+                        preserveState: false,
+                        replace: true
+                    });
+                },
+                onError: (errors) => {
+                    console.error('Failed to update Palakasan:', errors);
+                }
+            });
+
+        } catch (error) {
+            console.error('Failed to start Palakasan:', error);
+        }
+    };
+
+    const concludePalakasan = (palakasanId) => {
         router.put(`/palakasan/${palakasanId}/update-status`, {
             status: 'completed'
         }, {
@@ -1254,7 +1314,14 @@
 
     const submitPalakasan = () => {
         form.post(route('palakasan.store'), {
-            onSuccess: () => closePalakasanModal(),
+            onSuccess: () => {
+                closePalakasanModal();
+                router.visit(route('palakasan.details'), {
+                    preserveScroll: true,
+                    preserveState: false,
+                    replace: true
+                });
+            },
         });
     };
 
@@ -1315,28 +1382,6 @@
             },
         });
     };
-    //status
-    const openStatusModal = () => {
-        isStatusModalOpen.value = true;
-    };
-
-    const closeStatusModal = () => {
-        isStatusModalOpen.value = false;
-        statusForm.reset();
-    };
-
-    const updateStatus = () => {
-        statusForm.put(route('palakasan.updateStatus', { id: props.latestPalakasan.id }), {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                closeStatusModal();
-                // Reload the entire page after success
-                window.location.reload();
-            },
-        });
-    };
-
 
     //Search and sort functionalities
     // State variables for search and sort (for both teams and sports)
@@ -1513,6 +1558,10 @@
                     selectedSports.value = [];
                     isSelectionMode.value = false;
                 },
+                onError: (errors) => {
+                    alert('Failed to delete sports. Please try again.');
+                    console.error(errors);
+                }
             });
         }
     };
@@ -1544,6 +1593,104 @@
             disabled: usedCategories.includes(category)
         }));
     });
+
+    const allSportsScheduled = computed(() => {
+        return props.assignedSports.every(sport => sport.status === 'scheduled');
+    });
+
+    const unscheduledSports = computed(() => {
+        return props.assignedSports.filter(sport => sport.status !== 'scheduled');
+    });
+
+    const getSetupDescription = (setup) => {
+        switch (setup) {
+            case 'Single Elimination':
+                return 'Teams are eliminated after one loss';
+            case 'Double Elimination':
+                return 'Teams are eliminated after two losses';
+            case 'Free for All':
+                return 'All teams compete simultaneously';
+            case 'Round Robin':
+                return 'Each team plays against every team';
+            default:
+                return '';
+        }
+    };
+    
+    const getTypeDescription = (type) => {
+        switch (type) {
+            case 'Major':
+                return 'Higher point value destribution';
+            case 'Minor':
+                return 'Lower point value destribution';
+            default:
+                return '';
+        }
+    };
+
+    const sportSearch = ref('');
+    const showSportDropdown = ref(false);
+    const filteredSports = ref([]);
+
+    const onFocus = () => {
+        showSportDropdown.value = true;
+        if (selectedSportName.value) {
+            sportSearch.value = '';
+        }
+    };
+
+    const filterSports = () => {
+        if (!sportSearch.value) {
+            filteredSports.value = availableSports.value;
+            return;
+        }
+        const search = sportSearch.value.toLowerCase();
+        filteredSports.value = availableSports.value.filter(sport => 
+            sport.name.toLowerCase().includes(search)
+        );
+    };
+
+    const selectSport = (sport) => {
+        if (isDisabled(sport.id)) return;
+        form1.sport_id = sport.id;
+        sportSearch.value = sport.name;
+        showSportDropdown.value = false;
+        updateAvailableCategories();
+    };
+
+    const selectedSportName = computed(() => {
+        const sport = availableSports.value.find(s => s.id === form1.sport_id);
+        return sport ? sport.name : '';
+    });
+
+    // Add click outside handler to close dropdown
+    const dropdownContainer = ref(null);
+
+    onMounted(() => {
+        document.addEventListener('click', (e) => {
+            if (dropdownContainer.value && !dropdownContainer.value.contains(e.target)) {
+                showSportDropdown.value = false;
+                sportSearch.value = ''; // Clear search when dropdown closes
+                filterSports(); // Reset the filtered list
+            }
+        });
+    });
+
+    // Initialize filtered sports
+    watchEffect(() => {
+        filteredSports.value = availableSports.value;
+    });
+
+    watch(sportSearch, (newValue) => {
+        if (!newValue && selectedSportName.value) {
+            sportSearch.value = selectedSportName.value;
+        }
+    });
+
+    const clearSearch = () => {
+        sportSearch.value = '';
+        filterSports();
+    };
 </script>
 
 <style scoped>
