@@ -36,6 +36,10 @@ Route::get('/', function () {return Inertia::render('Login');})->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Sports Landing Page routes
+Route::get('/sports', [SportsLandingController::class, 'sports'])->name('sports.index');
+Route::get('/home-sportview/{sport}', [SportsLandingController::class, 'sportsIndex'])->name('home-sportview.index');
+
 // Admin routes
 Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::get('/admin',[DashboardController::class, 'index'])->name('admin.show');
@@ -131,8 +135,32 @@ Route::middleware(['web', 'auth', 'subAdminMiddleware'])->group(function () {
     Route::get('/secretary', [SubAdminController::class, 'index']);
 });
 
+//
+
 // Sports Landing Page Routes
-Route::get('/landing', [SportsLandingController::class, 'index'])->name('sports.landing');
+Route::get('/home', [SportsLandingController::class, 'index'])->name('sports.landing');
+Route::get('/sports', [SportsLandingController::class, 'sportsIndex'])->name('sports.sports');
+Route::get('/sports/schedules', [SportsLandingController::class, 'scheduleIndex'])->name('sports.schedules');
+Route::get('/rankings', [SportsLandingController::class, 'rankingIndex'])->name('sports.rankings');
+
 Route::get('/sports/{sportId}/matches', [SportsLandingController::class, 'getSportMatches'])->name('sports.matches');
 Route::get('/sports/{sportId}/standings', [SportsLandingController::class, 'getSportStandings'])->name('sports.standings');
 Route::get('/teams/{teamId}/matches', [SportsLandingController::class, 'getTeamMatches'])->name('teams.matches');
+
+//sports setup
+Route::get('sportview/{sport}', function ($sport) {
+    $sportModel = AssignedSports::findOrFail($sport);
+    
+    switch ($sportModel->setup) {
+        case 'Single Elimination':
+            return app(SingleEliminationController::class)->homeIndex($sportModel);
+        case 'Double Elimination':
+            return app(DoubleEliminationController::class)->homeIndex($sportModel);
+        case 'Free for All':
+            return app(FreeForAllController::class)->homeIndex($sportModel);
+        case 'Round Robin':
+            return app(RoundRobinController::class)->homeIndex($sportModel);
+        default:
+            abort(404, 'Invalid sport setup');
+    }
+})->name('home-sportview.index');

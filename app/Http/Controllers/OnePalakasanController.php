@@ -48,9 +48,7 @@ class OnePalakasanController extends Controller
         }
 
         $facilitator = StudentAccount::with('student')->where('role', 'Facilitator')->get();  
-        
         $palakasans = Palakasan::all();
-
         $matchResults = MatchResult::with(['sportMatch.assignedSport', 'winning_team', 'losing_team'])
             ->whereHas('sportMatch.assignedSport', function($query) use ($latestPalakasan) {
                 $query->where('palakasan_sport_id', $latestPalakasan->id);
