@@ -58,26 +58,24 @@
               </div>
           </div>
 
-          <!-- Tabs Navigation -->
-          <nav class="flex relative justify-between mt-4  items-center">
-                      <div class="flex gap-2 rounded-lg ">
-                          <div class=" flex gap-2 rounded-lg">
-                              <button 
-                                  v-for="tab in ['matches', 'standing', 'players']"
-                                  :key="tab"
-                                  @click="activeTab = tab"
-                                  :class="[
-                                  'px-5 py-2 text-sm',
-                                  activeTab === tab
-                                      ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
-                                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
-                                  ]"
-                              >
-                                  {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                              </button>
-                              </div>
-                      </div>
-          </nav>
+                <!-- Tabs Navigation -->
+                <nav class="mt-4">
+                    <div class="grid grid-cols-4 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                        <button 
+                            v-for="tab in ['matches', 'standing', 'players']"
+                            :key="tab"
+                            @click="activeTab = tab"
+                            :class="[
+                                'px-5 py-2.5 font-medium sm:py-2 text-sm w-full sm:w-auto',
+                                activeTab === tab
+                                    ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-md'
+                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
+                            ]"
+                        >
+                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                        </button>
+                    </div>
+                </nav>
 
           <div v-if="sport.status === 'pending'" class="mt-4 p-6 rounded-lg bg-blue-50 text-sm text-center text-blue-700">
                       <i class="fa-solid fa-circle-info mr-2"></i>

@@ -28,7 +28,7 @@
                   
                   <!-- Progress Bar -->
                   <div class="flex mt-3 flex-col">
-                      <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div class="w-full sm:w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                           <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
                       </div>
                       <div class="flex items-center mt-2">
@@ -38,26 +38,24 @@
                       </div>
                   </div>
           </div>
-
-          <nav class="flex relative justify-between mt-4  items-center">
-            <div class="flex gap-2 rounded-lg ">
-                <div class=" flex gap-2 rounded-lg">
-                    <button 
-                        v-for="tab in ['sports', 'players']"
-                          :key="tab"
-                          @click="activeTab = tab"
-                          :class="[
-                            'px-5 py-2 text-sm',
-                            activeTab === tab
-                              ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
+                <!-- Tabs Navigation -->
+                <nav class="mt-4">
+                    <div class="grid grid-cols-4 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                        <button 
+                            v-for="tab in ['sports', 'players']"
+                            :key="tab"
+                            @click="activeTab = tab"
+                            :class="[
+                                'px-5 py-2.5 font-medium sm:py-2 text-sm w-full sm:w-auto',
+                                activeTab === tab
+                                    ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-md'
+                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
                             ]"
-                            >
-                              {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                      </button>
+                        >
+                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                        </button>
                     </div>
-                </div>
-          </nav>
+                </nav>
 
           <div class="mt-4">
             <div v-if="activeTab === 'sports'">

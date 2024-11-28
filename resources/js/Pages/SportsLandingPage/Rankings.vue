@@ -2,14 +2,11 @@
     <Head title="Rankings" />
     <MainLayout>
         <div class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-900">
-                        Overall Rankings
-                    </h2>
-                    <p class="mt-4 text-lg text-gray-500">
-                        Current standings of colleges in Palakasan
-                    </p>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <!-- Header Section -->
+                <div class="sm:text-left text-center mb-8">
+                    <h1 class="text-2xl font-bold text-gray-900">Overall Rankings</h1>
+                    <p class="mt-2 text-gray-600">List of rankings in different sports</p>
                 </div>
 
                 <div class="p-6">
@@ -76,7 +73,6 @@
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wins</th>
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Losses</th>
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Win %</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
@@ -92,15 +88,16 @@
                                                             </div>
                                                         </div>
                                                         <div class="ml-4">
-                                                            <div class="text-sm font-medium text-gray-900">{{ team.name }}</div>
-                                                            <div class="text-sm text-gray-500">{{ team.acronym }}</div>
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                <span v-if="team.assigned_team_name">{{ team.assigned_team_name }}</span> <br>
+                                                                <span class="text-sm font-normal text-gray-500" v-if="team.name">{{ team.name }}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ team.wins }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{{ team.losses }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ team.win_percentage }}%</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">{{ team.regular_points + team.variation_points }}</td>
                                             </tr>
                                         </template>
                                         <tr v-else>
@@ -274,6 +271,7 @@ const getSportRankings = (sportId) => {
             name: team.college?.name,
             acronym: team.college?.acronym,
             logo: team.college?.logo,
+            assigned_team_name: team.assigned_team_name,
             wins: 0,
             losses: 0,
             total_games: 0,

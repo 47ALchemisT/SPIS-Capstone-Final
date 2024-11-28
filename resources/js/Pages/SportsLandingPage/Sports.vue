@@ -3,9 +3,9 @@
     <MainLayout>
         <div class="min-h-screen">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-4">
-                <div class="sm:text-left text-center">
-                    <h1 class="text-3xl font-bold text-gray-900">All Sports</h1>
-                    <p class="mt-2 text-lg text-gray-600">Browse all available sports in Palakasan</p>
+                <div class="sm:text-left text-center mb-8">
+                    <h1 class="text-2xl font-bold text-gray-900">All Sports</h1>
+                    <p class="mt-2 text-gray-600">Browse all available sports in Palakasan</p>
                 </div>
 
                 <!-- Search and Filter Bar -->
@@ -73,8 +73,15 @@
                             @click="viewSport(sport.id)"
                             class="bg-white ring-1 ring-gray-200 rounded-lg p-6 hover:shadow-md transition cursor-pointer  duration-300">
                             <div>
-                                <div class="h-14 w-14 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
-                                    <i :class="[sport.sport.icon]" class="text-xl"></i>
+                                <div class="h-14 w-14" :class="[
+                                    sport.status === 'completed' ? 'bg-green-50' : 'bg-blue-50',
+                                    'rounded-full flex items-center justify-center'
+                                ]">
+                                    <i :class="[
+                                        sport.sport.icon,
+                                        sport.status === 'completed' ? 'text-green-600' : 'text-blue-600',
+                                        'text-xl'
+                                    ]"></i>
                                 </div>
                                 <h3 class="mt-4 text-lg font-medium text-gray-900">{{ sport.sport.name }} {{ sport.categories }}</h3>
                                 <div class="flex items-center text-gray-600 gap-2 mt-1">
@@ -91,8 +98,6 @@
                         <p class="text-gray-500">No sports found matching your search.</p>
                     </div>
                 </div>
-
-                
             </div>
         </div>
     </MainLayout>

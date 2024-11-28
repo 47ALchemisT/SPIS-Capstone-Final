@@ -2,10 +2,10 @@
     <Head title="Schedule" />
     <MainLayout>
         <div class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                 <!-- Header Section -->
                 <div class="sm:text-left text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900">Sports Schedule</h1>
+                    <h1 class="text-2xl font-bold text-gray-900">Sports Schedule</h1>
                     <p class="mt-2 text-gray-600">{{ palakasanYear }} Palakasan Games</p>
                 </div>
 
@@ -67,7 +67,7 @@
                     <template v-for="(matches, date) in groupedMatches" :key="date">
                         <!-- Date Header -->
                         <div class="sticky top-14 z-10">
-                            <h2 class="text-xl font-bold text-gray-800 bg-white  border-b p-4 rounded-t-lg">
+                            <h2 class="text-xl font-bold text-gray-800 bg-white border-b p-4 rounded-t-lg">
                                 {{ formatDate(date) }}
                             </h2>
                         </div>
@@ -79,9 +79,9 @@
                                 <!-- Sport Header -->
                                 <div class="border-b border-gray-100 p-4">
                                     <!-- Regular Match Header -->
-                                    <div v-if="match.type === 'regular'" class="flex gap-2 items-center">
+                                    <div v-if="match.type === 'regular'" class="flex flex-col sm:flex-row gap-2">
                                         <!-- Time and Venue -->
-                                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                                        <div class="flex flex-wrap gap-2 text-sm text-gray-600">
                                             <div class="flex items-center">
                                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -96,29 +96,28 @@
                                                 <span class="font-medium">{{ match.matchVenue?.name || match.venue?.name }}</span>
                                             </div>
                                         </div>
-                                        <span class="text-gray-400">•</span>
+                                        
                                         <!-- Sport and Game Info -->
-                                        <div class="flex text-sm items-center gap-2">
+                                        <div class="flex flex-wrap text-sm items-center gap-2">
                                             <span class="font-semibold text-gray-900">{{ match.assignedSport?.sport?.name || match.sport_name }}</span>
                                             <span class="font-semibold text-gray-900">{{ match.assignedSport?.categories || match.category }}</span>
-                                            <span class="text-gray-400">•</span>
                                             <span class="text-sm font-medium text-gray-600">{{ match.game || 'Game' }}</span>
                                         </div>
-                                            <!-- View Details button for completed regular matches -->
-                                        <div v-if="match.status?.toLowerCase() === 'completed'" class="ml-auto">
+
+                                        <!-- View Details button for completed matches -->
+                                        <div v-if="match.status?.toLowerCase() === 'completed'" class="sm:ml-auto mt-2 sm:mt-0">
                                             <button 
-                                                @click="showResultModal(match)"                                                 
+                                                @click="showResultModal(match)"
                                                 type="button" 
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                                class="w-full sm:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                                 View Result
                                             </button>
                                         </div>
                                     </div>
-
                                     <!-- Sports Variation Header -->
-                                    <div v-else class="flex gap-2 items-center">
+                                    <div v-else class="flex flex-col sm:flex-row gap-2 sm:items-center">
                                         <!-- Time and Venue -->
-                                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                                        <div class="flex flex-wrap items-center gap-2 text-sm text-gray-600">
                                             <div class="flex items-center">
                                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -133,67 +132,70 @@
                                                 <span class="font-medium">{{ match.venue_id?.name }}</span>
                                             </div>
                                         </div>
-                                        <span class="text-gray-400">•</span>
+                                        <span class="hidden sm:block text-gray-400">•</span>
                                         <!-- Sport Name -->
-                                        <div class="flex text-sm items-center gap-2">
+                                        <div class="flex flex-wrap text-sm items-center gap-2">
                                             <span class="font-medium text-gray-600">{{ match.sport_id?.sport?.name }} {{ match.sport_id?.categories }}</span>
                                         </div>
-                                        <span class="text-gray-400">•</span>
+                                        <span class="hidden sm:block text-gray-400">•</span>
                                         <!-- Sport Variation Name -->
-                                        <div class="flex text-sm items-center gap-2">
+                                        <div class="flex flex-wrap text-sm items-center gap-2">
                                             <span class="font-medium text-gray-600">{{ match.sport_variation_name }}</span>
                                         </div>
 
                                         <!-- View Details button for completed variation matches -->
-                                        <div v-if="match.status?.toLowerCase() === 'completed'" class="ml-auto">
+                                        <div v-if="match.status?.toLowerCase() === 'completed'" class="sm:ml-auto mt-2 sm:mt-0">
                                             <button 
                                                 @click="showResultModal(match)"
                                                 type="button" 
-                                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                                class="w-full sm:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                                 View Result
                                             </button>
                                         </div>
-
                                     </div>
                                 </div>
 
                                 <!-- Teams Section -->
-                                <div class="grid grid-cols-11 py-6">
-                                    <template v-if="match.type === 'regular'">
-                                        <!-- Team A -->
-                                        <div class="col-span-5 px-6 flex flex-col items-center justify-center text-center">
-                                            <span class="font-bold text-lg text-gray-900 mb-1">{{ match.teamA?.assigned_team_name || 'TBA' }}</span>
-                                            <span class="hidden sm:block text-sm text-gray-500">{{ match.teamA?.college?.name }}</span>
-                                        </div>
+                                <div class="p-4">
+                                    <div class="grid grid-cols-1 sm:grid-cols-11 gap-4">
+                                        <template v-if="match.type === 'regular'">
+                                            <!-- Team A -->
+                                            <div class="sm:col-span-5 flex flex-col items-center justify-center text-center">
+                                                <span class="font-bold text-lg text-gray-900 mb-1">{{ match.teamA?.assigned_team_name || 'TBA' }}</span>
+                                                <span class="text-sm text-gray-500">{{ match.teamA?.college?.name }}</span>
+                                            </div>
 
-                                        <!-- VS -->
-                                        <div class="col-span-1 flex items-center justify-center">
-                                            <span class="font-bold text-xl text-gray-400">VS</span>
-                                        </div>
+                                            <!-- VS -->
+                                            <div class="sm:col-span-1 flex items-center justify-center my-2 sm:my-0">
+                                                <span class="font-bold text-xl text-gray-400">VS</span>
+                                            </div>
 
-                                        <!-- Team B -->
-                                        <div class="col-span-5 px-6 flex flex-col items-center justify-center text-center">
-                                            <span class="font-bold text-lg text-gray-900 mb-1">{{ match.teamB?.assigned_team_name || 'TBA' }}</span>
-                                            <span class="hidden sm:block text-sm text-gray-500">{{ match.teamB?.college?.name }}</span>
-                                        </div>
-                                    </template>
-                                    <template v-else>
-                                        <!-- Sports Variation Match -->
-                                        <div class="col-span-11 flex flex-col items-center justify-center text-center">
-                                            <!-- Participating Teams -->
-                                            <div v-if="match.sport_variation_i_d && match.sport_variation_i_d.length > 0" class="grid grid-cols-4 gap-3 w-full max-w-6xl">
-                                                <div v-for="team in match.sport_variation_i_d" :key="team.id" 
-                                                    class="flex items-center justify-center bg-gray-50 hover:bg-gray-100 rounded-lg p-3 transition-colors">
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-md font-medium text-gray-700">{{ team.assigned_team_variation_i_d?.assigned_team_name || 'TBA' }}</span>
-                                                        <span class="text-sm text-gray-500">{{ team.assigned_team_variation_i_d?.college?.name }}</span>
-                                                        <span v-if="team.rank" class="text-xs text-gray-500 mt-1">Rank: {{ team.rank }}</span>
+                                            <!-- Team B -->
+                                            <div class="sm:col-span-5 flex flex-col items-center justify-center text-center">
+                                                <span class="font-bold text-lg text-gray-900 mb-1">{{ match.teamB?.assigned_team_name || 'TBA' }}</span>
+                                                <span class="text-sm text-gray-500">{{ match.teamB?.college?.name }}</span>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <!-- Sports Variation Match -->
+                                            <div class="col-span-full">
+                                                <div v-if="match.sport_variation_i_d && match.sport_variation_i_d.length > 0" 
+                                                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                                    <div v-for="team in match.sport_variation_i_d" :key="team.id" 
+                                                        class="bg-gray-50 hover:bg-gray-100 rounded-lg p-3 transition-colors">
+                                                        <div class="flex flex-col items-center">
+                                                            <span class="text-md font-medium text-gray-700">{{ team.assigned_team_variation_i_d?.assigned_team_name || 'TBA' }}</span>
+                                                            <span class="text-sm text-center text-gray-500">{{ team.assigned_team_variation_i_d?.college?.name }}</span>
+                                                            <span v-if="team.assigned_team_variation_i_d?.team_name" class="text-xs text-gray-500 mt-1">{{ team.assigned_team_variation_i_d?.team_name }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <div v-else class="text-center text-sm text-gray-500 bg-gray-50 px-4 py-3 rounded-lg">
+                                                    No teams registered yet
+                                                </div>
                                             </div>
-                                            <div v-else class="text-sm text-gray-500 bg-gray-50 px-4 py-3 rounded-lg">No teams registered yet</div>
-                                        </div>
-                                    </template>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                         </div>
