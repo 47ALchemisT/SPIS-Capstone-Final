@@ -72,7 +72,7 @@
                     </div>
             </nav>
 
-            <div class="mt-4">
+            <div class="mt-4 pb-6">
                 <div v-if="activeTab === 'matches'">
                     <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues"  :allMatches="allMatches" :venueRecords="venueRecords"/>                
                 </div>

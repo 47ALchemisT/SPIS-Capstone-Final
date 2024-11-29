@@ -189,18 +189,39 @@
                                     class=" w-64 border border-gray-300 bg-gray-50 text-sm rounded-lg p-2"
                                 />
                             </div>
-                            <button                                                 
-                            @click="openTeamsModal" 
-                            :disabled="latestPalakasan?.status === 'live'"
-                            :class="[
-                            'flex gap-1.5 text-sm focus:outline-none focus:ring-4 font-medium focus:ring-gray-300 rounded-lg px-4 py-2',
-                            latestPalakasan?.status === 'live' 
-                                ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
-                                : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
-                            ]"                            
-                            >
-                                Create
-                            </button>
+                            <div class="relative">
+                                <button                                                 
+                                @click="openTeamsModal" 
+                                @mouseenter="showTooltip = true"
+                                @mouseleave="showTooltip = false"
+                                :disabled="latestPalakasan?.status === 'live'"
+                                :class="[
+                                'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                latestPalakasan?.status === 'live' 
+                                    ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
+                                    : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                ]"                            
+                                >
+                                    Form Line ups
+                                </button>
+                                <Transition
+                                    enter-active-class="transition duration-200 ease-out"
+                                    enter-from-class="transform scale-95 opacity-0"
+                                    enter-to-class="transform scale-100 opacity-100"
+                                    leave-active-class="transition duration-150 ease-in"
+                                    leave-from-class="transform scale-100 opacity-100"
+                                    leave-to-class="transform scale-95 opacity-0"
+                                >
+                                    <div v-if="showTooltip && latestPalakasan?.status === 'live'"
+                                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded shadow-lg whitespace-nowrap z-50"
+                                    >
+                                        Cannot modify line ups while tournament is live
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                            <div class="border-4 border-transparent border-t-gray-900"></div>
+                                        </div>
+                                    </div>
+                                </Transition>
+                            </div>
                         </div>
                         <div class="flex items-center justify-end border border-gray-300 px-2.5 shadow rounded-lg">
                             <label for="sort" class="text-sm font-semibold">Sort By:</label>
@@ -405,7 +426,7 @@
                     </div>
                 </div>
                 <!-- Not Enough Teams State -->
-                    <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4">
+                <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4">
                         <div class="flex flex-col items-center justify-center text-center p-10 bg-yellow-50 rounded-lg">
                             <svg class="w-16 h-16 text-yellow-400 mb-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
                             <h3 class="text-xl font-semibold text-yellow-700 mb-2">Not Enough Teams</h3>
@@ -422,7 +443,7 @@
                                 Go to Teams
                             </button>
                         </div>
-                    </div>
+                </div>
             </div>
 
             <!--Modals for palakasan-->
@@ -742,7 +763,7 @@
                 <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
                     <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Select college to participate
+                            Select colleges to participate
                         </h3>
                         <button               
                             @click="closeTeamsModal" 
@@ -758,10 +779,10 @@
                         <div class="p-4">
                             <!--select college-->
                             <div class="mb-4">
-                                <label for="college" class="block text-sm mb-2 font-medium">Select College</label>
+                                <label for="college" class="block text-sm mb-2 font-medium">Select Colleges</label>
                                 <div class="relative">
                                     <select 
-                                        v-model="form2.college_id" 
+                                        v-model="selectedCollege" 
                                         id="college" 
                                         class="w-full appearance-none border border-gray-300 px-3 py-2 pr-10 rounded-lg"
                                         @focus="isOpen = true"
@@ -771,7 +792,7 @@
                                         <option
                                         v-for="college in availableColleges"
                                         :key="college.id"
-                                        :value="college.id"
+                                        :value="college"
                                         :disabled="isCollegeAssigned(college.id)"
                                         >
                                         {{ college.shortName }} {{ isCollegeAssigned(college.id) ? '(Already Assigned)' : '' }}
@@ -783,7 +804,39 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </div>
                                 </div>
-                                <span v-if="form2.errors.college_id" class="text-red-500">{{ form2.errors.college_id }}</span>
+                                <button 
+                                    type="button" 
+                                    @click="addCollege" 
+                                    class="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                                    :disabled="!selectedCollege"
+                                >
+                                    Add College
+                                </button>
+
+                                <!-- Selected Colleges List -->
+                                <div v-if="form2.selected_colleges.length > 0" class="mt-3">
+                                    <p class="text-sm font-medium mb-2">Selected Colleges:</p>
+                                    <div class="space-y-2">
+                                        <div 
+                                            v-for="(college, index) in form2.selected_colleges" 
+                                            :key="index"
+                                            class="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
+                                        >
+                                            <span>{{ college.shortName }}</span>
+                                            <button 
+                                                type="button"
+                                                @click="removeCollege(index)"
+                                                class="text-red-500 hover:text-red-700"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <span v-if="form2.errors.selected_colleges" class="text-red-500">{{ form2.errors.selected_colleges }}</span>
                                 <p v-if="unassignedCollegesCount === 0" class="mt-2 text-sm text-red-500">
                                     All colleges have been assigned teams
                                 </p>
@@ -830,7 +883,6 @@
                 </div>
             </div>
             
-
             <div v-if="isHistoryModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
                 <div class="p-6 border-b border-gray-200 sticky top-0 bg-white z-10 flex justify-between items-center rounded-t-lg">
@@ -916,8 +968,8 @@
                 </div>
             </div>
             <!-- Logs Modal -->
-            <div v-if="isLogsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg w-[62rem]">
+             <div v-if="isLogsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                <div class="bg-white rounded-lg shadow-lg h-[37rem] w-[62rem] flex flex-col">
                     <div class="flex items-center justify-between p-4 border-b">
                         <h3 class="text-lg font-semibold text-gray-900">Activity Logs</h3>
                         <button 
@@ -930,40 +982,12 @@
                         </button>
                     </div>
                     
-                    <div class="p-4">
+                    <div class="p-4 space-y-4 overflow-y-auto flex-1">
                         <!-- Tabs for Match Results and Rankings -->
-                        <div class="flex space-x-4 mb-4">
-                            <button 
-                                @click="activeLogTab = 'results'"
-                                :class="[
-                                'px-4 py-2 text-sm rounded-lg',
-                                activeLogTab === 'results' 
-                                    ? 'bg-blue-100 text-blue-700' 
-                                    : 'text-gray-600 hover:bg-gray-100'
-                                ]"
-                            >
-                                Match Results
-                            </button>
-                            <button 
-                                @click="activeLogTab = 'rankings'"
-                                :class="[
-                                'px-4 py-2 text-sm rounded-lg',
-                                activeLogTab === 'rankings' 
-                                    ? 'bg-blue-100 text-blue-700' 
-                                    : 'text-gray-600 hover:bg-gray-100'
-                                ]"
-                            >
-                                Rankings Updates
-                            </button>
-                        </div>
-
-                        <!-- Content Area -->
-                        <div class="max-h-[32rem] overflow-y-auto">
-                            <div v-if="activeLogTab === 'results'" class="space-y-4">
-                                <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
+                        <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
                                     <!-- Regular Match Result -->
                                     <template v-if="submit.type === 'regular'">
-                                        <div class="flex justify-between items-center">
+                                        <div class="flex justify-between items-center  overflow-y-auto ">
                                             <div class="w-full">
                                                 <div class="flex w-full justify-between gap-2 mb-2">
                                                     <div class="flex items-center text-gray-600 gap-2 ">
@@ -1041,8 +1065,6 @@
                                             </button>
                                         </div>
                                     </template>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1119,7 +1141,7 @@
     const page = usePage();
     const showSignature = ref(false);
     const selectedSignature = ref(null);
-
+    const showTooltip = ref(false);
     const openSignature = (signature) => {
         selectedSignature.value = signature;
         showSignature.value = true;
@@ -1291,7 +1313,7 @@
     // team form
     const form2 = useForm({
         assigned_team_name: '',
-        college_id: '',
+        selected_colleges: [],
         palakasan_id: props.latestPalakasan?.id || '', // Use optional chaining and provide a default
     });
     //status
@@ -1373,12 +1395,18 @@
 
     // Submit form for adding a new team
     const submitTeam = () => {
+        if (form2.selected_colleges.length === 0) {
+            form2.setError('selected_colleges', 'Please select at least one college');
+            return;
+        }
+
         form2.post(route('team.store'), {
-        onSuccess: () => {
-            closeTeamsModal();
-            },
-            onError: () => {
-                console.error('Form submission error');
+            onSuccess: () => {
+                closeTeamsModal();
+                form2.reset();
+                // Reset the selected colleges
+                form2.selected_colleges = [];
+                selectedCollege.value = null;
             },
         });
     };
@@ -1690,6 +1718,18 @@
     const clearSearch = () => {
         sportSearch.value = '';
         filterSports();
+    };
+
+    const selectedCollege = ref(null);
+
+    const addCollege = () => {
+        if (!selectedCollege.value) return;
+        form2.selected_colleges.push(selectedCollege.value);
+        selectedCollege.value = null;
+    };
+
+    const removeCollege = (index) => {
+        form2.selected_colleges.splice(index, 1);
     };
 </script>
 

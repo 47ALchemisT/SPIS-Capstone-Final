@@ -32,7 +32,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
 use App\Http\Controllers\SportsLandingController;
 
 // Login routes (accessible without authentication)
-Route::get('/', function () {return Inertia::render('Login');})->name('login');
+Route::get('/login', function () {return Inertia::render('Login');})->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -138,7 +138,7 @@ Route::middleware(['web', 'auth', 'subAdminMiddleware'])->group(function () {
 //
 
 // Sports Landing Page Routes
-Route::get('/home', [SportsLandingController::class, 'index'])->name('sports.landing');
+Route::get('/', [SportsLandingController::class, 'index'])->name('sports.landing');
 Route::get('/sports', [SportsLandingController::class, 'sportsIndex'])->name('sports.sports');
 Route::get('/sports/schedules', [SportsLandingController::class, 'scheduleIndex'])->name('sports.schedules');
 Route::get('/rankings', [SportsLandingController::class, 'rankingIndex'])->name('sports.rankings');

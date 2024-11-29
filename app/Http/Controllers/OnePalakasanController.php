@@ -187,19 +187,44 @@ class OnePalakasanController extends Controller
         // Validate incoming request
         $validated = $request->validate([
             'assigned_team_name' => 'required|string|max:255',
-            'college_id' => 'required|exists:colleges,id',
+            'selected_colleges' => 'required|array|min:1',
+            'selected_colleges.*.id' => 'required|exists:colleges,id',
             'palakasan_id' => 'required|exists:palakasans,id',
         ], [
             'assigned_team_name.required' => 'The team name is required.',
-            'college_id.exists' => 'The selected college does not exist.',
+            'selected_colleges.required' => 'At least one college must be selected.',
+            'selected_colleges.*.id.exists' => 'One or more selected colleges do not exist.',
             'palakasan_id.exists' => 'The selected Palakasan does not exist.',
         ]);
 
-        // Create a new assigned team
-        AssignedTeams::create($validated);
+        try {
+            DB::beginTransaction();
 
-        // Return a success response or redirect
-        return redirect()->back()->with('success', 'Sport created and teams matched successfully.');
+            // Create a new team
+            $team = AssignedTeams::create([
+                'assigned_team_name' => $validated['assigned_team_name'],
+                'palakasan_id' => $validated['palakasan_id'],
+                // Use the first college as the primary college
+                'college_id' => $validated['selected_colleges'][0]['id']
+            ]);
+
+            // Create team-college relationships for additional colleges
+            if (count($validated['selected_colleges']) > 1) {
+                $additionalColleges = array_slice($validated['selected_colleges'], 1);
+                foreach ($additionalColleges as $college) {
+                    TeamColleges::create([
+                        'team_id' => $team->id,
+                        'college_id' => $college['id']
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Team created successfully with multiple colleges.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to create team: ' . $e->getMessage());
+        }
     }
 
     public function updatePalakasanStatus(Request $request, $id)

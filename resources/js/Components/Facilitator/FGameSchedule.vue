@@ -6,8 +6,8 @@
         :key="match.id" 
         :class="[
           'p-4 border rounded-lg transition-all duration-200 group',
-          match.status === 'completed' ? 'bg-green-50 border-green-200' : 
-          !canUpdateMatch(match) ? 'bg-gray-50 border-gray-200' : 
+          match.status === 'completed' ? 'bg-green-50 border-green-300' : 
+          !canUpdateMatch(match) ? 'bg-gray-50 border-gray-300' : 
           'bg-white border-gray-300 hover:border-blue-400'
         ]">
         <div class="flex justify-between items-center mb-3">
@@ -33,14 +33,30 @@
 
         <div class="grid grid-cols-4 gap-3 items-center">
           <div class="col-span-2 flex justify-center p-2 rounded-md items-center transition"
-            :class="match.status === 'completed' ? 'bg-green-100' : 'bg-gray-100'">
-            <span class="font-medium mr-3">{{ getTeamName(match.teamA_id) }}</span>
+            :class="[
+              match.status === 'completed' ? {
+                'bg-green-100': isWinner(match, 'teamA'),
+                'bg-red-100': !isWinner(match, 'teamA')
+              } : 'bg-gray-100'
+            ]">
+            <span class="font-medium mr-3" :class="{
+              'text-red-600': match.status === 'completed' && !isWinner(match, 'teamA'),
+              'text-green-700': match.status === 'completed' && isWinner(match, 'teamA')
+            }">{{ getTeamName(match.teamA_id) }}</span>
             <span :class="getScoreClass(match, 'teamA')">{{ getScore(match, 'teamA') }}</span>
           </div>
           <div class="col-span-2 flex justify-center p-2 rounded-md items-center transition"
-            :class="match.status === 'completed' ? 'bg-green-100' : 'bg-gray-100'">
+            :class="[
+              match.status === 'completed' ? {
+                'bg-green-100': isWinner(match, 'teamB'),
+                'bg-red-100': !isWinner(match, 'teamB')
+              } : 'bg-gray-100'
+            ]">
             <span :class="getScoreClass(match, 'teamB')">{{ getScore(match, 'teamB') }}</span>
-            <span class="font-medium ml-3">{{ getTeamName(match.teamB_id) }}</span>
+            <span class="font-medium ml-3" :class="{
+              'text-red-600': match.status === 'completed' && !isWinner(match, 'teamB'),
+              'text-green-700': match.status === 'completed' && isWinner(match, 'teamB')
+            }">{{ getTeamName(match.teamB_id) }}</span>
           </div>
         </div>
 
@@ -569,9 +585,9 @@ const getScoreClass = (match, team) => {
   const scoreB = result.teamB_score;
   
   if (team === 'teamA') {
-    return scoreA > scoreB ? 'font-bold text-green-600' : 'font-medium';
+    return scoreA > scoreB ? 'font-bold text-green-600' : 'font-medium text-red-600';
   }
-  return scoreB > scoreA ? 'font-bold text-green-600' : 'font-medium';
+  return scoreB > scoreA ? 'font-bold text-green-600' : 'font-medium text-red-600';
 };
 
 const getStatusClass = (status) => {
@@ -596,6 +612,16 @@ const formatDateTime = (date, time) => {
 
 const getMatchResult = (matchId) => {
   return props.results.find(result => result.sport_match_id === matchId);
+};
+
+const isWinner = (match, team) => {
+  const result = props.results.find(r => r.sport_match_id === match.id);
+  if (!result) return false;
+  
+  if (team === 'teamA') {
+    return result.teamA_score > result.teamB_score;
+  }
+  return result.teamB_score > result.teamA_score;
 };
 
 watch(signatureCanvas, (canvas) => {

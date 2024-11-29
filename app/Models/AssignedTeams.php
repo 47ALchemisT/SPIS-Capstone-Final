@@ -23,6 +23,22 @@ class AssignedTeams extends Model
     {
         return $this->belongsTo(College::class, 'college_id');
     }
+
+    public function additionalColleges()
+    {
+        return $this->hasMany(TeamColleges::class, 'team_id');
+    }
+
+    public function getAllColleges()
+    {
+        // Get the primary college and additional colleges
+        $primaryCollege = $this->college;
+        $additionalColleges = $this->additionalColleges()->with('college')->get()->pluck('college');
+        
+        // Combine them into a single collection
+        return collect([$primaryCollege])->concat($additionalColleges);
+    }
+
     public function palakasan()
     {
         return $this->belongsTo(Palakasan::class, 'palakasan_id');
