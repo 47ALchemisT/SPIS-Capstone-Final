@@ -495,7 +495,28 @@ const getTabClass = (tab) => {
 const groupedMatches = computed(() => {
     const grouped = {}
     
-    filteredMatches.value.forEach(match => {
+    // First, sort the matches to put completed ones first and sort by game number
+    const sortedMatches = [...filteredMatches.value].sort((a, b) => {
+        const aCompleted = a.status?.toLowerCase() === 'completed';
+        const bCompleted = b.status?.toLowerCase() === 'completed';
+        
+        // If both are completed, sort by game number in reverse order
+        if (aCompleted && bCompleted) {
+            const aGameNum = parseInt(a.game?.replace('Game ', '') || '0');
+            const bGameNum = parseInt(b.game?.replace('Game ', '') || '0');
+            return bGameNum - aGameNum; // Reverse order for completed games
+        }
+        
+        // Put completed matches first
+        if (aCompleted && !bCompleted) return -1;
+        if (!aCompleted && bCompleted) return 1;
+        
+        // For non-completed matches, sort by date
+        return new Date(a.date) - new Date(b.date);
+    });
+    
+    // Group the sorted matches by date
+    sortedMatches.forEach(match => {
         if (!grouped[match.date]) {
             grouped[match.date] = []
         }
