@@ -63,11 +63,11 @@
                 </div>
 
                 <!-- Schedule Cards -->
-                <div class="space-y-6">
+                <div class="space-y-4">
                     <template v-for="(matches, date) in groupedMatches" :key="date">
                         <!-- Date Header -->
                         <div class="sticky top-14 z-10">
-                            <h2 class="text-xl font-bold text-gray-800 bg-white border-b p-4 rounded-t-lg">
+                            <h2 class="text-xl font-bold text-gray-800 bg-white py-4 rounded-t-lg">
                                 {{ formatDate(date) }}
                             </h2>
                         </div>

@@ -240,7 +240,7 @@
     import { route } from 'ziggy-js';
     import MainLayout from '@/Layouts/MainLayout.vue';
     import Standing from '@/Components/Standing.vue'
-    import GameSchedule from '@/Components/GameSchedule.vue';
+    import GameSchedule from '@/Components/LandingPage/SportGameSchedule.vue';
     import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 const props = defineProps({

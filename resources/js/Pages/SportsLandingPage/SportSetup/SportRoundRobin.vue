@@ -82,7 +82,7 @@
                       <span class="font-medium">Important:</span> All matches must be scheduled with date and time before the sport can be marked as scheduled, this is required to start the Palakasan.
           </div>
 
-          <div class="mt-4">
+          <div class="mt-4 pb-6">
             <div v-if="activeTab === 'matches'">
               <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues" :allMatches="allMatches" :venueRecords="venueRecords"/>
             </div>

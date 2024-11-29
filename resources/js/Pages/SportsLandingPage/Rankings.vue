@@ -81,13 +81,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ index + 1 }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
-                                                        <div class="flex-shrink-0 h-8 w-8">
-                                                            <img v-if="team.logo" :src="team.logo" class="h-8 w-8 rounded-full" :alt="team.name">
-                                                            <div v-else class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                                                <span class="text-xs font-medium text-gray-500">{{ team.acronym }}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="ml-4">
+                                                        <div class="">
                                                             <div class="text-sm font-medium text-gray-900">
                                                                 <span v-if="team.assigned_team_name">{{ team.assigned_team_name }}</span> <br>
                                                                 <span class="text-sm font-normal text-gray-500" v-if="team.name">{{ team.name }}</span>
@@ -136,18 +130,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ team.rank || '-' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
-                                                        <div class="flex-shrink-0 h-8 w-8">
-                                                            <img v-if="team.assigned_team_variation_i_d?.college?.logo" 
-                                                                 :src="team.assigned_team_variation_i_d.college.logo" 
-                                                                 class="h-8 w-8 rounded-full" 
-                                                                 :alt="team.assigned_team_variation_i_d?.college?.name">
-                                                            <div v-else class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                                                <span class="text-xs font-medium text-gray-500">
-                                                                    {{ team.assigned_team_variation_i_d?.college?.acronym }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="ml-4">
+                                                        <div>
                                                             <div class="text-sm font-medium text-gray-900">
                                                                 {{ team.assigned_team_variation_i_d?.assigned_team_name }}
                                                             </div>

@@ -10,13 +10,13 @@
                         </div>
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                             <Link :href="route('sports.landing')" :class="{'border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/LandingPage', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/LandingPage'}" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Home</Link>
-                            <Link :href="route('sports.sports')" :class="{'border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/Sports', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/Sports'}" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Sports</Link>
                             <Link :href="route('sports.schedules')" :class="{'border-blue-500  text-blue-700': $page.component === 'SportsLandingPage/SportsSchedule', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/SportsSchedule'}" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Schedules</Link>
+                            <Link :href="route('sports.sports')" :class="{'border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/Sports', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/Sports'}" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Sports</Link>
                             <Link :href="route('sports.rankings')" :class="{'border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/Rankings', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/Rankings'}" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Rankings</Link>
                         </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Login</button>
+                        <button @click="$inertia.visit(route('login'))" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Login</button>
                     </div>
                     <div class="flex items-center sm:hidden">
                         <button @click="mobileMenuOpen = !mobileMenuOpen" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
@@ -29,8 +29,8 @@
                 <div class="sm:hidden" :class="{'block': mobileMenuOpen, 'hidden': !mobileMenuOpen}">
                     <div class="pt-2 pb-3 space-y-1">
                         <Link :href="route('sports.landing')" :class="{'bg-blue-50 border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/LandingPage', 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/LandingPage'}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</Link>
-                        <Link :href="route('sports.sports')" :class="{'bg-blue-50 border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/Sports', 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/Sports'}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Sports</Link>
                         <Link :href="route('sports.schedules')" :class="{'bg-blue-50 border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/SportsSchedule', 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/SportsSchedule'}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Schedules</Link>
+                        <Link :href="route('sports.sports')" :class="{'bg-blue-50 border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/Sports', 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/Sports'}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Sports</Link>
                         <Link :href="route('sports.rankings')" :class="{'bg-blue-50 border-blue-500 text-blue-700': $page.component === 'SportsLandingPage/Rankings', 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700': $page.component !== 'SportsLandingPage/Rankings'}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Rankings</Link>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const mobileMenuOpen = ref(false);

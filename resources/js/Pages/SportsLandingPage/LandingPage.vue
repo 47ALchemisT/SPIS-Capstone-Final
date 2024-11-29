@@ -20,13 +20,8 @@
                                     </p>
                                     <div class="mt-5 sm:mt-8 flex flex-col gap-4 sm:flex-row justify-center lg:justify-start  sm:space-y-0 sm:space-x-3">
                                         <div class="rounded-md">
-                                            <a href="#" class="w-full flex items-center justify-center px-8 py-3 border border-gray-200 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-2 md:text-md md:px-6">
+                                            <a @click="scrollToFeatured" class="w-full flex items-center justify-center px-8 py-3 border border-gray-200 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-2 md:text-md md:px-6 cursor-pointer">
                                                 Get Started
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <a href="#" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400  md:py-2 md:text-md md:px-6">
-                                                Learn More
                                             </a>
                                         </div>
                                     </div>
@@ -42,7 +37,7 @@
             </div>
 
             <!-- Featured Sports Section -->
-            <div class="py-12 bg-white">
+            <div id="featured-sports" class="py-12 bg-white">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
                         <!-- Sports Info Section -->
@@ -55,7 +50,7 @@
                                     <p class="mt-1 text-md  sm:mt-3 sm:text-lg text-gray-500">
                                         Schedules of all the sports in Palakasan
                                     </p>
-                                    <button type="button" class="mt-4 text-white bg-blue-500 w-full sm:w-auto hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-md sm:text-sm px-5 py-3 sm:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                    <button @click="goToAllSchedules" type="button" class="mt-4 text-white bg-blue-500 w-full sm:w-auto hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-md sm:text-sm px-5 py-3 sm:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                         See All Schedules
                                         <i class="fas fa-arrow-right ms-2"></i>
                                     </button>
@@ -135,7 +130,7 @@
                             <p class="mt-1 text-md sm:mt-3 sm:text-lg text-gray-500">
                                 Sports that are currently in progress
                             </p>
-                            <button type="button" class="mt-4 text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-md sm:text-sm px-5 py-3 sm:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <button @click="goToAllSports" type="button" class="mt-4 text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-md sm:text-sm px-5 py-3 sm:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                 View All Sports
                                 <i class="fas fa-arrow-right ms-2"></i>
                             </button>
@@ -197,7 +192,7 @@
                             <p class="mt-1 text-md sm:mt-3 sm:text-lg sm:mb-6 text-gray-500">
                                 Current standings of colleges in Palakasan
                             </p>
-                            <button type="button" class="block sm:hidden mt-4 text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-md sm:text-sm px-5 py-3 sm:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <button @click="goToAllRankings" type="button" class="block sm:hidden mt-4 text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-md sm:text-sm px-5 py-3 sm:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                 See All Rankings
                                 <i class="fas fa-arrow-right ms-2"></i>
                             </button>
@@ -210,7 +205,7 @@
                             <div class="md:w-1/3">
                                 <div class="mb-4 flex justify-between items-center">
                                     <h3 class="text-lg font-medium text-gray-900">Leading Team</h3>
-                                    <button type="button" class="hidden md:block text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                    <button @click="goToAllRankings" type="button" class="hidden md:block text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                         See All Rankings
                                         <i class="fas fa-arrow-right ms-2"></i>
                                     </button>
@@ -293,7 +288,7 @@
 </template>
 
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 import Graph from '@/Components/BarGraph.vue';
 import MainLayout from '@/Layouts/MainLayout.vue';
@@ -321,6 +316,18 @@ const props = defineProps({
         default: () => []
     },
 });
+
+const goToAllSchedules = () => {
+  router.get(route('sports.schedules'));
+};
+
+const goToAllSports = () => {
+  router.get(route('sports.sports'));
+};
+
+const goToAllRankings = () => {
+  router.get(route('sports.rankings'));
+};
 
 const teamRankings = computed(() => {
     return props.assignedTeams.map(team => {
@@ -373,6 +380,11 @@ const hasMoreMatches = computed(() => {
 const liveSports = computed(() => {
     return props.activeSports.filter(sport => sport.status === 'live');
 });
+
+const scrollToFeatured = () => {
+    const featuredSection = document.getElementById('featured-sports');
+    featuredSection.scrollIntoView({ behavior: 'smooth' });
+}
 </script>
 
 <style>
