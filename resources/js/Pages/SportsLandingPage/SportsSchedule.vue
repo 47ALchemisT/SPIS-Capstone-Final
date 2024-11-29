@@ -493,29 +493,35 @@ const getTabClass = (tab) => {
 }
 
 const groupedMatches = computed(() => {
-    const grouped = {}
+    // Separate completed and pending matches
+    const completedMatches = filteredMatches.value.filter(match => match.status?.toLowerCase() === 'completed');
+    const pendingMatches = filteredMatches.value.filter(match => match.status?.toLowerCase() !== 'completed');
     
-    // First, sort the matches to put completed ones first and sort by game number
-    const sortedMatches = [...filteredMatches.value].sort((a, b) => {
-        const aCompleted = a.status?.toLowerCase() === 'completed';
-        const bCompleted = b.status?.toLowerCase() === 'completed';
+    // Sort completed matches (latest date first, highest game number first)
+    const sortedCompleted = completedMatches.sort((a, b) => {
+        const dateCompare = new Date(b.date) - new Date(a.date);
+        if (dateCompare !== 0) return dateCompare;
         
-        // If both are completed, sort by game number in reverse order
-        if (aCompleted && bCompleted) {
-            const aGameNum = parseInt(a.game?.replace('Game ', '') || '0');
-            const bGameNum = parseInt(b.game?.replace('Game ', '') || '0');
-            return bGameNum - aGameNum; // Reverse order for completed games
-        }
-        
-        // Put completed matches first
-        if (aCompleted && !bCompleted) return -1;
-        if (!aCompleted && bCompleted) return 1;
-        
-        // For non-completed matches, sort by date
-        return new Date(a.date) - new Date(b.date);
+        const aGameNum = parseInt(a.game?.replace('Game ', '') || '0');
+        const bGameNum = parseInt(b.game?.replace('Game ', '') || '0');
+        return bGameNum - aGameNum;
     });
     
-    // Group the sorted matches by date
+    // Sort pending matches (earliest date first, lowest game number first)
+    const sortedPending = pendingMatches.sort((a, b) => {
+        const dateCompare = new Date(a.date) - new Date(b.date);
+        if (dateCompare !== 0) return dateCompare;
+        
+        const aGameNum = parseInt(a.game?.replace('Game ', '') || '0');
+        const bGameNum = parseInt(b.game?.replace('Game ', '') || '0');
+        return aGameNum - bGameNum;
+    });
+    
+    // Combine sorted matches
+    const sortedMatches = [...sortedCompleted, ...sortedPending];
+    
+    // Group by date
+    const grouped = {}
     sortedMatches.forEach(match => {
         if (!grouped[match.date]) {
             grouped[match.date] = []
@@ -523,9 +529,23 @@ const groupedMatches = computed(() => {
         grouped[match.date].push(match)
     })
     
-    // Sort dates
+    // For completed matches dates: latest first
+    // For pending matches dates: earliest first
     return Object.keys(grouped)
-        .sort((a, b) => new Date(a) - new Date(b))
+        .sort((a, b) => {
+            const aHasCompleted = grouped[a].some(match => match.status?.toLowerCase() === 'completed');
+            const bHasCompleted = grouped[b].some(match => match.status?.toLowerCase() === 'completed');
+            
+            // If both dates have completed matches or both don't, sort by date
+            if (aHasCompleted === bHasCompleted) {
+                return aHasCompleted ? 
+                    new Date(b) - new Date(a) :  // Latest first for completed
+                    new Date(a) - new Date(b);   // Earliest first for pending
+            }
+            
+            // Put dates with completed matches first
+            return aHasCompleted ? -1 : 1;
+        })
         .reduce((obj, key) => {
             obj[key] = grouped[key]
             return obj
