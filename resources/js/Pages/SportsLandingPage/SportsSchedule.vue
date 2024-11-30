@@ -514,18 +514,59 @@ const getTabClass = (tab) => {
 }
 
 const groupedMatches = computed(() => {
-    const grouped = {}
+    // Separate completed and pending matches
+    const completedMatches = filteredMatches.value.filter(match => match.status?.toLowerCase() === 'completed');
+    const pendingMatches = filteredMatches.value.filter(match => match.status?.toLowerCase() !== 'completed');
     
-    filteredMatches.value.forEach(match => {
+    // Sort completed matches (latest date first, highest game number first)
+    const sortedCompleted = completedMatches.sort((a, b) => {
+        const dateCompare = new Date(b.date) - new Date(a.date);
+        if (dateCompare !== 0) return dateCompare;
+        
+        const aGameNum = parseInt(a.game?.replace('Game ', '') || '0');
+        const bGameNum = parseInt(b.game?.replace('Game ', '') || '0');
+        return bGameNum - aGameNum;
+    });
+    
+    // Sort pending matches (earliest date first, lowest game number first)
+    const sortedPending = pendingMatches.sort((a, b) => {
+        const dateCompare = new Date(a.date) - new Date(b.date);
+        if (dateCompare !== 0) return dateCompare;
+        
+        const aGameNum = parseInt(a.game?.replace('Game ', '') || '0');
+        const bGameNum = parseInt(b.game?.replace('Game ', '') || '0');
+        return aGameNum - bGameNum;
+    });
+    
+    // Combine sorted matches
+    const sortedMatches = [...sortedCompleted, ...sortedPending];
+    
+    // Group by date
+    const grouped = {}
+    sortedMatches.forEach(match => {
         if (!grouped[match.date]) {
             grouped[match.date] = []
         }
         grouped[match.date].push(match)
     })
     
-    // Sort dates
+    // For completed matches dates: latest first
+    // For pending matches dates: earliest first
     return Object.keys(grouped)
-        .sort((a, b) => new Date(a) - new Date(b))
+        .sort((a, b) => {
+            const aHasCompleted = grouped[a].some(match => match.status?.toLowerCase() === 'completed');
+            const bHasCompleted = grouped[b].some(match => match.status?.toLowerCase() === 'completed');
+            
+            // If both dates have completed matches or both don't, sort by date
+            if (aHasCompleted === bHasCompleted) {
+                return aHasCompleted ? 
+                    new Date(b) - new Date(a) :  // Latest first for completed
+                    new Date(a) - new Date(b);   // Earliest first for pending
+            }
+            
+            // Put dates with completed matches first
+            return aHasCompleted ? -1 : 1;
+        })
         .reduce((obj, key) => {
             obj[key] = grouped[key]
             return obj
