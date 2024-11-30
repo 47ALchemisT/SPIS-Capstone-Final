@@ -11,7 +11,7 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::all(); // Fetch from the database
+        $students = Student::where('status', 'active')->get(); // Only fetch active students
         return Inertia::render('SSCAdmin/Student', [
             'students' => $students, // Pass to the view
         ]);
@@ -35,21 +35,29 @@ class StudentController extends Controller
         $updatedCount = 0;
         $createdCount = 0;
 
+        // Get all current student IDs to track which ones are not in the import
+        $existingStudentIds = Student::pluck('id_number')->toArray();
+        $importedStudentIds = [];
+
         // Skip the first row if it contains headers
         foreach ($rows as $index => $row) {
             if ($index === 0) continue; // Skip header row
 
             // Check if all required fields are present
             if (!empty($row[0]) && !empty($row[1]) && !empty($row[2])) {
+                // Store the ID for tracking
+                $importedStudentIds[] = $row[2];
+
                 // Use updateOrCreate to update existing records or create new ones
                 $student = Student::updateOrCreate(
-                    ['first_name' => $row[0]], // Check if a student with this name exists
+                    ['id_number' => $row[2]], // Check if a student with this ID exists
                     [
+                        'first_name' => $row[0],
                         'last_name' => $row[1],
-                        'id_number' => $row[2],
                         'univ_email' => $row[3],
                         'college' => $row[4],
                         'contact' => $row[5],
+                        'status' => 'active' // Set status to active for all imported students
                     ]
                 );
 
@@ -59,6 +67,13 @@ class StudentController extends Controller
                     $updatedCount++;
                 }
             }
+        }
+
+        // Set status to 'inactive' for students not in the current import
+        $studentsToDeactivate = array_diff($existingStudentIds, $importedStudentIds);
+        if (!empty($studentsToDeactivate)) {
+            Student::whereIn('id_number', $studentsToDeactivate)
+                  ->update(['status' => 'inactive']);
         }
 
         return redirect()->route('student.index')->with('success', "Import completed. Created: $createdCount, Updated: $updatedCount");

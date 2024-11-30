@@ -51,7 +51,7 @@
                   <div v-for="sport in assignedSports" :key="sport.id" class="flex items-center px-4 py-2 hover:bg-gray-50 rounded-md transition-colors duration-150">
                     <div class="w-2.5 h-2.5 rounded-full mr-3" :class="{
                       'bg-green-500': sport.status === 'completed',
-                      'bg-gray-400': sport.status === 'live'
+                      'bg-gray-400': sport.status === 'Ongoing'
                     }"></div>
                     <span class="text-sm text-gray-700">{{ sport.sport.name }} {{ sport.categories }}</span>
                   </div>
@@ -107,7 +107,13 @@
             </div>
 
             <div v-if="filteredSports.length > 0" class="space-y-4">
-              <div v-for="sport in filteredSports" :key="sport.id" class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+              <div v-for="sport in filteredSports" :key="sport.id" 
+                class="rounded-lg shadow-sm p-6 border transition-all duration-200 group"
+                :class="[
+                  sport.status?.toLowerCase() === 'completed'
+                    ? 'bg-blue-50 border-blue-300 hover:border-blue-400 hover:bg-blue-100' 
+                    : 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                ]">
                 <div class="flex justify-between items-center">
                   <div>
                     <h3 class="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-600">{{ sport.sport.name }} {{ sport.categories }}</h3>
@@ -117,9 +123,9 @@
                       <span>{{ sport.type }}</span>
                       <span class="text-xs">•</span>
                       <span :class="{
-                        'text-green-600': sport.status === 'Completed',
-                        'text-yellow-600': sport.status === 'In Progress',
-                        'text-gray-600': sport.status === 'Pending'
+                        'text-green-600': sport.status?.toLowerCase() === 'completed',
+                        'text-yellow-600': sport.status?.toLowerCase() === 'in progress',
+                        'text-gray-600': sport.status?.toLowerCase() === 'pending'
                       }">{{ sport.status }}</span>
                     </div>
                   </div>
@@ -225,4 +231,3 @@ const clearSearch = () => {
   border: transparent;
 }
 </style>
-

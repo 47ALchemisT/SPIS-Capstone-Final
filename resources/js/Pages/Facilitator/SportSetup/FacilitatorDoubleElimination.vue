@@ -75,7 +75,7 @@
                     </div>
                 </nav>
 
-                <div class="mt-4 mb-6">
+                <div class="mt-4 mb-8">
                     <div v-if="activeTab === 'matches'" >
                         <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues"  :allMatches="allMatches" :venueRecords="venueRecords"/>                
                     </div>
@@ -330,11 +330,9 @@ const activeTab = ref('matches');  // Default to "matches"
 
 const returnToFacilitator = () => {
   const currentPath = window.location.pathname;
-  // Extract everything after "sportview/NUMBER/"
   const matches = currentPath.match(/sportview\/\d+\/([^/]+)$/);
   if (matches && matches[1]) {
     const encryptedId = matches[1];
-    // Use the encrypted ID directly without any modification
     router.visit(route('facilitator.show', { id: encryptedId }));
   }
 };

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CollegeController;
 use App\Http\Controllers\DoubleEliminationController;
 use App\Http\Controllers\FacilitatorController;
@@ -30,11 +31,21 @@ use App\Models\StudentAccount;
 use App\Http\Controllers\PlayerSportController;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Round;
 use App\Http\Controllers\SportsLandingController;
+use Illuminate\Http\Request;
 
 // Login routes (accessible without authentication)
 Route::get('/login', function () {return Inertia::render('Login');})->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/create-admin', function () {
+    return Inertia::render('Auth/CreateAdmin');
+})->name('create-admin');
+
+Route::get('/create-admin/step-2', [AdminController::class, 'showStep2'])->name('create-admin.step2');
+Route::post('/register-admin/create-student', [AdminController::class, 'createStudent']);
+Route::post('/register-admin/create-account', [AdminController::class, 'createAccount']);
+Route::delete('/register-admin/cancel-student/{id}', [AdminController::class, 'cancelStudent'])->name('cancel-student');
 
 // Sports Landing Page routes
 Route::get('/sports', [SportsLandingController::class, 'sports'])->name('sports.index');
@@ -99,6 +110,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::patch('/assigned-sports/{id}/update-status', [FreeForAllController::class, 'updateStatus'])->name('assigned-sports.update-status');
     Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
     Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
+    Route::post('/palakasan/{id}/emergency-cancel', [OnePalakasanController::class, 'emergencyCancel'])->name('palakasan.emergency-cancel');
 });
 
 // Facilitator routes

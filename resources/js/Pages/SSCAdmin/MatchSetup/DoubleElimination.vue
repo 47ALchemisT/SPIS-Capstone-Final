@@ -931,22 +931,13 @@ const handleScheduleClick = () => {
 
 //
 
-const rankingsSubmitted = ref(false);
-
 //
 
 const showRankingModal = ref(false)
 const isSubmittingRankings = ref(false)
 const rankingTeams = ref([])
 
-const openRankingModal = () => {
-  rankingTeams.value = props.teams.map((team, index) => ({
-    ...team,
-    rank: index + 1,
-    points: 0,
-  }))
-  showRankingModal.value = true
-}
+
 
 const closeRankingModal = () => {
   showRankingModal.value = false
@@ -977,20 +968,6 @@ const submitRankings = () => {
     },
   })
 }
-const checkWinsAndLosses = (teamId) => {
-  let wins = 0;
-  let losses = 0;
-
-  props.results.forEach(result => {
-    if (result.winning_team_id === teamId) {
-      wins++;
-    } else if (result.losing_team_id === teamId) {
-      losses++;
-    }
-  });
-
-  return { wins, losses };
-};
 
 const calculateTeamRecords = () => {
   const records = {};

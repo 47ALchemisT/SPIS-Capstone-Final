@@ -183,10 +183,8 @@ class RoundRobinController extends Controller
     
             DB::commit();
     
-            return response()->json([
-                'message' => 'Round-robin matches created successfully',
-                'matches' => $matches
-            ], 200);
+            return redirect()->back()->with('message', 'Round-robin matches created successfully');
+
     
         } catch (\Exception $e) {
             DB::rollBack();

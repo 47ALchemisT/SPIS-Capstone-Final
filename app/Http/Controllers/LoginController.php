@@ -16,7 +16,10 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return Inertia::render('Login');
+        $hasAdmin = StudentAccount::where('role', 'Admin')->exists();
+        \Log::info('Has admin: ' . ($hasAdmin ? 'true' : 'false')); // Debug log
+
+        return Inertia::render('Login', compact('hasAdmin'));
     }
 
     public function login(Request $request)

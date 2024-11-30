@@ -13,6 +13,7 @@ use App\Models\OverallResult;
 use App\Models\Palakasan;
 use App\Models\Sport;
 use App\Models\SportMatch; 
+use App\Models\SportsVariations;
 use App\Models\SportsVariationsMatches;
 use App\Models\StudentAccount;
 use Dotenv\Exception\ValidationException;
@@ -42,13 +43,117 @@ class OnePalakasanController extends Controller
                 ->where('palakasan_sport_id', $latestPalakasan->id)
                 ->get();
 
+            // Get sports variations only for the assigned sports in current Palakasan
+            $sportVariations = SportsVariations::with([
+                'sport_id.sport',
+                'venue_id',
+                'sportVariationID' => function($query) {
+                    $query->with(['assignedTeamVariationID.college']);
+                }
+            ])
+                ->whereIn('assigned_sport_id', $assignedSports->pluck('id'))
+                ->where('date', '>=', $latestPalakasan->start_date)
+                ->where('date', '<=', $latestPalakasan->end_date)
+                ->where(function($query) {
+                    $query->where('status', '!=', 'cancelled')
+                          ->orWhereNull('status');
+                })
+                ->orderBy('date')
+                ->orderBy('time')
+                ->get()
+                ->map(function($variation) {
+                    return [
+                        'id' => $variation->id,
+                        'sport_id' => [
+                            'id' => $variation->sport_id?->id,
+                            'sport' => [
+                                'id' => $variation->sport_id?->sport?->id,
+                                'name' => $variation->sport_id?->sport?->name
+                            ],
+                            'categories' => $variation->sport_id?->categories
+                        ],
+                        'assigned_sport_id' => $variation->assigned_sport_id,
+                        'venue_id' => $variation->venue_id,
+                        'sport_variation_name' => $variation->sport_variation_name,
+                        'date' => $variation->date,
+                        'time' => $variation->time,
+                        'status' => $variation->status ?? 'pending',
+                        'sport_variation_i_d' => $variation->sportVariationID
+                    ];
+                });
+
             $assignedTeams = AssignedTeams::with('college')
                 ->where('palakasan_id', $latestPalakasan->id)
                 ->get();
         }
-
+        $admin = StudentAccount::with('student')->where('role', 'Admin')->get();
         $facilitator = StudentAccount::with('student')->where('role', 'Facilitator')->get();  
         $palakasans = Palakasan::all();
+
+        // Fetch sport matches with relationships
+        $sportMatches = SportMatch::with([
+            'assignedSport.sport',
+            'teamA.college',
+            'teamB.college',
+            'matchVenue',
+            'match_result.winning_team.college'
+        ])
+            ->whereHas('assignedSport', function($query) use ($latestPalakasan) {
+                $query->where('palakasan_sport_id', $latestPalakasan->id);
+            })
+            ->get()
+            ->map(function ($match) {
+                return [
+                    'id' => $match->id,
+                    'assignedSport' => [
+                        'id' => $match->assignedSport?->id,
+                        'sport' => [
+                            'id' => $match->assignedSport?->sport?->id,
+                            'name' => $match->assignedSport?->sport?->name
+                        ],
+                        'categories' => $match->assignedSport?->categories
+                    ],
+                    'category' => $match->assignedSport?->categories,
+                    'teamA' => [
+                        'id' => $match->teamA?->id,
+                        'assigned_team_name' => $match->teamA?->assigned_team_name,
+                        'college' => [
+                            'id' => $match->teamA?->college?->id,
+                            'name' => $match->teamA?->college?->name,
+                            'logo' => $match->teamA?->college?->logo
+                        ]
+                    ],
+                    'teamB' => [
+                        'id' => $match->teamB?->id,
+                        'assigned_team_name' => $match->teamB?->assigned_team_name,
+                        'college' => [
+                            'id' => $match->teamB?->college?->id,
+                            'name' => $match->teamB?->college?->name,
+                            'logo' => $match->teamB?->college?->logo
+                        ]
+                    ],
+                    'matchVenue' => [
+                        'name' => $match->matchVenue?->name ?? 'TBA'
+                    ],
+                    'date' => $match->date ? date('Y-m-d', strtotime($match->date)) : null,
+                    'time' => $match->time ? date('H:i', strtotime($match->time)) : null,
+                    'status' => $match->status ?? 'pending',
+                    'game' => $match->game,
+                    'match_result' => $match->match_result ? [
+                        'id' => $match->match_result->id,
+                        'teamA_score' => $match->match_result->teamA_score,
+                        'teamB_score' => $match->match_result->teamB_score,
+                        'winning_team_id' => $match->match_result->winning_team_id,
+                        'losing_team_id' => $match->match_result->losing_team_id,
+                        'winning_team' => [
+                            'college' => [
+                                'name' => $match->match_result->winning_team?->college?->name
+                            ]
+                        ]
+                    ] : null
+                ];
+            });
+
         $matchResults = MatchResult::with(['sportMatch.assignedSport', 'winning_team', 'losing_team'])
             ->whereHas('sportMatch.assignedSport', function($query) use ($latestPalakasan) {
                 $query->where('palakasan_sport_id', $latestPalakasan->id);
@@ -102,12 +207,19 @@ class OnePalakasanController extends Controller
                 ->get();
 
         return Inertia::render('SSCAdmin/Onepalakasan', [
-            'colleges' => $colleges,
             'sports' => $sports,
+            'colleges' => $colleges,
+            'latestPalakasan' => [
+                'id' => $latestPalakasan?->id,
+                'year' => $latestPalakasan?->year,
+                'start_date' => $latestPalakasan?->start_date,
+                'end_date' => $latestPalakasan?->end_date,
+                'sportMatches' => $sportMatches,
+                'sportVariations' => $sportVariations ?? collect(),
+            ],
             'palakasans' => $palakasans,
             'assignedSports' => $assignedSports,
             'assignedTeams' => $assignedTeams,
-            'latestPalakasan' => $latestPalakasan, // Pass the latest Palakasan (could be null) to the view
             'overallResult' => $overallResult,
             'variationResult' => $variationResult,
             'facilitator' => $facilitator,
@@ -187,44 +299,19 @@ class OnePalakasanController extends Controller
         // Validate incoming request
         $validated = $request->validate([
             'assigned_team_name' => 'required|string|max:255',
-            'selected_colleges' => 'required|array|min:1',
-            'selected_colleges.*.id' => 'required|exists:colleges,id',
+            'college_id' => 'required|exists:colleges,id',
             'palakasan_id' => 'required|exists:palakasans,id',
         ], [
             'assigned_team_name.required' => 'The team name is required.',
-            'selected_colleges.required' => 'At least one college must be selected.',
-            'selected_colleges.*.id.exists' => 'One or more selected colleges do not exist.',
+            'college_id.exists' => 'The selected college does not exist.',
             'palakasan_id.exists' => 'The selected Palakasan does not exist.',
         ]);
 
-        try {
-            DB::beginTransaction();
+        // Create a new assigned team
+        AssignedTeams::create($validated);
 
-            // Create a new team
-            $team = AssignedTeams::create([
-                'assigned_team_name' => $validated['assigned_team_name'],
-                'palakasan_id' => $validated['palakasan_id'],
-                // Use the first college as the primary college
-                'college_id' => $validated['selected_colleges'][0]['id']
-            ]);
-
-            // Create team-college relationships for additional colleges
-            if (count($validated['selected_colleges']) > 1) {
-                $additionalColleges = array_slice($validated['selected_colleges'], 1);
-                foreach ($additionalColleges as $college) {
-                    TeamColleges::create([
-                        'team_id' => $team->id,
-                        'college_id' => $college['id']
-                    ]);
-                }
-            }
-
-            DB::commit();
-            return redirect()->back()->with('success', 'Team created successfully with multiple colleges.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create team: ' . $e->getMessage());
-        }
+        // Return a success response or redirect
+        return redirect()->back()->with('success', 'Sport created and teams matched successfully.');
     }
 
     public function updatePalakasanStatus(Request $request, $id)
@@ -244,7 +331,7 @@ class OnePalakasanController extends Controller
             // If Palakasan is being set to live, update all its sports to live as well
             if ($request->input('status') === 'live') {
                 $updated = AssignedSports::where('palakasan_sport_id', $id)
-                    ->update(['status' => 'live']);
+                    ->update(['status' => 'Ongoing']);
                 
                 \Log::info('Updated all sports statuses', [
                     'palakasan_id' => $id,
@@ -320,6 +407,44 @@ class OnePalakasanController extends Controller
             ]);
 
             return redirect()->back()->with('error', 'Failed to update sport status: ' . $e->getMessage());
+        }
+    }
+
+    public function cancel($id)
+    {
+        $palakasan = Palakasan::findOrFail($id);
+        $palakasan->status = 'cancelled';
+        $palakasan->save();
+        
+        return response()->json(['message' => 'Palakasan cancelled successfully']);
+    }
+
+    public function emergencyCancel(Request $request, $id)
+    {
+        try {
+            // Validate admin credentials
+            $credentials = $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            // Find admin account
+            $admin = StudentAccount::where('username', $credentials['username'])
+                ->where('role', 'Admin')
+                ->first();
+
+            if (!$admin || !password_verify($credentials['password'], $admin->password)) {
+                return back()->withErrors(['message' => 'Invalid admin credentials']);
+            }
+
+            // Find and update Palakasan status
+            $palakasan = Palakasan::findOrFail($id);
+            $palakasan->status = 'cancelled';
+            $palakasan->save();
+
+            return back()->with('success', 'Palakasan has been cancelled successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['message' => 'Failed to cancel Palakasan: ' . $e->getMessage()]);
         }
     }
 }

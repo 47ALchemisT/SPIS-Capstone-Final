@@ -59,9 +59,9 @@
                         <!-- Buttons -->
                         <div class="flex items-center space-x-2.5">
                             <!-- Import Button to open the modal -->
-   
+
                             <button @click="showModal = true" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                <svg class="h-5 w-5 " xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25z"/><path d="M9.657 15.874L7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0M17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2z"/></g></svg>                                
+                                <svg class="h-5 w-5 " xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25z"/><path d="M9.657 15.874L7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0M17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2z"/></g></svg>                                 
                                 Import
                             </button>
                         </div>
@@ -79,12 +79,12 @@
                                 <th class="py-2 px-4 text-left border-b">Student ID</th>
                                 <th class="py-2 px-4 text-left border-b">University Email</th>    
                                 <th class="py-2 px-4 text-left border-b">College</th>   
-                                <th class="py-2 px-4 text-left border-b">Contact</th>                                    
+                                <th class="py-2 px-4 text-left border-b">Contact</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="paginatedStudents.length === 0">
-                                <td colspan="6" class="py-4 px-4 text-center text-gray-600">No student found.</td>
+                                <td colspan="7" class="py-4 px-4 text-center text-gray-600">No student found.</td>
                             </tr>
                             <tr v-else v-for="student in paginatedStudents" :key="student.id" class="bg-white hover:bg-gray-50">
                                 <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.id }}</td>

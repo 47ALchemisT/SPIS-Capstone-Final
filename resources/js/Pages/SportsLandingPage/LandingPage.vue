@@ -125,7 +125,7 @@
                     <div class="py-4 sm:mb-6">
                         <div class="rounded-lg flex flex-col sm:items-center">
                             <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
-                                Live Sports
+                                Ongoing Sports
                             </h2>
                             <p class="mt-1 text-md sm:mt-3 sm:text-lg text-gray-500">
                                 Sports that are currently in progress
@@ -140,7 +140,7 @@
                         <div class="text-gray-400">
                             <i class="fas fa-trophy text-4xl mb-4"></i>
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900">No Live Sports</h3>
+                        <h3 class="text-lg font-medium text-gray-900">No Ongoing Sports</h3>
                         <p class="mt-1 text-sm text-gray-500">
                             There are no sports currently in progress
                         </p>
@@ -168,7 +168,7 @@
                             <div class="mt-4">
                                 <span :class="{
                                     'px-3 py-1 text-xs font-medium rounded-full': true,
-                                    'bg-red-100 text-red-600': sport.status === 'live',
+                                    'bg-red-100 text-red-600': sport.status === 'Ongoing',
                                     'bg-yellow-100 text-yellow-800': sport.status === 'scheduled',
                                     'bg-green-100 text-green-800': sport.status === 'completed',
                                     'bg-gray-100 text-gray-800': sport.status === 'pending'
@@ -378,7 +378,7 @@ const hasMoreMatches = computed(() => {
 });
 
 const liveSports = computed(() => {
-    return props.activeSports.filter(sport => sport.status === 'live');
+    return props.activeSports.filter(sport => sport.status === 'Ongoing');
 });
 
 const scrollToFeatured = () => {

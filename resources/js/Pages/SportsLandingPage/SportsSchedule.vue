@@ -54,8 +54,8 @@
                         <div>
                             <select v-model="selectedTeam" class="w-full py-2 px-3 text-sm ring-1 ring-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">All Teams</option>
-                                <option v-for="team in activeTeams" :key="team.id" :value="team?.college?.name">
-                                    {{ team?.college?.name }}
+                                <option v-for="team in availableTeams" :key="team" :value="team">
+                                    {{ team }}
                                 </option>
                             </select>
                         </div>
@@ -412,6 +412,27 @@ const allMatches = computed(() => {
     return [...regularMatches, ...variationMatches]
 })
 
+const availableTeams = computed(() => {
+    const teams = new Set();
+    
+    // Add teams from regular matches
+    props.sportMatches.forEach(match => {
+        if (match.teamA?.assigned_team_name) teams.add(match.teamA.assigned_team_name);
+        if (match.teamB?.assigned_team_name) teams.add(match.teamB.assigned_team_name);
+    });
+    
+    // Add teams from sport variations
+    props.sportVariations.forEach(match => {
+        match.sport_variation_i_d?.forEach(variation => {
+            if (variation.assigned_team_variation_i_d?.assigned_team_name) {
+                teams.add(variation.assigned_team_variation_i_d.assigned_team_name);
+            }
+        });
+    });
+    
+    return Array.from(teams).sort();
+})
+
 const filteredMatches = computed(() => {
     return allMatches.value.filter(match => {
         const sportMatch = !selectedSport.value || 
@@ -424,10 +445,10 @@ const filteredMatches = computed(() => {
                 match.sport_id?.categories === selectedCategory.value)
         const teamMatch = !selectedTeam.value || 
             (match.type === 'regular' ? 
-                (match.teamA?.college?.name === selectedTeam.value || 
-                match.teamB?.college?.name === selectedTeam.value) :
-                (match.sport_variation_i_d || []).some(team => 
-                    team.assigned_team_variation_i_d?.college?.name === selectedTeam.value
+                (match.teamA?.assigned_team_name === selectedTeam.value || 
+                match.teamB?.assigned_team_name === selectedTeam.value) :
+                match.sport_variation_i_d?.some(variation => 
+                    variation.assigned_team_variation_i_d?.assigned_team_name === selectedTeam.value
                 ))
         const statusMatch = activeTab.value === 'all' || 
             (match.status || '').toLowerCase() === activeTab.value

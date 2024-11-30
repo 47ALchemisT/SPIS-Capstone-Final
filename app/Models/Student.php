@@ -18,6 +18,7 @@ class Student extends Model
         'univ_email',
         'college',
         'contact',
+        'status'
     ];
     public function studentAccount()
     {

@@ -3,7 +3,8 @@
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div v-for="match in sortedMatches" 
         :key="match.id" 
-        class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-md transition-all duration-200">
+        class="rounded-lg p-4 border hover:shadow-md transition-all duration-200"
+        :class="match.status === 'completed' ? 'bg-green-50 border-green-300' : 'bg-white border-gray-300'">
         <div class="flex justify-between items-center mb-3">
           <div class="flex flex-col">
             <span class="font-semibold text-md">{{ match.game }}</span>
@@ -14,13 +15,27 @@
         </div>
 
         <div class="grid grid-cols-4 gap-3 items-center">
-          <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
-            <span class="font-medium mr-3">{{ getTeamName(match.teamA_id) }}</span>
+          <div class=" col-span-2 flex justify-center p-2 rounded-md items-center"
+            :class="match.status === 'completed' ? {
+              'bg-green-100': isWinner(match, 'teamA'),
+              'bg-red-100': !isWinner(match, 'teamA')
+            } : 'bg-gray-100'">
+            <span class="font-medium mr-3"
+              :class="{'text-green-700': match.status === 'completed' && isWinner(match, 'teamA'), 'text-red-600': match.status === 'completed' && !isWinner(match, 'teamA')}">
+              {{ getTeamName(match.teamA_id) }}
+            </span>
             <span :class="getScoreClass(match, 'teamA')">{{ getScore(match, 'teamA') }}</span>
           </div>
-          <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
+          <div class=" col-span-2 flex justify-center p-2 rounded-md items-center"
+            :class="match.status === 'completed' ? {
+              'bg-green-100': isWinner(match, 'teamB'),
+              'bg-red-100': !isWinner(match, 'teamB')
+            } : 'bg-gray-100'">
             <span :class="getScoreClass(match, 'teamB')">{{ getScore(match, 'teamB') }}</span>
-            <span class="font-medium ml-3">{{ getTeamName(match.teamB_id) }}</span>
+            <span class="font-medium ml-3"
+              :class="{'text-green-700': match.status === 'completed' && isWinner(match, 'teamB'), 'text-red-600': match.status === 'completed' && !isWinner(match, 'teamB')}">
+              {{ getTeamName(match.teamB_id) }}
+            </span>
           </div>
         </div>
 
@@ -148,16 +163,15 @@ const getScore = (match, team) => {
 };
 
 const getScoreClass = (match, team) => {
+  if (match.status !== 'completed') return 'font-medium text-gray-500';
   const result = props.results.find(r => r.sport_match_id === match.id);
   if (!result) return 'font-medium text-gray-500';
   
-  const scoreA = result.teamA_score;
-  const scoreB = result.teamB_score;
+  const isTeamWinner = team === 'teamA' 
+    ? parseInt(result.teamA_score) > parseInt(result.teamB_score)
+    : parseInt(result.teamB_score) > parseInt(result.teamA_score);
   
-  if (team === 'teamA') {
-    return scoreA > scoreB ? 'font-bold text-green-600' : 'font-medium';
-  }
-  return scoreB > scoreA ? 'font-bold text-green-600' : 'font-medium';
+  return isTeamWinner ? 'font-bold text-green-700' : 'font-medium text-red-600';
 };
 
 const getStatusClass = (status) => {
@@ -212,6 +226,38 @@ const updateAvailableTimeSlots = () => {
   }
 };
 
+const isWinner = (match, team) => {
+  const result = props.results.find(r => r.sport_match_id === match.id);
+  if (!result) return false;
+  
+  if (team === 'teamA') {
+    return parseInt(result.teamA_score) > parseInt(result.teamB_score);
+  }
+  return parseInt(result.teamB_score) > parseInt(result.teamA_score);
+};
+
+const getResult = (match, team) => {
+  if (match.status !== 'completed') return '-';
+  const result = props.results.find(r => r.sport_match_id === match.id);
+  if (!result) return '-';
+  
+  if (team === 'teamA') {
+    return parseInt(result.teamA_score) > parseInt(result.teamB_score) ? 'WIN' : 'LOSS';
+  }
+  return parseInt(result.teamB_score) > parseInt(result.teamA_score) ? 'WIN' : 'LOSS';
+};
+
+const getResultClass = (match, team) => {
+  if (match.status !== 'completed') return 'font-medium text-gray-500';
+  const result = props.results.find(r => r.sport_match_id === match.id);
+  if (!result) return 'font-medium text-gray-500';
+  
+  const isTeamWinner = team === 'teamA' 
+    ? parseInt(result.teamA_score) > parseInt(result.teamB_score)
+    : parseInt(result.teamB_score) > parseInt(result.teamA_score);
+  
+  return isTeamWinner ? 'font-bold text-green-700' : 'font-medium text-red-600';
+};
 
 const openTimeModal = (match) => {
   selectedMatch.value = match;
@@ -260,7 +306,6 @@ const saveDateTime = () => {
     }
   });
 };
-
 
 const sortedMatches = computed(() => {
   return [...props.matches].sort((a, b) => {
