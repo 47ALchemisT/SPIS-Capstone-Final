@@ -2,15 +2,15 @@
     <Head title="College"/>
     <AppLayout>
         <template v-slot:default>
-            <div class="flex items-center gap-2">
-                    <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+            <div class="flex items-center justify-between gap-2 mt-6">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                     <div>
                         <button 
-                            @click="returnToPalakasan" 
+                            @click="returnToPalakasan"
                             type="button" 
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
                     </div>
@@ -85,14 +85,6 @@
                             </div>
                     </div>
                     <div class="flex items-center gap-2">
-                    <button
-                        @click="openCreateMatchesModal"
-                        type="button"
-                        class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
-                        :disabled="hasExistingMatches"
-                    >
-                        {{ hasExistingMatches ? 'Game Already Started' : 'Start Game' }}
-                    </button>
                 </div>
             </nav>
 
@@ -170,198 +162,6 @@
                     <PlayersDisplay class="mt-1" :players="players" :teams="teams" />
                 </div>
             </div>
-
-            <!-- Ranking Modal -->
-            <div v-if="showRankingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-lg relative w-96 max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center justify-between p-4 border-b">
-                        <h3 class="text-lg font-semibold text-gray-900">Submit Rankings</h3>
-                        <button @click="closeRankingModal" class="text-gray-400 hover:text-gray-900">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        </button>
-                    </div>
-                    <div class="p-4">
-                        <form @submit.prevent="submitRankings">
-                        <div v-for="(team) in rankingTeams" :key="team.id" class="mb-4">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium">{{ team.assigned_team_name }}</span>
-                                <div class="flex items-center space-x-2">
-                                    <span class="font-medium">Rank</span>
-                                    <input
-                                    v-model="team.rank"
-                                    type="text"
-                                    min="1"
-                                    disabled
-                                    :max="teams.length"
-                                    class="w-8 border text-center rounded px-2 py-1"
-                                    placeholder="Rank"
-                                    />
-                                    <span class="font-medium">Points</span>
-                                    <input
-                                    v-model="team.points"
-                                    type="number"
-                                    min="0"
-                                    class="w-16 border rounded px-2 py-1"
-                                    placeholder="Points"
-                                    required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex justify-end">
-                            <button
-                            type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                            :disabled="isSubmittingRankings || rankingsSubmitted"
-                            >
-                            {{ isSubmittingRankings ? 'Submitting...' : (rankingsSubmitted ? 'Rankings Submitted' : 'Submit Rankings') }}
-                            </button>
-                        </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <!-- Score Setting Modal -->
-            <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-lg relative w-72">
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Add Score
-                        </h3>
-                        <button @click="closeScoreModal"  type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <div class="p-4 ">
-                        
-                        <form @submit.prevent="submitScore">
-                            <div class="mb-4">
-                                <label class="block mb-2 font-medium text-sm">
-                                    {{ getTeamName(selectedMatch.teamA_id) }}
-                                    <input 
-                                        v-model="scoreFormData.teamA_score"
-                                        type="number"
-                                        min="0"
-                                        required
-                                        class="border px-3 py-2 mt-2  rounded-lg border-gray-300  w-full"
-                                    />
-                                </label>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block mb-3 font-medium text-sm">
-                                    {{ getTeamName(selectedMatch.teamB_id) }}
-                                    <input 
-                                        v-model="scoreFormData.teamB_score"
-                                        type="number"
-                                        min="0"
-                                        required
-                                        class="border mt-2 rounded-lg border-gray-300 px-3 py-2 w-full"
-                                    />
-                                </label>
-                            </div>
-
-                            <p v-if="scoreError" class="text-red-600 mb-4">{{ scoreError }}</p>
-
-                            <div class="grid grid-cols-2 items-center gap-2">
-                                <button  
-                                    @click="closeScoreModal" 
-                                    type="button" class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                    Cancel
-                                </button>
-
-                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                    {{ scoreLoading ? 'Saving...' : 'Save Score' }}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <!-- Create Matches Modal -->
-            <div v-if="showCreateMatchesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-lg relative w-96">
-                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Create {{ sport.sport.name }} Matches
-                        </h3>
-                        <button               
-                            @click="closeCreateMatchesModal" 
-                            type="button" 
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
-
-                    <!-- Form Starts Here -->
-                    <form @submit.prevent="createInitialMatches">
-                        <div class="p-5">
-                            <!-- Venue Selection -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Select Venue
-                                </label>
-                                <div class="relative">
-                                    <select
-                                        v-model="selectedVenue"
-                                        class="w-full p-2 pr-8 rounded-md bg-white ring-1 ring-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 appearance-none"
-                                        required
-                                    >
-                                        <option value="" disabled>Choose a venue</option>
-                                        <option
-                                            v-for="venue in props.venues"
-                                            :key="venue.id"
-                                            :value="venue.id"
-                                        >
-                                            {{ venue.name }}
-                                        </option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                        <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Shuffle Teams Option -->
-                            <div class="mb-4 py-2.5 px-3 bg-gray-50 rounded-md ring-1 ring-gray-300">
-                                <label class="flex items-center">
-                                    <input
-                                        v-model="shuffleTeams"
-                                        type="checkbox"
-                                        class="form-checkbox h-4 w-4 text-blue-600 border-blue-600 focus:ring-blue-500"
-                                    >
-                                    <span class="ml-2 text-gray-700 text-sm">Shuffle and randomize teams</span>
-                                </label>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <button 
-                                type="submit"
-                                :disabled="createMatchesLoading || !selectedVenue"
-                                class="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {{ createMatchesLoading ? 'Creating...' : 'Create Matches' }}
-                            </button>
-
-                            <p v-if="createMatchesError" class="text-red-600 mt-2">{{ createMatchesError }}</p>
-                        </div>
-                    </form>
-                    <!-- Form Ends Here -->
-
-                </div>
-            </div>
-
         </template>
     </AppLayout>
 </template>
@@ -419,35 +219,12 @@ const createMatchesLoading = ref(false);
 const createMatchesError = ref('');
 
 const returnToPalakasan = () => {
-    router.get(route('palakasan.details', { tab: 'leagues' }));
+    router.get(route('subadmin.show'));
 };
 
 const hasExistingMatches = computed(() => {
     return props.matches.some(match => match.assigned_sport_id === props.sport.id);
 });
-
-const openCreateMatchesModal = () => {
-    if (hasExistingMatches.value) {
-        error.value = 'Tournament has already been started';
-        return;
-    }
-    showCreateMatchesModal.value = true;
-};
-
-const closeCreateMatchesModal = () => {
-    showCreateMatchesModal.value = false;
-    shuffleTeams.value = false;
-    selectedVenue.value = '';
-    createMatchesError.value = '';
-};
-
-const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-};
 
 // In the script setup section, modify the generateMatchStructure function:
 const generateMatchStructure = (teams) => {

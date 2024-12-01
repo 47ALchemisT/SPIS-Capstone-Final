@@ -144,19 +144,19 @@ Route::middleware(['web', 'auth', 'comHeadMiddleware'])->group(function () {
 
 // Sub Admin routes
 Route::middleware(['web', 'auth', 'subAdminMiddleware'])->group(function () {
-    Route::get('/sa-dashboard', [SubAdminController::class, 'index'])->name('subadmin.show');
+    Route::get('/secretary', [SubAdminController::class, 'index'])->name('subadmin.show');
     Route::get('/sa-sportview/{sport}', function ($sport) {
         $sportModel = AssignedSports::findOrFail($sport);
     
         switch ($sportModel->setup) {
             case 'Single Elimination':
-                return app(SingleEliminationController::class)->index($sportModel);
+                return app(SingleEliminationController::class)->subIndex($sportModel);
             case 'Double Elimination':
-                return app(DoubleEliminationController::class)->index($sportModel);
+                return app(DoubleEliminationController::class)->subIndex($sportModel);
             case 'Free for All':
-                return app(FreeForAllController::class)->index($sportModel);
+                return app(FreeForAllController::class)->subIndex($sportModel);
             case 'Round Robin':
-                return app(RoundRobinController::class)->index($sportModel);
+                return app(RoundRobinController::class)->subIndex($sportModel);
             default:
                 abort(404, 'Invalid sport setup');
         }

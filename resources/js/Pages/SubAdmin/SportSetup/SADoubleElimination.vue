@@ -3,16 +3,19 @@
     <AppLayout>
         <template v-slot:default>
             <div class="flex flex-col">
-                <div class="flex items-center gap-2">
-                    <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <button 
-                        @click="returnToPalakasan" 
-                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 flex items-center gap-2"
-                    >
-                        <i class="fas fa-arrow-left"></i>
-                        Return
-                    </button>
-                </div>
+                <div class="flex items-center justify-between gap-2 mt-6">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                    <div>
+                        <button 
+                            @click="returnToPalakasan"
+                            type="button" 
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            >
+                            <i class="fa-solid fa-arrow-left mr-2"></i>
+                            Return
+                        </button>
+                    </div>
+            </div>
                 <!-- Progress Bar -->
                 <div class="flex mt-2 flex-col">
                     <div class="flex items-center mb-2">

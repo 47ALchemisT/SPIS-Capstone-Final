@@ -6,12 +6,12 @@
                 <div class="flex justify-between h-16">
                     <div class="flex-shrink-0 flex space-x-3 items-center">
                         <img class="w-10 h-10 rounded-full object-cover cursor-pointer" src='/resources/assets/ssclogo.jpg' alt="User dropdown">
-                        <span class="text-xl font-semibold text-white">SPIS</span>
+                        <span class="text-xl font-semibold text-white">SPSIS</span>
                     </div>
                     <div class="ml-3 relative flex items-center gap-3">
                         <div>
-                            <p class="text-white text-sm font-semibold ">Sub Admin</p>
-                            <p class="text-white text-xs text-right ">Facilitator</p>
+                            <p class="text-white text-sm font-semibold ">Supreme Student Council</p>
+                            <p class="text-white text-xs text-right ">Sub Admin</p>
                         </div>
                         <Menu as="div" class="relative inline-block text-left">
                                     <MenuButton class="mt-1.5 inline-flex items-center justify-center w-full rounded-lg  text-sm font-medium text-gray-700 ">

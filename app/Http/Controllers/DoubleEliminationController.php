@@ -50,6 +50,36 @@ class DoubleEliminationController extends Controller
 
         ]);
     }   
+
+    public function subIndex(AssignedSports $assignedSports)
+    {
+        $venues = Venue::all();
+        $assignedSports->load('sport');
+        $tournaments = Palakasan::all();
+        $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+        $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+        $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+        $allMatches = SportMatch::all();
+        $latestPalakasan = Palakasan::latest()->first();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
+
+        return Inertia::render('SubAdmin/SportSetup/SADoubleElimination', [
+            'sport' => $assignedSports,
+            'tournaments' => $tournaments,
+            'teams' => $teams,
+            'matches' => $matches,
+            'results' => $results,
+            'venues' => $venues,
+            'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords,
+            'players' => $players
+
+        ]);
+    }   
+
      public function facilitatorIndex(AssignedSports $assignedSports, $encryptedFacilitatorId)
     {
         try {

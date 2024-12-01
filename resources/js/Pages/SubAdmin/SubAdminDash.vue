@@ -5,7 +5,7 @@
             <Toast ref="toastRef" />
             <div class="mt-4">
                 <div class="flex mb-4 items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-4">
                         <!-- Search Input -->
                         <div class="flex items-center">
                             <input
@@ -15,11 +15,21 @@
                                 class="w-64 border border-gray-300 bg-gray-50 text-sm rounded-lg p-2"
                             />
                         </div>
+                        <!-- Setup Filter -->
+                        <select
+                            v-model="setupFilter"
+                            class="border border-gray-300 bg-gray-50 text-sm rounded-lg p-2"
+                        >
+                            <option value="">All Setups</option>
+                            <option v-for="setup in uniqueSetups" :key="setup" :value="setup">
+                                {{ setup }}
+                            </option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Empty State -->
-                <div v-if="filteredAndSortedSports.length === 0" class="flex flex-col items-center justify-center border-2 border-dashed border-blue-400 text-center p-6 bg-blue-50 rounded-lg">
+                <div v-if="filteredAndSortedSports.length === 0" class="flex flex-col items-center justify-center text-center p-10 bg-blue-50 rounded-lg">
                     <i class="fa-solid fa-basketball text-blue-700 text-6xl mb-4"></i>
                     <h3 class="text-xl font-semibold text-blue-700 mb-2">No sports found</h3>
                     <p class="text-gray-500 text-sm mb-4">
@@ -42,15 +52,20 @@
                                 </svg>
                                 <div class="flex justify-between items-center">
                                     <div>
-                                        <h3 class="text-lg font-semibold text-gray-800">{{ sport.sport.name }}</h3>
-                                        <p class="text-sm text-gray-500">{{ sport.type }}</p>
-                                        <p class="text-sm text-gray-500">Sub-Admin: {{ getFacilitatorName(sport.facilitator_id) }}</p>
+                                        <h3 class="text-lg font-semibold text-gray-800">{{ sport.sport.name }} {{ sport.categories }}</h3>
+                                        <div class="flex items-center text-gray-600 gap-2 ">
+                                            <p class="text-sm"> {{ sport.setup }}</p>
+                                            <span class="text-sm">•</span>
+                                            <p class=" text-sm">{{ sport.type }}</p>
+                                            <span class="text-sm">•</span>
+                                            <p class=" text-sm">{{ sport.status }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!-- Animated Arrow -->
-                        <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
+                        <div class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
                             <svg class="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7l7 7l-7 7"/>
                             </svg>
@@ -75,14 +90,45 @@ const props = defineProps({
 
 // Search and Sort Functionality
 const searchQuerySports = ref('');
+const typeFilter = ref('');
+const statusFilter = ref('');
+const setupFilter = ref('');
+
+// Get unique setups from sports array
+const uniqueSetups = computed(() => {
+    return [...new Set(props.sports.map(sport => sport.setup))].filter(Boolean).sort();
+});
+
 const filteredAndSortedSports = computed(() => {
     let filtered = props.sports;
     
+    // Search filter
     if (searchQuerySports.value) {
         const searchTerm = searchQuerySports.value.toLowerCase();
         filtered = filtered.filter(sport => 
             sport.sport.name.toLowerCase().includes(searchTerm) ||
             sport.type.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    // Type filter
+    if (typeFilter.value) {
+        filtered = filtered.filter(sport => 
+            sport.type === typeFilter.value
+        );
+    }
+    
+    // Status filter
+    if (statusFilter.value) {
+        filtered = filtered.filter(sport => 
+            sport.status === statusFilter.value
+        );
+    }
+    
+    // Setup filter
+    if (setupFilter.value) {
+        filtered = filtered.filter(sport => 
+            sport.setup === setupFilter.value
         );
     }
     

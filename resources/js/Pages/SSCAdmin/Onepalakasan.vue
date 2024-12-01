@@ -71,7 +71,7 @@
                                                     v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
                                                     @click="showModal = true"
                                                     type="button" 
-                                                    :disabled="latestPalakasan.status === 'live' || assignedSports === 0 || assignedTeams.length < 4"
+                                                    :disabled="latestPalakasan.status === 'live' || assignedSports.length  < 2 || assignedTeams.length < 4"
                                                     :class="[
                                                     'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
                                                     latestPalakasan.status === 'live'

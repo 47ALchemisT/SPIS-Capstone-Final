@@ -56,6 +56,39 @@ class RoundRobinController extends Controller
         ]);
     }   
 
+    public function subIndex(AssignedSports $assignedSports)
+    {
+        $venues = Venue::all();
+        $allMatches = SportMatch::all();
+        $assignedSports->load('sport');
+        $tournaments = Palakasan::all();
+        $latestPalakasan = Palakasan::latest()->first();
+        $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+        $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+        $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+        $standings = TeamStanding::where('assigned_sport_id', $assignedSports->id)
+                                 ->get();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+        ->where('student_assigned_sport_id', $assignedSports->id)
+        ->get();
+
+
+        return Inertia::render('SubAdmin/SportSetup/SARoundRobin', [
+            'sport' => $assignedSports,
+            'tournaments' => $tournaments,
+            'teams' => $teams,
+            'matches' => $matches,
+            'results' => $results,
+            'venues' => $venues,
+            'standings' => $standings,
+            'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords,
+            'players' => $players
+
+        ]);
+    }   
+
     public function facilitatorIndex(AssignedSports $assignedSports, $encryptedFacilitatorId)
     {
         $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
@@ -276,8 +309,11 @@ class RoundRobinController extends Controller
             'sport_match_id' => 'required|exists:sport_matches,id',
             'teamA_score' => 'required|integer|min:0',
             'teamB_score' => 'required|integer|min:0',
-            'winning_team_id' => 'required|exists:assigned_teams,id',
-            'losing_team_id' => 'required|exists:assigned_teams,id',
+            'winning_team_id' => 'required_if:is_draw,false|exists:assigned_teams,id',
+            'losing_team_id' => 'required_if:is_draw,false|exists:assigned_teams,id',
+            'is_draw' => 'required|boolean',
+            'official_name' => 'required|string',
+            'signature' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -293,14 +329,23 @@ class RoundRobinController extends Controller
 
             $match = SportMatch::findOrFail($request->sport_match_id);
             
+            $resultData = [
+                'teamA_score' => $request->teamA_score,
+                'teamB_score' => $request->teamB_score,
+                'is_draw' => $request->is_draw
+            ];
+
+            if (!$request->is_draw) {
+                $resultData['winning_team_id'] = $request->winning_team_id;
+                $resultData['losing_team_id'] = $request->losing_team_id;
+            } else {
+                $resultData['winning_team_id'] = null;
+                $resultData['losing_team_id'] = null;
+            }
+
             $result = MatchResult::updateOrCreate(
                 ['sport_match_id' => $request->sport_match_id],
-                [
-                    'teamA_score' => $request->teamA_score,
-                    'teamB_score' => $request->teamB_score,
-                    'winning_team_id' => $request->winning_team_id,
-                    'losing_team_id' => $request->losing_team_id,
-                ]
+                $resultData
             );
 
             // Store facilitator submission
@@ -309,13 +354,12 @@ class RoundRobinController extends Controller
                 'match_id' => $result->id,
                 'official_name' => $request->official_name,
                 'signature' => $request->signature,
-
             ]);
 
             $match->update(['status' => 'completed']);
 
             // Update standings
-            $this->updateStandings($match, $request->teamA_score, $request->teamB_score, $request->winning_team_id);
+            $this->updateStandings($match, $request->teamA_score, $request->teamB_score, $request->is_draw ? null : $request->winning_team_id);
 
             // Check for ties and create tie-breaker matches if necessary
             $this->checkForTiesAndCreateMatches($match->assigned_sport_id);
@@ -349,19 +393,19 @@ class RoundRobinController extends Controller
         $teamBStanding->played++;
     
         // Update wins, draws, and losses
-        if ($teamAScore == $teamBScore) {
+        if ($winningTeamId === null) { // It's a tie
             $teamAStanding->drawn++;
             $teamBStanding->drawn++;
-            $teamAStanding->points += 0.5;
-            $teamBStanding->points += 0.5;
+            $teamAStanding->points += 1; // Changed from 0.5 to 1 point for a draw
+            $teamBStanding->points += 1;
         } elseif ($winningTeamId == $match->teamA_id) {
             $teamAStanding->won++;
             $teamBStanding->lost++;
-            $teamAStanding->points += 1;
+            $teamAStanding->points += 2; // Changed from 1 to 2 points for a win
         } else {
             $teamBStanding->won++;
             $teamAStanding->lost++;
-            $teamBStanding->points += 1;
+            $teamBStanding->points += 2;
         }
     
         $teamAStanding->save();
