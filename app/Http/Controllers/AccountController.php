@@ -15,7 +15,7 @@ class AccountController extends Controller
     public function index()
     {
         $students = Student::all();
-        $studentAccounts = StudentAccount::with('student')->get();
+        $studentAccounts = StudentAccount::with('student')->whereIn('role', ['Facilitator', 'Sub Admin', 'College Sport Head' ])->get();
         return Inertia::render('SSCAdmin/Account',[
             'students' => $students,
             'studentAccounts' => $studentAccounts,

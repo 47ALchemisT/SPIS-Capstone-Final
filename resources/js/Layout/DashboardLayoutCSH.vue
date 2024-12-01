@@ -6,7 +6,7 @@
                 <div class="flex justify-between h-16">
                     <div class="flex-shrink-0 flex space-x-3 items-center">
                         <img class="w-10 h-10 rounded-full object-cover cursor-pointer" src='/resources/assets/ssclogo.jpg' alt="User dropdown">
-                        <span class="text-xl font-semibold text-white">SPIS</span>
+                        <span class="text-xl font-semibold text-white">SPSIS</span>
                     </div>
                     <div class="ml-3 relative flex items-center gap-3">
                         <div>

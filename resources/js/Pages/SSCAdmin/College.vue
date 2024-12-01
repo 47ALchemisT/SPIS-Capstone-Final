@@ -135,14 +135,14 @@
                             <textarea v-model="form.description" id="description" rows="3" class="block p-2.5 transition w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter a brief description about the college..."></textarea>
                         </div>
                         <div class="flex justify-end">
-                            <button type="button" @click="closeModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 text-sm rounded-lg transition">Cancel</button>
+                            <button type="button" @click="closeModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2.5 font-medium text-sm rounded-lg transition">Cancel</button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
+                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2.5 font-medium rounded-lg text-sm transition relative"
                             >
                                 <span v-if="!form.processing">
-                                    {{ isEditing ? 'Save Changes' : 'Confirm' }}
+                                    {{ isEditing ? 'Save' : 'Confirm' }}
                                 </span>
                                 <span v-else>
                                     <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -151,7 +151,7 @@
                                     </svg>
                                     Processing...
                                 </span>
-                            </button>                        
+                            </button>
                         </div>
                     </form>
                 </div>

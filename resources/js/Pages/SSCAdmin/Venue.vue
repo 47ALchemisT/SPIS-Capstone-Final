@@ -127,15 +127,14 @@
                             <input required placeholder="e.g., MSU at Naawan..." v-model="form.location" type="text" class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2"/>
                         </div>
                         <div class="flex justify-end">
-                            <button type="button" @click="closeModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 text-sm rounded-lg transition">Cancel</button>
-                           
+                            <button type="button" @click="closeModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2.5 font-medium text-sm rounded-lg transition">Cancel</button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
+                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2.5 font-medium rounded-lg text-sm transition relative"
                             >
                                 <span v-if="!form.processing">
-                                    {{ isEditing ? 'Save Changes' : 'Confirm' }}
+                                    {{ isEditing ? 'Save' : 'Confirm' }}
                                 </span>
                                 <span v-else>
                                     <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

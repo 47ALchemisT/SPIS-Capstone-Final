@@ -74,21 +74,29 @@
                         <!-- Display selected student -->
                         <label for="student" class=" text-gray-800 text-sm font-medium">Select a student</label>
                         <div class="mb-2 mt-1.5 grid grid-cols-4 items-center gap-3">
-                            <div class="col-span-3 py-2 px-4 bg-gray-50 ring-1 ring-gray-300 rounded-lg text-sm w-full">
+                            <div class="col-span-3 py-2.5 px-4 bg-gray-50 ring-1 ring-gray-300 rounded-lg text-sm w-full">
                                 <span v-if="selectedStudentName" class="text-sm text-gray-700"><strong>{{ selectedStudentName }}</strong></span>
                                 <span v-else class="text-sm text-gray-500">No student selected</span>
                             </div>
-                            <button type="button" @click="openStudentModal" class="col-span-1 bg-blue-700 hover:bg-blue-700/90 text-white py-2 px-3 rounded-lg text-sm font-medium shadow  transition-colors">
+                            <button type="button" @click="openStudentModal" class="col-span-1 bg-blue-700 hover:bg-blue-700/90 text-white py-2.5 px-3 rounded-lg text-sm font-medium shadow  transition-colors">
                                 <i class="fa-solid fa-file mr-1"></i>   
                                 Student                          
                             </button>
                             <span v-if="form.errors.student_id" class="text-red-500">{{ form.errors.student_id }}</span>
                         </div>
-                        <div class="p-2 mb-4 text-xs bg-blue-50 text-blue-700 rounded-lg">
+                        <div class="p-3 mb-4 text-xs bg-blue-50 text-blue-700 rounded-lg">
                             <h1 class="font-bold mb-1">Note</h1>
                             <p>
-                                In selecting a student, you need to click the <span class="font-semibold">Student</span> button at the right side of the form and select a student you want to put in this role
+                                In selecting a student, you need to click the <span class="font-semibold">Student</span> button at the right side of the form and select a student you want to put in this role.
                             </p>
+                            <div class=" mt-2">
+                                <h1 class="font-medium">Roles</h1>
+                                <div class="px-2 mt-1">
+                                    <div class="font-medium">- Sub Admin : <span class="font-normal">helps in scheduling the sports game</span></div>
+                                    <div class="font-medium">- College Sport Head : <span class="font-normal">Assigns student as players in their specific sport</span></div>
+                                    <div class="font-medium">- Facilitator : <span class="font-normal">Manages their assigned sport</span></div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Input for Role -->
@@ -97,10 +105,9 @@
                             <select
                                 v-model="form.role"
                                 id="role"
-                                class="w-full border px-3 py-2 text-sm text-gray rounded-lg border-gray-300"
+                                class="w-full border px-3 py-2.5 text-sm text-gray rounded-lg border-gray-300"
                             >
                                 <option value="" disabled>Select role...</option>
-                                <option value="Admin">Admin</option>
                                 <option value="Sub Admin">Sub Admin</option>
                                 <option value="Facilitator">Facilitator</option>
                                 <option value="College Sport Head">College Sport Head</option>
@@ -109,12 +116,12 @@
                         </div>
 
                         <!-- Modal Buttons -->
-                        <div class="flex justify-end text-sm">
-                            <button type="button" @click="closeModal" class="mr-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
+                        <div class="flex justify-end text-sm font-medium">
+                            <button type="button" @click="closeModal" class="mr-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
+                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm transition relative"
                             >
                                 <span v-if="!form.processing">
                                     Create account
@@ -170,11 +177,11 @@
 
                     <!-- Modal Buttons -->
                     <div class="flex absolute bottom-6 right-6 justify-end">
-                        <button type="button" @click="closeStudentModal" class="px-4 py-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
+                        <button type="button" @click="closeStudentModal" class="px-4 py-2.5  font-medium text-sm bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
                         <button
                             type="button"
                             @click="confirmStudentSelection"
-                            class="ml-2 bg-blue-700 hover:bg-blue-700/90 text-white text-sm px-4 py-2 rounded-lg"
+                            class="ml-2 bg-blue-700 hover:bg-blue-700/90 text-white text-sm px-4 py-2.5  font-medium rounded-lg"
                             :disabled="!selectedStudentId"
                         >
                             Select

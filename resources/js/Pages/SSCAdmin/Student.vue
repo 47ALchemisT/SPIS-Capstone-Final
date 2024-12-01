@@ -168,15 +168,20 @@
                                 <p class="text-sm font-semibold">Info</p>
                                 <i class="fa-solid fa-circle-info"></i>
                             </div>
-                            <h1>When importing an excel file make sure it follows a specific format so that there would be no problem that will happen in the later time, the format should be as followed: <span class="font-semibold">Name, E-mail, and contact number</span>. </h1>
+                            <h1 class="space-y-2">
+                                <span>When importing an excel file make sure it follows a specific format so that there would be no problem that will happen in the later time, the format should be as followed: <span class="font-semibold">Name, E-mail, and contact number</span> </span>.
+
+                                <div class="pt-1"> Keep in mind, only the enrolled student that are in the list will be displayed, if the student that was playing before but not enrolled then he/she cant play in this years Palakasan </div>
+
+                            </h1>
                         </div>
 
-                        <div class="flex justify-end mt-4 space-x-2">
-                            <button type="button" @click="showModal = false" class="bg-gray-100 text-gray-800 py-2 px-4 rounded-lg text-sm hover:bg-gray-200 transition-colors">Cancel</button>
+                        <div class="flex justify-end font-medium mt-4 space-x-2">
+                            <button type="button" @click="showModal = false" class="bg-gray-100 text-gray-800 py-2.5 px-4 rounded-lg text-sm hover:bg-gray-200 transition-colors">Close</button>
                             <button 
                                 type="submit"
                                 :disabled="form.processing"
-                                class="bg-blue-800 text-white py-2 px-4 rounded-lg hover:bg-blue-700 text-sm transition-colors">
+                                class="bg-blue-700 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 text-sm transition-colors">
                                 <span v-if="form.processing">importing...</span>
                                 <span v-else>Import</span>
                             </button>
@@ -184,7 +189,6 @@
                     </form>
                 </div>
             </div>
-
         </template>
     </AppLayout>
 </template>
@@ -265,12 +269,18 @@
     });
     // Computed property to filter students based on the search query
     const filteredStudents = computed(() => {
-        if (!searchQuery.value) return props.students;
-        return props.students.filter(student =>
-            student.fullname.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            student.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            student.contact.toLowerCase().includes(searchQuery.value.toLowerCase())
-        );
+        if (!searchQuery.value) return props.students || [];
+        
+        const query = searchQuery.value.toLowerCase();
+        return (props.students || []).filter(student => {
+            const fullname = student?.fullname || '';
+            const email = student?.email || '';
+            const contact = student?.contact || '';
+            
+            return fullname.toLowerCase().includes(query) ||
+                   email.toLowerCase().includes(query) ||
+                   contact.toLowerCase().includes(query);
+        });
     });
 
     // Computed property to get paginated students

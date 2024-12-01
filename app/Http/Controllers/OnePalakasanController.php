@@ -32,6 +32,7 @@ class OnePalakasanController extends Controller
 
         // Fetch the latest Palakasan
         $latestPalakasan = Palakasan::latest()->first();        
+        $thisPalakasan = Palakasan::latest()->first();        
 
         // Initialize empty collections for assigned sports and teams
         $assignedSports = collect();
@@ -214,6 +215,9 @@ class OnePalakasanController extends Controller
                 'year' => $latestPalakasan?->year,
                 'start_date' => $latestPalakasan?->start_date,
                 'end_date' => $latestPalakasan?->end_date,
+                'status' => $latestPalakasan->status,
+                'tagline' => $latestPalakasan->tagline,
+                'description' => $latestPalakasan->description,
                 'sportMatches' => $sportMatches,
                 'sportVariations' => $sportVariations ?? collect(),
             ],
@@ -227,7 +231,8 @@ class OnePalakasanController extends Controller
             'matchRankings' => $matchRankings,
             'facilitatorSubmits' => $facilitatorSubmits,
             'facilitatorRankSubmits' => $facilitatorRankSubmits,
-            'ffofacilitatorSubmits' => $ffofacilitatorSubmits
+            'ffofacilitatorSubmits' => $ffofacilitatorSubmits,
+            'thisPalakasan' => $thisPalakasan
         ]);
     }
 

@@ -71,21 +71,16 @@
                             <!-- Regular Matches -->
                             <div v-if="categoryGroup.matches.length" class="space-y-2 mb-4">
                                 <div v-for="(match, index) in categoryGroup.matches" :key="match.id" 
-                                    class="bg-white p-4 rounded-lg ring-1 ring-gray-200 hover:ring-2 hover:ring-blue-300 transition-all duration-200">
+                                    class="bg-white px-4 py-1 transition-all duration-200">
                                     <div class="flex flex-col space-y-2">
-                                        <div class="flex justify-between items-center">
-                                            <span class="font-medium text-gray-900">Game {{ index + 1 }}</span>
+                                        <div class="flex items-center text-gray-700 gap-2">
+                                            <span class="font-medium text-sm text-gray-800">Game {{ index + 1 }}</span>
+                                            <span class="text-sm">•</span>
                                             <div class="text-sm text-gray-600">
-                                                {{ formatDate(match.date) }} / {{ formatTime(match.time) }} / {{ match.matchVenue?.name || 'TBA' }}
+                                                {{ formatDate(match.date) }} at {{ formatTime(match.time) }}
                                             </div>
-                                        </div>
-                                        <div class="flex justify-between items-center text-sm">
-                                            <span class="text-gray-600">
-                                                {{ match.teamA?.college?.name }} vs {{ match.teamB?.college?.name }}
-                                            </span>
-                                            <span v-if="match.match_result" class="text-green-600 font-medium">
-                                                Winner: {{ match.match_result.winning_team?.college?.name }}
-                                            </span>
+                                            <span class="text-sm">•</span>
+                                            <span class="text-sm text-gray-800"> {{ match.matchVenue?.name }}</span>
                                         </div>
                                     </div>
                                 </div>

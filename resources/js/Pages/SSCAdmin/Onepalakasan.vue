@@ -8,7 +8,7 @@
                 <div class="flex gap-2 ">
                     <div class="flex gap-2">
                         <button 
-                            v-for="tab in ['details', 'line ups', 'leagues', 'overallSchedules', 'settings', ]"
+                            v-for="tab in ['details', 'line ups', 'leagues', 'Schedules', 'settings', ]"
                             :key="tab"
                             @click="setActiveTab(tab)"
                             :class="[
@@ -218,19 +218,15 @@
                     </div>
 
                     <!-- Check if assignedTeams array is empty after search and sort -->
-                    <div v-if="filteredAndSortedTeams.length === 0" class="flex flex-col items-center justify-center border-2 border-dashed border-blue-400 text-center p-6 bg-blue-50 rounded-lg">
+                    <div v-if="filteredAndSortedTeams.length === 0" class="flex flex-col items-center justify-center text-center p-10 bg-blue-50 rounded-lg">
                         <i class="fa-solid fa-people-group text-blue-700 text-6xl mb-4"></i>
                         <h3 class="text-xl font-semibold text-blue-700 mb-2">No team found</h3>
                         <p class="text-gray-500 text-sm mb-4">
-                            We couldn't find any tea that match your search criteria. <br>
+                            We couldn't find any team that match your search criteria. <br>
                             If the team you are looking for is not here you can add it <br>
-                            by clicking the <span class="text-blue-500 font-semibold">Button</span> below.
+                            by clicking the <span class="text-blue-500 font-semibold">Button</span> form line ups.
 
                         </p>
-                        <button @click="openTeamsModal" class="bg-blue-700 text-sm text-white px-4 py-2 shadow rounded-lg">
-                            <i class="fa-solid fa-square-plus mr-1"></i>
-                            Add Team
-                        </button>
                     </div>
 
                     <!-- Display assigned teams as cards -->
@@ -322,18 +318,14 @@
                     </div>
 
                     <!-- Empty State -->
-                    <div v-if="filteredAndSortedSports.length === 0" class="flex flex-col items-center justify-center border-2 border-dashed border-blue-400 text-center p-6 bg-blue-50 rounded-lg">
+                    <div v-if="filteredAndSortedSports.length === 0" class="flex flex-col items-center justify-center text-center p-10 bg-blue-50 rounded-lg">
                         <i class="fa-solid fa-basketball text-blue-700 text-6xl mb-4"></i>
                         <h3 class="text-xl font-semibold text-blue-700 mb-2">No sports found</h3>
                         <p class="text-gray-500 text-sm mb-4">
                             We couldn't find any sports that match your search criteria. <br>
                             If the sport you are looking for is not here you can add it <br>
-                            by clicking the <span class="text-blue-500 font-semibold">Button</span> below.
+                            by clicking the <span class="text-blue-500 font-semibold">Button</span> above.
                         </p>
-                        <button @click="openSportsModal" class="bg-blue-700 text-sm text-white px-4 py-2 rounded-lg">
-                            <i class="fa-solid fa-square-plus mr-1"></i>
-                            Add Sport
-                        </button>
                     </div>
 
                     <!-- Sports Grid -->
@@ -458,7 +450,7 @@
                     />   
                 </div>
 
-                <div v-if="activeTab === 'overallSchedules'">
+                <div v-if="activeTab === 'Schedules'">
                     <OverallSchedules
                         :latestPalakasan="{
                             ...latestPalakasan,
@@ -1117,6 +1109,7 @@
         colleges: Array,
         sports: Array,
         palakasans: Array,      // Palakasans data array
+        thisPalakasan: Array,
         assignedTeams: Array,   // Teams data array
         assignedSports: Array,  
         overallResult: Array,  
