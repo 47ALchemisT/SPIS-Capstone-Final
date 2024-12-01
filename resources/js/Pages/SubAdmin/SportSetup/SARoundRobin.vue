@@ -224,7 +224,7 @@
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
-import AppLayout from '@/Layout/DashboardLayout.vue';
+import AppLayout from '@/Layout/DashboardLayoutSA.vue';
 import Standing from '@/Components/StandingRR.vue';
 import GameSchedule from '@/Components/GameScheduleRR.vue';
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';

@@ -44,7 +44,7 @@
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-800">{{ sport.sport.name }}</h3>
                                         <p class="text-sm text-gray-500">{{ sport.type }}</p>
-                                        <p class="text-sm text-gray-500">Facilitator: {{ getFacilitatorName(sport.facilitator_id) }}</p>
+                                        <p class="text-sm text-gray-500">Sub-Admin: {{ getFacilitatorName(sport.facilitator_id) }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -91,8 +91,8 @@ const filteredAndSortedSports = computed(() => {
 
 // Helper Functions
 const viewSport = (sportId) => {
-        router.get(route('sportview.index', { sport: sportId }));
-    };
+    router.get(route('sa-sportview.index', { sport: sportId }));
+};
 
 const getFacilitatorName = (facilitatorId) => {
     const facilitator = props.facilitator.find(f => f.id === facilitatorId);
