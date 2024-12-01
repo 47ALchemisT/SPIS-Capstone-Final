@@ -69,7 +69,13 @@ class CHSDashboardController extends Controller
                 ->with('assigned_team.college')
                 ->first();
 
-            $students = Student::all();
+            // Filter students based on the committee head's assigned college
+            $students = collect([]);
+            if ($assignedCollege && $assignedCollege->assigned_team && $assignedCollege->assigned_team->college) {
+                $students = Student::where('status', 'active')
+                    ->where('college', $assignedCollege->assigned_team->college->name)
+                    ->get();
+            }
 
             // Get all assigned players for the committee head's team
             $assignedPlayers = StudentPlayer::whereHas('assignedTeam', function ($query) use ($id) {
