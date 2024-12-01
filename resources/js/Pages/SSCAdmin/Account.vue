@@ -171,7 +171,7 @@
                             class="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors "
                             :class="{ 'bg-gray-200 hover:bg-gray-200': student.id === selectedStudentId }"
                         >
-                            {{ student.first_name }}
+                            {{ student.first_name }} {{ student.last_name }}
                         </li>
                     </ul>
 

@@ -37,6 +37,36 @@
                     </div>
                 </div>
             </div>
+            <!-- Continue Cancelled Palakasan Section -->
+            <div v-if="latestPalakasan?.status === 'cancelled'" class="bg-blue-50 p-4 rounded-lg">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <!-- Info Icon -->
+                        <svg class="h-6 w-6 text-blue-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-lg font-medium text-blue-800">Continue Cancelled Palakasan</h3>
+                        <div class="mt-2 text-blue-700">
+                            <p class="text-sm">You can resume this Palakasan if the emergency situation has been resolved. Please note:</p>
+                            <ul class="list-disc ml-5 mt-2 text-sm">
+                                <li>All previous scores and progress will be maintained</li>
+                                <li>All scheduled matches will be preserved</li>
+                                <li>You should communicate the continuation to all participants</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4">
+                            <button 
+                                @click="showContinueModal = true"
+                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                                Continue Palakasan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Confirmation Modal -->
@@ -113,6 +143,77 @@
                 </div>
             </div>
         </div>
+
+        <!-- Continue Palakasan Modal -->
+        <div v-if="showContinueModal" class="fixed inset-0 flex items-center justify-center z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity" aria-hidden="true"></div>
+                <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full relative">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex flex-col items-center">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                                <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="w-full">
+                                <h3 class="text-lg leading-6 font-medium text-center text-gray-900 mb-4">
+                                    Continue Palakasan Confirmation
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-center text-gray-500 mb-4">
+                                        Please enter your admin credentials to continue the Palakasan.
+                                    </p>
+                                    
+                                    <!-- Admin Authentication Form -->
+                                    <div class="space-y-4 max-w-md mx-auto pt-4">
+                                        <div>
+                                            <label for="continue-username" class="block text-sm font-medium text-gray-700">Admin Username</label>
+                                            <input 
+                                                type="text" 
+                                                id="continue-username" 
+                                                v-model="continueForm.username"
+                                                class="mt-2 block w-full rounded-md border-gray-300 p-2.5 ring-1 ring-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                placeholder="Enter admin username"
+                                            >
+                                        </div>
+                                        <div>
+                                            <label for="continue-password" class="block text-sm font-medium text-gray-700">Admin Password</label>
+                                            <input 
+                                                type="password" 
+                                                id="continue-password" 
+                                                v-model="continueForm.password"
+                                                class="mt-2 block w-full p-2.5 ring-1 ring-gray-200 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                placeholder="Enter admin password"
+                                            >
+                                        </div>
+                                        <!-- Error Message -->
+                                        <div v-if="showContinueError" class="text-sm text-red-600">
+                                            {{ continueErrorMessage }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full px-4 py-6 sm:px-6 flex justify-end space-x-3">
+                        <button 
+                            @click="showContinueModal = false"
+                            class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:text-sm"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            @click="confirmContinuePalakasan"
+                            :disabled="continueForm.processing || !continueForm.username || !continueForm.password"
+                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Continue Palakasan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -150,6 +251,26 @@ const confirmEmergencyCancel = async () => {
         showError.value = true;
         errorMessage.value = error.message || 'An error occurred during validation';
         console.error('Emergency cancel error:', error);
+    }
+};
+//
+const showContinueModal = ref(false);
+const showContinueError = ref(false);
+const continueErrorMessage = ref('');
+
+const continueForm = useForm({
+    username: '',
+    password: '',
+});
+
+const confirmContinuePalakasan = async () => {
+    try {
+        await continueForm.post(route('palakasan.continue', props.latestPalakasan.id));
+        showContinueModal.value = false;
+    } catch (error) {
+        showContinueError.value = true;
+        continueErrorMessage.value = error.message || 'An error occurred during validation';
+        console.error('Continue Palakasan error:', error);
     }
 };
 </script>

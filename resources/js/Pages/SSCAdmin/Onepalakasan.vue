@@ -82,7 +82,7 @@
                                                     Start Palakasan
                                                 </button>
                                             </div>
-                                            <div>
+                                            <div class="flex items-center gap-2">
                                                 <div v-if="latestPalakasan?.status !== 'live' && latestPalakasan?.status !== 'pending'">
                                                     <button 
                                                         @click="openPalakasanModal" 
@@ -92,7 +92,16 @@
                                                         Create New Palakasan            
                                                     </button>
                                                 </div>
+                                                <button
+                                                    v-if="latestPalakasan?.status !== 'completed' && latestPalakasan?.status !== 'cancelled' && latestPalakasan?.status !== 'pending' && progressPercentage === 100"
+                                                    @click="concludePalakasan"
+                                                    :disabled="latestPalakasan?.status === 'completed' || latestPalakasan?.status === 'cancelled'"
+                                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    Conclude Palakasan
+                                                </button>
                                             </div>
+
                                 </div>
                             </div>
 
@@ -376,7 +385,8 @@
 
                             <div class="flex border-b pb-2 border-gray-300 text-gray-700 items-center gap-2 mt-2">
                                 <p class="text-xs flex items-center gap-1">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M10.75 2.567a2.5 2.5 0 0 1 2.332-.089l.168.089L19.544 6.2a2.5 2.5 0 0 1 1.244 1.987l.006.178v7.268a2.5 2.5 0 0 1-1.099 2.07l-.15.095l-6.295 3.634a2.5 2.5 0 0 1-2.332.089l-.168-.09L4.456 17.8a2.5 2.5 0 0 1-1.244-1.987l-.006-.178V8.366a2.5 2.5 0 0 1 1.1-2.07l.15-.095zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/></g></svg>
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M16.45 13.29c.74-.29 4.3-1.96 4.3-7.13c0-.41-.34-.75-.75-.75h-2.28V4c0-.41-.34-.75-.75-.75H7.03c-.41 0-.75.34-.75.75v1.41H4c-.41 0-.75.34-.75.75c0 5.17 3.56 6.84 4.3 7.13c.9 1.12 2.21 1.88 3.7 2.08v1.29H8.5c-.32 0-.61.21-.71.51l-.86 2.59a.75.75 0 0 0 .1.68c.14.2.37.31.61.31h8.72c.24 0 .47-.12.61-.31s.18-.45.1-.68l-.86-2.59a.74.74 0 0 0-.71-.51h-2.75v-1.29c1.49-.2 2.8-.96 3.7-2.08m-1.13 5.96H8.68l.36-1.09h5.91zm3.9-12.34c-.15 1.81-.86 3-1.59 3.77c.06-.32.09-.64.09-.98V6.91zm-14.44 0h1.5V9.7c0 .33.03.66.09.98c-.73-.77-1.43-1.96-1.58-3.77zm3 2.79V4.75h8.45V9.7a4.22 4.22 0 0 1-4.22 4.22A4.23 4.23 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
+                            </svg>
                                 {{ sport.setup }}
                                 </p>
                                 <p class="text-xs text-gray-400">|</p>
@@ -1275,48 +1285,45 @@
         }
     };
 
-    const concludePalakasan = (palakasanId) => {
-        router.put(`/palakasan/${palakasanId}/update-status`, {
-            status: 'completed'
-        }, {
-            preserveScroll: true,
+    const concludePalakasan = () => {
+        if (!props.latestPalakasan) {
+            toastRef.value.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No active Palakasan found',
+                life: 3000
+            });
+            return;
+        }
+
+        if (!confirm('Are you sure you want to conclude this Palakasan? This action cannot be undone.')) {
+            return;
+        }
+
+        router.post(route('palakasan.conclude'), {}, {
             onSuccess: () => {
-            console.log('Palakasan concluded successfully')
+                toastRef.value.show({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Palakasan concluded successfully',
+                    life: 3000
+                });
+                // Refresh the page to show updated status
+                router.visit(route('palakasan.details'), {
+                    preserveScroll: true,
+                    preserveState: false,
+                    replace: true
+                });
             },
             onError: (errors) => {
-            // Optional: Handle errors
+                toastRef.value.show({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: errors.message || 'Failed to conclude Palakasan',
+                    life: 3000
+                });
             }
-        })
-    }
-
-    const cancelPalakasan = async () => {
-        // Show confirmation dialog
-        const confirmed = await Swal.fire({
-            title: 'Cancel Palakasan?',
-            text: 'Are you sure you want to cancel this Palakasan? This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc2626',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Yes, cancel it',
-            cancelButtonText: 'No, keep it'
         });
-
-        if (confirmed.isConfirmed) {
-            try {
-                // Make API call to cancel Palakasan
-                await axios.patch(`/api/palakasan/${latestPalakasan.value.id}/cancel`);
-                
-                // Show success message
-                toastRef.value.showToast('Palakasan has been cancelled successfully', 'success');
-                
-                // Refresh the page to show updated status
-                window.location.reload();
-            } catch (error) {
-                console.error('Error cancelling Palakasan:', error);
-                toastRef.value.showToast('Failed to cancel Palakasan', 'error');
-            }
-        }
     };
 
     // Initialize palakasan useForm with default values

@@ -415,15 +415,6 @@ class OnePalakasanController extends Controller
         }
     }
 
-    public function cancel($id)
-    {
-        $palakasan = Palakasan::findOrFail($id);
-        $palakasan->status = 'cancelled';
-        $palakasan->save();
-        
-        return response()->json(['message' => 'Palakasan cancelled successfully']);
-    }
-
     public function emergencyCancel(Request $request, $id)
     {
         try {
@@ -450,6 +441,85 @@ class OnePalakasanController extends Controller
             return back()->with('success', 'Palakasan has been cancelled successfully');
         } catch (\Exception $e) {
             return back()->withErrors(['message' => 'Failed to cancel Palakasan: ' . $e->getMessage()]);
+        }
+    }
+
+    public function concludePalakasan(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Get the latest Palakasan
+            $palakasan = Palakasan::latest()->first();
+            
+            if (!$palakasan) {
+                throw new \Exception('No active Palakasan found');
+            }
+
+            // Check if all sports are completed
+            $incompleteSports = AssignedSports::where('palakasan_sport_id', $palakasan->id)
+                ->whereNotIn('status', ['completed', 'cancelled'])
+                ->exists();
+
+            if ($incompleteSports) {
+                throw new \Exception('Cannot conclude Palakasan: Some sports are still ongoing or pending');
+            }
+
+            // Update Palakasan status to completed
+            $palakasan->status = 'completed';
+            $palakasan->save();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Palakasan concluded successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function continuePalakasan(Request $request, $palakasan)
+    {
+        try {
+            // Validate admin credentials
+            $credentials = $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            // Find admin account
+            $admin = StudentAccount::where('username', $credentials['username'])
+                ->where('role', 'Admin')
+                ->first();
+
+            if (!$admin || !password_verify($credentials['password'], $admin->password)) {
+                return back()->withErrors(['message' => 'Invalid admin credentials']);
+            }
+
+            DB::beginTransaction();
+
+            // Find and update Palakasan status
+            $palakasan = Palakasan::findOrFail($palakasan);
+            
+            if ($palakasan->status !== 'cancelled') {
+                throw new \Exception('Only cancelled Palakasan events can be continued');
+            }
+
+            // Update Palakasan status back to live
+            $palakasan->status = 'live';
+            $palakasan->save();
+
+            // Update all non-completed sports back to Ongoing
+            AssignedSports::where('palakasan_sport_id', $palakasan->id)
+                ->where('status', '!=', 'completed')
+                ->update(['status' => 'Ongoing']);
+
+            DB::commit();
+
+            return back()->with('success', 'Palakasan has been successfully continued');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['message' => 'Failed to continue Palakasan: ' . $e->getMessage()]);
         }
     }
 }

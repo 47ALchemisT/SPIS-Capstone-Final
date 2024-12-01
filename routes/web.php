@@ -90,6 +90,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::put('/palakasan/{id}/update-status', [OnePalakasanController::class, 'updatePalakasanStatus'])->name('palakasan.updateStatus');
     Route::patch('/assigned-sports/{id}/update-status', [OnePalakasanController::class, 'updateSportStatus'])->name('assigned-sports.update-status');
     Route::post('/match-result', [OnePalakasanController::class, 'storeMatchResult'])->name('match.result.store');
+    Route::post('/palakasan/{palakasan}/continue', [OnePalakasanController::class, 'continuePalakasan'])->name('palakasan.continue');
 
     Route::resource('student', StudentController::class);
     Route::post('student/import', [StudentController::class, 'import'])->name('student.import');
@@ -111,6 +112,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
     Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
     Route::post('/palakasan/{id}/emergency-cancel', [OnePalakasanController::class, 'emergencyCancel'])->name('palakasan.emergency-cancel');
+    Route::post('/palakasan/conclude', [OnePalakasanController::class, 'concludePalakasan'])->name('palakasan.conclude');
 });
 
 // Facilitator routes
