@@ -272,7 +272,7 @@
                         <div>
                             <h3 class="text-gray-900 text-lg font-semibold mb-3">Contact Us</h3>
                             <ul class="space-y-2">
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-map-marker-alt text-blue-600 w-5"></i><span class="text-sm">TUP Manila</span></li>
+                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-map-marker-alt text-blue-600 w-5"></i><span class="text-sm">MSU Naawan</span></li>
                                 <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-envelope text-blue-600 w-5"></i><span class="text-sm">palakasan@tup.edu.ph</span></li>
                                 <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-phone text-blue-600 w-5"></i><span class="text-sm">(02) 8301-3001</span></li>
                             </ul>
