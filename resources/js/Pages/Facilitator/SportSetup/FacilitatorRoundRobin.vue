@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Head title="College"/>
+    <Head :title="sport.sport.name" />
     <AppLayout :facilitator="facilitator">
       <template v-slot:default>
         <div class="flex items-center justify-between gap-2 pt-4">
