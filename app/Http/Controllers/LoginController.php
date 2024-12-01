@@ -65,6 +65,9 @@ class LoginController extends Controller
             case 'College Sport Head':
                 $request->session()->put('committee_head_session', $sessionData);
                 break;
+            case 'Sub Admin':
+                $request->session()->put('sub_admin_session', $sessionData);
+                break;
         }
 
         // Login with the web guard
