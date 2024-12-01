@@ -370,7 +370,7 @@
 import { Head, useForm, router, usePage } from '@inertiajs/vue3';
 import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
-import AppLayout from '@/Layout/DashboardLayout.vue';
+import AppLayout from '@/Layout/DashboardLayoutSA.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/GameSchedule.vue';
 import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed

@@ -5,16 +5,13 @@
             <div class="flex flex-col">
                 <div class="flex items-center gap-2">
                     <h1 class="text-4xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <div>
-                        <button 
-                            @click="returnToPalakasan" 
-                            type="button" 
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            >
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i>
-                            Return
-                        </button>
-                    </div>
+                    <button 
+                        @click="returnToPalakasan" 
+                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 flex items-center gap-2"
+                    >
+                        <i class="fas fa-arrow-left"></i>
+                        Return
+                    </button>
                 </div>
                 <!-- Progress Bar -->
                 <div class="flex mt-2 flex-col">
@@ -66,7 +63,7 @@
                 </div>
 
                 <!-- Tabs Navigation -->
-                <nav class="flex relative justify-between mt-4  items-center">
+                <nav class="flex relative justify-between mt-4 items-center">
                     <div class="flex gap-2 rounded-lg ">
                         <div class=" flex gap-2 rounded-lg">
                             <button 
@@ -86,13 +83,16 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <button
+                            v-if="!hasExistingMatches && canScheduleMatches"
                             @click="openCreateMatchesModal"
-                            type="button"
-                            class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
-                            :disabled="hasExistingMatches"
+                            class="text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            :disabled="createMatchesLoading || !selectedVenue"
                         >
                             {{ hasExistingMatches ? 'Game Already Started' : 'Start Game' }}
                         </button>
+                        <div v-else-if="!canScheduleMatches" class="text-sm text-gray-500 italic">
+                            Tournament has already started
+                        </div>
                     </div>
                 </nav>
 
@@ -174,7 +174,7 @@
                                                         </p>
                                                     </div>
                                                     <div  class="shadow ring-2 ring-yellow-400 bg-yellow-50 p-2 rounded-lg">
-                                                        <span class="mb-1 bg-yellow-200 text-xs rounded-md flex justify-between"
+                                                        <span class="mb-1 text-xs rounded-md bg-yellow-200 flex justify-between"
                                                             :class="getTeamBackgroundColor(decidingMatch.id, decidingMatch.teamA_id)">
                                                             <p class="p-2">{{ getTeamName(decidingMatch.teamA_id) }}</p>
                                                             <div v-if="getMatchResult(decidingMatch.id)" class="mt-2 mr-2">
@@ -447,10 +447,11 @@
     import { Head, useForm, router } from '@inertiajs/vue3';
     import { ref, onMounted, computed } from 'vue';
     import { route } from 'ziggy-js';
-    import AppLayout from '@/Layout/DashboardLayout.vue';
+    import AppLayout from '@/Layout/DashboardLayoutSA.vue';
     import Standing from '@/Components/Standing.vue'
     import GameSchedule from '@/Components/GameSchedule.vue';
     import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+    import Toast from '@/Components/Toast.vue'; 
 
 const props = defineProps({
     sport: [Array, Object],
@@ -462,6 +463,7 @@ const props = defineProps({
     allMatches: Array,
     venueRecords: Array,
     players: Array,
+    palakasanStatus: String
 });
 
 const loading = ref(false);
@@ -495,12 +497,17 @@ const closeCreateMatchesModal = () => {
 
 const activeTab = ref('matches');  // Default to "Details" 
 const returnToPalakasan = () => {
-  router.get(route('palakasan.details', { tab: 'leagues' }));
+  router.get(route('subadmin.show'));
 };
 
 // Check if matches already exist for this sport
 const hasExistingMatches = computed(() => {
-    return props.matches.some(match => match.assigned_sport_id === props.sport.id);
+    return props.matches && props.matches.some(match => match.assigned_sport_id === props.sport.id);
+});
+
+// Check if scheduling is allowed
+const canScheduleMatches = computed(() => {
+    return props.palakasanStatus !== 'started' && props.palakasanStatus !== 'completed';
 });
 
 // Updated shuffleArray function to make it more random
@@ -713,12 +720,12 @@ const getTeamName = (teamId) => {
     return team ? team.assigned_team_name : 'Unknown';
 };
 const groupedBrackets = computed(() => {
+    if (!props.matches) return { winners: {}, losers: {} };
     const sportMatches = props.matches.filter(match => match.assigned_sport_id === props.sport.id);
     
     const brackets = {
         winners: {},
-        losers: {},
-        deciding: {}
+        losers: {}
     };
     
     sportMatches.forEach(match => {
@@ -842,55 +849,46 @@ const submitScore = async () => {
 };
 
 const tournamentWinner = computed(() => {
-  const winnersBracket = groupedBrackets.value.winners;
-  const lastRound = winnersBracket[Math.max(...Object.keys(winnersBracket).map(Number))];
-  if (!lastRound || lastRound.length === 0) return null;
-  
-  const championshipMatches = lastRound.filter(match => isChampionshipMatch(match));
-  if (championshipMatches.length === 0) return null;
+    if (!groupedBrackets.value.winners) return null;
+    const winnersBracket = groupedBrackets.value.winners;
+    const lastRound = winnersBracket[Math.max(...Object.keys(winnersBracket).map(Number))];
+    if (!lastRound || lastRound.length === 0) return null;
 
-  const lastChampionshipMatch = championshipMatches[championshipMatches.length - 1];
-  const result = getMatchResult(lastChampionshipMatch.id);
-  
-  // Check if there's a deciding match
-  if (decidingMatch.value) {
-    const decidingResult = getMatchResult(decidingMatch.value.id);
-    // If the deciding match is completed, use its result
-    if (decidingResult && decidingMatch.value.status === 'completed') {
-      return decidingResult.winning_team_id;
-    }
-    // If there's a deciding match but it's not completed, don't declare a winner yet
-    return null;
-  }
-  
-  // If there's no deciding match, use the result of the last championship match
-  return result && lastChampionshipMatch.status === 'completed' ? result.winning_team_id : null;
+    const lastMatch = lastRound[0];
+    if (!lastMatch) return null;
+
+    const result = getMatchResult(lastMatch.id);
+    if (!result) return null;
+
+    return result.winning_team_id;
 });
 
 // Modify the isChampionshipMatch function to include the deciding match
 const isChampionshipMatch = (match) => {
-  const winnersBracket = groupedBrackets.value.winners;
-  const lastRound = winnersBracket[Math.max(...Object.keys(winnersBracket).map(Number))];
-  return lastRound && (lastRound[0]?.id === match.id || match.bracket_type === 'deciding match');
+    const winnersBracket = groupedBrackets.value.winners;
+    const lastRound = winnersBracket[Math.max(...Object.keys(winnersBracket).map(Number))];
+    return lastRound && (lastRound[0]?.id === match.id || match.bracket_type === 'deciding match');
 };
 
 // Add this computed property to get the deciding match
 const decidingMatch = computed(() => {
-  const decidingMatches = props.matches.filter(match => match.bracket_type === 'deciding match');
-  return decidingMatches.length > 0 ? decidingMatches[0] : null;
+    if (!props.matches) return null;
+    const decidingMatches = props.matches.filter(match => match.bracket_type === 'deciding match');
+    return decidingMatches.length > 0 ? decidingMatches[0] : null;
 });
 
 // New computed properties for progress bar
-const totalMatches = computed(() => props.matches.length);
+const totalMatches = computed(() => props.matches ? props.matches.length : 0);
 
 const completedMatches = computed(() => {
-  return props.matches.filter(match => match.status === 'completed').length;
+    if (!props.matches) return 0;
+    return props.matches.filter(match => match.status === 'completed').length;
 });
 
 const progressPercentage = computed(() => {
-  return (completedMatches.value / totalMatches.value) * 100;
+    if (totalMatches.value === 0) return 0;
+    return (completedMatches.value / totalMatches.value) * 100;
 });
-
 
 const getTeamBackgroundColor = (matchId, teamId) => {
     const result = getMatchResult(matchId);

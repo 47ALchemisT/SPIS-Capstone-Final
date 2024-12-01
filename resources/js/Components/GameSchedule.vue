@@ -345,6 +345,7 @@ const saveDateTime = () => {
 
 
 const sortedMatches = computed(() => {
+  if (!props.matches) return [];
   return [...props.matches].sort((a, b) => {
     const getGameNumber = (game) => {
       const number = parseInt(game.match(/\d+/));
