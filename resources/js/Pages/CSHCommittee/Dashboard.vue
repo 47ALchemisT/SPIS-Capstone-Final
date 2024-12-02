@@ -329,7 +329,25 @@
                                     </div>
                                     
                                     <div v-else class="space-y-4">
-                                        <div v-for="match in upcomingSchedules" :key="match.id" 
+                                        <div class="flex justify-between mb-4">
+
+                                            <div class="flex gap-2 rounded-lg">
+                                                <button 
+                                                    v-for="tab in ['pending','completed' ]"
+                                                    :key="tab"
+                                                    @click="matchTab = tab"
+                                                    :class="[
+                                                    'px-5 py-2 text-sm',
+                                                    matchTab === tab
+                                                        ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-lg'
+                                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 font-medium border-transparent'
+                                                    ]"
+                                                >
+                                                    {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div v-for="match in displayedMatches" :key="match.id" 
                                             class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
                                             <div class="flex items-center justify-between">
                                                 <div class="flex-1">
@@ -530,7 +548,7 @@
                                                             </div>
                                                             <div v-if="selectedTeam === team.id && !team.is_assigned" class="text-blue-600">
                                                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                                                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" />
                                                                 </svg>
                                                             </div>
                                                         </div>
@@ -744,6 +762,27 @@
     const selectTeam = (teamId) => {
         selectedTeam.value = teamId;
     };
+
+    const matchTab = ref('pending');
+
+    const pendingMatches = computed(() => {
+        return props.upcomingSchedules.filter(match => !match.match_result);
+    });
+
+    const completedMatches = computed(() => {
+        return props.upcomingSchedules
+            .filter(match => match.match_result)
+            .sort((a, b) => {
+                // Convert dates to timestamps for comparison
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateB - dateA; // Sort in descending order (newest first)
+            });
+    });
+
+    const displayedMatches = computed(() => {
+        return matchTab.value === 'pending' ? pendingMatches.value : completedMatches.value;
+    });
 </script>
  
 <style scoped>

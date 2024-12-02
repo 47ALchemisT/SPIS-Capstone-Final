@@ -90,7 +90,7 @@ class CHSDashboardController extends Controller
                 ->get();
 
             // Get upcoming schedules for the committee head's college
-            $upcomingSchedules = SportMatch::with(['teamA', 'teamB', 'matchVenue', 'assignedSport.sport'])
+            $upcomingSchedules = SportMatch::with(['teamA', 'teamB', 'matchVenue', 'assignedSport.sport', 'match_result'])
                 ->where(function($query) use ($assignedCollege) {
                     $query->where('teamA_id', $assignedCollege->assigned_team_id)
                           ->orWhere('teamB_id', $assignedCollege->assigned_team_id);
