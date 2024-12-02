@@ -70,12 +70,48 @@ class CHSDashboardController extends Controller
                 ->with('assigned_team.college')
                 ->first();
 
-            // Filter students based on the committee head's assigned college
+            // Initialize empty collections
+            $upcomingSchedules = collect([]);
             $students = collect([]);
-            if ($assignedCollege && $assignedCollege->assigned_team && $assignedCollege->assigned_team->college) {
-                $students = Student::where('status', 'active')
-                    ->where('college', $assignedCollege->assigned_team->college->name)
+
+            if ($assignedCollege && $assignedCollege->assigned_team) {
+                // Get upcoming schedules for the committee head's college
+                $upcomingSchedules = SportMatch::with(['teamA', 'teamB', 'matchVenue', 'assignedSport.sport', 'match_result'])
+                    ->where(function($query) use ($assignedCollege) {
+                        $query->where('teamA_id', $assignedCollege->assigned_team_id)
+                              ->orWhere('teamB_id', $assignedCollege->assigned_team_id);
+                    })
+                    ->where('date', '>=', now()->toDateString())
+                    ->orderBy('date', 'asc')
+                    ->orderBy('time', 'asc')
                     ->get();
+
+                // Process the matches only if there are any
+                if ($upcomingSchedules->isNotEmpty()) {
+                    $upcomingSchedules = $upcomingSchedules->map(function($match) use ($assignedCollege) {
+                        $teamA = AssignedTeams::with('college')->find($match->teamA_id);
+                        $teamB = AssignedTeams::with('college')->find($match->teamB_id);
+
+                        // If teamB is the committee head's team, swap positions
+                        if ($match->teamB_id === $assignedCollege->assigned_team_id) {
+                            $temp = $teamA;
+                            $teamA = $teamB;
+                            $teamB = $temp;
+                        }
+
+                        $match->teamA = $teamA;
+                        $match->teamB = $teamB;
+
+                        return $match;
+                    });
+                }
+
+                // Get students for the assigned college
+                if ($assignedCollege->assigned_team->college) {
+                    $students = Student::where('status', 'active')
+                        ->where('college', $assignedCollege->assigned_team->college->name)
+                        ->get();
+                }
             }
 
             // Get all assigned players for the committee head's team
@@ -89,38 +125,9 @@ class CHSDashboardController extends Controller
                 }])
                 ->get();
 
-            // Get upcoming schedules for the committee head's college
-            $upcomingSchedules = SportMatch::with(['teamA', 'teamB', 'matchVenue', 'assignedSport.sport', 'match_result'])
-                ->where(function($query) use ($assignedCollege) {
-                    $query->where('teamA_id', $assignedCollege->assigned_team_id)
-                          ->orWhere('teamB_id', $assignedCollege->assigned_team_id);
-                })
-                ->where('date', '>=', now()->toDateString())
-                ->orderBy('date', 'asc')
-                ->orderBy('time', 'asc')
-                ->get();
-
-            // Process the matches
-            $processedSchedules = $upcomingSchedules->map(function($match) use ($assignedCollege) {
-                $teamA = AssignedTeams::with('college')->find($match->teamA_id);
-                $teamB = AssignedTeams::with('college')->find($match->teamB_id);
-
-                // If teamB is the committee head's team, swap positions
-                if ($match->teamB_id === $assignedCollege->assigned_team_id) {
-                    $temp = $teamA;
-                    $teamA = $teamB;
-                    $teamB = $temp;
-                }
-
-                $match->teamA = $teamA;
-                $match->teamB = $teamB;
-
-                return $match;
-            });
-
             // Log for debugging
             \Log::info('Match Data:', [
-                'matches' => $processedSchedules->map(function($match) {
+                'matches' => $upcomingSchedules->map(function($match) {
                     return [
                         'id' => $match->id,
                         'teamA' => [
@@ -143,7 +150,7 @@ class CHSDashboardController extends Controller
                 'assignedCollege' => $assignedCollege,
                 'students' => $students,
                 'assignedPlayers' => $assignedPlayers,
-                'upcomingSchedules' => $processedSchedules
+                'upcomingSchedules' => $upcomingSchedules
             ]);
 
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
