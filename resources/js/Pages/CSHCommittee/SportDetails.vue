@@ -39,12 +39,12 @@
                 <p class="text-sm text-gray-600 mb-4">Category: {{ sport.categories }}</p>
 
                 <!-- Players Table -->
-                <div v-if="players.length > 0">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Players ({{ players.length }})</h2>
+                <div v-if="newlyAssignedPlayers.length > 0">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Newly Assigned Players ({{ newlyAssignedPlayers.length }})</h2>
                     <ul>
                         <li
-                            v-for="player in players"
-                            :key="player.id"
+                            v-for="player in newlyAssignedPlayers"
+                            :key="player.student.id"
                             class="py-2 border-b flex justify-between items-center"
                         >
                             <span class="font-medium text-gray-700">
@@ -54,7 +54,7 @@
                     </ul>
                 </div>
                 <div v-else class="text-center text-gray-500">
-                    No players are assigned to this sport yet.
+                    No new players have been assigned yet.
                 </div>
 
                 <!-- Assign Players Button -->
@@ -79,12 +79,13 @@
                         <label
                             :for="'player-' + student.id"
                             class="flex items-center w-full cursor-pointer"
+                            @click="toggleSelection(student.id)"
                         >
                             <input
                                 type="checkbox"
                                 :value="student.id"
                                 v-model="selectedStudentIds"
-                                id="player-{{ student.id }}"
+                                :id="'player-' + student.id"
                                 class="mr-2"
                             />
                             <span class="text-gray-700">
@@ -133,18 +134,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head} from '@inertiajs/vue3';
 import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 
-
 const { props } = usePage();
 const sport = props.sport;
-const players = props.players;
+const initialPlayers = ref(props.players || []); // Store initial players
+const newlyAssignedPlayers = ref([]); // Store newly assigned players
 const { flash } = usePage().props; 
 
-const availableStudents = props.students; // List of students
+// Filter out students who are already assigned to this specific sport
+const availableStudents = computed(() => {
+    const assignedStudentIds = initialPlayers.value.map(player => player.student.id);
+    return props.students.filter(student => !assignedStudentIds.includes(student.id));
+});
+
 const isAssignModalOpen = ref(false);
 const selectedStudentIds = ref([]); // Array to store selected player IDs
 const form = useForm({
@@ -158,16 +164,27 @@ const closeAssignModal = () => (isAssignModalOpen.value = false);
 
 // Submit form to assign players
 const submitAssignPlayers = () => {
-    form.student_ids = selectedStudentIds.value; // Add selected players to form data
+    form.student_ids = selectedStudentIds.value;
     form.post(route('studentplayer.store'), {
         onSuccess: () => {
+            // Add newly assigned players to the list
+            const newPlayers = selectedStudentIds.value.map(id => {
+                const student = props.students.find(s => s.id === id);
+                return {
+                    student: student,
+                    student_id: student.id,
+                    student_assigned_sport_id: sport.id
+                };
+            });
+            newlyAssignedPlayers.value = [...newlyAssignedPlayers.value, ...newPlayers];
+            
             closeAssignModal();
             selectedStudentIds.value = []; // Clear selected IDs
             form.reset();
-            location.reload();
         },
     });
 };
+
 // Toggle selection when the row is clicked
 const toggleSelection = (studentId) => {
     const index = selectedStudentIds.value.indexOf(studentId);
