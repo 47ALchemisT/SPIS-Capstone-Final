@@ -413,6 +413,10 @@
                                                     <span class="text-green-600 font-medium">
                                                         Winner: {{ match.match_result.winning_team?.assigned_team_name || 'Not specified' }}
                                                     </span>
+
+                                                    <span class="text-red-600 font-medium">
+                                                        Loser: {{ match.match_result.losing_team?.assigned_team_name || 'Not specified' }}
+                                                    </span>
                                                 </template>
                                             </div>
                                         </div>
