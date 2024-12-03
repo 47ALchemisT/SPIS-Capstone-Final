@@ -119,7 +119,7 @@
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
                                             <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>                                    
                                             <p class="text-sm text-blue-600 mb-1.5">Assigned Students</p>
-                                            <p class="text-2xl font-bold text-blue-700">{{ newlyAssignedPlayers.length }}</p>
+                                            <p class="text-2xl font-bold text-blue-700">{{ totalAssignedStudents }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -622,6 +622,10 @@
         upcomingSchedules: {
             type: Array,
             default: () => []
+        },
+        totalAssignedStudents: {
+            type: Number,
+            default: 0
         }
     });
 

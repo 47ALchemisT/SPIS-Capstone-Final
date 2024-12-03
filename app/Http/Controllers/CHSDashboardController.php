@@ -49,8 +49,14 @@ class CHSDashboardController extends Controller
                         }])
                         ->get();
                     
-                    return array_merge($sport->toArray(), ['assigned_players' => $players]);
+                    return array_merge($sport->toArray(), [
+                        'assigned_players' => $players,
+                        'player_count' => $players->count()
+                    ]);
                 });
+
+            // Calculate total assigned students
+            $totalAssignedStudents = $assignedSports->sum('player_count');
 
             $assignedTeams = AssignedTeams::where('palakasan_id', $latestPalakasan->id)
                 ->with('college')
@@ -150,7 +156,8 @@ class CHSDashboardController extends Controller
                 'assignedCollege' => $assignedCollege,
                 'students' => $students,
                 'assignedPlayers' => $assignedPlayers,
-                'upcomingSchedules' => $upcomingSchedules
+                'upcomingSchedules' => $upcomingSchedules,
+                'totalAssignedStudents' => $totalAssignedStudents
             ]);
 
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
