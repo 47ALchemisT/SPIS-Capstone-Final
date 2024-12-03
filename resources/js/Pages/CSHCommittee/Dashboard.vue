@@ -374,7 +374,7 @@
                                                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                         </svg>
-                                                        {{ formatDate(match.date) }} at {{ formatTime(match.time) }}
+                                                        {{ formatDate(match.date) }} {{ formatTime(match.time) }}
                                                     </div>
                                                 </div>
                                                 <div class="text-right">
@@ -407,9 +407,13 @@
                                                     {{ match.assigned_sport?.sport?.name || 'Sport TBD' }}
                                                 </span>
                                                 <span class="mx-2">•</span>
-                                                <span class="capitalize">{{ match.bracket_type || 'Bracket TBD' }}</span>
-                                                <span class="mx-2">•</span>
                                                 <span>Round {{ match.round || '?' }}</span>
+                                                <template v-if="match.match_result">
+                                                    <span class="mx-2">•</span>
+                                                    <span class="text-green-600 font-medium">
+                                                        Winner: {{ match.match_result.winning_team?.assigned_team_name || 'Not specified' }}
+                                                    </span>
+                                                </template>
                                             </div>
                                         </div>
                                     </div>
@@ -644,14 +648,8 @@
     };
 
     const formatTime = (timeString) => {
-        const [hours, minutes] = timeString.split(':');
-        const date = new Date();
-        date.setHours(parseInt(hours), parseInt(minutes));
-        return date.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
-            minute: '2-digit', 
-            hour12: true 
-        });
+        if (!timeString) return '';
+        return timeString; // Just return the time string as is since it's already in the correct format
     };
 
     // Compute sports with player assignment status
@@ -770,7 +768,14 @@
     const matchTab = ref('pending');
 
     const pendingMatches = computed(() => {
-        return props.upcomingSchedules.filter(match => !match.match_result);
+        return props.upcomingSchedules
+            .filter(match => !match.match_result)
+            .sort((a, b) => {
+                // Convert dates to timestamps for comparison
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateA - dateB; // Sort in ascending order (upcoming first)
+            });
     });
 
     const completedMatches = computed(() => {
@@ -780,8 +785,12 @@
                 // Convert dates to timestamps for comparison
                 const dateA = new Date(a.date + ' ' + a.time);
                 const dateB = new Date(b.date + ' ' + b.time);
-                return dateB - dateA; // Sort in descending order (newest first)
-            });
+                return dateB - dateA; // Sort in descending order (most recent first)
+            })
+            .map(match => ({
+                ...match,
+                winner: match.match_result?.winning_team?.assigned_team_name || 'Unknown'
+            }));
     });
 
     const displayedMatches = computed(() => {

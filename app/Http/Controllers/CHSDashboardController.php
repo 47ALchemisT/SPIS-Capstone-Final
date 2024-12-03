@@ -82,7 +82,14 @@ class CHSDashboardController extends Controller
 
             if ($assignedCollege && $assignedCollege->assigned_team) {
                 // Get upcoming schedules for the committee head's college
-                $upcomingSchedules = SportMatch::with(['teamA', 'teamB', 'matchVenue', 'assignedSport.sport', 'match_result'])
+                $upcomingSchedules = SportMatch::with([
+                    'teamA.college',
+                    'teamB.college',
+                    'matchVenue',
+                    'assignedSport.sport',
+                    'match_result.winning_team.college',
+                    'match_result.losing_team.college'
+                ])
                     ->where(function($query) use ($assignedCollege) {
                         $query->where('teamA_id', $assignedCollege->assigned_team_id)
                               ->orWhere('teamB_id', $assignedCollege->assigned_team_id);
@@ -107,6 +114,9 @@ class CHSDashboardController extends Controller
 
                         $match->teamA = $teamA;
                         $match->teamB = $teamB;
+
+                        // Add status based on match result
+                        $match->status = $match->match_result ? 'Completed' : 'Pending';
 
                         return $match;
                     });
