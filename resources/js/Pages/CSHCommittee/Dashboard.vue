@@ -42,7 +42,7 @@
                             <div class="flex gap-2 rounded-lg">
                                 <div class="flex gap-2 rounded-lg">
                                     <button 
-                                        v-for="tab in ['home', 'sports', 'What to Know']"
+                                        v-for="tab in ['home', 'sports', 'schedule', 'What to Know' ]"
                                         :key="tab"
                                         @click="activeTab = tab"
                                         :class="[
@@ -121,9 +121,9 @@
                                             <p class="text-2xl font-bold text-blue-700">{{ students.length }}</p>
                                         </div>
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M12 13c2.396 0 4.575.694 6.178 1.672c.8.488 1.484 1.064 1.978 1.69c.486.615.844 1.351.844 2.138c0 .845-.411 1.511-1.003 1.986c-.56.45-1.299.748-2.084.956c-1.578.417-3.684.558-5.913.558s-4.335-.14-5.913-.558c-.785-.208-1.524-.506-2.084-.956C3.41 20.01 3 19.345 3 18.5c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z" clip-rule="evenodd" /></g></svg>                                    
+                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>                                    
                                             <p class="text-sm text-blue-600 mb-1.5">Assigned Students</p>
-                                            <p class="text-2xl font-bold text-blue-700">{{ assignedPlayers.length }}</p>
+                                            <p class="text-2xl font-bold text-blue-700">{{ totalAssignedStudents }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -350,6 +350,110 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div v-if="activeTab === 'schedule'" class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                                <div class="p-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Upcoming Matches</h2>
+                                    
+                                    <div v-if="!upcomingSchedules || upcomingSchedules.length === 0" class="text-center py-8">
+                                        <p class="text-gray-500">No upcoming matches scheduled.</p>
+                                    </div>
+                                    
+                                    <div v-else class="space-y-4">
+                                        <div class="flex justify-between mb-4">
+
+                                            <div class="flex gap-2 rounded-lg">
+                                                <button 
+                                                    v-for="tab in ['pending','completed' ]"
+                                                    :key="tab"
+                                                    @click="matchTab = tab"
+                                                    :class="[
+                                                    'px-5 py-2 text-sm',
+                                                    matchTab === tab
+                                                        ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-lg'
+                                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 font-medium border-transparent'
+                                                    ]"
+                                                >
+                                                    {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div v-for="match in displayedMatches" :key="match.id" 
+                                            class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <h3 class="text-lg font-medium text-gray-900">
+                                                            {{ match.game || '?' }}
+                                                        </h3>
+                                                        <span class="px-2 py-1 text-xs font-medium rounded-full"
+                                                            :class="{
+                                                                'bg-yellow-100 text-yellow-800': match.status === 'Pending',
+                                                                'bg-green-100 text-green-800': match.status === 'Completed',
+                                                                'bg-blue-100 text-blue-800': match.status === 'In Progress'
+                                                            }">
+                                                            {{ match.status || 'Pending' }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"/>
+                                                        </svg>
+                                                        {{ match.match_venue?.name || 'Venue TBD' }}
+                                                    </div>
+                                                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                        </svg>
+                                                        {{ formatDate(match.date) }} {{ formatTime(match.time) }}
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="flex items-center space-x-4">
+                                                        <div class="text-right flex-1">
+                                                            <p class="font-medium text-gray-900">
+                                                                {{ match.teamA?.assigned_team_name || 'TBD' }}
+                                                            </p>
+                                                            <p class="text-sm text-gray-600">
+                                                                {{ match.teamA?.college?.name || 'TBD' }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="text-gray-400 font-medium">VS</div>
+                                                        <div class="text-left flex-1">
+                                                            <p class="font-medium text-gray-900">
+                                                                {{ match.teamB?.assigned_team_name || 'TBD' }}
+                                                            </p>
+                                                            <p class="text-sm text-gray-600">
+                                                                {{ match.teamB?.college?.name || 'TBD' }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-sm text-gray-500">
+                                                <span class="inline-flex items-center">
+                                                    <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                                    </svg>
+                                                    {{ match.assigned_sport?.sport?.name || 'Sport TBD' }}
+                                                </span>
+                                                <span class="mx-2">•</span>
+                                                <span>Round {{ match.round || '?' }}</span>
+                                                <template v-if="match.match_result">
+                                                    <span class="mx-2">•</span>
+                                                    <span class="text-green-600 font-medium">
+                                                        Winner: {{ match.match_result.winning_team?.assigned_team_name || 'Not specified' }}
+                                                    </span>
+
+                                                    <span class="text-red-600 font-medium">
+                                                        Loser: {{ match.match_result.losing_team?.assigned_team_name || 'Not specified' }}
+                                                    </span>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
 
                 </div>
@@ -483,7 +587,7 @@
                                                             </div>
                                                             <div v-if="selectedTeam === team.id && !team.is_assigned" class="text-blue-600">
                                                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                                                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" />
                                                                 </svg>
                                                             </div>
                                                         </div>
@@ -553,12 +657,35 @@
         palakasan: {
             type: Object,
             required: true
+        },
+        upcomingSchedules: {
+            type: Array,
+            default: () => []
+        },
+        totalAssignedStudents: {
+            type: Number,
+            default: 0
         }
     });
 
     const isModalOpen = ref(false);
     const selectedTeam = ref(null);
-    const activeTab = ref('home');  // Default to "Details" 
+    const activeTab = ref('home');  
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+    };
+
+    const formatTime = (timeString) => {
+        if (!timeString) return '';
+        return timeString; // Just return the time string as is since it's already in the correct format
+    };
 
     // Compute sports with player assignment status
     const sportsWithStatus = computed(() => {
@@ -600,6 +727,7 @@
     const selectedSport = ref(null);
     const selectedStudents = ref([]);
     const searchQuery = ref('');
+    const newlyAssignedPlayers = ref([]);
 
     const isStudentAssigned = (studentId) => {
         return props.assignedSports.some(sport => 
@@ -637,6 +765,19 @@
             assigned_team_id: props.assignedCollege.assigned_team.id
         }, {
             onSuccess: () => {
+                // Add newly assigned players to the list
+                const newPlayers = selectedStudents.value.map(studentId => {
+                    const student = props.students.find(s => s.id === studentId);
+                    return {
+                        student: {
+                            id: student.id,
+                            first_name: student.first_name,
+                            last_name: student.last_name
+                        }
+                    };
+                });
+                newlyAssignedPlayers.value = [...newlyAssignedPlayers.value, ...newPlayers];
+                
                 closePlayerModal();
             }
         });
@@ -659,15 +800,37 @@
         selectedTeam.value = teamId;
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
+    const matchTab = ref('pending');
+
+    const pendingMatches = computed(() => {
+        return props.upcomingSchedules
+            .filter(match => !match.match_result)
+            .sort((a, b) => {
+                // Convert dates to timestamps for comparison
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateA - dateB; // Sort in ascending order (upcoming first)
+            });
+    });
+
+    const completedMatches = computed(() => {
+        return props.upcomingSchedules
+            .filter(match => match.match_result)
+            .sort((a, b) => {
+                // Convert dates to timestamps for comparison
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateB - dateA; // Sort in descending order (most recent first)
+            })
+            .map(match => ({
+                ...match,
+                winner: match.match_result?.winning_team?.assigned_team_name || 'Unknown'
+            }));
+    });
+
+    const displayedMatches = computed(() => {
+        return matchTab.value === 'pending' ? pendingMatches.value : completedMatches.value;
+    });
 </script>
  
 <style scoped>

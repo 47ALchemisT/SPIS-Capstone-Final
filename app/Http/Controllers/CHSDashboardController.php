@@ -9,6 +9,7 @@ use App\Models\AssignedTeams;
 use App\Models\Palakasan;
 use App\Models\ComHeadColleges;
 use App\Models\StudentPlayer;
+use App\Models\SportMatch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Crypt;
@@ -48,8 +49,14 @@ class CHSDashboardController extends Controller
                         }])
                         ->get();
                     
-                    return array_merge($sport->toArray(), ['assigned_players' => $players]);
+                    return array_merge($sport->toArray(), [
+                        'assigned_players' => $players,
+                        'player_count' => $players->count()
+                    ]);
                 });
+
+            // Calculate total assigned students
+            $totalAssignedStudents = $assignedSports->sum('player_count');
 
             $assignedTeams = AssignedTeams::where('palakasan_id', $latestPalakasan->id)
                 ->with('college')
@@ -69,12 +76,58 @@ class CHSDashboardController extends Controller
                 ->with('assigned_team.college')
                 ->first();
 
-            // Filter students based on the committee head's assigned college
+            // Initialize empty collections
+            $upcomingSchedules = collect([]);
             $students = collect([]);
-            if ($assignedCollege && $assignedCollege->assigned_team && $assignedCollege->assigned_team->college) {
-                $students = Student::where('status', 'active')
-                    ->where('college', $assignedCollege->assigned_team->college->name)
+
+            if ($assignedCollege && $assignedCollege->assigned_team) {
+                // Get upcoming schedules for the committee head's college
+                $upcomingSchedules = SportMatch::with([
+                    'teamA.college',
+                    'teamB.college',
+                    'matchVenue',
+                    'assignedSport.sport',
+                    'match_result.winning_team.college',
+                    'match_result.losing_team.college'
+                ])
+                    ->where(function($query) use ($assignedCollege) {
+                        $query->where('teamA_id', $assignedCollege->assigned_team_id)
+                              ->orWhere('teamB_id', $assignedCollege->assigned_team_id);
+                    })
+                    ->where('date', '>=', now()->toDateString())
+                    ->orderBy('date', 'asc')
+                    ->orderBy('time', 'asc')
                     ->get();
+
+                // Process the matches only if there are any
+                if ($upcomingSchedules->isNotEmpty()) {
+                    $upcomingSchedules = $upcomingSchedules->map(function($match) use ($assignedCollege) {
+                        $teamA = AssignedTeams::with('college')->find($match->teamA_id);
+                        $teamB = AssignedTeams::with('college')->find($match->teamB_id);
+
+                        // If teamB is the committee head's team, swap positions
+                        if ($match->teamB_id === $assignedCollege->assigned_team_id) {
+                            $temp = $teamA;
+                            $teamA = $teamB;
+                            $teamB = $temp;
+                        }
+
+                        $match->teamA = $teamA;
+                        $match->teamB = $teamB;
+
+                        // Add status based on match result
+                        $match->status = $match->match_result ? 'Completed' : 'Pending';
+
+                        return $match;
+                    });
+                }
+
+                // Get students for the assigned college
+                if ($assignedCollege->assigned_team->college) {
+                    $students = Student::where('status', 'active')
+                        ->where('college', $assignedCollege->assigned_team->college->name)
+                        ->get();
+                }
             }
 
             // Get all assigned players for the committee head's team
@@ -88,6 +141,23 @@ class CHSDashboardController extends Controller
                 }])
                 ->get();
 
+            // Log for debugging
+            \Log::info('Match Data:', [
+                'matches' => $upcomingSchedules->map(function($match) {
+                    return [
+                        'id' => $match->id,
+                        'teamA' => [
+                            'name' => $match->teamA->assigned_team_name ?? 'TBD',
+                            'college' => $match->teamA->college->name ?? 'TBD'
+                        ],
+                        'teamB' => [
+                            'name' => $match->teamB->assigned_team_name ?? 'TBD',
+                            'college' => $match->teamB->college->name ?? 'TBD'
+                        ]
+                    ];
+                })->toArray()
+            ]);
+
             return Inertia::render('CSHCommittee/Dashboard', [
                 'comHead' => $comHead,
                 'assignedTeams' => $assignedTeams,
@@ -95,7 +165,9 @@ class CHSDashboardController extends Controller
                 'palakasan' => $latestPalakasan,
                 'assignedCollege' => $assignedCollege,
                 'students' => $students,
-                'assignedPlayers' => $assignedPlayers
+                'assignedPlayers' => $assignedPlayers,
+                'upcomingSchedules' => $upcomingSchedules,
+                'totalAssignedStudents' => $totalAssignedStudents
             ]);
 
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
