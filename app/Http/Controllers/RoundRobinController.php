@@ -305,16 +305,22 @@ class RoundRobinController extends Controller
     
     public function storeResult(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $baseRules = [
             'sport_match_id' => 'required|exists:sport_matches,id',
             'teamA_score' => 'required|integer|min:0',
             'teamB_score' => 'required|integer|min:0',
-            'winning_team_id' => 'required_if:is_draw,false|exists:assigned_teams,id',
-            'losing_team_id' => 'required_if:is_draw,false|exists:assigned_teams,id',
             'is_draw' => 'required|boolean',
             'official_name' => 'required|string',
             'signature' => 'required|string'
-        ]);
+        ];
+
+        // Add winning/losing team validation only if it's not a draw
+        if (!$request->is_draw) {
+            $baseRules['winning_team_id'] = 'required|exists:assigned_teams,id';
+            $baseRules['losing_team_id'] = 'required|exists:assigned_teams,id|different:winning_team_id';
+        }
+
+        $validator = Validator::make($request->all(), $baseRules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -332,16 +338,10 @@ class RoundRobinController extends Controller
             $resultData = [
                 'teamA_score' => $request->teamA_score,
                 'teamB_score' => $request->teamB_score,
-                'is_draw' => $request->is_draw
+                'is_draw' => $request->is_draw,
+                'winning_team_id' => $request->is_draw ? null : $request->winning_team_id,
+                'losing_team_id' => $request->is_draw ? null : $request->losing_team_id
             ];
-
-            if (!$request->is_draw) {
-                $resultData['winning_team_id'] = $request->winning_team_id;
-                $resultData['losing_team_id'] = $request->losing_team_id;
-            } else {
-                $resultData['winning_team_id'] = null;
-                $resultData['losing_team_id'] = null;
-            }
 
             $result = MatchResult::updateOrCreate(
                 ['sport_match_id' => $request->sport_match_id],

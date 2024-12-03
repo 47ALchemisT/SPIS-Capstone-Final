@@ -49,19 +49,82 @@
                     </div>
                 </div>
 
-                <!-- Main Content, List of Accounts -->
+                <!-- Main Content -->
                 <div>
-                    <div v-if="studentAccounts.length" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <!-- Loop through each account -->
-                        <div v-for="account in studentAccounts" :key="account.id" class="group bg-white ring-1 ring-gray-300 p-4 rounded-lg shadow hover:ring-blue-400 hover:bg-blue-50 transition">
-                            <div class="mb-2">
-                                <svg class="w-8 h-8 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a5 5 0 1 0 5 5a5 5 0 0 0-5-5m0 8a3 3 0 1 1 3-3a3 3 0 0 1-3 3m9 11v-1a7 7 0 0 0-7-7h-4a7 7 0 0 0-7 7v1h2v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1z"/></svg>
+                    <!-- Folder View -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div 
+                            v-for="role in uniqueRoles" 
+                            :key="role"
+                            @click="selectRole(role)"
+                            class="cursor-pointer"
+                        >
+                        <div class="flex items-center gap-3">
+                                <div class="text-gray-400">
+                                    <svg v-if="selectedRole === role" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
+                                    </svg>
+                                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900">{{ role }}</h3>
+                                    <p class="text-sm text-gray-500">{{ getRoleCount(role) }} accounts</p>
+                                </div>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800">{{ account.student.first_name}} {{account.student.last_name}}</h3>
-                            <p class="text-xs text-gray-600">{{ account.role }}</p>
                         </div>
                     </div>
-                    <p v-else class="text-gray-500 text-center">No accounts found.</p>
+
+                    <!-- Table View (shows when folder is clicked) -->
+                    <div v-if="selectedRole" class="mt-6">
+                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                                <h2 class="text-lg font-semibold text-gray-900">{{ selectedRole }} Accounts</h2>
+                                <button 
+                                    @click="selectedRole = null" 
+                                    class="text-gray-500 hover:text-gray-700"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr v-for="account in filteredAccounts" :key="account.id" class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ account.student ? `${account.student.first_name} ${account.student.last_name}` : account.username }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-500">{{ account.username }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <button 
+                                                    @click="openModal(true, account)"
+                                                    class="text-blue-600 hover:text-blue-900"
+                                                >
+                                                    Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p v-else-if="props.studentAccounts?.length === 0" class="text-gray-500 text-center mt-4">No accounts found.</p>
                 </div>
             </div>
 
@@ -194,7 +257,7 @@
 </template>
 
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { router,Head, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 
@@ -274,6 +337,36 @@ const submitAccount = () => {
         }
     });
 };
+
+// Create a ref for student accounts from props
+const studentAccounts = ref(props.accounts);
+
+const selectedRole = ref(null);
+
+const uniqueRoles = computed(() => {
+    if (!props.studentAccounts) return [];
+    return [...new Set(props.studentAccounts.map(account => account.role))];
+});
+
+// Get count of accounts for each role
+const getRoleCount = (role) => {
+    if (!props.studentAccounts) return 0;
+    return props.studentAccounts.filter(account => account.role === role).length;
+};
+
+// Filter accounts based on selected role
+const filteredAccounts = computed(() => {
+    if (!selectedRole.value || !props.studentAccounts) return [];
+    return props.studentAccounts.filter(account => account.role === selectedRole.value);
+});
+
+// Handle role selection
+const selectRole = (role) => {
+    selectedRole.value = selectedRole.value === role ? null : role;
+};
+
+
+
 </script>
 
 <style scoped>

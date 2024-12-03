@@ -57,7 +57,8 @@ class SportsLandingController extends Controller
                                 'id' => $variation->sport_id?->sport?->id,
                                 'name' => $variation->sport_id?->sport?->name
                             ],
-                            'categories' => $variation->sport_id?->categories
+                            'categories' => $variation->sport_id?->categories,
+                            'setup' => $variation->sport_id?->setup
                         ],
                         'assigned_sport_id' => $variation->assigned_sport_id,
                         'venue_id' => $variation->venue_id,
@@ -241,7 +242,8 @@ class SportsLandingController extends Controller
                                 'id' => $variation->sport_id?->sport?->id,
                                 'name' => $variation->sport_id?->sport?->name
                             ],
-                            'categories' => $variation->sport_id?->categories
+                            'categories' => $variation->sport_id?->categories,
+                            'setup' => $variation->sport_id?->setup
                         ],
                         'assigned_sport_id' => $variation->assigned_sport_id,
                         'venue_id' => $variation->venue_id,
@@ -425,7 +427,8 @@ class SportsLandingController extends Controller
                                 'id' => $variation->sport_id?->sport?->id,
                                 'name' => $variation->sport_id?->sport?->name
                             ],
-                            'categories' => $variation->sport_id?->categories
+                            'categories' => $variation->sport_id?->categories,
+                            'setup' => $variation->sport_id?->setup
                         ],
                         'assigned_sport_id' => $variation->assigned_sport_id,
                         'venue_id' => $variation->venue_id,
@@ -610,7 +613,8 @@ class SportsLandingController extends Controller
                                 'id' => $variation->sport_id?->sport?->id,
                                 'name' => $variation->sport_id?->sport?->name
                             ],
-                            'categories' => $variation->sport_id?->categories
+                            'categories' => $variation->sport_id?->categories,
+                            'setup' => $variation->sport_id?->setup
                         ],
                         'assigned_sport_id' => $variation->assigned_sport_id,
                         'venue_id' => $variation->venue_id,
@@ -626,7 +630,6 @@ class SportsLandingController extends Controller
                 ->where('palakasan_id', $latestPalakasan->id)
                 ->get();
         }
-        $year = $latestPalakasan ? $latestPalakasan->year : date('Y');
         $sportMatches = SportMatch::with([
             'assignedSport.sport',
             'teamA.college',
@@ -763,7 +766,6 @@ class SportsLandingController extends Controller
         return Inertia::render('SportsLandingPage/Rankings', [
             'latestPalakasan' => $latestPalakasan,
             'sportMatches' => $sportMatches,
-            'palakasanYear' => $year,
             'activeSports' => $activeSports,
             'activeTeams' => $activeTeams,
             'overallRankings' => $overallRankings,

@@ -8,7 +8,7 @@
                 <div class="flex gap-2 ">
                     <div class="flex gap-2">
                         <button 
-                            v-for="tab in ['details', 'line ups', 'leagues', 'Schedules', 'settings', ]"
+                            v-for="tab in ['details', 'line ups', 'leagues', 'Schedules', 'rankings', 'settings', ]"
                             :key="tab"
                             @click="setActiveTab(tab)"
                             :class="[
@@ -67,16 +67,37 @@
                                     <!--utility, history and creating-->
                                     <div class="flex">
                                         <div>  <!-- Start Palakasan Button -->
+                                                <Tooltip 
+                                                    v-if="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
+                                                    :text="latestPalakasan.status === 'live' 
+                                                        ? 'Palakasan is currently live'
+                                                        : assignedSports.length < 2
+                                                        ? 'At least 2 sports must be assigned before starting'
+                                                        : 'At least 4 teams must be assigned before starting'"
+                                                    position="top"
+                                                >
+                                                    <button 
+                                                        v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
+                                                        @click="showModal = true"
+                                                        type="button" 
+                                                        :disabled="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
+                                                        :class="[
+                                                        'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                                        latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4
+                                                            ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
+                                                            : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                                        ]"
+                                                        >
+                                                        Start Palakasan
+                                                    </button>
+                                                </Tooltip>
                                                 <button 
-                                                    v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
+                                                    v-else-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
                                                     @click="showModal = true"
                                                     type="button" 
-                                                    :disabled="latestPalakasan.status === 'live' || assignedSports.length  < 2 || assignedTeams.length < 4"
                                                     :class="[
                                                     'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                                    latestPalakasan.status === 'live'
-                                                        ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
-                                                        : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                                    'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                                     ]"
                                                     >
                                                     Start Palakasan
@@ -183,37 +204,30 @@
                                 />
                             </div>
                             <div class="relative">
-                                <button                                                 
-                                @click="openTeamsModal" 
-                                @mouseenter="showTooltip = true"
-                                @mouseleave="showTooltip = false"
-                                :disabled="latestPalakasan?.status !== 'pending'"                                
-                                :class="[
-                                'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                latestPalakasan?.status !== 'pending'
-                                    ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
-                                    : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
-                                ]"                            
+                                <Tooltip 
+                                    v-if="latestPalakasan?.status !== 'pending'"
+                                    text="Cannot form line ups when Palakasan starts"
+                                    position="top"
+                                >
+                                    <button                                                 
+                                    @click="openTeamsModal" 
+                                    :disabled="latestPalakasan?.status !== 'pending'"                                
+                                    :class="[
+                                    'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                    latestPalakasan?.status !== 'pending'
+                                        ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
+                                        : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                    ]"                            
+                                    >
+                                        Form Line ups
+                                    </button>
+                                </Tooltip>
+                                <button v-else                                               
+                                    @click="openTeamsModal" 
+                                    :class="'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'"                            
                                 >
                                     Form Line ups
                                 </button>
-                                <Transition
-                                    enter-active-class="transition duration-200 ease-out"
-                                    enter-from-class="transform scale-95 opacity-0"
-                                    enter-to-class="transform scale-100 opacity-100"
-                                    leave-active-class="transition duration-150 ease-in"
-                                    leave-from-class="transform scale-100 opacity-100"
-                                    leave-to-class="transform scale-95 opacity-0"
-                                >
-                                    <div v-if="showTooltip && latestPalakasan?.status === 'live'"
-                                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-blue-700 text-white text-xs rounded-md shadow-lg whitespace-nowrap z-50"
-                                    >
-                                        Cannot form line ups while tournament is live
-                                        <div class="absolute top-10 left-1/2 transform -translate-x-1/2 -mt-1">
-                                            <div class="border-4 border-transparent border-t-blue-900"></div>
-                                        </div>
-                                    </div>
-                                </Transition>
                             </div>
                         </div>
                         <div class="flex items-center justify-end border border-gray-300 px-2.5 shadow rounded-lg">
@@ -265,40 +279,36 @@
                                     class="w-64 border border-gray-300 bg-gray-50 text-sm rounded-lg p-2"
                                 />
                             </div>
-                            <button 
+                            <Tooltip 
+                                v-if="latestPalakasan?.status !== 'pending' || assignedTeams.length < 4"
+                                :text="latestPalakasan?.status !== 'pending' 
+                                    ? 'Cannot create league when Palakasan starts'
+                                    : 'At least 4 teams must be assigned before creating league'"
+                                position="top"
+                            >
+                                <button 
+                                    @click="openSportsModal" 
+                                    :disabled="latestPalakasan?.status !== 'pending' || assignedTeams.length < 4"
+                                    :class="[
+                                        'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                        latestPalakasan?.status !== 'pending'
+                                            ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
+                                            : 'flex items-center gap-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                    ]"      
+                                >
+                                    Create League
+                                </button>
+                            </Tooltip>
+                            <button v-else
                                 @click="openSportsModal" 
-                                @mouseenter="showTooltip = true"
-                                @mouseleave="showTooltip = false"
-                                :disabled="latestPalakasan?.status !== 'pending' || assignedTeams.length < 4"
-                                :class="[
-                                    'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                    latestPalakasan?.status !== 'pending'
-                                        ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
-                                        : 'flex items-center gap-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
-                                ]"      
+                                :class="'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 flex items-center gap-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'"      
                             >
                                 Create League
                             </button>
-                            <Transition
-                                    enter-active-class="transition duration-200 ease-out"
-                                    enter-from-class="transform scale-95 opacity-0"
-                                    enter-to-class="transform scale-100 opacity-100"
-                                    leave-active-class="transition duration-150 ease-in"
-                                    leave-from-class="transform scale-100 opacity-100"
-                                    leave-to-class="transform scale-95 opacity-0"
-                                >
-                                    <div v-if="showTooltip && latestPalakasan?.status === 'live'"
-                                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-blue-700 text-white text-xs rounded-md shadow-lg whitespace-nowrap z-50"
-                                    >
-                                        Cannot create league while tournament is live
-                                        <div class="absolute top-10 left-1/2 transform -translate-x-1/2 -mt-1">
-                                            <div class="border-4 border-transparent border-t-blue-900"></div>
-                                        </div>
-                                    </div>
-                            </Transition>
+
                         </div>
                         <div class="flex items-center gap-2">
-                            <button 
+                            <button
                                 @click="openLogsModal"
                                 class="flex gap-1.5 text-sm focus:outline-none focus:ring-4 ring-gray-300 ring-1 focus:ring-gray-300 rounded-lg px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"      
                             >
@@ -460,19 +470,31 @@
                     />   
                 </div>
 
-                <div v-if="activeTab === 'Schedules'">
-                    <OverallSchedules
-                        :latestPalakasan="{
-                            ...latestPalakasan,
-                            matches: sportMatches
-                        }"
-                        :activeSports="assignedSports"
-                        :activeTeams="assignedTeams"
-                        :palakasanYear="latestPalakasan?.year"
-                        :admin="admin"
-                    />
+                <div v-if="activeTab === 'rankings'">
+                    <div>
+                        <SportsRankings 
+                            :assigned-sports="assignedSports"
+                            :assigned-teams="assignedTeams"
+                            :sport-matches="sportMatches"
+                            :sportsVariations="sportsVariations"
+                            :latest-palakasan="latestPalakasan"
+                            :overall-result="overallResult"
+                            :variation-result="variationResult"
+                            :teams="assignedTeams"
+                            :overallResult="overallResult"
+                            :variationResult="variationResult"
+                        />
+                    </div>
                 </div>
 
+                <div v-if="activeTab === 'Schedules'">
+                    <OverallSchedules
+                        :latest-palakasan="latestPalakasan"
+                        :active-sports="assignedSports"
+                        :active-teams="assignedTeams"
+                        :palakasan-year="latestPalakasan?.year"
+                    />
+                </div>
             </div>
 
             <!--Modals for palakasan-->
@@ -555,7 +577,8 @@
                         <button               
                             @click="closeSportsModal" 
                             type="button" 
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -797,7 +820,8 @@
                         <button               
                             @click="closeTeamsModal" 
                             type="button" 
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -1106,24 +1130,37 @@
     import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
     import { ref, computed, onMounted, watch, watchEffect } from 'vue';
     import AppLayout from '@/Layout/DashboardLayout.vue';
-    import { route } from 'ziggy-js';
+    import { Disclosure, DisclosureButton, DisclosurePanel, TransitionChild } from '@headlessui/vue';
+    import Toast from '@/Components/Toast.vue';
+    import Tooltip from '@/Components/Tooltip.vue';
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
     import Graph from '@/Components/BarGraph.vue';  // Adjust the path as necessary
-    import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
     import HowToStartModal from '@/Components/HowToStart.vue';
     import Settings from '@/Components/Settings.vue';
     import OverallSchedules from '@/Components/OverallSchedules.vue';
-    
+    import SportsRankings from '@/Components/SportsRankings.vue';
 
     const props = defineProps({
         colleges: Array,
         sports: Array,
         palakasans: Array,      // Palakasans data array
-        thisPalakasan: Array,
-        assignedTeams: Array,   // Teams data array
-        assignedSports: Array,  
-        overallResult: Array,  
-        variationResult: Array,  
+        assignedTeams: {
+            type: Array,
+            required: true
+        },
+        assignedSports: {
+            type: Array,
+            required: true
+        },
+
+        overallResult: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
+        
+        variationResult: Array,
         facilitator: Array,
         matchResults: Array,
         matchRankings: Array,
@@ -1131,15 +1168,27 @@
         facilitatorSubmits: Array,
         ffofacilitatorSubmits: Array,
         admin: Array,
-        sportMatches: Array,  // Add this line
+        sportMatches: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         latestPalakasan: {
             type: Object,
-            default: () => ({})
+            required: true
         },
         initialActiveTab: {
             type: String,
             default: 'details'
-        }
+        },
+
+        sportsVariations: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
     });
 
     const isPalakasanModalOpen = ref(false);
@@ -1570,9 +1619,11 @@ const openTeamsModal = () => {
         return acc;
     }, {});
     });
+
     const getFacilitatorName = (facilitatorId) => {
     return facilitatorMap.value[facilitatorId] || 'Not Assigned';
     };
+
 
     // Add these refs
     const isLogsModalOpen = ref(false);

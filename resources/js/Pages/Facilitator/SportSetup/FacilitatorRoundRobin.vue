@@ -39,15 +39,30 @@
         </div>
 
 
-        <!-- Winner Display -->
-        <div v-if="displayWinner" class="mt-6 p-6 bg-green-50 border border-green-200 rounded-lg flex flex-col items-center justify-center">
-          <h2 class="text-md font-semibold text-green-800">Tournament Winner</h2>
-          <p class="text-2xl font-bold text-green-700 mt-2"> {{ getTeamName(displayWinner) }}</p>
+        <!-- Winner/Leading Team Display -->
+        <div 
+          v-if="displayWinner" 
+          class="mt-6 p-6 border rounded-lg flex flex-col items-center justify-center"
+          :class="[allMatchesCompleted ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200']"
+        >
+          <h2 
+            class="text-md font-semibold"
+            :class="[allMatchesCompleted ? 'text-green-800' : 'text-blue-800']"
+          >
+            {{ allMatchesCompleted ? 'Tournament Winner' : 'Current Leading Team' }}
+          </h2>
+          <p 
+            class="text-2xl font-bold mt-2"
+            :class="[allMatchesCompleted ? 'text-green-700' : 'text-blue-700']"
+          >
+            {{ getTeamName(displayWinner) }}
+          </p>
           <button
+            v-if="progressPercentage === 100 && sport.status !== 'completed'"
             @click="openRankingModal"
             type="button"
-            class="text-white mt-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            :disabled="matches.status === 'completed'"
+            class="text-white mt-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            :disabled="isSubmittingRankings || rankingsSubmitted"
           >
             {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
           </button>
@@ -155,28 +170,20 @@ import Toast from '@/Components/Toast.vue';  // Ad/just the import path as neede
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 const props = defineProps({
-  sport: [Array, Object],
-  tournaments: Array,
-  teams: Array,
+  sport: Object,
   matches: Array,
+  teams: Array,
+  standings: Array,
   results: Array,
   venues: Array,
-  allMatches: Array,
-  standings: Array,
-  winner: Number,
-  venueRecords: Array,
+  winner: [Number, String],
   facilitator: Object,
+  majorPoints: Array,
+  minorPoints: Array,
   players: Array,
-  errors: Object,
-  majorPoints: {
-    type: Array,
-    default: () => [],
-  },
-  minorPoints: {
-    type: Array,
-    default: () => [],
-  }
 });
+
+const matches = ref(props.matches);
 
 const activeTab = ref('matches');
 
@@ -185,6 +192,10 @@ const showRankingModal = ref(false);
 const isSubmittingRankings = ref(false);
 const rankingTeams = ref([]);
 const rankingsSubmitted = ref(false);
+
+const allMatchesCompleted = computed(() => {
+  return matches.value.every(match => match.status === 'completed');
+});
 
 const displayWinner = computed(() => {
   return tournamentWinner.value || props.winner;

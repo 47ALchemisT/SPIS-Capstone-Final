@@ -390,7 +390,10 @@ const getResult = (match, team) => {
   const result = props.results.find(r => r.sport_match_id === match.id);
   if (!result) return '-';
   
-  if (result.teamA_score === result.teamB_score) return 'Tie';
+  // Check for equal scores first
+  if (result.teamA_score === result.teamB_score) {
+    return 'Draw';
+  }
   
   if (team === 'teamA') {
     return result.teamA_score > result.teamB_score ? 'Win' : 'Lose';
@@ -402,7 +405,10 @@ const getResultClass = (match, team) => {
   const result = props.results.find(r => r.sport_match_id === match.id);
   if (!result) return 'font-medium text-gray-500';
   
-  if (result.teamA_score === result.teamB_score) return 'font-medium text-blue-600';
+  // Check for equal scores first
+  if (result.teamA_score === result.teamB_score) {
+    return 'font-medium text-blue-600';
+  }
   
   const resultText = getResult(match, team);
   return resultText === 'Win' ? 'font-bold text-green-600' : 'font-medium text-red-600';
@@ -482,30 +488,17 @@ const submitResult = () => {
   // Prepare form data
   const formData = {
     sport_match_id: selectedMatch.value.id,
-    teamA_score: 0,
-    teamB_score: 0,
-    winning_team_id: null,
-    losing_team_id: null,
-    is_draw: false,
+    teamA_score: winnerFormData.value.result === 'tie' ? 5 : winnerFormData.value.result === 'teamA' ? 10 : 5,
+    teamB_score: winnerFormData.value.result === 'tie' ? 5 : winnerFormData.value.result === 'teamB' ? 10 : 5,
+    is_draw: winnerFormData.value.result === 'tie',
     official_name: scoreFormData.value.official_name,
     signature: canvas.toDataURL('image/png')
   };
 
-  // Set scores based on winner selection
-  if (winnerFormData.value.result === 'teamA') {
-    formData.teamA_score = 10;
-    formData.teamB_score = 5;
-    formData.winning_team_id = selectedMatch.value.teamA_id;
-    formData.losing_team_id = selectedMatch.value.teamB_id;
-  } else if (winnerFormData.value.result === 'teamB') {
-    formData.teamA_score = 5;
-    formData.teamB_score = 10;
-    formData.winning_team_id = selectedMatch.value.teamB_id;
-    formData.losing_team_id = selectedMatch.value.teamA_id;
-  } else {
-    formData.teamA_score = 5;
-    formData.teamB_score = 5;
-    formData.is_draw = true;
+  // Only include winning/losing team IDs if it's not a tie
+  if (!formData.is_draw) {
+    formData.winning_team_id = winnerFormData.value.result === 'teamA' ? selectedMatch.value.teamA_id : selectedMatch.value.teamB_id;
+    formData.losing_team_id = winnerFormData.value.result === 'teamA' ? selectedMatch.value.teamB_id : selectedMatch.value.teamA_id;
   }
 
   const form = useForm(formData);

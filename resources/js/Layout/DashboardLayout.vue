@@ -26,23 +26,26 @@
                                     leave-from-class="transform opacity-100 scale-100"
                                     leave-to-class="transform opacity-0 scale-95"
                                     >
-                                    <MenuItems class="origin-top-right absolute right-0 z-10 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <MenuItems class="origin-top-right absolute right-0 z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <div class="py-1">
-                                        <MenuItem v-slot="{ active }">
-                                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                            Option 1
-                                            </a>
-                                        </MenuItem>
-                                        <MenuItem v-slot="{ active }">
-                                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                            Option 2
-                                            </a>
-                                        </MenuItem>
-                                        <MenuItem v-slot="{ active }">
-                                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                            Option 3
-                                            </a>
-                                        </MenuItem>
+                                            <MenuItem v-slot="{ active }">
+                                                <Link 
+                                                    :href="route('admin.account-settings')"
+                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block w-full text-left px-4 py-2 text-sm']"
+                                                >
+                                                    Account Settings
+                                                </Link>
+                                            </MenuItem>
+                                            <MenuItem v-slot="{ active }">
+                                                <Link 
+                                                    :href="route('logout')" 
+                                                    method="post" 
+                                                    as="button" 
+                                                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block w-full text-left px-4 py-2 text-sm']"
+                                                >
+                                                    Logout
+                                                </Link>
+                                            </MenuItem>
                                         </div>
                                     </MenuItems>
                                     </transition>
@@ -86,7 +89,7 @@
                                     class="flex items-center py-2 px-3 text-md rounded-lg mb-2"
                                     :class="{'bg-blue-700 text-white': currentRoute === '/points', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/points'}"
                                 >
-                                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M15.08 2.752H8.92a1.97 1.97 0 0 0-2.062 1.85v6.077a5.49 5.49 0 0 0 3.024 4.8a4.52 4.52 0 0 0 4.236 0a5.49 5.49 0 0 0 3.024-4.8V4.602a1.97 1.97 0 0 0-2.062-1.85Z"/><path d="M17.142 4.602h2.054a1.97 1.97 0 0 1 2.053 1.85a6.8 6.8 0 0 1-.87 3.311a7.74 7.74 0 0 1-2.423 2.608l-.814.555l-.795.481M6.858 4.602H4.804a1.97 1.97 0 0 0-2.053 1.85c.003 1.16.302 2.3.87 3.311a7.74 7.74 0 0 0 2.423 2.608l.814.555l.795.481m2.294 5.068v-2.969m4.106 2.969v-2.969M8.81 18.475h6.38a1.95 1.95 0 0 1 1.952 1.952v.333a.49.49 0 0 1-.49.49H7.348a.49.49 0 0 1-.49-.49v-.333a1.95 1.95 0 0 1 1.951-1.952Z"/><path stroke-linejoin="round" d="m12.143 10.308l1.18.62a.302.302 0 0 0 .437-.319l-.226-1.313a.3.3 0 0 1 .087-.268l.955-.93a.3.3 0 0 0-.166-.515l-1.319-.19a.3.3 0 0 1-.225-.165l-.603-1.205a.302.302 0 0 0-.542 0l-.602 1.205a.3.3 0 0 1-.226.165l-1.3.19a.301.301 0 0 0-.17.515l.955.93a.3.3 0 0 1 .088.268l-.226 1.313a.3.3 0 0 0 .436.32l1.18-.62a.3.3 0 0 1 .287 0"/></g></svg>                                
+                                <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M15.08 2.752H8.92a1.97 1.97 0 0 0-2.062 1.85v6.077a5.49 5.49 0 0 0 3.024 4.8a4.52 4.52 0 0 0 4.236 0a5.49 5.49 0 0 0 3.024-4.8V4.602a1.97 1.97 0 0 0-2.062-1.85Z"/><path d="M17.142 4.602h2.054a1.97 1.97 0 0 1 2.053 1.85a6.8 6.8 0 0 1-.87 3.311a7.74 7.74 0 0 1-2.423 2.608l-.814.555l-.795.481M6.858 4.602H4.804a1.97 1.97 0 0 0-2.053 1.85c.003 1.16.302 2.3.87 3.311a7.74 7.74 0 0 0 2.423 2.608l.814.555l.795.481m2.294 5.068v-2.969m4.106 2.969v-2.969M8.81 18.475h6.38a1.95 1.95 0 0 1 1.952 1.952v.333a.49.49 0 0 1-.49.49H7.348a.49.49 0 0 1-.49-.49v-.333a1.95 1.95 0 0 1 1.951-1.952Z"/><path stroke-linejoin="round" d="m12.143 10.308l1.18.62a.302.302 0 0 0 .437-.319l-.226-1.313a.3.3 0 0 1 .087-.268l.955-.93a.3.3 0 0 0-.166-.515l-1.319-.19a.3.3 0 0 1-.225-.165l-.603-1.205a.302.302 0 0 0-.542 0l-.602 1.205a.3.3 0 0 1-.226.165l-1.3.19a.301.301 0 0 0-.17.515l.955.93a.3.3 0 0 1 .088.268l-.226 1.313a.3.3 0 0 0 .436.32l1.18-.62a.3.3 0 0 1 .287 0"/></g></svg>                                
                                 <span class="ms-3">Points</span>
                                 </Link>
                                 <Link 
@@ -168,18 +171,133 @@
             </div>
         </div>
     </div>
+
+    <!-- Change Password Modal -->
+    <TransitionRoot appear :show="isChangePasswordModalOpen" as="template">
+        <Dialog as="div" @close="closeChangePasswordModal" class="relative z-50">
+            <TransitionChild
+                as="template"
+                enter="duration-300 ease-out"
+                enter-from="opacity-0"
+                enter-to="opacity-100"
+                leave="duration-200 ease-in"
+                leave-from="opacity-100"
+                leave-to="opacity-0"
+            >
+                <div class="fixed inset-0 bg-black/25" />
+            </TransitionChild>
+
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0 scale-95"
+                        enter-to="opacity-100 scale-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100 scale-100"
+                        leave-to="opacity-0 scale-95"
+                    >
+                        <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                            <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                                Change Password
+                            </DialogTitle>
+
+                            <form @submit.prevent="handleChangePassword" class="mt-4 space-y-4">
+                                <div>
+                                    <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                                    <input
+                                        id="current_password"
+                                        type="password"
+                                        v-model="form.current_password"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                                    <input
+                                        id="new_password"
+                                        type="password"
+                                        v-model="form.new_password"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                                    <input
+                                        id="new_password_confirmation"
+                                        type="password"
+                                        v-model="form.new_password_confirmation"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="mt-6 flex justify-end space-x-3">
+                                    <button
+                                        type="button"
+                                        @click="closeChangePasswordModal"
+                                        class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        :disabled="form.processing"
+                                    >
+                                        Change Password
+                                    </button>
+                                </div>
+                            </form>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
 </template>
 
 <script setup>
     import { Link, usePage } from '@inertiajs/vue3';
-    import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-    import { onMounted } from 'vue';
+    import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+    import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+    import { onMounted, ref } from 'vue';
     import { router } from '@inertiajs/vue3';
+    import { useForm } from '@inertiajs/vue3';
 
     const { url: currentRoute } = usePage();
+    const isChangePasswordModalOpen = ref(false);
+
+    const form = useForm({
+        current_password: '',
+        new_password: '',
+        new_password_confirmation: ''
+    });
+
+    const openChangePasswordModal = () => {
+        isChangePasswordModalOpen.value = true;
+    };
+
+    const closeChangePasswordModal = () => {
+        isChangePasswordModalOpen.value = false;
+        form.reset();
+    };
+
+    const handleChangePassword = () => {
+        form.post(route('admin.change-password'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeChangePasswordModal();
+            },
+        });
+    };
 
     onMounted(() => {
-        // Redirect to dashboard if on root path
         if (currentRoute === '/') {
             router.visit(route('admin.show'));
         }

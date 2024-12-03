@@ -43,7 +43,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <!-- Username Input -->
                 <label for="username" class="block text-sm text-gray-900 dark:text-white mb-2">Username</label>
@@ -88,7 +88,10 @@
                         </svg>
                     </button>
                 </div>
-                <span v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</span>
+                <div v-if="errorMessage" class="text-sm p-3 bg-red-100/70 text-red-600 mt-2 rounded-lg">
+                  <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+                  {{ errorMessage }}
+                </div>
               </div>
               <!-- Error Message -->
     
@@ -101,7 +104,7 @@
                   </div>
                 </div><!-- Create Admin Account Section -->
                 <Link 
-                  v-if="!props.hasAdmin"
+                  v-if="hasAdmin.length === 0"
                   href="/create-admin"
                   class="font-medium text-sm text-blue-600 rounded-lg hover:underline inline-block text-center"
                 >
@@ -122,7 +125,11 @@
   import { router, Head, Link } from '@inertiajs/vue3';
   
   const props = defineProps({
-    hasAdmin: Boolean,
+    hasAdmin: {
+      type: Object,
+      required: true,
+      default: () => ({})
+    },
     errors: Object,
     flash: Object,
     sharedPalakasans: Array
@@ -150,15 +157,11 @@
     // Submit form via Inertia.js
     router.post('/login', form, {
       onError: (errors) => {
-        console.log(errors); // Log errors if form submission fails
-        
-        // Set the error message if there's a login error
-        if (errors.username) {
-          errorMessage.value = 'These Username do not match our records.';
-        }
-        if (errors.password) {
-          errorMessage.value = 'Incorrect password. Please try again.';
-        }
+          if (errors.username || errors.password || errors.role) {
+              errorMessage.value = errors.username || errors.password || errors.role;
+          } else {
+              errorMessage.value = 'An unexpected error occurred. Please try again.';
+          }
       }
     });
   };

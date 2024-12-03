@@ -94,7 +94,11 @@
                                             </div>
 
                                             <div class="mt-8">
-                                                <button type="button" class="bg-white hover:bg-gray-100 focus:ring-4 text-gray-700 focus:ring-gray-300 ring-1 ring-gray-200 hover:ring-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition ease-in-out duration-300">
+                                                <button 
+                                                    @click="activeTab = 'sports'"
+                                                    type="button" 
+                                                    class="bg-white hover:bg-gray-100 focus:ring-4 text-gray-700 focus:ring-gray-300 ring-1 ring-gray-200 hover:ring-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition ease-in-out duration-300"
+                                                >
                                                     Start assigning players
                                                     <i class="fa-solid fa-arrow-right ms-2"></i>  
                                                 </button>
@@ -112,7 +116,7 @@
                                             <p class="text-sm text-blue-500 mb-3">{{ assignedCollege.assigned_team.college.name }}</p>
                                         </div>
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" d="M15 14s1 0 1-1s-1-4-5-4s-5 3-5 4s1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276c.593.69.758 1.457.76 1.72l-.008.002l-.014.002zM11 7a2 2 0 1 0 0-4a2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0a3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904c.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724c.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0a3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4"/></svg>                                            
+                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" d="M15 14s1 0 1-1s-1-4-5-4s-5 3-5 4s1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276c.593.69.758 1.457.76 1.72l-.008.002l-.014.002zM11 7a2 2 0 1 0 0-4a2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0a3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904c.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>                                            
                                             <p class="text-sm text-blue-600 mb-1.5">Total number of Students</p>
                                             <p class="text-2xl font-bold text-blue-700">{{ students.length }}</p>
                                         </div>
@@ -139,7 +143,7 @@
                                                         class="w-full pl-10 pr-10 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                                                     >
                                                     <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0m-5-3a7 7 0 00-7 7v2a5 5 0 0010.557 4.743l.007.022a.75.75 0 001.774.557V20l2.5-2.5H9.625l2.5-2.5A.75.75 0 0012 15V9.406a.75.75 0 00-.551-.223l-.007-.022a5 5 0 00-4.568-6.32l-2.5-2.5H3a.75.75 0 00-.557 1.227l2.5 2.5A.75.75 0 003 9.187V19.5a5 5 0 0010.557 4.743l.007.022a.75.75 0 001.774.557V22h2.5l-2.5-2.5A.75.75 0 0012 20v-2a7 7 0 00-7-7V5.373l.007-.022a.75.75 0 001.774-.557V3H7.5a.75.75 0 00-.557 1.227l2.5 2.5A.75.75 0 007 6.187V3.625a5 5 0 00-4.568-6.32l-2.5-2.5H3a.75.75 0 00-.557 1.227l2.5 2.5z" />
                                                     </svg>
                                                     <button
                                                         v-if="sportsSearchQuery"
@@ -240,7 +244,7 @@
                                         <div class="space-y-3">
                                             <div class="flex items-start gap-4">
                                                 <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
-                                                    {{ palakasan.start_date }}
+                                                    {{ formatDate(palakasan.start_date) }}
                                                 </div>
                                                 <div>
                                                     <p class="text-gray-900 font-medium">Event Start</p>
@@ -249,7 +253,7 @@
                                             </div>
                                             <div class="flex items-start gap-4">
                                                 <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
-                                                    {{ palakasan.end_date }}
+                                                    {{ formatDate(palakasan.end_date) }}
                                                 </div>
                                                 <div>
                                                     <p class="text-gray-900 font-medium">Event End</p>
@@ -294,6 +298,33 @@
                                                 <div>
                                                     <h4 class="font-medium text-gray-900">Timely Updates</h4>
                                                     <p class="text-sm text-gray-600">Keep player assignments and team information up to date throughout the event.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="">
+                                        <div class="max-w-3xl mx-auto">
+                                            <!-- Account Settings Section -->
+                                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                                                <h2 class="text-lg font-semibold text-gray-800 mb-4">Account Settings</h2>
+                                                
+                                                <!-- Change Password Card -->
+                                                <div class="bg-blue-50 rounded-lg p-6">
+                                                    <div class="flex justify-between">
+                                                        <div>
+                                                            <h3 class="text-md font-medium text-gray-800 mb-1">Password & Security</h3>
+                                                            <p class="text-sm text-gray-600">Update your password to keep your account secure</p>
+                                                        </div>
+                                                        <div>
+                                                            <Link
+                                                                :href="route('password.change.form', comHead.id)"
+                                                                class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                                                                >
+                                                                Change Password
+                                                            </Link>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -488,7 +519,7 @@
 <script setup>
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-    import { Head, useForm, router } from '@inertiajs/vue3';
+    import { Head, useForm, router, Link } from '@inertiajs/vue3';
     import { ref, onMounted, computed } from 'vue';
     import { route } from 'ziggy-js';
     import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
@@ -626,6 +657,16 @@
 
     const selectTeam = (teamId) => {
         selectedTeam.value = teamId;
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 </script>
  

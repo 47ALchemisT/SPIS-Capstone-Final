@@ -891,6 +891,7 @@ const completedMatches = computed(() => {
 });
 
 const progressPercentage = computed(() => {
+  if (totalMatches.value === 0) return 0;
   return (completedMatches.value / totalMatches.value) * 100;
 });
 

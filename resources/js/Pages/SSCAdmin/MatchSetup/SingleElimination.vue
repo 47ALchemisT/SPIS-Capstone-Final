@@ -720,7 +720,8 @@ const completedMatches = computed(() => {
 });
 
 const progressPercentage = computed(() => {
-    return (completedMatches.value / totalMatches.value) * 100;
+  if (totalMatches.value === 0) return 0;
+  return (completedMatches.value / totalMatches.value) * 100;
 });
 
 const allMatchesScheduled = computed(() => {

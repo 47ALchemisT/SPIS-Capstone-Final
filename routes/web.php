@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\CollegeController;
 use App\Http\Controllers\DoubleEliminationController;
 use App\Http\Controllers\FacilitatorController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\FreeForAllController;
 use App\Http\Controllers\OnePalakasanController;
 use App\Http\Controllers\PalakasanController;
@@ -34,9 +37,15 @@ use App\Http\Controllers\SportsLandingController;
 use Illuminate\Http\Request;
 
 // Login routes (accessible without authentication)
-Route::get('/login', function () {return Inertia::render('Login');})->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.show');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Change Password Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/change-password/{id}', [ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change.form');
+    Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('password.change');
+});
 
 Route::get('/create-admin', function () {
     return Inertia::render('Auth/CreateAdmin');
@@ -46,6 +55,19 @@ Route::get('/create-admin/step-2', [AdminController::class, 'showStep2'])->name(
 Route::post('/register-admin/create-student', [AdminController::class, 'createStudent']);
 Route::post('/register-admin/create-account', [AdminController::class, 'createAccount']);
 Route::delete('/register-admin/cancel-student/{id}', [AdminController::class, 'cancelStudent'])->name('cancel-student');
+
+// Forgot Password Routes
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/search-user', [ForgotPasswordController::class, 'searchUser'])->name('password.search');
+Route::get('/reset-password/{id}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+
+// Activity logs route
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::post('/admin/change-password', [DashboardController::class, 'changePassword'])->name('admin.change-password');
+    Route::get('/account-settings', [DashboardController::class, 'accountSettings'])->name('admin.account-settings');
+});
 
 // Sports Landing Page routes
 Route::get('/sports', [SportsLandingController::class, 'sports'])->name('sports.index');
@@ -114,6 +136,8 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/palakasan/{id}/emergency-cancel', [OnePalakasanController::class, 'emergencyCancel'])->name('palakasan.emergency-cancel');
     Route::post('/palakasan/conclude', [OnePalakasanController::class, 'concludePalakasan'])->name('palakasan.conclude');
 });
+
+
 
 // Facilitator routes
 Route::middleware(['web', 'auth', 'facilitatorMiddleware'])->group(function () {

@@ -1,10 +1,17 @@
 <template>
-  <div class="relative inline-block">
+  <div 
+    class="relative inline-block" 
+    @mouseenter="showTooltip"
+    @mouseleave="hideTooltip"
+    @focus="showTooltip"
+    @blur="hideTooltip"
+  >
     <slot></slot>
     <div 
       v-show="show"
-      class="absolute z-50 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm tooltip dark:bg-gray-700"
-      :class="position"
+      class="absolute z-50 px-3 py-2 text-xs font-medium text-white bg-blue-700 rounded-lg shadow-sm tooltip dark:bg-gray-700"
+      :class="[positionClasses[position]]"
+      role="tooltip"
     >
       {{ text }}
       <div class="tooltip-arrow" data-popper-arrow></div>
@@ -13,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   text: {
@@ -40,30 +47,11 @@ const positionClasses = {
 // Event handlers
 const showTooltip = () => show.value = true;
 const hideTooltip = () => show.value = false;
-
-onMounted(() => {
-  const parent = document.querySelector('[data-tooltip]');
-  if (parent) {
-    parent.addEventListener('mouseenter', showTooltip);
-    parent.addEventListener('mouseleave', hideTooltip);
-    parent.addEventListener('focus', showTooltip);
-    parent.addEventListener('blur', hideTooltip);
-  }
-});
-
-onUnmounted(() => {
-  const parent = document.querySelector('[data-tooltip]');
-  if (parent) {
-    parent.removeEventListener('mouseenter', showTooltip);
-    parent.removeEventListener('mouseleave', hideTooltip);
-    parent.removeEventListener('focus', showTooltip);
-    parent.removeEventListener('blur', hideTooltip);
-  }
-});
 </script>
 
 <style scoped>
 .tooltip {
   white-space: nowrap;
+  pointer-events: none;
 }
 </style>

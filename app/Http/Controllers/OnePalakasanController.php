@@ -30,6 +30,11 @@ class OnePalakasanController extends Controller
         $overallResult = OverallResult::all();
         $variationResult = SportsVariationsMatches::all();
 
+        // Load facilitators with student relationship
+        $facilitator = StudentAccount::with('student')
+            ->where('role', 'Facilitator')
+            ->get();
+
         // Fetch the latest Palakasan
         $latestPalakasan = Palakasan::latest()->first();        
         $thisPalakasan = Palakasan::latest()->first();        
@@ -37,12 +42,201 @@ class OnePalakasanController extends Controller
         // Initialize empty collections for assigned sports and teams
         $assignedSports = collect();
         $assignedTeams = collect();
+        $activeSports = collect();
+        $activeTeams = collect();
 
         // If a Palakasan exists, fetch the assigned sports and teams
         if ($latestPalakasan) {
             $assignedSports = AssignedSports::with('sport')
                 ->where('palakasan_sport_id', $latestPalakasan->id)
                 ->get();
+
+            $activeSports = $assignedSports->filter(function($sport) {
+                return $sport->status === 'completed';
+            });
+
+            // Get active teams with college info
+            $activeTeams = AssignedTeams::with(['college'])
+                ->where('palakasan_id', $latestPalakasan->id)
+                ->get()
+                ->map(function($team) {
+                    return [
+                        'id' => $team->id,
+                        'name' => $team->college->name,
+                        'acronym' => $team->college->acronym,
+                        'logo' => $team->college->logo,
+                        'assigned_team_name' => $team->assigned_team_name
+                    ];
+                });
+
+            // Get sports variations
+            $sportsVariations = SportsVariations::with([
+                'sport_id.sport',
+                'venue_id',
+                'sportVariationID' => function($query) {
+                    $query->with(['assignedTeamVariationID.college']);
+                }
+            ])
+                ->whereIn('assigned_sport_id', $assignedSports->pluck('id'))
+                ->where('date', '>=', $latestPalakasan->start_date)
+                ->where('date', '<=', $latestPalakasan->end_date)
+                ->where(function($query) {
+                    $query->where('status', '!=', 'cancelled')
+                          ->orWhereNull('status');
+                })
+                ->orderBy('date')
+                ->orderBy('time')
+                ->get()
+                ->map(function($variation) {
+                    return [
+                        'id' => $variation->id,
+                        'sport_id' => [
+                            'id' => $variation->sport_id?->id,
+                            'sport' => [
+                                'id' => $variation->sport_id?->sport?->id,
+                                'name' => $variation->sport_id?->sport?->name
+                            ],
+                            'categories' => $variation->sport_id?->categories,
+                            'setup' => $variation->sport_id?->setup
+
+                        ],
+                        'assigned_sport_id' => $variation->assigned_sport_id,
+                        'venue' => [
+                            'id' => $variation->venue_id?->id,
+                            'name' => $variation->venue_id?->name ?? 'TBA'
+                        ],
+                        'sport_variation_name' => $variation->sport_variation_name,
+                        'date' => $variation->date ? date('M d, Y', strtotime($variation->date)) : 'TBA',
+                        'time' => $variation->time ? date('g:i A', strtotime($variation->time)) : 'TBA',
+                        'status' => $variation->status ?? 'pending',
+                        'sport_variation_i_d' => $variation->sportVariationID->map(function($match) {
+                            return [
+                                'id' => $match->id,
+                                'rank' => $match->rank,
+                                'assigned_team_variation_i_d' => [
+                                    'id' => $match->assignedTeamVariationID?->id,
+                                    'college' => [
+                                        'id' => $match->assignedTeamVariationID?->college?->id,
+                                        'name' => $match->assignedTeamVariationID?->college?->name,
+                                        'acronym' => $match->assignedTeamVariationID?->college?->acronym,
+                                        'logo' => $match->assignedTeamVariationID?->college?->logo
+                                    ]
+                                ]
+                            ];
+                        })
+                    ];
+                });
+
+            // Get sport matches
+            $sportMatches = SportMatch::with([
+                'assignedSport.sport',
+                'teamA.college',
+                'teamB.college',
+                'matchVenue',
+                'match_result'
+            ])
+                ->whereIn('assigned_sport_id', $assignedSports->pluck('id'))
+                ->where('date', '>=', $latestPalakasan->start_date)
+                ->where('date', '<=', $latestPalakasan->end_date)
+                ->where(function($query) {
+                    $query->where('status', '!=', 'cancelled')
+                          ->orWhereNull('status');
+                })
+                ->orderBy('date')
+                ->orderBy('time')
+                ->get()
+                ->map(function ($match) {
+                    return [
+                        'id' => $match->id,
+                        'assignedSport' => [
+                            'id' => $match->assignedSport?->id,
+                            'sport' => [
+                                'id' => $match->assignedSport?->sport?->id,
+                                'name' => $match->assignedSport?->sport?->name
+                            ],
+                            'categories' => $match->assignedSport?->categories
+                        ],
+                        'teamA' => [
+                            'id' => $match->teamA?->id,
+                            'assigned_team_name' => $match->teamA?->assigned_team_name,
+                            'college' => [
+                                'id' => $match->teamA?->college?->id,
+                                'name' => $match->teamA?->college?->name,
+                                'acronym' => $match->teamA?->college?->acronym,
+                                'logo' => $match->teamA?->college?->logo
+                            ]
+                        ],
+                        'teamB' => [
+                            'id' => $match->teamB?->id,
+                            'assigned_team_name' => $match->teamB?->assigned_team_name,
+                            'college' => [
+                                'id' => $match->teamB?->college?->id,
+                                'name' => $match->teamB?->college?->name,
+                                'acronym' => $match->teamB?->college?->acronym,
+                                'logo' => $match->teamB?->college?->logo
+                            ]
+                        ],
+                        'matchVenue' => [
+                            'id' => $match->matchVenue?->id,
+                            'name' => $match->matchVenue?->name
+                        ],
+                        'round' => $match->round,
+                        'game' => $match->game,
+                        'bracket_type' => $match->bracket_type,
+                        'elimination_type' => $match->elimination_type,
+                        'date' => $match->date ? date('M d, Y', strtotime($match->date)) : 'TBA',
+                        'time' => $match->time ? date('g:i A', strtotime($match->time)) : '',
+                        'status' => $match->status ?? 'pending',
+                        'match_result' => $match->match_result
+                    ];
+                });
+
+            // Get overall rankings
+            $overallRankings = AssignedTeams::with(['college'])
+                ->where('palakasan_id', $latestPalakasan->id)
+                ->get()
+                ->map(function($team) {
+                    // Regular matches
+                    $totalWins = MatchResult::where('winning_team_id', $team->id)->count();
+                    $totalLosses = MatchResult::where('losing_team_id', $team->id)->count();
+                    $totalGames = $totalWins + $totalLosses;
+                    $winPercentage = $totalGames > 0 ? round(($totalWins / $totalGames) * 100, 1) : 0;
+                    
+                    // Sports variation matches
+                    $variationPoints = 0;
+                    $variationResults = SportsVariationsMatches::where('sport_variation_team_id', $team->id)
+                        ->get();
+
+                    foreach ($variationResults as $result) {
+                        if ($result->rank) {
+                            if ($result->rank === 1) {
+                                $variationPoints += 3;
+                                $totalWins++; // Count first place as a win
+                            } elseif ($result->rank === 2) {
+                                $variationPoints += 2;
+                            } elseif ($result->rank === 3) {
+                                $variationPoints += 1;
+                            }
+                            $totalGames++;
+                        }
+                    }
+                    
+                    return [
+                        'team_id' => $team->id,
+                        'name' => $team->college->name,
+                        'acronym' => $team->college->acronym,
+                        'assigned_team_name' => $team->assigned_team_name,
+                        'wins' => $totalWins,
+                        'losses' => $totalLosses,
+                        'total_games' => $totalGames,
+                        'win_percentage' => $winPercentage,
+                        'regular_points' => $totalWins * 2, // 2 points per regular win
+                        'variation_points' => $variationPoints,
+                        'total_points' => ($totalWins * 2) + $variationPoints // Total points from both types
+                    ];
+                })
+                ->sortByDesc('total_points')
+                ->values();
 
             // Get sports variations only for the assigned sports in current Palakasan
             $sportVariations = SportsVariations::with([
@@ -74,10 +268,13 @@ class OnePalakasanController extends Controller
                             'categories' => $variation->sport_id?->categories
                         ],
                         'assigned_sport_id' => $variation->assigned_sport_id,
-                        'venue_id' => $variation->venue_id,
+                        'venue' => [
+                            'id' => $variation->venue_id?->id,
+                            'name' => $variation->venue_id?->name ?? 'TBA'
+                        ],
                         'sport_variation_name' => $variation->sport_variation_name,
-                        'date' => $variation->date,
-                        'time' => $variation->time,
+                        'date' => $variation->date ? date('M d, Y', strtotime($variation->date)) : 'TBA',
+                        'time' => $variation->time ? date('g:i A', strtotime($variation->time)) : '',
                         'status' => $variation->status ?? 'pending',
                         'sport_variation_i_d' => $variation->sportVariationID
                     ];
@@ -88,7 +285,6 @@ class OnePalakasanController extends Controller
                 ->get();
         }
         $admin = StudentAccount::with('student')->where('role', 'Admin')->get();
-        $facilitator = StudentAccount::with('student')->where('role', 'Facilitator')->get();  
         $palakasans = Palakasan::all();
 
         // Fetch sport matches with relationships
@@ -219,7 +415,7 @@ class OnePalakasanController extends Controller
                 'tagline' => $latestPalakasan->tagline,
                 'description' => $latestPalakasan->description,
                 'sportMatches' => $sportMatches,
-                'sportVariations' => $sportVariations ?? collect(),
+                'sportVariations' => $sportsVariations ?? collect(),
             ],
             'palakasans' => $palakasans,
             'assignedSports' => $assignedSports,
@@ -232,7 +428,11 @@ class OnePalakasanController extends Controller
             'facilitatorSubmits' => $facilitatorSubmits,
             'facilitatorRankSubmits' => $facilitatorRankSubmits,
             'ffofacilitatorSubmits' => $ffofacilitatorSubmits,
-            'thisPalakasan' => $thisPalakasan
+            'thisPalakasan' => $thisPalakasan,
+            'activeSports' => $activeSports,
+            'activeTeams' => $activeTeams,
+            'overallRankings' => $overallRankings,
+            'sportsVariations' => $sportsVariations,
         ]);
     }
 
