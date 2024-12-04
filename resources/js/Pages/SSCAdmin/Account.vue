@@ -59,8 +59,8 @@
                             @click="selectRole(role)"
                             class="cursor-pointer"
                         >
-                        <div class="flex items-center gap-3">
-                                <div class="text-gray-400">
+                        <div class="flex items-center gap-3 p-4 ring-1 ring-gray-200 rounded-lg">
+                                <div class="text-gray-400 ">
                                     <svg v-if="selectedRole === role" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
                                         <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
                                     </svg>

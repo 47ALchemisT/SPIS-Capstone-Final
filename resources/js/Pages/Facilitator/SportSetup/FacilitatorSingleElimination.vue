@@ -24,6 +24,18 @@
                     <p class=" text-sm">{{ sport.status }}</p>
                 </div>
                 
+                <!-- Progress Bar -->
+                <div class="flex mt-3 flex-col">
+                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
+                    </div>
+                    <div class="flex items-center mt-2">
+                        <h2 class="text-xs text-gray-600">Sport Progress  </h2>
+                        <h2 class="text-xs text-gray-600 px-2">:</h2>
+                        <span class="text-xs font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
+                    </div>
+                </div>
+
                 <!-- Tournament Winner Display -->
                 <div v-if="tournamentWinner" class="mt-6 p-6 bg-green-50 flex justify-center flex-col items-center border border-green-200 rounded-lg">
                     <h2 class="text-md font-medium text-green-800">Game Winner</h2>

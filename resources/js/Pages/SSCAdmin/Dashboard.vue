@@ -217,7 +217,7 @@
                     <div class="col-span-2 h-full">
                         <div v-if="latestPalakasan" class="bg-white overflow-hidden ring-1 ring-gray-300 rounded-lg h-full">
                             <div class="p-6 h-full">
-                                <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-lg font-semibold text-gray-900">Palakasan Event {{ latestPalakasan.year }}</h3>
                                     <span :class="{
                                         'bg-green-100 text-green-800': latestPalakasan.status === 'completed',
@@ -232,8 +232,10 @@
 
                                     <!-- Event Details -->
                                     <div class="space-y-4">
-                                        <div>
-                                            <h1 class="text-md mb-2 font-medium text-gray-800">{{ latestPalakasan.tagline }}</h1>
+                                        <div>                                            
+                                            <h1 class="text-xl  font-medium text-gray-800">{{ latestPalakasan.theme }}</h1>
+
+                                            <h1 class="text-md mb-2 font-medium text-gray-600">{{ latestPalakasan.tagline }}</h1>
                                             <p class="text-sm text-gray-500 line-clamp-4" v-if="!showFullDescription">
                                                 {{ latestPalakasan.description }}
                                                 <button @click="showFullDescription = true" class="text-blue-500 hover:text-blue-600 font-medium ml-1">

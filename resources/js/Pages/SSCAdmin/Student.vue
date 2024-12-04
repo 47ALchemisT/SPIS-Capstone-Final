@@ -68,68 +68,75 @@
                     </div>
                 </div>
 
-                <!-- Updated table with pagination -->
+                <!-- Replace the existing table with this folder view -->
                 <div>
-                    <div class="border rounded-lg border-gray-300">
-                    <table class="min-w-full">
-                        <thead>
-                            <tr class=" text-gray-700 font-normal">                                    
-                                <th class="py-2 px-4 text-left border-b rounded-t-lg">ID</th>
-                                <th class="py-2 px-4 text-left border-b">Name</th>
-                                <th class="py-2 px-4 text-left border-b">Student ID</th>
-                                <th class="py-2 px-4 text-left border-b">University Email</th>    
-                                <th class="py-2 px-4 text-left border-b">College</th>   
-                                <th class="py-2 px-4 text-left border-b">Contact</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-if="paginatedStudents.length === 0">
-                                <td colspan="7" class="py-4 px-4 text-center text-gray-600">No student found.</td>
-                            </tr>
-                            <tr v-else v-for="student in paginatedStudents" :key="student.id" class="bg-white hover:bg-gray-50">
-                                <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.id }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-800  font-semibold border-b">{{student.first_name}} {{ student.last_name }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.id_number }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.univ_email }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.college }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-600 border-b">{{ student.contact }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="p-4 flex justify-between items-center">
-                        <p class="text-sm text-gray-700 font-medium">
-                            Total number of students: <span class="font-bold">{{ filteredStudents.length }}</span>
-                        </p>
-                        <div class="space-x-2 flex items-center">
-                        <button 
-                            @click="prevPage"
-                            :disabled="currentPage === 1"
-                            :class="{'opacity-50 cursor-not-allowed': currentPage === 1}"
-                            type="button" 
-                            class="py-2 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div 
+                            v-for="college in uniqueColleges" 
+                            :key="college"
+                            @click="selectCollege(college)"
+                            class="cursor-pointer"
                         >
-                            <i class="fa-solid fa-chevron-left mr-1"></i>
-                            Prev
-                        </button>
-                        
-                        <div class="text-sm font-medium text-gray-700">
-                            Page {{ currentPage }} of {{ totalPages }}
+                            <div class="bg-white p-4 rounded-lg border border-gray-200  transition-all duration-200"
+                                :class="{ 'border-blue-500 bg-blue-50': selectedCollege === college }">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-gray-400">
+                                        <svg v-if="selectedCollege === college" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900">{{ college }}</h3>
+                                        <p class="text-sm text-gray-500">{{ getCollegeCount(college) }} students</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <button 
-                            @click="nextPage"
-                            :disabled="currentPage === totalPages"
-                            :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
-                            type="button" 
-                            class="py-2 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                        >
-                            Next
-                            <i class="fa-solid fa-chevron-right ml-1"></i>
-                        </button>
                     </div>
-                    </div>
-                </div>
 
+                    <!-- Table View (shows when folder is clicked) -->
+                    <div v-if="selectedCollege" class="mt-6">
+                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                                <h2 class="text-lg font-semibold text-gray-900">{{ selectedCollege }} Students</h2>
+                                <button 
+                                    @click="selectedCollege = null" 
+                                    class="text-gray-500 hover:text-gray-700"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">University Email</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr v-for="student in filteredStudentsByCollege" :key="student.id" class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {{ student.first_name }} {{ student.last_name }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.id_number }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.univ_email }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.contact }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p v-else-if="props.students?.length === 0" class="text-gray-500 text-center mt-4">No students found.</p>
                 </div>
             </div>
 
@@ -310,6 +317,45 @@
     const clearSearch = () => {
         searchQuery.value = '';
         currentPage.value = 1; // Reset to first page when clearing search
+    };
+
+    const selectedCollege = ref(null);
+    // Compute unique colleges from students
+    const uniqueColleges = computed(() => {
+        if (!props.students) return [];
+        return [...new Set(props.students.map(student => student.college))];
+    });
+
+    // Get count of students for each college
+    const getCollegeCount = (college) => {
+        if (!props.students) return 0;
+        return props.students.filter(student => student.college === college).length;
+    };
+
+    // Filter students based on selected college and search query
+    const filteredStudentsByCollege = computed(() => {
+        if (!selectedCollege.value || !props.students) return [];
+        
+        let filtered = props.students.filter(student => student.college === selectedCollege.value);
+        
+        // Apply search filter if there's a search query
+        if (searchQuery.value) {
+            const query = searchQuery.value.toLowerCase();
+            filtered = filtered.filter(student => {
+                const fullName = `${student.first_name} ${student.last_name}`.toLowerCase();
+                return fullName.includes(query) ||
+                    student.id_number?.toLowerCase().includes(query) ||
+                    student.univ_email?.toLowerCase().includes(query) ||
+                    student.contact?.toLowerCase().includes(query);
+            });
+        }
+        
+        return filtered;
+    });
+
+    // Handle college selection
+    const selectCollege = (college) => {
+        selectedCollege.value = selectedCollege.value === college ? null : college;
     };
 </script>
 

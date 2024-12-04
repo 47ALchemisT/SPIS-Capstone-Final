@@ -67,15 +67,15 @@
                   >
                   Add Variation
                 </button>
-                <button
+                <button 
                     v-if="sport.status === 'pending'"
-                      type="button"
-                      class="flex items-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
-                      :disabled="!allMatchesScheduled"
-                      @click="handleScheduleClick"
-                      >
-                    {{ allMatchesScheduled ? 'Save Schedule' : 'Set All Schedules First' }}
-                  </button>
+                    type="button"
+                    class="flex items-center gap-2 font-medium text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700"
+                    :disabled="!allMatchesScheduled || sportVariations.length === 0"
+                    @click="handleScheduleClick"
+                >
+                    {{ sportVariations.length === 0 ? 'No Sports Available' : (allMatchesScheduled ? 'Save Schedule' : 'Set All Schedules First') }}
+                </button>
               </div>
         </nav>
 
