@@ -430,6 +430,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+                                            <!--completed-->
                                             <div class="mt-2 text-sm text-gray-500">
                                                 <span class="inline-flex items-center">
                                                     <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
