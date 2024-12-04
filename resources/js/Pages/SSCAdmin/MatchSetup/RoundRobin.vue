@@ -95,7 +95,7 @@
                             :disabled="!allMatchesScheduled"
                             @click="handleScheduleClick"
                         >
-                        {{ allMatchesScheduled ? 'Save Scheduled' : 'Not Scheduled' }}
+                        {{ allMatchesScheduled ? 'Save Schedule' : 'Not Scheduled' }}
                     </button>
                 </div>
             </nav>

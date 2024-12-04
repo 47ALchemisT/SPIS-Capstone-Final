@@ -29,6 +29,30 @@
                     <p class="text-gray-700 dark:text-gray-300">{{ palakasan.description }}</p>
                 </div>
             </div>
+
+            <!-- Overall Winner Section -->
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+        <i class="fas fa-trophy text-yellow-400 mr-2"></i>
+        Overall Champion
+    </h2>
+    <div v-if="overallWinner" class="flex items-center space-x-4">
+        <div class="flex-1">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                {{ overallWinner.assigned_team_name }}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400">
+                {{ overallWinner.college.name }}
+            </p>
+            <p class="text-lg font-medium text-blue-600 dark:text-blue-400 mt-2">
+                Total Points: {{ overallWinner.totalPoints }}
+            </p>
+        </div>
+    </div>
+    <div v-else class="text-gray-600 dark:text-gray-400">
+        No winner data available
+    </div>
+</div>
   
   
   
@@ -154,6 +178,30 @@
   const returnToPalakasan = () => {
     router.get(route('palakasan.details', { tab: 'details' }));
     };
+
+    const overallWinner = computed(() => {
+    if (!props.assignedTeams || !props.overallResult || !props.variationResult) return null;
+
+    const rankings = props.assignedTeams.map(team => {
+        // Calculate points from overall results
+        const overallPoints = props.overallResult
+            .filter(result => result.assigned_team_id === team.id)
+            .reduce((sum, result) => sum + (result.points || 0), 0);
+
+        // Calculate points from variation results
+        const variationPoints = props.variationResult
+            .filter(result => result.sport_variation_team_id === team.id)
+            .reduce((sum, result) => sum + (result.points || 0), 0);
+
+        return {
+            ...team,
+            totalPoints: overallPoints + variationPoints
+        };
+    });
+
+    // Sort by total points and return the winner
+    return rankings.sort((a, b) => b.totalPoints - a.totalPoints)[0];
+});
 
   
   const formatDate = (dateString) => {

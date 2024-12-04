@@ -3,18 +3,19 @@
     <AppLayout>
       <template v-slot:default>
         <!--Head-->
-        <div>
-          <h1 class="text-3xl font-semibold text-gray-800">Points</h1>
-          <h1 class="text-sm font-normal text-gray-700">List of Points</h1>
+        <div class="mb-6">
+          <h1 class="text-2xl font-semibold text-gray-800">Points System</h1>
+          <p class="text-sm text-gray-600">Manage scoring points for major and minor events</p>
         </div>
+
         <!--Content-->
-        <div class="mt-3 space-y-3">
+        <div class="space-y-6">
           <!--Utility-->
-          <div class="utility">
-            <div class="flex justify-between items-center">
-              <div class="search flex space-x-2 items-center">
+          <div class="">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+              <div class="search flex space-x-2 items-center w-full sm:w-auto">
                 <!-- Search Input -->
-                <div class="relative">
+                <div class="relative w-full sm:w-64">
                   <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <i class="fas fa-search"></i>
                   </span>
@@ -22,7 +23,7 @@
                     v-model="searchQuery"
                     type="text"
                     placeholder="Search points..."
-                    class="w-64 pl-10 pr-10 py-2 bg-white shadow-sm border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                    class="w-full pl-10 pr-10 py-2 bg-white border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                   >
                   <button
                     v-if="searchQuery"
@@ -34,67 +35,95 @@
                 </div>
               </div>
               <!--Buttons-->
-              <div class="flex items-center space-x-2.5">
-                <button @click="openModal(false)" class="bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-medium shadow hover:bg-blue-800/90 transition-colors">
-                  <i class="fa-solid fa-square-plus mr-1"></i>   
-                  Points                             
+              <div class="flex items-center w-full sm:w-auto">
+                <button @click="openModal(false)" class="w-full sm:w-auto bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 transition-all duration-200 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-square-plus"></i>   
+                  Add Points                             
                 </button>
               </div>
             </div>
           </div>
   
-        <!-- Main Content, Two Cards -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Main Content, Two Cards -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Major Points Card -->
-            <div class="bg-white rounded-lg shadow hover:shadow-lg transition-all ring-1 ring-gray-300">
-              <div class="p-4">
-                <h2 class="text-xl font-bold mb-3">Major Points</h2>
-                <div v-if="filteredMajorPoints.length > 0">
-                  <div v-for="point in filteredMajorPoints" :key="point.id" class="mb-3 pb-3 border-b last:border-b-0">
+            <div class="bg-white rounded-lg shadow-sm hover:shadow transition-all duration-200 ring-1 ring-gray-300">
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h2 class="text-lg font-semibold text-gray-800">Major Points</h2>
+                  <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    {{ filteredMajorPoints.length }} Items
+                  </span>
+                </div>
+                <div v-if="filteredMajorPoints.length > 0" class="divide-y divide-gray-200">
+                  <div v-for="point in filteredMajorPoints" :key="point.id" class="py-4 first:pt-0 last:pb-0">
                     <div class="flex items-center justify-between mb-2">
-                      <h3 class="text-lg font-semibold">{{ point.type }}</h3>
-                      <div class="flex space-x-2">
-                        <button @click="openModal(true, point)" class="text-blue-600 hover:text-blue-800">
+                      <h3 class="text-base font-medium text-gray-800">{{ point.type }}</h3>
+                      <div class="flex items-center space-x-2">
+                        <button @click="openModal(true, point)" class="text-gray-600 hover:text-blue-600 transition-colors p-1">
                           <i class="fas fa-edit"></i>
                         </button>
-                        <button @click="confirmDelete(point.id)" class="text-red-600 hover:text-red-800">
+                        <button @click="confirmDelete(point.id)" class="text-gray-600 hover:text-red-600 transition-colors p-1">
                           <i class="fa-regular fa-trash-can"></i>
                         </button>
                       </div>
                     </div>
-                    <p class="text-gray-600 text-sm">Rank: {{ point.rank }}</p>
-                    <p class="text-gray-600 text-sm">Points: {{ point.points }}</p>
+                    <div class="flex items-center space-x-4">
+                      <span class="inline-flex items-center gap-1 text-sm text-gray-600">
+                        <i class="fas fa-trophy text-yellow-500"></i>
+                        Rank {{ point.rank }}
+                      </span>
+                      <span class="inline-flex items-center gap-1 text-sm text-gray-600">
+                        <i class="fas fa-star text-blue-500"></i>
+                        {{ point.points }} Points
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div v-else class="text-center text-gray-600 mt-4">
-                  No major points found.
+                <div v-else class="text-center py-8 text-gray-500">
+                  <i class="fas fa-trophy text-gray-400 text-4xl mb-3"></i>
+                  <p>No major points found</p>
                 </div>
               </div>
             </div>
 
             <!-- Minor Points Card -->
-            <div class="bg-white rounded-lg shadow hover:shadow-lg transition-all ring-1 ring-gray-300">
-              <div class="p-4">
-                <h2 class="text-xl font-bold mb-3">Minor Points</h2>
-                <div v-if="filteredMinorPoints.length > 0">
-                  <div v-for="point in filteredMinorPoints" :key="point.id" class="mb-3 pb-3 border-b last:border-b-0">
+            <div class="bg-white rounded-lg shadow-sm hover:shadow transition-all duration-200 ring-1 ring-gray-300">
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h2 class="text-lg font-semibold text-gray-800">Minor Points</h2>
+                  <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    {{ filteredMinorPoints.length }} Items
+                  </span>
+                </div>
+                <div v-if="filteredMinorPoints.length > 0" class="divide-y divide-gray-200">
+                  <div v-for="point in filteredMinorPoints" :key="point.id" class="py-4 first:pt-0 last:pb-0">
                     <div class="flex items-center justify-between mb-2">
-                      <h3 class="text-lg font-semibold">{{ point.type }}</h3>
-                      <div class="flex space-x-2">
-                        <button @click="openModal(true, point)" class="text-blue-600 hover:text-blue-800">
+                      <h3 class="text-base font-medium text-gray-800">{{ point.type }}</h3>
+                      <div class="flex items-center space-x-2">
+                        <button @click="openModal(true, point)" class="text-gray-600 hover:text-blue-600 transition-colors p-1">
                           <i class="fas fa-edit"></i>
                         </button>
-                        <button @click="confirmDelete(point.id)" class="text-red-600 hover:text-red-800">
+                        <button @click="confirmDelete(point.id)" class="text-gray-600 hover:text-red-600 transition-colors p-1">
                           <i class="fa-regular fa-trash-can"></i>
                         </button>
                       </div>
                     </div>
-                    <p class="text-gray-600 text-sm">Rank: {{ point.rank }}</p>
-                    <p class="text-gray-600 text-sm">Points: {{ point.points }}</p>
+                    <div class="flex items-center space-x-4">
+                      <span class="inline-flex items-center gap-1 text-sm text-gray-600">
+                        <i class="fas fa-trophy text-yellow-500"></i>
+                        Rank {{ point.rank }}
+                      </span>
+                      <span class="inline-flex items-center gap-1 text-sm text-gray-600">
+                        <i class="fas fa-star text-blue-500"></i>
+                        {{ point.points }} Points
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div v-else class="text-center text-gray-600 mt-4">
-                  No minor points found.
+                <div v-else class="text-center py-8 text-gray-500">
+                  <i class="fas fa-trophy text-gray-400 text-4xl mb-3"></i>
+                  <p>No minor points found</p>
                 </div>
               </div>
             </div>
@@ -103,16 +132,21 @@
   
         <!-- Modal for Add/Edit -->
         <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
-          <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal"></div>
-          <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full">
-            <h2 class="text-xl font-bold mb-4">{{ isEditing ? 'Edit Point' : 'Add Point' }}</h2>
-            <form @submit.prevent="submitPoint">
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm mb-1.5 font-medium">Type</label>
+          <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" @click="closeModal"></div>
+          <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-semibold text-gray-800">{{ isEditing ? 'Edit Point' : 'Add Point' }}</h2>
+              <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <form @submit.prevent="submitPoint" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
                 <select
                   v-model="form.type"
                   required
-                  class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2"
+                  class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="" disabled>Select a type</option>
                   <option value="Major">Major</option>
@@ -120,29 +154,61 @@
                 </select>
               </div>
   
-              <div v-for="(item, index) in form.rankPoints" :key="index" class="mb-4">
-                <div class="flex items-center gap-3">
-                  <div>
-                    <label :for="'rank-' + index" class="block mb-1.5 text-sm font-medium text-gray-700">Rank</label>
-                    <input v-model="item.rank" :id="'rank-' + index" type="text" class="block p-2.5 transition w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter rank...">
+              <div v-for="(item, index) in form.rankPoints" :key="index" class="space-y-4">
+                <div class="flex items-center gap-4">
+                  <div class="flex-1">
+                    <label :for="'rank-' + index" class="block text-sm font-medium text-gray-700 mb-1">Rank</label>
+                    <input 
+                      v-model="item.rank" 
+                      :id="'rank-' + index" 
+                      type="text" 
+                      class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" 
+                      placeholder="Enter rank..."
+                    >
                   </div>
-                  <div>
-                    <label :for="'points-' + index" class="block mb-1.5 text-sm font-medium text-gray-700">Points</label>
-                    <input v-model="item.points" :id="'points-' + index" type="number" class="block p-2.5 transition w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter points...">
+                  <div class="flex-1">
+                    <label :for="'points-' + index" class="block text-sm font-medium text-gray-700 mb-1">Points</label>
+                    <input 
+                      v-model="item.points" 
+                      :id="'points-' + index" 
+                      type="number" 
+                      class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" 
+                      placeholder="Enter points..."
+                    >
                   </div>
-                  <button type="button" @click="removeRankPoints(index)" class="py-2 px-3 rounded-md bg-red-100 mt-6 text-red-500 hover:text-red-700">
+                  <button 
+                    type="button" 
+                    @click="removeRankPoints(index)" 
+                    class="mt-6 p-2 text-red-600 hover:text-red-800 rounded-lg hover:bg-red-50 transition-colors"
+                  >
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
               </div>
   
-              <button type="button" @click="addRankPoints" class="mb-4 text-blue-600 hover:text-blue-800 text-sm font-medium">
-                <i class="fas fa-plus-circle mr-1"></i> Add Another Rank and Points
+              <button 
+                type="button" 
+                @click="addRankPoints" 
+                class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                <i class="fas fa-plus-circle"></i>
+                Add Another Rank and Points
               </button>
   
-              <div class="flex justify-end">
-                <button type="button" @click="closeModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 text-sm rounded-lg transition">Cancel</button>
-                <button type="submit" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition">{{ isEditing ? 'Update Point' : 'Add Point' }}</button>
+              <div class="flex justify-end gap-3 pt-4">
+                <button 
+                  type="button" 
+                  @click="closeModal" 
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  class="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors focus:ring-4 focus:ring-blue-300"
+                >
+                  {{ isEditing ? 'Update Point' : 'Add Point' }}
+                </button>
               </div>
             </form>
           </div>
@@ -150,16 +216,32 @@
   
         <!-- Modal for Delete Confirmation -->
         <div v-if="isDeleteModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
-          <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeDeleteModal"></div>
-          <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-bold">Confirm Delete</h2>
-              <i class="fa-regular fa-trash-can text-xl"></i>
+          <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" @click="closeDeleteModal"></div>
+          <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full mx-4">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-100">
+                <i class="fa-regular fa-trash-can text-red-600 text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-semibold text-gray-800">Delete Point</h2>
+                <p class="text-sm text-gray-600">This action cannot be undone</p>
+              </div>
             </div>
-            <p>Are you sure you want to remove this Point from the list?</p>
-            <div class="flex justify-end mt-4">
-              <button type="button" @click="closeDeleteModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm transition">No, keep it</button>
-              <button @click="deletePoint" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition">Yes, delete it</button>
+            <p class="text-gray-600 mb-6">Are you sure you want to remove this point from the system?</p>
+            <div class="flex justify-end gap-3">
+              <button 
+                type="button" 
+                @click="closeDeleteModal" 
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                @click="deletePoint" 
+                class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors focus:ring-4 focus:ring-red-300"
+              >
+                Delete Point
+              </button>
             </div>
           </div>
         </div>

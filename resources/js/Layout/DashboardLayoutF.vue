@@ -2,20 +2,20 @@
     <div>
         <!-- Navbar -->
         <nav class="bg-blue-700 fixed top-0 left-0 right-0 z-50">
-            <div class="px-6">
+            <div class="px-4 sm:px-6">
                 <div class="flex justify-between h-16">
-                    <div class="flex-shrink-0 flex space-x-3 items-center">
-                        <img class="w-10 h-10 rounded-full object-cover cursor-pointer" src='/resources/assets/ssclogo.jpg' alt="User dropdown">
-                        <span class="text-xl font-semibold text-white">SPSIS</span>
+                    <div class="flex-shrink-0 flex space-x-2 sm:space-x-3 items-center">
+                        <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer" src='/resources/assets/ssclogo.jpg' alt="User dropdown">
+                        <span class="text-lg sm:text-xl font-semibold text-white">SPSIS</span>
                     </div>
-                    <div class="ml-3 relative flex items-center gap-3">
-                        <div>
-                            <p class="text-white text-sm font-semibold ">{{ fullName }}</p>
-                            <p class="text-white text-xs text-right ">Facilitator</p>
+                    <div class="ml-2 sm:ml-3 relative flex items-center gap-2 sm:gap-3">
+                        <div class="hidden sm:block">
+                            <p class="text-white text-sm font-semibold">{{ fullName }}</p>
+                            <p class="text-white text-xs text-right">Facilitator</p>
                         </div>
                         <Menu as="div" class="relative inline-block text-left">
-                                    <MenuButton class="mt-1.5 inline-flex items-center justify-center w-full rounded-lg  text-sm font-medium text-gray-700 ">
-                                        <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-400 cursor-pointer" src='/resources/assets/user.png' alt="User dropdown">
+                                    <MenuButton class="mt-1.5 inline-flex items-center justify-center rounded-lg text-sm font-medium text-gray-700 ">
+                                        <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-blue-400 cursor-pointer" src='/resources/assets/user.png' alt="User dropdown">
 
                                     </MenuButton>
                                     <transition
@@ -63,7 +63,7 @@
         </nav>
 
         <!-- Main content -->
-        <div class="contatiner flex-1 px-48 mt-16 main-content">
+        <div class="container mx-auto flex-1 px-4 sm:px-6 lg:px-8 xl:px-48 mt-16 main-content">
             <slot />
         </div>
     </div>
