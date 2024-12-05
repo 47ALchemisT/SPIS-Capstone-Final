@@ -219,7 +219,6 @@
                                                 <h3 class="text-xl font-semibold mb-4">
                                                     {{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} 
                                                     {{ variation.sport_id?.categories }} 
-                                                    <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span>
                                                     - {{ variation.sport_variation_name }}
                                                 </h3>
                                                 <div v-if="getVariationRankings(variation.id).length > 0" class="mb-6">

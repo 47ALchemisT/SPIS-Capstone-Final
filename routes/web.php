@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AssignedPlayerController;
 use App\Http\Controllers\CollegeController;
 use App\Http\Controllers\DoubleEliminationController;
 use App\Http\Controllers\FacilitatorController;
@@ -37,7 +38,7 @@ use App\Http\Controllers\SportsLandingController;
 use Illuminate\Http\Request;
 
 // Login routes (accessible without authentication)
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.show');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -81,10 +82,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::resource('sport', SportController::class);
     Route::resource('points', PointsController::class);
     Route::resource('account', AccountController::class);
-    Route::resource('palakasan/details',PalakasanController::class);
-    Route::post('/palakasan/details', [PalakasanController::class, 'store'])->name('palakasan.store');
-    Route::resource('palakasan/team', PalakasanTeamController::class);
-    Route::resource('palakasan/sportselection', PalakasanSportsController::class);
+
 
     //sports setup
     Route::get('details/sportview/{sport}', function ($sport) {
@@ -130,18 +128,36 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/matches/update-date-time', [RoundRobinController::class, 'updateDateTime'])->name('matches.updateDateTimeRR');
     Route::post('/results/store', [RoundRobinController::class, 'storeResult'])->name('resultsRR.store');
     Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])->name('sport-variations.update-time');
-    Route::patch('/assigned-sports/{id}/update-status', [FreeForAllController::class, 'updateStatus'])->name('assigned-sports.update-status');
     Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
     Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
     Route::post('/palakasan/{id}/emergency-cancel', [OnePalakasanController::class, 'emergencyCancel'])->name('palakasan.emergency-cancel');
     Route::post('/palakasan/conclude', [OnePalakasanController::class, 'concludePalakasan'])->name('palakasan.conclude');
+    Route::patch('/assigned-sports/{id}/update-admin-status', [FreeForAllController::class, 'updateStatusAdmin'])->name('assigned-sports.update-admin-status');
+
+    //account settings
+    Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::post('/admin/change-password', [DashboardController::class, 'changePassword'])->name('admin.change-password');
+    Route::get('/account-settings', [DashboardController::class, 'accountSettings'])->name('admin.account-settings');
 });
 
-
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/update-password', [SubAdminController::class, 'updatePassword'])->name('update-password');
+});
 
 // Facilitator routes
 Route::middleware(['web', 'auth', 'facilitatorMiddleware'])->group(function () {
+
     Route::get('/facidashboard/{id}', [FacilitatorController::class, 'index'])->name('facilitator.show');
+
+    //new
+    Route::post('/resultsSE', [SingleEliminationController::class, 'storeResult'])->name('results.store');
+    Route::post('/resultsDE', [DoubleEliminationController::class, 'storeResult'])->name('results.store');
+    Route::patch('/assigned-sports/{id}/update-status', [FreeForAllController::class, 'updateStatus'])->name('assigned-sports.update-status');
+    Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
+    Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
+    Route::post('/results/store', [RoundRobinController::class, 'storeResult'])->name('resultsRR.store');
+
+
     Route::get('sportview/{sport}/{facilitator}', function ($sport, $facilitator) {
         $sportModel = AssignedSports::findOrFail($sport);
 
@@ -166,6 +182,7 @@ Route::middleware(['web', 'auth', 'comHeadMiddleware'])->group(function () {
     Route::post('/cshdashboard/assign-college', [CHSDashboardController::class, 'assignCollege'])->name('chs.assign-college');
     Route::post('/cshdashboard/assign-players', [CHSDashboardController::class, 'store'])->name('chs.assign-players');
     Route::resource('studentplayer', StudentPalakasanController::class);
+    Route::delete('/assigned-sports/{sport}/players/{player}', [CHSDashboardController::class, 'destroy'])->name('assigned-players.destroy');
 });
 
 // Sub Admin routes

@@ -3,7 +3,10 @@
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div v-for="match in sortedMatches" 
         :key="match.id" 
-        class="bg-white rounded-lg p-4 border border-gray-300 hover:shadow-md transition-all duration-200">
+        :class="[
+          'rounded-lg p-4 border transition-all duration-200',
+          match.status === 'completed' ? 'bg-blue-100 border-blue-300' : 'bg-white border-gray-200 hover:shadow-md'
+        ]">
         <div class="flex justify-between items-center mb-3">
           <div class="flex flex-col">
             <span class="font-semibold text-md">{{ match.game }}</span>
@@ -16,7 +19,7 @@
             <button 
               @click="openTimeModal(match)" 
               type="button" 
-              class="p-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              class="p-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
               :disabled="match.status === 'completed'"
             >
               <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -28,11 +31,23 @@
         </div>
 
         <div class="grid grid-cols-4 gap-3 items-center">
-          <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
+          <div class=" col-span-2 flex justify-center p-2 rounded-md items-center"
+            :class="[
+              match.status === 'completed' ? {
+                'bg-green-100 text-green-700': getScore(match, 'teamA') > getScore(match, 'teamB'),
+                'bg-red-100 text-red-700': getScore(match, 'teamA') < getScore(match, 'teamB')
+              } : 'bg-gray-100'
+            ]">
             <span class="font-medium mr-3">{{ getTeamName(match.teamA_id) }}</span>
             <span :class="getScoreClass(match, 'teamA')">{{ getScore(match, 'teamA') }}</span>
           </div>
-          <div class=" col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
+          <div class=" col-span-2 flex justify-center p-2 rounded-md items-center"
+            :class="[
+              match.status === 'completed' ? {
+                'bg-green-100 text-green-700': getScore(match, 'teamB') > getScore(match, 'teamA'),
+                'bg-red-100 text-red-700': getScore(match, 'teamB') < getScore(match, 'teamA')
+              } : 'bg-gray-100'
+            ]">
             <span :class="getScoreClass(match, 'teamB')">{{ getScore(match, 'teamB') }}</span>
             <span class="font-medium ml-3">{{ getTeamName(match.teamB_id) }}</span>
           </div>
@@ -82,15 +97,31 @@
           </div>
           <!-- Modal body -->
           <div class="p-4 pt-0">
-            <label class="text-sm font-medium text-gray-900 mt-5 dark:text-white mb-2 block">
-              Pick the Date and Time of the game
-            </label>
-            <div class="text-xs p-3 bg-blue-50  text-blue-700 rounded-lg border mb-3 border-blue-400">
-              <h1 class="font-semibold mb-1">
-                Note
-              </h1>
-              <p>All the time that is available can be selected, the time that are not available will be grayed out and cannot be selected. This is a first come first serve, so make sure you set the time correctly</p>
+            <div class="text-xs p-3 bg-blue-50 text-blue-700 rounded-lg border mb-3 border-blue-400">
+              <h1 class="font-semibold mb-1">Note</h1>
+              <p>All available times can be selected. Times that are not available will be grayed out. This is first come first serve, so make sure to set the time and venue correctly.</p>
             </div>
+
+            <!-- Venue Selection -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                Select Venue
+              </label>
+              <select
+                v-model="selectedVenue"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a venue</option>
+                <option v-for="venue in props.venues" :key="venue.id" :value="venue.id">
+                  {{ venue.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Date Selection -->
+            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+              Pick the Date and Time
+            </label>
             <div class="mx-auto sm:mx-0 flex justify-center mb-5">
               <input
                 type="date"
@@ -101,6 +132,7 @@
               />
             </div>
 
+            <!-- Time Selection -->
             <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
               <li v-for="slot in availableTimeSlots" :key="slot.value">
                 <input 
@@ -122,7 +154,10 @@
                 </label>
               </li>
             </ul>
+
             <div v-if="formError" class="mb-4 text-red-500 text-sm">{{ formError }}</div>
+
+            <!-- Action Buttons -->
             <div class="grid grid-cols-2 gap-2">
               <button @click="closeTimeModal" type="button" class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Discard</button>
               <button @click="saveDateTime" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
@@ -138,7 +173,6 @@
 import { ref, computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
-  
 const props = defineProps({
   matches: {
     type: Array,
@@ -164,13 +198,14 @@ const props = defineProps({
     type: Array,
     required: true
   }
-
 });
-  
+
 const isTimeModalOpen = ref(false);
 const selectedMatch = ref(null);
 const selectedDate = ref('');
 const selectedTime = ref('');
+const previousTime = ref(''); // Track previous time selection
+const selectedVenue = ref('');
 const formError = ref('');
 const availableTimeSlots = ref([]);
 
@@ -178,6 +213,7 @@ const form = useForm({
   matchId: '',
   date: '',
   time: '',
+  venueId: ''
 });
 
 const timeSlots = [
@@ -268,23 +304,38 @@ const formatDateTime = (date, time) => {
 };
 
 const updateAvailableTimeSlots = () => {
-  if (!selectedDate.value || !selectedMatch.value) return;
+  if (!selectedDate.value || !selectedMatch.value || !selectedVenue.value) return;
+
+  // Store current time as previous before potential changes
+  if (selectedTime.value && selectedTime.value !== previousTime.value) {
+    previousTime.value = selectedTime.value;
+  }
 
   const conflictingRecords = props.venueRecords.filter(record => {
     return record.date === selectedDate.value && 
-           record.venue_id === selectedMatch.value.match_venue_id &&
+           record.venue_id === selectedVenue.value &&
            record.match_id !== selectedMatch.value.id;
   });
 
   const bookedTimes = new Set(conflictingRecords.map(record => record.time));
+
+  // Remove both current and previous selections from booked times
+  if (selectedTime.value) {
+    bookedTimes.delete(selectedTime.value);
+  }
+  if (previousTime.value) {
+    bookedTimes.delete(previousTime.value);
+  }
 
   availableTimeSlots.value = timeSlots.map(slot => ({
     ...slot,
     disabled: bookedTimes.has(slot.value)
   }));
 
-  // If editing existing match, make its current time slot available
-  if (selectedMatch.value.time && selectedMatch.value.date === selectedDate.value) {
+  // If editing existing match and it's the same date and venue, make its current time slot available
+  if (selectedMatch.value.time && 
+      selectedMatch.value.date === selectedDate.value && 
+      selectedMatch.value.match_venue_id === selectedVenue.value) {
     const currentTimeSlot = availableTimeSlots.value.find(slot => 
       slot.value === selectedMatch.value.time
     );
@@ -294,13 +345,14 @@ const updateAvailableTimeSlots = () => {
   }
 };
 
-
 const openTimeModal = (match) => {
   selectedMatch.value = match;
   selectedDate.value = match.date || '';
   selectedTime.value = match.time || '';
-  formError.value = '';
+  previousTime.value = match.time || ''; // Initialize previous time
+  selectedVenue.value = match.match_venue_id || '';
   isTimeModalOpen.value = true;
+  formError.value = '';
   updateAvailableTimeSlots();
 };
 
@@ -309,13 +361,15 @@ const closeTimeModal = () => {
   selectedMatch.value = null;
   selectedDate.value = '';
   selectedTime.value = '';
+  previousTime.value = ''; // Reset previous time
+  selectedVenue.value = '';
   formError.value = '';
   availableTimeSlots.value = [];
 };
 
 const saveDateTime = () => {
-  if (!selectedDate.value || !selectedTime.value) {
-    formError.value = 'Please select date and time';
+  if (!selectedDate.value || !selectedTime.value || !selectedVenue.value) {
+    formError.value = 'Please select a date, time, and venue';
     return;
   }
 
@@ -328,21 +382,17 @@ const saveDateTime = () => {
   form.matchId = selectedMatch.value.id;
   form.date = selectedDate.value;
   form.time = selectedTime.value;
+  form.venueId = selectedVenue.value;
 
-  form.post(route('matches.updateDateTime'), {
-    preserveState: true,
-    preserveScroll: true,
-    onSuccess: (response) => {
-      selectedMatch.value.date = selectedDate.value;
-      selectedMatch.value.time = selectedTime.value;
+  form.put(route('matches.updateDateTime'), {
+    onSuccess: () => {
       closeTimeModal();
     },
     onError: (errors) => {
       formError.value = Object.values(errors)[0];
-    }
+    },
   });
 };
-
 
 const sortedMatches = computed(() => {
   if (!props.matches) return [];
@@ -367,6 +417,5 @@ const sortedMatches = computed(() => {
   });
 });
 
-watch(selectedDate, updateAvailableTimeSlots);
-watch(selectedMatch, updateAvailableTimeSlots);
+watch([selectedDate, selectedMatch, selectedVenue, selectedTime], updateAvailableTimeSlots);
 </script>

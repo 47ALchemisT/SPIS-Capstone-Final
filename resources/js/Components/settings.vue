@@ -28,7 +28,7 @@
                         <div class="mt-4">
                             <button 
                                 @click="showModal = true"
-                                :disabled="form.processing || latestPalakasan?.status === 'cancelled' || latestPalakasan?.status === 'completed'"
+                                :disabled="form.processing || latestPalakasan?.status === 'cancelled' || latestPalakasan?.status === 'completed' || latestPalakasan?.status === 'pending'"
                                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Force Cancel Palakasan
@@ -61,7 +61,7 @@
                                 @click="showContinueModal = true"
                                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                                Continue Palakasan
+                                Resume Palakasan
                             </button>
                         </div>
                     </div>
@@ -135,20 +135,20 @@
                         <button 
                             @click="confirmEmergencyCancel"
                             :disabled="form.processing || !form.username || !form.password"
-                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm"
                         >
-                            Force Cancel
+                            Confirm Cancel
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Continue Palakasan Modal -->
-        <div v-if="showContinueModal" class="fixed inset-0 flex items-center justify-center z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Continue Modal -->
+        <div v-if="showContinueModal" class="fixed inset-0 flex items-center justify-center z-50">
             <div class="flex items-center justify-center min-h-screen px-4 text-center">
-                <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity" aria-hidden="true"></div>
-                <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full relative">
+                <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity"></div>
+                <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="flex flex-col items-center">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
@@ -196,19 +196,79 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-full px-4 py-6 sm:px-6 flex justify-end space-x-3">
-                        <button 
-                            @click="showContinueModal = false"
-                            class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:text-sm"
-                        >
-                            Cancel
-                        </button>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button 
                             @click="confirmContinuePalakasan"
                             :disabled="continueForm.processing || !continueForm.username || !continueForm.password"
-                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Continue Palakasan
+                        </button>
+                        <button 
+                            @click="showContinueModal = false"
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal for Emergency Cancel -->
+        <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-50">
+            <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity"></div>
+                <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                        <div class="flex flex-col items-center">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                                <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Success!</h3>
+                                <p class="text-sm text-gray-500">{{ successMessage }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button
+                            @click="closeSuccessModal"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal for Continue Palakasan -->
+        <div v-if="showContinueSuccessModal" class="fixed inset-0 flex items-center justify-center z-50">
+            <div class="flex items-center justify-center min-h-screen px-4 text-center">
+                <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity"></div>
+                <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                        <div class="flex flex-col items-center">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                                <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Success!</h3>
+                                <p class="text-sm text-gray-500">{{ continueSuccessMessage }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button
+                            @click="closeContinueSuccessModal"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                            OK
                         </button>
                     </div>
                 </div>
@@ -224,53 +284,87 @@ import { useForm } from '@inertiajs/vue3';
 const props = defineProps({
     latestPalakasan: {
         type: Object,
-        required: true
-    },
-    admin: {
-        type: Array,
-        required: true,
-        default: () => []
+        default: () => ({})
     }
 });
 
 const showModal = ref(false);
 const showError = ref(false);
 const errorMessage = ref('');
-
 const form = useForm({
     username: '',
-    password: '',
+    password: ''
 });
 
+// New success modal refs
+const showSuccessModal = ref(false);
+const successMessage = ref('');
+const showContinueSuccessModal = ref(false);
+const continueSuccessMessage = ref('');
+
 const confirmEmergencyCancel = async () => {
+    showError.value = false;
+    errorMessage.value = '';
+    
     try {
-        // Send credentials to backend for validation
-        await form.post(route('palakasan.emergency-cancel', props.latestPalakasan.id));
-        showModal.value = false;
+        await form.post(route('palakasan.emergency-cancel', props.latestPalakasan.id), {
+            onSuccess: () => {
+                showModal.value = false;
+                showSuccessModal.value = true;
+                successMessage.value = 'Palakasan has been successfully cancelled.';
+                form.reset();
+            },
+            onError: (errors) => {
+                showError.value = true;
+                errorMessage.value = errors.message || 'Invalid credentials. Please try again.';
+            }
+        });
     } catch (error) {
         showError.value = true;
-        errorMessage.value = error.message || 'An error occurred during validation';
+        errorMessage.value = 'An unexpected error occurred. Please try again.';
         console.error('Emergency cancel error:', error);
     }
 };
-//
+
 const showContinueModal = ref(false);
 const showContinueError = ref(false);
 const continueErrorMessage = ref('');
-
 const continueForm = useForm({
     username: '',
-    password: '',
+    password: ''
 });
 
 const confirmContinuePalakasan = async () => {
+    showContinueError.value = false;
+    continueErrorMessage.value = '';
+    
     try {
-        await continueForm.post(route('palakasan.continue', props.latestPalakasan.id));
-        showContinueModal.value = false;
+        await continueForm.post(route('palakasan.continue', props.latestPalakasan.id), {
+            onSuccess: () => {
+                showContinueModal.value = false;
+                showContinueSuccessModal.value = true;
+                continueSuccessMessage.value = 'Palakasan has been successfully resumed.';
+                continueForm.reset();
+            },
+            onError: (errors) => {
+                showContinueError.value = true;
+                continueErrorMessage.value = errors.message || 'Invalid credentials. Please try again.';
+            }
+        });
     } catch (error) {
         showContinueError.value = true;
-        continueErrorMessage.value = error.message || 'An error occurred during validation';
+        continueErrorMessage.value = 'An unexpected error occurred. Please try again.';
         console.error('Continue Palakasan error:', error);
     }
+};
+
+const closeSuccessModal = () => {
+    showSuccessModal.value = false;
+    successMessage.value = '';
+};
+
+const closeContinueSuccessModal = () => {
+    showContinueSuccessModal.value = false;
+    continueSuccessMessage.value = '';
 };
 </script>

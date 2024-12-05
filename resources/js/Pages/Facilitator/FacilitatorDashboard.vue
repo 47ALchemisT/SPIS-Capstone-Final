@@ -11,7 +11,7 @@
           <div class="flex gap-2 rounded-lg w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
             <div class="flex gap-2 rounded-lg">
               <button 
-                v-for="tab in ['home', 'sports', 'What to Know']"
+                v-for="tab in ['home', 'sports', 'Overview', 'settings']"
                 :key="tab"
                 @click="activeTab = tab"
                 :class="[
@@ -88,9 +88,7 @@
                   placeholder="Search sport..."
                   class="w-full pl-10 pr-10 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 >
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m0 0l-7 7m7-7H3" />
-                </svg>
+                <i class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 fa-solid fa-magnifying-glass"></i>
                 <button
                   v-if="searchQuery"
                   @click="clearSearch"
@@ -114,7 +112,7 @@
                     ? 'bg-blue-50 border-blue-300 hover:border-blue-400 hover:bg-blue-100' 
                     : 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                 ]">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between ">
                   <div>
                     <h3 class="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-600">{{ sport.sport.name }} {{ sport.categories }}</h3>
                     <div class="flex items-center gap-2 text-sm text-gray-500">
@@ -129,15 +127,17 @@
                       }">{{ sport.status }}</span>
                     </div>
                   </div>
-                  <button 
-                    @click="navigateToSportView(sport.id)"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 flex items-center gap-2"
-                  >
-                    View Sport
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </button>
+                  <div>
+                    <button 
+                      @click="navigateToSportView(sport.id)"
+                      class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 flex items-center gap-2"
+                    >
+                      View Sport
+                      <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -145,9 +145,9 @@
           </div>
         </div>
 
-        <div v-if="activeTab === 'What to Know'">
+        <div v-if="activeTab === 'Overview'">
           <div class="py-6">
-              <div class="max-w-3xl mx-auto space-y-8">
+              <div class="max-w-7xl  sm:px-6 lg:px-12 mx-auto space-y-8">
                 <!-- Important Dates Section -->
                 <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
                   <h3 class="text-lg font-medium text-gray-900 mb-4">Important Dates</h3>
@@ -202,48 +202,18 @@
                   </div>
                 </div>
 
-                <!-- Account Settings Section -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-                  <h2 class="text-lg font-semibold text-gray-800 mb-4">Account Settings</h2>
-                  
-                  <!-- Change Password Card -->
-                  <div class="bg-blue-50 rounded-lg p-4 sm:p-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-                      <div>
-                        <h3 class="text-md font-medium text-gray-800 mb-1">Password & Security</h3>
-                        <p class="text-sm text-gray-600">Update your password to keep your account secure</p>
-                      </div>
-                      <Link
-                        :href="route('password.change.form', facilitator.id)"
-                        class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-                      >
-                        Change Password
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Contact Support -->
-                <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200">
-                  <h3 class="text-lg font-medium text-gray-900 mb-4">Need Help?</h3>
-                  <div class="flex flex-col sm:flex-row items-start gap-4">
-                    <div class="flex-shrink-0">
-                      <svg class="w-6 h-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                    <div class="w-full sm:w-auto">
-                      <p class="text-gray-900 font-medium">Contact Support</p>
-                      <p class="text-sm text-gray-600 mb-2">Need assistance? Our support team is here to help.</p>
-                      <a href="mailto:support@palakasan.com" class="text-blue-600 hover:text-blue-500 text-sm font-medium">
-                        support@palakasan.com
-                      </a>
-                    </div>
-                  </div>
-                </div>
               </div>
           </div>
         </div>
+
+        <div v-if="activeTab === 'settings'">
+          <FacilitatorSettings 
+            :facilitator="facilitator"
+            :activity-logs="activityLogs"
+            :assignedSports="assignedSports"
+          />
+        </div>
+
       </div>
 
     </div>
@@ -254,6 +224,7 @@
 import { Head, router, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
+import FacilitatorSettings from '@/Components/FacilitatorSettings.vue';
 
 const props = defineProps({
   facilitator: {
@@ -267,7 +238,11 @@ const props = defineProps({
   palakasan: {
     type: Object,
     default: () => ({})
-  } 
+  },
+  activityLogs: {
+    type: Array,
+    default: () => []
+  }
 });
 
 const searchQuery = ref('');

@@ -30,113 +30,134 @@
             </transition>
 
             <!-- Content -->
-            <div class="mt-3 space-y-3">
-                <!-- Utility -->
-                <div class="utility">
-                    <div class="flex justify-between items-center">
+            <div class="mt-3 flex">
+                <!-- Sidebar -->
+                <div class="w-[20rem] sticky top-0 overflow-y-auto bg-white px-2">
+                    <!-- Import Button -->
+                    <div class="sticky top-0 bg-white pt-4 pb-2">
+                        <button @click="showModal = true" type="button" class="w-full flex items-center justify-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2.5 mb-4">
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25z"/><path d="M9.657 15.874L7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0M17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2z"/></g></svg>                                 
+                            Import
+                        </button>
+
                         <!-- Search -->
-                        <div class="search flex space-x-2 items-center">
-                            <div class="relative">
-                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <input
-                                    v-model="searchQuery"
-                                    type="text"
-                                    placeholder="Search student..."
-                                    class="w-64 pl-10 pr-10 py-2 bg-white border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                                >
-                                <button
-                                    v-if="searchQuery"
-                                    @click="clearSearch"
-                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                                >
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="flex items-center space-x-2.5">
-                            <!-- Import Button to open the modal -->
-
-                            <button @click="showModal = true" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                <svg class="h-5 w-5 " xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25z"/><path d="M9.657 15.874L7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0M17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2z"/></g></svg>                                 
-                                Import
+                        <div class="relative mb-4">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input
+                                v-model="searchQuery"
+                                type="text"
+                                placeholder="Search student..."
+                                class="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                            >
+                            <button
+                                v-if="searchQuery"
+                                @click="clearSearch"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                            >
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Replace the existing table with this folder view -->
-                <div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- College Folders -->
+                    <div class="space-y-2 pb-4">
                         <div 
                             v-for="college in uniqueColleges" 
                             :key="college"
                             @click="selectCollege(college)"
                             class="cursor-pointer"
                         >
-                            <div class="bg-white p-4 rounded-lg border border-gray-200  transition-all duration-200"
-                                :class="{ 'border-blue-500 bg-blue-50': selectedCollege === college }">
-                                <div class="flex items-center gap-3">
+                            <div class="p-3 rounded-lg  transition-all duration-200"
+                                :class="{ 'bg-gray-100': selectedCollege === college }">
+                                <div class="flex gap-3">
                                     <div class="text-gray-400">
-                                        <svg v-if="selectedCollege === college" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
+                                        <svg v-if="selectedCollege === college" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
                                             <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
                                         </svg>
-                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
                                             <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 class="text-lg font-medium text-gray-900">{{ college }}</h3>
-                                        <p class="text-sm text-gray-500">{{ getCollegeCount(college) }} students</p>
+                                        <h3 class="text-sm font-medium text-gray-900">{{ college }}</h3>
+                                        <p class="text-xs text-gray-500">{{ getCollegeCount(college) }} students</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <!-- Main Content -->
+                <div class="flex-1 p-4">
                     <!-- Table View (shows when folder is clicked) -->
-                    <div v-if="selectedCollege" class="mt-6">
-                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                                <h2 class="text-lg font-semibold text-gray-900">{{ selectedCollege }} Students</h2>
-                                <button 
-                                    @click="selectedCollege = null" 
-                                    class="text-gray-500 hover:text-gray-700"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">University Email</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr v-for="student in filteredStudentsByCollege" :key="student.id" class="hover:bg-gray-50">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {{ student.first_name }} {{ student.last_name }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.id_number }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.univ_email }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.contact }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <div v-if="selectedCollege" class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                            <h2 class="text-lg font-semibold text-gray-900">{{ selectedCollege }} Students</h2>
+                            <button 
+                                @click="selectedCollege = null" 
+                                class="text-gray-500 hover:text-gray-700"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">University Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr v-for="student in paginatedStudentsByCollege" :key="student.id" class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            {{ student.first_name }} {{ student.last_name }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.id_number }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.univ_email }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ student.contact }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="px-6 py-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-700">
+                                        Showing {{ startIndex }} to {{ endIndex }} of {{ filteredStudentsByCollege.length }} entries
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button 
+                                        @click="currentPage--" 
+                                        :disabled="currentPage === 1"
+                                        class="px-3 py-1 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Previous
+                                    </button>
+                                    <span class="text-sm text-gray-700">Page {{ currentPage }} of {{ totalPagesByCollege }}</span>
+                                    <button 
+                                        @click="currentPage++" 
+                                        :disabled="currentPage === totalPagesByCollege"
+                                        class="px-3 py-1 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <p v-else-if="props.students?.length === 0" class="text-gray-500 text-center mt-4">No students found.</p>
+                    <p v-else class="text-gray-500 text-center mt-4">Select a college to view students</p>
                 </div>
             </div>
 
@@ -202,7 +223,7 @@
 
 <script setup>
 
-    import { ref, computed, onMounted } from 'vue';
+    import { ref, computed, watch } from 'vue';
     import { Head, router, useForm } from '@inertiajs/vue3';
     import { route } from 'ziggy-js';
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -219,7 +240,7 @@
     const showModal = ref(false);
     const selectedFile = ref('');
     const currentPage = ref(1);
-    const itemsPerPage = 25;
+    const itemsPerPage = 16;
     const showSuccessAlert = ref(false);
 
     // Define the form object using useForm
@@ -266,14 +287,14 @@
     };
 
     // Check for flash message on component mount
-    onMounted(() => {
+    const onMounted = () => {
         if (props.flash && props.flash.message) {
             showSuccessAlert.value = true;
             setTimeout(() => {
                 showSuccessAlert.value = false;
             }, 4000);
         }
-    });
+    };
     // Computed property to filter students based on the search query
     const filteredStudents = computed(() => {
         if (!searchQuery.value) return props.students || [];
@@ -353,10 +374,55 @@
         return filtered;
     });
 
+    // Computed property to get paginated students by college
+    const paginatedStudentsByCollege = computed(() => {
+        const start = (currentPage.value - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        return filteredStudentsByCollege.value.slice(start, end);
+    });
+
+    // Computed property to get total number of pages by college
+    const totalPagesByCollege = computed(() => Math.ceil(filteredStudentsByCollege.value.length / itemsPerPage));
+
+    // Computed property to get start index
+    const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage + 1);
+
+    // Computed property to get end index
+    const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage, filteredStudentsByCollege.value.length));
+
+    // Function to go to next page
+    const nextPageByCollege = () => {
+        if (currentPage.value < totalPagesByCollege.value) {
+            currentPage.value++;
+        }
+    };
+
+    // Function to go to previous page
+    const prevPageByCollege = () => {
+        if (currentPage.value > 1) {
+            currentPage.value--;
+        }
+    };
+
+    const clearSearchByCollege = () => {
+        searchQuery.value = '';
+        currentPage.value = 1; // Reset to first page when clearing search
+    };
+
     // Handle college selection
     const selectCollege = (college) => {
         selectedCollege.value = selectedCollege.value === college ? null : college;
     };
+
+    // Reset pagination when selecting a new college
+    watch(selectedCollege, () => {
+        currentPage.value = 1;
+    });
+
+    // Reset pagination when search query changes
+    watch(searchQuery, () => {
+        currentPage.value = 1;
+    });
 </script>
 
 <style scoped>

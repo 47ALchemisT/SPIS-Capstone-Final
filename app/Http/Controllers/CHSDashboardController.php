@@ -246,4 +246,24 @@ class CHSDashboardController extends Controller
             return redirect()->back()->with('error', 'Failed to add students as players.');
         }
     }
+
+    public function destroy(AssignedSports $sport, $playerId)
+    {
+        try {
+            $player = StudentPlayer::where('id', $playerId)
+                ->where('student_assigned_sport_id', $sport->id)
+                ->firstOrFail();
+
+            $player->delete();
+
+            return response()->json([
+                'message' => 'Player removed successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error removing player: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error removing player'
+            ], 500);
+        }
+    }
 }

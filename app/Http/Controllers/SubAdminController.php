@@ -17,6 +17,7 @@ use App\Models\SportsVariationsMatches;
 use App\Models\StudentAccount;
 use Dotenv\Exception\ValidationException;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;
 
 class SubAdminController extends Controller
 {
@@ -89,6 +90,7 @@ class SubAdminController extends Controller
             'sports' => $assignedSports,
             'facilitator' => $facilitator,
             'matchResults' => $matchResults,
+            'user' => auth()->user()->load('student')
         ]);
     }
 
@@ -167,4 +169,23 @@ class SubAdminController extends Controller
         ]);
     }
 
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = auth()->user();
+        
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return back()->with('success', 'Password updated successfully');
+    }
 }

@@ -267,7 +267,7 @@
                                                     <!-- Sport Variations -->
                                                     <template v-for="variation in categoryGroup.variations" :key="variation.id">
                                                         <div class="text-gray-700">
-                                                            - {{ variation.sport_variation_name }}: {{ formatDate(variation.date) }} / {{ formatTime(variation.time) }} / {{ variation.venue_id?.name || 'TBA' }}
+                                                            - {{ variation.sport_variation_name }}: {{ formatDate(variation.date) }} / {{ formatTime(variation.time) }} / {{ variation.venue?.name || 'TBA' }}
                                                         </div>
                                                     </template>
                                                 </div>

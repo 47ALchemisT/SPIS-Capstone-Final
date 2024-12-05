@@ -9,122 +9,144 @@
             </div>
 
             <!--Content-->
-            <div class="mt-3 space-y-4">
-                <!--Utility-->
-                <div class="utility">
-                    <div class="flex justify-between items-center">
-                        <div class="search flex space-x-2 items-center">
-                            <!-- Search Input -->
-                            <div class="relative">
-                                <!-- Search Icon (Left) -->
-                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                    <i class="fas fa-search"></i>
-                                </span>
+            <div class="mt-3 flex">
+                <!-- Sidebar -->
+                <div class="w-[20rem] sticky top-0 overflow-y-auto bg-white px-2">
+                    <!-- Create Account Button -->
+                    <div class="sticky top-0 bg-white pt-4 pb-2">
+                        <button @click="openModal(false)" type="button" class="w-full flex items-center justify-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2.5 mb-4">
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
+                            Create Account
+                        </button>
 
-                                <!-- Input Field -->
-                                <input
-                                    v-model="searchQuery"
-                                    type="text"
-                                    placeholder="Search accounts..."
-                                    class="w-64 pl-10 pr-10 py-2 bg-white shadow-sm border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                                >
-
-                                <!-- Clear Button (Right) -->
-                                <button
-                                    v-if="searchQuery"
-                                    @click="clearSearch"
-                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                                >
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!--Buttons-->
-                        <div class="flex items-center space-x-2.5">
-                            <button @click="openModal(false)" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
-                                Create Account
+                        <!-- Search -->
+                        <div class="relative mb-4">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input
+                                v-model="searchQuery"
+                                type="text"
+                                placeholder="Search accounts..."
+                                class="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                            >
+                            <button
+                                v-if="searchQuery"
+                                @click="clearSearch"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                            >
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Main Content -->
-                <div>
-                    <!-- Folder View -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Role Folders -->
+                    <div class="space-y-2 pb-4">
                         <div 
                             v-for="role in uniqueRoles" 
                             :key="role"
                             @click="selectRole(role)"
                             class="cursor-pointer"
                         >
-                        <div class="flex items-center gap-3 p-4 ring-1 ring-gray-200 rounded-lg">
-                                <div class="text-gray-400 ">
-                                    <svg v-if="selectedRole === role" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
-                                        <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
-                                    </svg>
-                                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24">
-                                        <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-medium text-gray-900">{{ role }}</h3>
-                                    <p class="text-sm text-gray-500">{{ getRoleCount(role) }} accounts</p>
+                            <div class="p-3 rounded-lg transition-all duration-200"
+                                :class="{ 'bg-gray-100': selectedRole === role }">
+                                <div class="flex gap-3">
+                                    <div class="text-gray-400">
+                                        <svg v-if="selectedRole === role" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
+                                            <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-900">{{ role }}</h3>
+                                        <p class="text-xs text-gray-500">{{ getRoleCount(role) }} accounts</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <!-- Main Content -->
+                <div class="flex-1 p-4">
                     <!-- Table View (shows when folder is clicked) -->
-                    <div v-if="selectedRole" class="mt-6">
-                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                                <h2 class="text-lg font-semibold text-gray-900">{{ selectedRole }} Accounts</h2>
-                                <button 
-                                    @click="selectedRole = null" 
-                                    class="text-gray-500 hover:text-gray-700"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr v-for="account in filteredAccounts" :key="account.id" class="hover:bg-gray-50">
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    {{ account.student ? `${account.student.first_name} ${account.student.last_name}` : account.username }}
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-500">{{ account.username }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                <button 
-                                                    @click="openModal(true, account)"
-                                                    class="text-blue-600 hover:text-blue-900"
-                                                >
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <div v-if="selectedRole" class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                            <h2 class="text-lg font-semibold text-gray-900">{{ selectedRole }} Accounts</h2>
+                            <button 
+                                @click="selectedRole = null" 
+                                class="text-gray-500 hover:text-gray-700"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr v-for="account in paginatedAccounts" :key="account.id" class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ account.student ? account.student.first_name : '-' }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ account.student ? account.student.last_name : '-' }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">{{ account.username }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">{{ account.student ? account.student.id_number : '-' }}</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="px-6 py-4 border-t border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-700">
+                                        Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filteredAccounts.length }} entries
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button 
+                                        @click="currentPage--" 
+                                        :disabled="currentPage === 1"
+                                        class="px-3 py-1 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Previous
+                                    </button>
+                                    <span class="text-sm text-gray-700">Page {{ currentPage }} of {{ totalPages }}</span>
+                                    <button 
+                                        @click="currentPage++" 
+                                        :disabled="currentPage === totalPages"
+                                        class="px-3 py-1 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <p v-else-if="props.studentAccounts?.length === 0" class="text-gray-500 text-center mt-4">No accounts found.</p>
+                    <p v-else class="text-gray-500 text-center mt-4">Select a role to view accounts</p>
                 </div>
             </div>
 
@@ -258,7 +280,7 @@
 
 <script setup>
 import { router,Head, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 
 // Props for students and errors
@@ -354,10 +376,35 @@ const getRoleCount = (role) => {
     return props.studentAccounts.filter(account => account.role === role).length;
 };
 
-// Filter accounts based on selected role
+// Filter accounts based on selected role and search query
 const filteredAccounts = computed(() => {
-    if (!selectedRole.value || !props.studentAccounts) return [];
-    return props.studentAccounts.filter(account => account.role === selectedRole.value);
+    if (!props.studentAccounts) return [];
+    
+    let filtered = props.studentAccounts;
+    
+    // Filter by role if selected
+    if (selectedRole.value) {
+        filtered = filtered.filter(account => account.role === selectedRole.value);
+    }
+    
+    // Filter by search query
+    if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase();
+        filtered = filtered.filter(account => {
+            // Search in student name if student exists
+            const studentName = account.student 
+                ? `${account.student.first_name} ${account.student.last_name}`.toLowerCase()
+                : '';
+            
+            // Search in username
+            const username = account.username.toLowerCase();
+            
+            // Return true if either student name or username matches the search query
+            return studentName.includes(query) || username.includes(query);
+        });
+    }
+    
+    return filtered;
 });
 
 // Handle role selection
@@ -365,8 +412,33 @@ const selectRole = (role) => {
     selectedRole.value = selectedRole.value === role ? null : role;
 };
 
+// Pagination
+const currentPage = ref(1);
+const itemsPerPage = 16;
+const searchQuery = ref('');
 
+// Computed properties for pagination
+const totalPages = computed(() => Math.ceil(filteredAccounts.value.length / itemsPerPage));
+const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage);
+const endIndex = computed(() => Math.min(startIndex.value + itemsPerPage, filteredAccounts.value.length));
+const paginatedAccounts = computed(() => {
+    return filteredAccounts.value.slice(startIndex.value, Math.min(endIndex.value, startIndex.value + itemsPerPage));
+});
 
+// Reset pagination when selecting a new role
+watch(selectedRole, () => {
+    currentPage.value = 1;
+});
+
+// Reset pagination when search query changes
+watch(searchQuery, () => {
+    currentPage.value = 1;
+});
+
+const clearSearch = () => {
+    searchQuery.value = '';
+    currentPage.value = 1;
+};
 </script>
 
 <style scoped>

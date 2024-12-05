@@ -446,4 +446,12 @@ class FreeForAllController extends Controller
         return redirect()->back()->with('message', 'Status updated successfully');
     }
 
+    public function updateStatusAdmin(Request $request, $id)
+    {
+        $assignedSport = AssignedSports::findOrFail($id);
+        $assignedSport->update(['status' => $request->input('status')]);
+        
+        return redirect()->back()->with('message', 'Status updated successfully');
+    }
+
 }
