@@ -84,7 +84,8 @@ class RoundRobinController extends Controller
             'standings' => $standings,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'players' => $players
+            'players' => $players,
+            'user' => auth()->user()
 
         ]);
     }   

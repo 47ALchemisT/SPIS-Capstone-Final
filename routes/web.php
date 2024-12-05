@@ -63,13 +63,6 @@ Route::post('/search-user', [ForgotPasswordController::class, 'searchUser'])->na
 Route::get('/reset-password/{id}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
 
-// Activity logs route
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
-    Route::post('/admin/change-password', [DashboardController::class, 'changePassword'])->name('admin.change-password');
-    Route::get('/account-settings', [DashboardController::class, 'accountSettings'])->name('admin.account-settings');
-});
-
 // Sports Landing Page routes
 Route::get('/sports', [SportsLandingController::class, 'sports'])->name('sports.index');
 Route::get('/home-sportview/{sport}', [SportsLandingController::class, 'sportsIndex'])->name('home-sportview.index');
@@ -139,6 +132,12 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/admin/change-password', [DashboardController::class, 'changePassword'])->name('admin.change-password');
     Route::get('/account-settings', [DashboardController::class, 'accountSettings'])->name('admin.account-settings');
 });
+
+Route::put('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');
+Route::post('/matches/update-date-time', [RoundRobinController::class, 'updateDateTime'])->name('matches.updateDateTimeRR');
+Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])->name('sport-variations.update-time');
+Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])->name('sport-variations.update-time');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/update-password', [SubAdminController::class, 'updatePassword'])->name('update-password');

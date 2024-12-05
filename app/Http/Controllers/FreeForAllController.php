@@ -97,6 +97,7 @@ class FreeForAllController extends Controller
                 'venueRecords' => $venueRecords,
                 'players' => $players,
                 'latestPalakasan' => $latestPalakasan,
+                'user' => auth()->user()        
 
             ]);
 

@@ -10,8 +10,8 @@
                     </div>
                     <div class="ml-2 sm:ml-3 relative flex items-center gap-2 sm:gap-3">
                         <div class="hidden sm:block">
-                            <p class="text-white text-sm font-semibold">{{ user.student.first_name }} {{ user.student.last_name }}</p>
-                            <p class="text-white text-xs text-right">Sub Admin</p>
+                            <p class="text-white text-sm font-semibold">{{ user?.student?.first_name }} {{ user?.student?.last_name }}</p>
+                            <p class="text-white text-xs text-right">{{ user?.role }}</p>
                         </div>
                         <Menu as="div" class="relative inline-block text-left">
                                     <MenuButton class="mt-1.5 inline-flex items-center justify-center rounded-lg text-sm font-medium text-gray-700 ">
@@ -30,8 +30,8 @@
                                         <div class="py-1">
                                         <MenuItem v-slot="{ active }">
                                             <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 border-b text-sm hover:bg-white overflow-hidden font-medium']">
-                                                {{ user.student.first_name }} {{ user.student.last_name }}
-                                                <p class="text-xs text-gray-500 font-normal">{{ user.student.univ_email }}</p>
+                                                {{ user?.student?.first_name }} {{ user?.student?.last_name }}
+                                                <p class="text-xs text-gray-500 font-normal">{{ user?.student?.univ_email }}</p>
                                             </a>
                                         </MenuItem>
 
@@ -68,15 +68,12 @@
 <script setup>
     import { Link, usePage } from '@inertiajs/vue3';
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-    import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-    import { computed } from 'vue';
-import { User } from 'lucide-vue-next';
 
     const { url: currentRoute } = usePage();
 
     const props = defineProps({
         user: Object,
-        facilitator: Object
+        facilitator: Object,
     });
 
 </script>

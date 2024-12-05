@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Hash;
 
 class ChangePasswordController extends Controller
 {
-    public function showChangePasswordForm($id)
+    public function showChangePasswordForm($id = null)
     {
         try {
-            $account = StudentAccount::with('student')->findOrFail($id);
+            // If no ID is provided, use the authenticated user
+            $account = $id ? StudentAccount::with('student')->findOrFail($id) 
+                         : auth()->user()->load('student');
             
             return Inertia::render('Auth/ChangePassword', [
                 'account' => [
@@ -41,28 +43,30 @@ class ChangePasswordController extends Controller
 
         try {
             $request->validate([
-                'id' => 'required',
                 'current_password' => 'required',
                 'new_password' => 'required|min:8|max:16',
                 'new_password_confirmation' => 'required|same:new_password'
             ]);
 
-            $account = StudentAccount::findOrFail($request->id);
+            // If no ID is provided, use the authenticated user
+            $account = $request->has('id') 
+                ? StudentAccount::findOrFail($request->id)
+                : auth()->user();
 
             // Verify current password
             if (!Hash::check($request->current_password, $account->password)) {
-                return back()->with([
-                    'error' => 'Current password is incorrect.'
-                ]);
+                return back()->withErrors([
+                    'current_password' => 'The current password is incorrect.'
+                ])->with('error', 'The current password is incorrect.');
             }
 
             $account->password = bcrypt($request->new_password);
             $account->save();
 
-            Log::info('Password change successful', ['id' => $request->id]);
+            Log::info('Password change successful', ['id' => $account->id]);
 
             return back()->with([
-                'success' => true,
+                'status' => 'success',
                 'message' => 'Password has been changed successfully.'
             ]);
         } catch (\Exception $e) {
@@ -72,7 +76,8 @@ class ChangePasswordController extends Controller
             ]);
             
             return back()->with([
-                'error' => 'Unable to change password. Please try again.'
+                'status' => 'error',
+                'message' => 'Unable to change password. Please try again.'
             ]);
         }
     }

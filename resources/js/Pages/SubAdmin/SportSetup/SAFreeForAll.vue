@@ -1,10 +1,10 @@
 <template>
   <div>
     <Head :title="sport.sport.name" />
-    <AppLayout>
+    <AppLayout :user="user">
       <template v-slot:default>
         <!-- Header Section -->
-        <div class="flex items-center justify-between gap-2 mt-6">
+        <div class="flex items-center justify-between gap-2 pt-6">
                     <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                     <div>
                         <button 
@@ -289,7 +289,8 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  players: Array
+  players: Array,
+  user: Object
 
 });
 
