@@ -1,6 +1,6 @@
 <template>
     <Head :title="sport.sport.name"/>
-    <AppLayout>
+    <AppLayout :user="user">
         <template v-slot:default>
             <div class="flex flex-col">
                 <div class="flex items-center justify-between gap-2 mt-6">
@@ -466,7 +466,8 @@ const props = defineProps({
     allMatches: Array,
     venueRecords: Array,
     players: Array,
-    palakasanStatus: String
+    palakasanStatus: String,
+    user: Object
 });
 
 const loading = ref(false);

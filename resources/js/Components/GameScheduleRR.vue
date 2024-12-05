@@ -1,11 +1,18 @@
 <template>
   <div class="game-schedule">
-    <div v-for="(roundMatches, round) in matchesByRound" :key="round" class="mb-8 p-5 rounded-lg bg-gray-50">
+    <div v-for="(roundMatches, round) in matchesByRound" :key="round" 
+      :class="[
+        'mb-8 p-5 rounded-lg',
+        isRoundCompleted(roundMatches) ? 'bg-blue-50' : 'bg-gray-50'
+      ]">
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
       <div class="flex justify-center gap-4 ">
         <div v-for="match in roundMatches" 
-            :key="match.id" 
-            class="bg-white shadow rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+          :key="match.id" 
+          :class="[
+            'shadow rounded-lg p-4 border transition-all duration-200',
+            match.status === 'completed' ? 'bg-blue-100 border-blue-300' : 'bg-white border-gray-200 hover:shadow-md'
+          ]">
           <div class="flex justify-between items-center mb-3">
             <div class="flex flex-col">
               <span class="font-semibold text-md">{{ match.game }}</span>
@@ -14,7 +21,7 @@
               <button 
                 @click="openTimeModal(match)" 
                 type="button" 
-                class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                 :disabled="match.status === 'completed'"
               >
                 <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
@@ -23,12 +30,28 @@
           </div>
 
           <div class="grid grid-cols-4 gap-3 items-center">
-            <div class="col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
+            <div class="col-span-2 flex justify-center p-2 rounded-md items-center"
+              :class="[ 
+                match.status === 'completed' ? {
+                  'bg-green-100 text-green-700': getScore(match, 'teamA') > getScore(match, 'teamB'),
+                  'bg-red-100 text-red-700': getScore(match, 'teamA') < getScore(match, 'teamB')
+                } : 'bg-gray-100'
+              ]">
               <span class="font-medium mr-3">{{ getTeamName(match.teamA_id) }}</span>
-              <span :class="getScoreClass(match, 'teamA')">{{ getScore(match, 'teamA') }}</span>
+              <span v-if="match.status === 'completed'" class="text-sm font-medium">
+                {{ getScore(match, 'teamA') > getScore(match, 'teamB') ? 'Win' : 'Lose' }}
+              </span>
             </div>
-            <div class="col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
-              <span :class="getScoreClass(match, 'teamB')">{{ getScore(match, 'teamB') }}</span>
+            <div class="col-span-2 flex justify-center p-2 rounded-md items-center"
+              :class="[
+                match.status === 'completed' ? {
+                  'bg-green-100 text-green-700': getScore(match, 'teamB') > getScore(match, 'teamA'),
+                  'bg-red-100 text-red-700': getScore(match, 'teamB') < getScore(match, 'teamA')
+                } : 'bg-gray-100'
+              ]">
+              <span v-if="match.status === 'completed'" class="text-sm font-medium">
+                {{ getScore(match, 'teamB') > getScore(match, 'teamA') ? 'Win' : 'Lose' }}
+              </span>
               <span class="font-medium ml-3">{{ getTeamName(match.teamB_id) }}</span>
             </div>
           </div>
@@ -203,7 +226,7 @@ const selectedMatch = ref(null);
 const winnerFormData = ref({
   result: '',
 });
-  
+
 const isTimeModalOpen = ref(false);
 const selectedDate = ref('');
 const selectedTime = ref('');
@@ -460,5 +483,9 @@ const declareWinner = () => {
       console.error('Error submitting result:', errors);
     }
   });
+};
+
+const isRoundCompleted = (matches) => {
+  return matches.every(match => match.status === 'completed');
 };
 </script>

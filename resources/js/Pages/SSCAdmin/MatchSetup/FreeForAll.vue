@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center text-gray-600 gap-2 ">
+                <div class="flex items-center text-gray-600 gap-2 capitalize">
                     <p class="text-sm"> {{ sport.setup }}</p>
                     <span class="text-sm">•</span>
                     <p class=" text-sm">{{ sport.type }}</p>
@@ -507,7 +507,7 @@ const allMatchesScheduled = computed(() => {
 
 const handleScheduleClick = async () => {
   try {
-    await router.patch(route('assigned-sports.update-status', props.sport.id), {
+    await router.patch(route('assigned-sports.update-admin-status', props.sport.id), {
       status: 'scheduled'
     });
     // Update local state

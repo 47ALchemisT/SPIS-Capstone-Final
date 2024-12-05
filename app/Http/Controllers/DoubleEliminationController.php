@@ -75,7 +75,8 @@ class DoubleEliminationController extends Controller
             'venues' => $venues,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'players' => $players
+            'players' => $players,
+            'user' => auth()->user()        
 
         ]);
     }   
@@ -146,8 +147,7 @@ class DoubleEliminationController extends Controller
             'venues' => $venues,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'players' => $players
-
+            'players' => $players,
         ]);
     }   
 
@@ -186,7 +186,8 @@ class DoubleEliminationController extends Controller
                 'facilitator' => $facilitator,
                 'majorPoints' => $majorPoints,
                 'minorPoints' => $minorPoints,
-                'players' => $players
+                'players' => $players,
+                
             ]);
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
             abort(403, 'Invalid or tampered facilitator ID');

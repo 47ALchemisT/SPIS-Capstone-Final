@@ -17,6 +17,7 @@ use App\Models\SportsVariationsMatches;
 use App\Models\StudentAccount;
 use Dotenv\Exception\ValidationException;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;
 
 class SubAdminController extends Controller
 {
@@ -89,7 +90,8 @@ class SubAdminController extends Controller
             'sports' => $assignedSports,
             'facilitator' => $facilitator,
             'matchResults' => $matchResults,
-        ]);
+            'user' => auth()->user()        
+            ]);
     }
 
     public function details()

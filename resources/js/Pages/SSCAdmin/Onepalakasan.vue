@@ -147,9 +147,9 @@
                                     </div>
 
                                     <div class="grid grid-cols-3 mt-4 gap-4">
-                                        <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'lineups'">
+                                        <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'line ups'">
                                             <div>
-                                                <h1 class="text-sm font-semibold text-blue-700">Lineups</h1>
+                                                <h1 class="text-sm font-semibold text-blue-700">Line ups</h1>
                                             </div>
                                             <p class="mt-4 text-3xl font-semibold text-blue-700 mb-3">{{ teamsCount }}</p>
                                         </div>
@@ -288,10 +288,10 @@
                             >
                                 <button 
                                     @click="openSportsModal" 
-                                    :disabled="latestPalakasan?.status !== 'pending' || assignedTeams.length < 4"
+                                    :disabled="latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed' || assignedTeams.length < 4"
                                     :class="[
                                         'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                        latestPalakasan?.status !== 'pending'
+                                        latestPalakasan?.status === 'pending' || latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed'
                                             ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
                                             : 'flex items-center gap-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                     ]"      
@@ -348,16 +348,16 @@
                     </div>
 
                     <!-- Sports Grid -->
-                    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div v-show="filteredAndSortedSports.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <div
-                        v-for="(sport, index) in filteredAndSortedSports"
-                        :key="index"
+                        v-for="sport in filteredAndSortedSports"
+                        :key="sport.id"
                         @click="isSelectionMode ? toggleSportSelection(sport) : viewSport(sport.id)"
-                        class="bg-white ring-1 ring-gray-300 cursor-pointer rounded-lg p-4 transition-all duration-300 ease-in-out hover:bg-blue-50/80 hover:ring-blue-400 group relative"
+                        class="bg-white ring-1 ring-gray-300 cursor-pointer rounded-lg p-6 transition-all duration-300 ease-in-out hover:bg-blue-50/80 hover:ring-blue-400 group relative"
                         :class="{ 'ring-2 ring-blue-500 bg-blue-50': isSelectionMode && selectedSports.includes(sport) }"
                         >
                         <!-- Selection Checkbox -->
-                        <div v-if="isSelectionMode" class="absolute top-2 right-2">
+                        <div v-show="isSelectionMode" class="absolute top-2 right-2">
                             <div class="w-5 h-5 rounded border-2" :class="[
                                 selectedSports.includes(sport) 
                                     ? 'bg-blue-500 border-blue-500' 
@@ -386,56 +386,56 @@
 
                         <div class="flex items-center justify-between">
                             <div class="w-full">
-                            <svg class="w-6 h-6 mb-3 group-hover:text-blue-600 transition" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 2048 2048">
-                                <path fill="currentColor" d="M1792 256q27 0 50 10t40 27t28 41t10 50v192q0 86-30 163t-85 137t-127 98t-159 48q-19 62-51 116t-76 98t-97 77t-114 56q35 34 58 76t35 91h70q40 0 75 15t61 41t41 61t15 75v192H384v-192q0-40 15-75t41-61t61-41t75-15h70q11-48 34-90t59-77q-61-22-114-55t-96-78t-76-98t-52-116q-86-9-159-47t-127-99t-84-137T0 576V384q0-27 10-50t27-40t41-28t50-10h256V128h1152v128zm-1280 0v128h896V256zM128 576q0 57 19 109t53 93t81 71t103 41V384H128zm1280 1152q0-26 19-45t45-19H576q-26 0-45 19t-19 45v64h896zm-267-192q-10-29-28-52t-42-41t-52-26t-59-9q-30 0-58 9t-53 26t-42 40t-28 53zm-181-256q81 0 161-27t144-76t103-121t40-160V512H512v384q0 89 39 160t103 120t144 77t162 27m832-896h-256v506q56-12 103-41t81-70t53-94t19-109z"/>
-                            </svg>
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-xl font-semibold">{{ sport.sport?.name }} {{ sport.categories }}</h3>
-                            </div>
+                                <div class="flex bg-blue-100 w-14 h-14 justify-center items-center rounded-full mb-4">
+                                    <svg class="w-6 h-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                        <path fill="currentColor" fill-rule="evenodd" d="M5.166 2.621v.858q-1.553.223-3.071.543a.75.75 0 0 0-.584.859a6.75 6.75 0 0 0 6.138 5.6a6.7 6.7 0 0 0 2.743 1.346A6.7 6.7 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75a2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.7 6.7 0 0 1-1.112-3.173a6.7 6.7 0 0 0 2.743-1.347a6.75 6.75 0 0 0 6.139-5.6a.75.75 0 0 0-.585-.858a47 47 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744a49 49 0 0 0-6.093-.377q-3.096.002-6.093.377a.75.75 0 0 0-.657.744m0 2.629c0 1.196.312 2.32.857 3.294A5.27 5.27 0 0 1 3.16 5.337a46 46 0 0 1 2.006-.343zm13.5 0v-.256q1.011.15 2.006.343a5.27 5.27 0 0 1-2.863 3.207a6.7 6.7 0 0 0 .857-3.294" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xl font-semibold">{{ sport.sport?.name }} {{ sport.categories }}</h3>
+                                </div>
 
-                            <div class="flex border-b pb-2 border-gray-300 text-gray-700 items-center gap-2 mt-2">
-                                <p class="text-xs flex items-center gap-1">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M16.45 13.29c.74-.29 4.3-1.96 4.3-7.13c0-.41-.34-.75-.75-.75h-2.28V4c0-.41-.34-.75-.75-.75H7.03c-.41 0-.75.34-.75.75v1.41H4c-.41 0-.75.34-.75.75c0 5.17 3.56 6.84 4.3 7.13c.9 1.12 2.21 1.88 3.7 2.08v1.29H8.5c-.32 0-.61.21-.71.51l-.86 2.59a.75.75 0 0 0 .1.68c.14.2.37.31.61.31h8.72c.24 0 .47-.12.61-.31s.18-.45.1-.68l-.86-2.59a.74.74 0 0 0-.71-.51h-2.75v-1.29c1.49-.2 2.8-.96 3.7-2.08m-1.13 5.96H8.68l.36-1.09h5.91zm3.9-12.34c-.15 1.81-.86 3-1.59 3.77c.06-.32.09-.64.09-.98V6.91zm-14.44 0h1.5V9.7c0 .33.03.66.09.98c-.73-.77-1.43-1.96-1.58-3.77zm3 2.79V4.75h8.45V9.7a4.22 4.22 0 0 1-4.22 4.22A4.23 4.23 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
-                            </svg>
-                                {{ sport.setup }}
-                                </p>
-                                <p class="text-xs text-gray-400">|</p>
-                                <p class="text-xs flex items-center gap-1">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M16.45 13.29c.74-.29 4.3-1.96 4.3-7.13c0-.41-.34-.75-.75-.75h-2.28V4c0-.41-.34-.75-.75-.75H7.03c-.41 0-.75.34-.75.75v1.41H4c-.41 0-.75.34-.75.75c0 5.17 3.56 6.84 4.3 7.13c.9 1.12 2.21 1.88 3.7 2.08v1.29H8.5c-.32 0-.61.21-.71.51l-.86 2.59a.75.75 0 0 0 .1.68c.14.2.37.31.61.31h8.72c.24 0 .47-.12.61-.31s.18-.45.1-.68l-.86-2.59a.74.74 0 0 0-.71-.51h-2.75v-1.29c1.49-.2 2.8-.96 3.7-2.08m-1.13 5.96H8.68l.36-1.09h5.91zm3.9-12.34c-.15 1.81-.86 3-1.59 3.77c.06-.32.09-.64.09-.98V6.91zm-14.44 0h1.5V9.7c0 .33.03.66.09.98c-.73-.77-1.43-1.96-1.58-3.77zm3 2.79V4.75h8.45V9.7a4.22 4.22 0 0 1-4.22 4.22A4.23 4.23 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
-                            </svg>
-                                {{ sport.type }}
-                                </p>
-                            </div>
-                            <!-- Facilitator information -->
-                            <div class="flex items-center mt-3 gap-2">
-                                <div class="p-2 bg-gray-200/80 rounded-md group-hover:bg-blue-200/50">
-                                <svg class="w-5 h-5 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="currentColor"/><path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/></svg>
+                                <div class="flex border-b pb-2 border-gray-300 text-gray-700 items-center gap-2 mt-2">
+                                    <p class="text-xs flex items-center gap-1">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"><path stroke-linecap="round" d="M8 10.5h32m-16 9h16m-16 9h16m-32 9h32"/><path d="m8 19l8 5l-8 5z"/></g></svg>
+                                    {{ sport.setup }}
+                                    </p>
+                                    <p class="text-xs text-gray-400">|</p>
+                                    <p class="text-xs flex items-center gap-1">
+                                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2.5" d="m12 2l3.104 6.728l7.358.873l-5.44 5.03l1.444 7.268L12 18.28L5.534 21.9l1.444-7.268L1.538 9.6l7.359-.873z"/></svg>
+                                        {{ sport.type }}
+                                    </p>
                                 </div>
-                                <div>
-                                <p class="text-sm text-gray-800 font-semibold">
-                                    {{ getFacilitatorName(sport.facilitator_id) }}
-                                </p>
-                                <p class="text-xs text-gray-400 group-hover:text-blue-400">Facilitator</p>
+                                <!-- Facilitator information -->
+                                <div class="flex items-center mt-3 gap-2">
+                                    <div class="p-2 bg-gray-200/80 rounded-md group-hover:bg-blue-200/50">
+                                    <svg class="w-5 h-5 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="currentColor"/><path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/></svg>
+                                    </div>
+                                    <div>
+                                    <p class="text-sm text-gray-800 font-semibold">
+                                        {{ getFacilitatorName(sport.facilitator_id) }}
+                                    </p>
+                                    <p class="text-xs text-gray-400 group-hover:text-blue-400">Facilitator</p>
+                                    </div>
+                                    
                                 </div>
-                                
-                            </div>
-                            <!-- Animated Arrow -->
-                            <div class="absolute bottom-6  right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
-                                <svg 
-                                    xmlns="http://www.w3.org/2000/svg" 
-                                    class="h-5 w-5 text-gray-500  group-hover:text-blue-600" 
-                                    fill="none" 
-                                    viewBox="0 0 24 24" 
-                                    stroke="currentColor"
-                                >
-                                    <path 
-                                        stroke-linecap="round" 
-                                        stroke-linejoin="round" 
-                                        stroke-width="2" 
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                    />
-                                </svg>
-                            </div>
+                                <!-- Animated Arrow -->
+                                <div class="absolute bottom-6  right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        class="h-5 w-5 text-gray-500  group-hover:text-blue-600" 
+                                        fill="none" 
+                                        viewBox="0 0 24 24" 
+                                        stroke="currentColor"
+                                    >
+                                        <path 
+                                            stroke-linecap="round" 
+                                            stroke-linejoin="round" 
+                                            stroke-width="2" 
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                        />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                         </div>
@@ -454,7 +454,7 @@
                                 Please add more teams in the Teams tab.
                             </p>
                             <button 
-                                @click="activeTab = 'lineups'" 
+                                @click="activeTab = 'line ups'" 
                                 class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
                             >
                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2A2.25 2.25 0 0 1 12.75 22h-2A8.75 8.75 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/></svg>
@@ -1013,10 +1013,10 @@
                         </div>
                         <!-- Logs List -->
                         <div v-else>
-                        <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg">
+                        <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg space-y-2 mb-4">
                                     <!-- Regular Match Result -->
                                     <template v-if="submit.type === 'regular'">
-                                        <div class="flex justify-between items-center  overflow-y-auto ">
+                                        <div class="flex justify-between items-center overflow-y-auto ">
                                             <div class="w-full">
                                                 <div class="flex w-full justify-between gap-2 mb-2">
                                                     <div class="flex items-center text-gray-600 gap-2 ">
@@ -1544,29 +1544,35 @@ const openTeamsModal = () => {
 
     // Computed property for filtering and sorting assigned sports from props
     const filteredAndSortedSports = computed(() => {
-        let filteredSports = props.assignedSports;
-
-        // Filter sports based on search query
-        if (searchQuerySports.value) {
-            filteredSports = filteredSports.filter(sport =>
-                sport.sport?.name.toLowerCase().includes(searchQuerySports.value.toLowerCase()) ||
-                sport.description.toLowerCase().includes(searchQuerySports.value.toLowerCase())
-            );
+        // Return original array if no search query
+        if (!searchQuerySports.value) {
+            return props.assignedSports;
         }
-
-        // Sort sports based on sort order
-        if (sortOrderSports.value === 'az') {
-            return filteredSports.sort((a, b) =>
-                a.sport?.name.localeCompare(b.sport?.name)
-            );
-        } else if (sortOrderSports.value === 'za') {
-            return filteredSports.sort((a, b) =>
-                b.sport?.name.localeCompare(a.sport?.name)
-            );
-        }
-
-        // Default sort order (as per the original assignedSports array)
-        return filteredSports;
+        
+        const searchTerm = searchQuerySports.value.toLowerCase();
+        
+        // Create a cached facilitator name lookup
+        const facilitatorNameCache = new Map();
+        
+        return props.assignedSports.filter(sport => {
+            // Get facilitator name from cache or compute and cache it
+            let facilitatorName = facilitatorNameCache.get(sport.facilitator_id);
+            if (!facilitatorName) {
+                facilitatorName = (getFacilitatorName(sport.facilitator_id) || '').toLowerCase();
+                facilitatorNameCache.set(sport.facilitator_id, facilitatorName);
+            }
+            
+            // Early return if sport name matches
+            if (sport.sport?.name?.toLowerCase().includes(searchTerm)) {
+                return true;
+            }
+            
+            // Check other fields only if necessary
+            return (sport.categories?.toLowerCase() || '').includes(searchTerm) ||
+                   (sport.type?.toLowerCase() || '').includes(searchTerm) ||
+                   (sport.setup?.toLowerCase() || '').includes(searchTerm) ||
+                   facilitatorName.includes(searchTerm);
+        });
     });
 
     //progress bar
@@ -1749,9 +1755,9 @@ const openTeamsModal = () => {
     const getTypeDescription = (type) => {
         switch (type) {
             case 'Major':
-                return 'Higher point value destribution';
+                return 'Higher point value distribution';
             case 'Minor':
-                return 'Lower point value destribution';
+                return 'Lower point value distribution';
             default:
                 return '';
         }

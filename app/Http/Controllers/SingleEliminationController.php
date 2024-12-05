@@ -76,7 +76,9 @@ class SingleEliminationController extends Controller
             'venues' => $venues,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'players' => $players
+            'players' => $players,
+            'user' => auth()->user()        
+
         ]);
     }  
     

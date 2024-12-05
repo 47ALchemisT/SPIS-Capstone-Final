@@ -12,24 +12,20 @@ class FacilitatorMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Get the currently authenticated user
-        $student = StudentAccount::find(Auth::id());
+        $user = Auth::user();
+        $currentBrowserSession = $request->session()->getId();
         
-        // Check if user is a facilitator
-        if ($student && $student->role === 'Facilitator') {
-            // Store facilitator session separately
-            $request->session()->put('facilitator_session', true);
-            return $next($request);
+        // Verify user role and browser session
+        if (!$user || 
+            $user->role !== 'Facilitator' || 
+            session('browser_session') !== $currentBrowserSession) {
+            
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('/login')->with('error', 'Please login as facilitator.');
         }
 
-        // If not authenticated as facilitator but has a valid session for another role, allow access
-        if (Auth::check() && 
-            ($request->session()->has('admin_session') || 
-             $request->session()->has('committee_head_session'))) {
-            return $next($request);
-        }
-
-        // Redirect to home or dashboard if not authenticated or not a facilitator
-        return redirect('/')->with('error', 'Access denied. Only facilitators can access this page.');
+        return $next($request);
     }
 }

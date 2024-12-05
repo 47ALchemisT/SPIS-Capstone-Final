@@ -17,7 +17,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center text-gray-600 gap-2 ">
+                <div class="flex items-center text-gray-600 gap-2 capitalize">
                     <p class="text-sm"> {{ sport.setup }}</p>
                     <span class="text-sm">•</span>
                     <p class=" text-sm">{{ sport.type }}</p>
@@ -210,7 +210,6 @@
                                             <h4 class="text-center text-sm font-bold py-2">Round {{ round }}</h4>
                                             <div 
                                                 v-for="match in matches"
-                                                @click="openScoreModal(match)"
                                                 :key="match.id"
                                                 class=" w-56 space-y-2"
                                                 :disabled="!canUpdateMatch(match)"
@@ -306,67 +305,6 @@
                     </div>
                 </div>
 
-                <!-- Score Setting Modal -->
-                <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div class="bg-white rounded-lg shadow-lg relative w-72">
-                        <!-- Modal header -->
-                        <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Add Score
-                            </h3>
-                            <button @click="closeScoreModal"  type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                            </button>
-                        </div>
-                        <div class="p-4 ">
-                            
-                            <form @submit.prevent="submitScore">
-                                <div class="mb-4">
-                                    <label class="block mb-2 font-medium text-sm">
-                                        {{ getTeamName(selectedMatch.teamA_id) }}
-                                        <input 
-                                            v-model="scoreFormData.teamA_score"
-                                            type="number"
-                                            min="0"
-                                            required
-                                            class="border px-3 py-2 mt-2  rounded-lg border-gray-300  w-full"
-                                        />
-                                    </label>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="block mb-3 font-medium text-sm">
-                                        {{ getTeamName(selectedMatch.teamB_id) }}
-                                        <input 
-                                            v-model="scoreFormData.teamB_score"
-                                            type="number"
-                                            min="0"
-                                            required
-                                            class="border mt-2 rounded-lg border-gray-300 px-3 py-2 w-full"
-                                        />
-                                    </label>
-                                </div>
-
-                                <p v-if="scoreError" class="text-red-600 mb-4">{{ scoreError }}</p>
-
-                                <div class="grid grid-cols-2 items-center gap-2">
-                                    <button  
-                                        @click="closeScoreModal" 
-                                        type="button" class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                        Cancel
-                                    </button>
-
-                                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                        {{ scoreLoading ? 'Saving...' : 'Save Score' }}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
                 <!-- Create Matches Modal -->
                 <div v-if="showCreateMatchesModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div class="bg-white rounded-lg shadow-lg relative w-96">
@@ -914,7 +852,7 @@ const allMatchesScheduled = computed(() => {
 });
 
 const handleScheduleClick = () => {
-    router.patch(route('assigned-sports.update-status', props.sport.id), {
+    router.patch(route('assigned-sports.update-admin-status', props.sport.id), {
         status: 'scheduled'
     }, {
         onSuccess: () => {

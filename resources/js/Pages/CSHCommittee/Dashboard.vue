@@ -42,7 +42,7 @@
                             <div class="flex gap-2 rounded-lg">
                                 <div class="flex gap-2 rounded-lg">
                                     <button 
-                                        v-for="tab in ['home', 'sports', 'schedule', 'What to Know' ]"
+                                        v-for="tab in ['home', 'sports', 'schedule', 'Overview', 'settings']"
                                         :key="tab"
                                         @click="activeTab = tab"
                                         :class="[
@@ -116,12 +116,16 @@
                                             <p class="text-sm text-blue-500 mb-3">{{ assignedCollege.assigned_team.college.name }}</p>
                                         </div>
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
+<<<<<<< HEAD
                                             <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" d="M15 14s1 0 1-1s-1-4-5-4s-5 3-5 4s1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276c.593.69.758 1.457.76 1.72l-.008.002l-.014.002zM11 7a2 2 0 1 0 0-4a2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0a3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904c.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>                                            
+=======
+                                            <i class="fa-solid fa-graduation-cap text-blue-700 w-8 h-8 mb-6 text-3xl"></i>
+>>>>>>> 9242572d25f6bb6911518591c2216c041d0c3a73
                                             <p class="text-sm text-blue-600 mb-1.5">Total number of Students</p>
                                             <p class="text-2xl font-bold text-blue-700">{{ students.length }}</p>
                                         </div>
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>                                    
+                                            <i class="fa-solid fa-user text-blue-700 w-8 h-8 mb-6 text-3xl"></i>
                                             <p class="text-sm text-blue-600 mb-1.5">Assigned Students</p>
                                             <p class="text-2xl font-bold text-blue-700">{{ totalAssignedStudents }}</p>
                                         </div>
@@ -142,9 +146,7 @@
                                                         placeholder="Search sport..."
                                                         class="w-full pl-10 pr-10 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                                                     >
-                                                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0m-5-3a7 7 0 00-7 7v2a5 5 0 0010.557 4.743l.007.022a.75.75 0 001.774.557V20l2.5-2.5H9.625l2.5-2.5A.75.75 0 0012 15V9.406a.75.75 0 00-.551-.223l-.007-.022a5 5 0 00-4.568-6.32l-2.5-2.5H3a.75.75 0 00-.557 1.227l2.5 2.5A.75.75 0 003 9.187V19.5a5 5 0 0010.557 4.743l.007.022a.75.75 0 001.774.557V22h2.5l-2.5-2.5A.75.75 0 0012 20v-2a7 7 0 00-7-7V5.373l.007-.022a.75.75 0 001.774-.557V3H7.5a.75.75 0 00-.557 1.227l2.5 2.5A.75.75 0 007 6.187V3.625a5 5 0 00-4.568-6.32l-2.5-2.5H3a.75.75 0 00-.557 1.227l2.5 2.5z" />
-                                                    </svg>
+                                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                                                     <button
                                                         v-if="sportsSearchQuery"
                                                         @click="clearSearch"
@@ -157,9 +159,6 @@
                                                 </div>
                                                 <h2 class="text-md font-medium text-gray-700">Assigned Sports ({{ assignedSports.length }})</h2>
                                             </div>
-                                            <button type="button" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                                                Sort
-                                            </button>
                                         </div>
 
                                         <ul class="space-y-4">
@@ -176,7 +175,7 @@
                                                     <div>
                                                         <button
                                                             @click="openPlayerModal(sport)"
-                                                            class="bg-blue-700 hover:bg-blue-600 font-medium text-white py-2 px-4 rounded-lg text-sm"
+                                                            class="bg-blue-700 hover:bg-blue-600 font-medium text-white py-2 px-4 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700"
                                                             :disabled="palakasan.status === 'live' || palakasan.status === 'completed'"
                                                             >
                                                             Assign Players
@@ -209,20 +208,29 @@
                                                         <DisclosurePanel class="px-4 pt-4 pb-2 text-sm text-gray-500">
                                                             <div v-if="sport.assigned_players.length > 0" class="space-y-2">
                                                                 <div v-for="player in sport.assigned_players" :key="player.id" 
-                                                                    class="flex gap-2 items-center p-2 bg-gray-200/30 rounded-md border border-gray-100"
+                                                                    class="flex justify-between items-center p-2 bg-gray-200/30 rounded-md border border-gray-100"
                                                                 >
-                                                                    <div class="flex-shrink-0">
-                                                                        <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                                                            <span class="text-gray-700 font-medium">
-                                                                                {{ player.student.first_name[0] }}
-                                                                            </span>
+                                                                    <div class="flex gap-2 items-center">
+                                                                        <div class="flex-shrink-0">
+                                                                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                                                                <span class="text-gray-700 font-medium">
+                                                                                    {{ player.student.first_name[0] }}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>
+                                                                            <p class="text-sm font-medium text-gray-900">
+                                                                                {{ player.student.first_name }} {{ player.student.last_name }}
+                                                                            </p>
                                                                         </div>
                                                                     </div>
-                                                                    <div>
-                                                                        <p class="text-sm font-medium text-gray-900">
-                                                                            {{ player.student.first_name }} {{ player.student.last_name }}
-                                                                        </p>
-                                                                    </div>
+                                                                    <button 
+                                                                        @click="removePlayer(sport.id, player.id)"
+                                                                        class="p-1 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50"
+                                                                        title="Remove player"
+                                                                    >
+                                                                        <i class="fa-solid fa-xmark"></i>
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                             <p v-else class="text-center text-gray-500 py-2">No players assigned yet</p>
@@ -236,8 +244,8 @@
                                 </div>
                             </div>
 
-                            <div v-if="activeTab === 'What to Know'" class="py-6">
-                                <div class="max-w-3xl mx-auto space-y-8">
+                            <div v-if="activeTab === 'Overview'" class="py-6">
+                                <div class="max-w-7xl mx-auto px-12 space-y-8">
                                     <!-- Important Dates Section -->
                                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                                         <h3 class="text-lg font-medium text-gray-900 mb-4">Important Dates</h3>
@@ -299,52 +307,6 @@
                                                     <h4 class="font-medium text-gray-900">Timely Updates</h4>
                                                     <p class="text-sm text-gray-600">Keep player assignments and team information up to date throughout the event.</p>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="">
-                                        <div class="max-w-3xl mx-auto">
-                                            <!-- Account Settings Section -->
-                                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                                                <h2 class="text-lg font-semibold text-gray-800 mb-4">Account Settings</h2>
-                                                
-                                                <!-- Change Password Card -->
-                                                <div class="bg-blue-50 rounded-lg p-6">
-                                                    <div class="flex justify-between">
-                                                        <div>
-                                                            <h3 class="text-md font-medium text-gray-800 mb-1">Password & Security</h3>
-                                                            <p class="text-sm text-gray-600">Update your password to keep your account secure</p>
-                                                        </div>
-                                                        <div>
-                                                            <Link
-                                                                :href="route('password.change.form', comHead.id)"
-                                                                class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
-                                                                >
-                                                                Change Password
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Contact Support -->
-                                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                                        <h3 class="text-lg font-medium text-gray-900 mb-4">Need Help?</h3>
-                                        <div class="flex items-start gap-4">
-                                            <div class="flex-shrink-0">
-                                                <svg class="w-6 h-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z" clip-rule="evenodd" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <p class="text-gray-900 font-medium">Contact Support</p>
-                                                <p class="text-sm text-gray-600 mb-2">Need assistance? Our support team is here to help.</p>
-                                                <a href="mailto:support@palakasan.com" class="text-blue-600 hover:text-blue-500 text-sm font-medium">
-                                                    support@palakasan.com
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -542,6 +504,10 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div v-if="activeTab === 'settings'">
+                                <CSHSettings :facilitator="comHead" :assignedSports="assignedSports" :assignedCollege="assignedCollege" />
+                            </div>
                     </div>
 
                 </div>
@@ -716,6 +682,7 @@
     import { route } from 'ziggy-js';
     import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
     import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
+    import CSHSettings from '@/Components/CSHSettings.vue'
 
     const props = defineProps({
         comHead: {
@@ -873,6 +840,21 @@
                 closePlayerModal();
             }
         });
+    };
+
+    const removePlayer = async (sportId, playerId) => {
+        try {
+            const response = await axios.delete(route('assigned-players.destroy', { sport: sportId, player: playerId }));
+            if (response.status === 200) {
+                // Remove the player from the local state
+                const sport = props.assignedSports.find(s => s.id === sportId);
+                if (sport) {
+                    sport.assigned_players = sport.assigned_players.filter(p => p.id !== playerId);
+                }
+            }
+        } catch (error) {
+            console.error('Error removing player:', error);
+        }
     };
 
     const filteredSports = computed(() => {

@@ -134,7 +134,7 @@
                             <Link href="/student"  class="flex items-center bg-blue-50 py-2.5 px-4 rounded-full hover:bg-blue-700  group transition-colors">
                                 <div class="flex items-center gap-2 text-blue-600 group-hover:text-white transition-colors text-sm">
                                     <h3 class="font-medium">Student Info</h3>
-                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><path fill="currentColor" d="m226.53 56.41l-96-32a8 8 0 0 0-5.06 0l-96 32A8 8 0 0 0 24 64v80a8 8 0 0 0 16 0V75.1l33.59 11.19a64 64 0 0 0 20.65 88.05c-18 7.06-33.56 19.83-44.94 37.29a8 8 0 1 0 13.4 8.74C77.77 197.25 101.57 184 128 184s50.23 13.25 65.3 36.37a8 8 0 0 0 13.4-8.74c-11.38-17.46-27-30.23-44.94-37.29a64 64 0 0 0 20.65-88l44.12-14.7a8 8 0 0 0 0-15.18ZM176 120a48 48 0 1 1-86.65-28.45l36.12 12a8 8 0 0 0 5.06 0l36.12-12A47.9 47.9 0 0 1 176 120m-48-32.43L57.3 64L128 40.43L198.7 64Z"/></svg>
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><path fill="currentColor" d="M226.53 56.41l-96-32a8 8 0 0 0-5.06 0l-96 32A8 8 0 0 0 24 64v80a8 8 0 0 0 16 0V75.1l33.59 11.19a64 64 0 0 0 20.65 88.05c-18 7.06-33.56 19.83-44.94 37.29a8 8 0 1 0 13.4 8.74C77.77 197.25 101.57 184 128 184s50.23 13.25 65.3 36.37a8 8 0 0 0 13.4-8.74c-11.38-17.46-27-30.23-44.94-37.29a64 64 0 0 0 20.65-88l44.12-14.7a8 8 0 0 0 0-15.18ZM176 120a48 48 0 1 1-86.65-28.45l36.12 12a8 8 0 0 0 5.06 0l36.12-12A47.9 47.9 0 0 1 176 120m-48-32.43L57.3 64L128 40.43L198.7 64Z"/></svg>
                                 </div>
                             </Link>
                             <Link href="/account"  class="flex items-center bg-blue-50 py-2.5 px-4 rounded-full hover:bg-blue-700  group transition-colors">
@@ -221,9 +221,9 @@
                                     <h3 class="text-lg font-semibold text-gray-900">Palakasan Event {{ latestPalakasan.year }}</h3>
                                     <span :class="{
                                         'bg-green-100 text-green-800': latestPalakasan.status === 'completed',
-                                        'bg-blue-100 text-blue-800': latestPalakasan.status === 'live',
-                                        'bg-gray-100 text-gray-800': latestPalakasan.status === 'pending'
-                                    }" class="px-3 py-1 rounded-full text-sm font-medium">
+                                        'bg-red-100 text-red-600': latestPalakasan.status === 'live',
+                                        'bg-blue-100 text-blue-800': latestPalakasan.status === 'pending'
+                                    }" class="px-3 py-1 rounded-full text-sm font-medium capitalize">
                                         {{ latestPalakasan.status }}
                                     </span>
                                 </div>

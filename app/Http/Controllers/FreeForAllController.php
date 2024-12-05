@@ -97,6 +97,7 @@ class FreeForAllController extends Controller
                 'venueRecords' => $venueRecords,
                 'players' => $players,
                 'latestPalakasan' => $latestPalakasan,
+                'user' => auth()->user()        
 
             ]);
 
@@ -439,6 +440,14 @@ class FreeForAllController extends Controller
     }
 
     public function updateStatus(Request $request, $id)
+    {
+        $assignedSport = AssignedSports::findOrFail($id);
+        $assignedSport->update(['status' => $request->input('status')]);
+        
+        return redirect()->back()->with('message', 'Status updated successfully');
+    }
+
+    public function updateStatusAdmin(Request $request, $id)
     {
         $assignedSport = AssignedSports::findOrFail($id);
         $assignedSport->update(['status' => $request->input('status')]);

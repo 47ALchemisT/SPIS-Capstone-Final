@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\StudentAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;  // Import Hash for password verification
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -46,43 +47,31 @@ class LoginController extends Controller
         if (!Hash::check($credentials['password'], $studentAccount->password)) {
             return back()->withErrors(['password' => 'Incorrect password. Please try again.']);
         }
-        
-        // Set role-specific session with additional security data
-        $sessionData = [
-            'user_id' => $studentAccount->id,
-            'role' => $studentAccount->role,
-            'login_time' => now(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent()
-        ];
 
-        switch ($studentAccount->role) {
-            case 'Admin':
-                $request->session()->put('admin_session', $sessionData);
-                break;
-            case 'Facilitator':
-                $request->session()->put('facilitator_session', $sessionData);
-                break;
-            case 'College Sport Head':
-                $request->session()->put('committee_head_session', $sessionData);
-                break;
-            case 'Sub Admin':
-                $request->session()->put('sub_admin_session', $sessionData);
-                break;
+        // Clear existing session in current browser only
+        if (Auth::check()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
         }
 
-        // Login with the web guard
-        Auth::login($studentAccount, true);
-        
-        // Regenerate session ID for security
+        // Start new session
+        Auth::login($studentAccount);
         $request->session()->regenerate();
         
-        // Set a longer session lifetime (30 days in minutes)
+        // Store session data with browser identifier
+        $browserSessionId = $request->session()->getId();
+        session([
+            'user_id' => $studentAccount->id,
+            'role' => $studentAccount->role,
+            'browser_session' => $browserSessionId,
+            'login_time' => now()
+        ]);
+
+        // Set session lifetime
         config(['session.lifetime' => 10]);
-    
-        // Store the active role in session
-        $request->session()->put('active_role', $studentAccount->role);
-    
+
+        // Redirect based on role
         switch ($studentAccount->role) {
             case 'Admin':
                 return redirect()->intended('/admin');
@@ -98,41 +87,14 @@ class LoginController extends Controller
                 return redirect()->intended('/');
         }
     }
-    
+
     public function logout(Request $request)
     {
-        // Get the active role from session
-        $activeRole = $request->session()->get('active_role');
-        
-        // Remove the specific role session
-        switch ($activeRole) {
-            case 'Admin':
-                $request->session()->forget('admin_session');
-                break;
-            case 'Facilitator':
-                $request->session()->forget('facilitator_session');
-                break;
-            case 'College Sport Head':
-                $request->session()->forget('committee_head_session');
-                break;
-        }
-        
-        // Remove the active role
-        $request->session()->forget('active_role');
-        
-        // Check if any other role sessions exist
-        $hasOtherSessions = $request->session()->has('admin_session') || 
-                           $request->session()->has('facilitator_session') || 
-                           $request->session()->has('committee_head_session');
-        
-        // If no other active sessions, perform full logout
-        if (!$hasOtherSessions) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-        }
+        // Clear only current browser session
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         
         return redirect('/login');
     }
-
 }

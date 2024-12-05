@@ -25,10 +25,12 @@
             <div class="flex">
               <button 
                 @click="openWinnerModal(match)"
+                :disabled="!canUpdateRound(round) || match.status === 'completed'"
                 type="button" 
-                class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              >
-                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H3V5h18M5 7h4c.6 0 1 .4 1 1v8c0 .6-.4 1-1 1H5c-.6 0-1-.4-1-1V8c0-.6.4-1 1-1m1 2v6h2V9m7-2h4c.6 0 1 .4 1 1v8c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1V8c0-.6.4-1 1-1m1 2v6h2V9m-6 2c.6 0 1-.4 1-1s-.4-1-1-1s-1 .4-1 1s.4 1 1 1m0 4c.6 0 1-.4 1-1s-.4-1-1-1s-1 .4-1 1s.4 1 1 1"/></svg>                
+                class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
+                >
+                <i class="fa-solid fa-flag mr-2"></i>
+                Score
               </button>
             </div>
           </div>
@@ -93,23 +95,48 @@
           <div class="p-4 md:p-5">
             <form class="space-y-4" @submit.prevent="handleWinnerSelection">
               <div>
-                <label for="result" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Result</label>
-                <select v-model="winnerFormData.result" id="result" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
-                  <option value="">Choose a result</option>
-                  <option value="teamA">{{ getTeamName(selectedMatch?.teamA_id) }} Wins</option>
-                  <option value="teamB">{{ getTeamName(selectedMatch?.teamB_id) }} Wins</option>
-                  <option value="tie">Tie</option>
-                </select>
+                <label class="block mb-3 text-sm font-medium text-gray-900">Select Result</label>
+                <div class="grid grid-cols-1 gap-3">
+                  <div>
+                    <input type="radio" name="result" id="teamA" value="teamA" v-model="winnerFormData.result" class="hidden peer">
+                    <label for="teamA" class="inline-flex items-center justify-between w-full p-4 text-gray-900 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-gray-50">
+                      <div class="block">
+                        <div class="w-full text-sm font-semibold">{{ getTeamName(selectedMatch?.teamA_id) }} Wins</div>
+                      </div>
+                      <i class="fa-solid fa-trophy text-yellow-500 ml-3"></i>
+                    </label>
+                  </div>
+                  <div>
+                    <input type="radio" name="result" id="teamB" value="teamB" v-model="winnerFormData.result" class="hidden peer">
+                    <label for="teamB" class="inline-flex items-center justify-between w-full p-4 text-gray-900 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-gray-50">
+                      <div class="block">
+                        <div class="w-full text-sm font-semibold">{{ getTeamName(selectedMatch?.teamB_id) }} Wins</div>
+                      </div>
+                      <i class="fa-solid fa-trophy text-yellow-500 ml-3"></i>
+                    </label>
+                  </div>
+                  <div>
+                    <input type="radio" name="result" id="tie" value="tie" v-model="winnerFormData.result" class="hidden peer">
+                    <label for="tie" class="inline-flex items-center justify-between w-full p-4 text-gray-900 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-gray-50">
+                      <div class="block">
+                        <div class="w-full text-sm font-semibold">Draw</div>
+                      </div>
+                      <i class="fa-solid fa-handshake text-blue-500 ml-3"></i>
+                    </label>
+                  </div>
+                </div>
               </div>
               <div v-if="form.errors.length" class="mt-2 text-sm text-red-600">
                 <div v-for="(error, index) in form.errors" :key="index">{{ error }}</div>
               </div>
               <div class="flex items-center justify-end">
                 <button 
-                type="submit" 
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Validate
-              </button>
+                  type="submit" 
+                  :disabled="!winnerFormData.result"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Validate
+                </button>
               </div>
             </form>
           </div>
@@ -132,6 +159,17 @@
           </button>
         </div>
         <div class="p-4">
+          <!-- Display Selected Winner -->
+          <div class="mb-4 p-4 bg-green-50 text-center rounded-lg">
+            <h4 class="text-xs text-green-600 mb-1">Match Result</h4>
+            <div class="flex items-center justify-center text-green-600 rounded-md">
+              <span class="font-medium text-md">
+                {{ winnerFormData.result === 'teamA' ? getTeamName(selectedMatch?.teamA_id) + ' Wins' :
+                  winnerFormData.result === 'teamB' ? getTeamName(selectedMatch?.teamB_id) + ' Wins' :
+                  'Draw' }}
+              </span>
+            </div>
+          </div>
           <!-- Add Official Name Field -->
           <div class="mb-4">
             <label class="block mb-2 text-sm font-medium text-gray-900">
@@ -508,6 +546,7 @@ const submitResult = () => {
     onSuccess: () => {
       closeSignatureModal();
       scoreLoading.value = false;
+      window.location.reload();
     },
     onError: (errors) => {
       console.error('Error submitting result:', errors);

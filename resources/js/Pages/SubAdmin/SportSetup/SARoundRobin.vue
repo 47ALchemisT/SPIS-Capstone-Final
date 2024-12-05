@@ -1,9 +1,9 @@
 <template>
   <div>
     <Head title="College"/>
-    <AppLayout>
+    <AppLayout :user="user">
       <template v-slot:default>
-        <div class="flex items-center justify-between gap-2 mt-6">
+        <div class="flex items-center justify-between gap-2 pt-6">
                     <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                     <div>
                         <button 
@@ -128,6 +128,7 @@ const props = defineProps({
   winner: Number,
   venueRecords: Array,
   players: Array,
+  user: Object
 });
 
 const activeTab = ref('matches');

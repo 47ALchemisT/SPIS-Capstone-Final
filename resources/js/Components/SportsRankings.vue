@@ -96,7 +96,7 @@
             </template>
         </div>
 
-        <div v-for="(variation, index) in filteredVariations" :key="index" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6 mb-6">
+        <div v-for="(variation, index) in filteredAndCompletedVariations" :key="index" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6 mb-6">
             <h4 class="text-lg font-semibold">{{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} {{ variation.sport_id?.categories }} <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span> - {{ variation.sport_variation_name }} </h4>            
             <!-- Rankings Section -->
             <div>
@@ -214,12 +214,11 @@
                                         </template>
 
                                         <!-- Variations Rankings -->
-                                        <template v-for="(variation, index) in filteredVariations" :key="index">
+                                        <template v-for="(variation, index) in filteredAndCompletedVariations" :key="index">
                                             <div class="mb-8">
                                                 <h3 class="text-xl font-semibold mb-4">
                                                     {{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} 
                                                     {{ variation.sport_id?.categories }} 
-                                                    <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span>
                                                     - {{ variation.sport_variation_name }}
                                                 </h3>
                                                 <div v-if="getVariationRankings(variation.id).length > 0" class="mb-6">
@@ -358,6 +357,23 @@ const filteredVariations = computed(() => {
     }
 
     return variations;
+});
+
+// Add a new computed property to check if a sport is completed
+const isSportCompleted = (sportId) => {
+    if (!props.sports) return false;
+    const sport = props.sports.find(s => s.id === sportId);
+    return sport?.status === 'completed';
+};
+
+const filteredAndCompletedVariations = computed(() => {
+    if (!props.sports || !filteredVariations.value) return [];
+    
+    return filteredVariations.value.filter(variation => {
+        if (!variation.assigned_sport_id) return false;
+        const sport = props.sports.find(s => s.id === variation.assigned_sport_id);
+        return sport?.status === 'completed';
+    });
 });
 
 // Get all available sports for the filter dropdown
@@ -548,7 +564,7 @@ const downloadRankingsAsPDF = () => {
     });
     
     // Add variations rankings with the same table format
-    filteredVariations.value.forEach(variation => {
+    filteredAndCompletedVariations.value.forEach(variation => {
         const rankings = getVariationRankings(variation.id);
         if (rankings.length > 0) {
             // Check if we need a new page

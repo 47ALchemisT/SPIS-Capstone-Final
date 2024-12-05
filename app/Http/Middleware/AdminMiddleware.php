@@ -8,29 +8,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Models\StudentAccount;
 
-
 class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Get the currently authenticated user
-        $student = StudentAccount::find(Auth::id());
+        $user = Auth::user();
+        $currentBrowserSession = $request->session()->getId();
         
-        // Check if user is an admin
-        if ($student && $student->role === 'Admin') {
-            // Store admin session separately
-            $request->session()->put('admin_session', true);
-            return $next($request);
+        // Verify user role and browser session
+        if (!$user || 
+            $user->role !== 'Admin' || 
+            session('browser_session') !== $currentBrowserSession) {
+            
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('/login')->with('error', 'Please login as administrator.');
         }
 
-        // If not authenticated as admin but has a valid session for another role, allow access
-        if (Auth::check() && 
-            ($request->session()->has('facilitator_session') || 
-             $request->session()->has('committee_head_session'))) {
-            return $next($request);
-        }
-
-        // Redirect to home or dashboard if not authenticated or not an admin
-        return redirect('/')->with('error', 'Access denied. Admins can access this page.');
+        return $next($request);
     }
 }

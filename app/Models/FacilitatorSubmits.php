@@ -18,37 +18,6 @@ class FacilitatorSubmits extends Model
         'signature',
     ];
 
-    // Custom activity description for better logging
-    protected function getActivityDescription($type)
-    {
-        $facilitator = $this->facilitator?->student;
-        $facilitatorName = $facilitator 
-            ? "{$facilitator->first_name} {$facilitator->last_name}"
-            : $this->official_name;
-
-        switch ($type) {
-            case 'create':
-                return " submitted match result, you can check the logs for more details";
-            case 'update':
-                return "updated submission by facilitator {$facilitatorName}";
-            case 'delete':
-                return "removed submission by facilitator {$facilitatorName}";
-            default:
-                return parent::getActivityDescription($type);
-        }
-    }
-
-    // Only log important changes
-    protected function getActivityProperties()
-    {
-        return [
-            'facilitator_id' => $this->facilitator_id,
-            'match_id' => $this->match_id,
-            'official_name' => $this->official_name,
-            'changes' => $this->getDirty()
-        ];
-    }
-
     public function facilitator()
     {
         return $this->belongsTo(StudentAccount::class, 'facilitator_id');

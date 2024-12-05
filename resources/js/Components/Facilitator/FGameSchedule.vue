@@ -10,7 +10,7 @@
           !canUpdateMatch(match) ? 'bg-gray-50 border-gray-300' : 
           'bg-white border-gray-300 hover:border-blue-400'
         ]">
-        <div class="flex justify-between items-center mb-3">
+        <div class="flex justify-between mb-3">
           <div class="flex flex-col">
             <span class="font-semibold text-md ">{{ match.game }}</span>
             <div class="text-xs flex justify-between gap-1.5 items-center">
@@ -21,12 +21,11 @@
             <button 
               @click="openScoreModal(match)"
               type="button" 
-              class="p-2 text-sm font-medium text-gray-600 focus:outline-none hover:text-blue-800 rounded-lg focus:z-10 focus:ring-4 focus:ring-gray-100 transition duration-200"
+              class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
               :disabled="!canUpdateMatch(match) || match.status === 'completed'"
             >
-              <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20">
-                <path fill="currentColor" d="M3.005 14.176A3 3 0 0 0 6 17h2.003q.01-.171.054-.347L8.22 16H6l-.15-.005A2 2 0 0 1 4 14v-4h3l.176-.005A3 3 0 0 0 10 7V4h4l.15.005A2 2 0 0 1 16 6v2.003a2.9 2.9 0 0 1 1 .13V6l-.005-.176A3 3 0 0 0 14 3H9.621l-.176.008a2 2 0 0 0-1.238.578L3.586 8.207l-.12.13A2 2 0 0 0 3 9.62V14zM7 9l-2.782-.001q.034-.045.075-.085l4.621-4.621L9 4.219V7l-.005.15A2 2 0 0 1 7 9m2.98 5.377l4.83-4.83a1.87 1.87 0 1 1 2.644 2.646l-4.83 4.829a2.2 2.2 0 0 1-1.02.578l-1.498.374a.89.89 0 0 1-1.079-1.078l.375-1.498a2.2 2.2 0 0 1 .578-1.02"/>
-              </svg>
+              <i class="fa-solid fa-flag mr-2"></i>
+              Score
             </button>
           </div>
         </div>
@@ -193,6 +192,20 @@
           </button>
         </div>
         <div class="p-4">
+          <!-- Display Selected Winner -->
+          <div class="mb-4 p-4 bg-green-50 text-center rounded-lg">
+            <h4 class="text-xs text-green-600 mb-1">Match Result</h4>
+            <div class="flex items-center justify-center text-green-600 rounded-md">
+              <span class="font-medium text-md">
+                {{ parseInt(scoreFormData.teamA_score) > parseInt(scoreFormData.teamB_score) ? 
+                    getTeamName(selectedMatch.teamA_id):
+                   parseInt(scoreFormData.teamB_score) > parseInt(scoreFormData.teamA_score) ? 
+                    getTeamName(selectedMatch.teamB_id):
+                    'Draw (' + scoreFormData.teamA_score + ' - ' + scoreFormData.teamB_score + ')'
+                }}
+              </span>
+            </div>
+          </div>
           <div class="mb-4">
             <label class="block mb-2 font-medium text-sm">
               Official Name
