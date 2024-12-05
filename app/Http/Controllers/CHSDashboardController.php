@@ -10,6 +10,7 @@ use App\Models\Palakasan;
 use App\Models\ComHeadColleges;
 use App\Models\StudentPlayer;
 use App\Models\SportMatch;
+use App\Models\SportsVariations;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Crypt;
@@ -79,6 +80,52 @@ class CHSDashboardController extends Controller
             // Initialize empty collections
             $upcomingSchedules = collect([]);
             $students = collect([]);
+
+            // Get free-for-all matches from sports variations
+            $freeForAllMatches = SportsVariations::with([
+                'sport_id.sport',
+                'venue_id',
+                'ffo_matchResult',
+                'sportVariationID.assignedTeamVariationID.college'
+            ])
+                ->whereHas('sport_id', function($query) use ($latestPalakasan) {
+                    $query->where('palakasan_sport_id', $latestPalakasan->id);
+                })
+                ->where('date', '>=', now()->toDateString())
+                ->orderBy('date', 'asc')
+                ->orderBy('time', 'asc')
+                ->get()
+                ->map(function($variation) {
+                    // Get participating teams
+                    $participatingTeams = $variation->sportVariationID->map(function($match) {
+                        return [
+                            'team_name' => $match->assignedTeamVariationID->assigned_team_name ?? 'Unknown Team',
+                            'college_name' => $match->assignedTeamVariationID->college->name ?? 'Unknown College',
+                            'rank' => $match->rank,
+                            'points' => $match->points
+                        ];
+                    });
+
+                    // Format the data to match the expected structure
+                    return [
+                        'id' => $variation->id,
+                        'date' => $variation->date,
+                        'time' => $variation->time,
+                        'assignedSport' => [
+                            'sport' => $variation->sport_id->sport
+                        ],
+                        'matchVenue' => $variation->venue_id,
+                        'status' => $variation->ffo_matchResult->count() > 0 ? 'Completed' : 'Pending',
+                        'sport_variation_name' => $variation->sport_variation_name,
+                        'participating_teams' => $participatingTeams
+                    ];
+                });
+
+            // Log free-for-all matches for debugging
+            \Log::info('Free for All Matches from Sports Variations:', [
+                'count' => $freeForAllMatches->count(),
+                'matches' => $freeForAllMatches->toArray()
+            ]);
 
             if ($assignedCollege && $assignedCollege->assigned_team) {
                 // Get upcoming schedules for the committee head's college
@@ -167,6 +214,7 @@ class CHSDashboardController extends Controller
                 'students' => $students,
                 'assignedPlayers' => $assignedPlayers,
                 'upcomingSchedules' => $upcomingSchedules,
+                'freeForAllMatches' => $freeForAllMatches,
                 'totalAssignedStudents' => $totalAssignedStudents
             ]);
 

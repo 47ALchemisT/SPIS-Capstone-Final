@@ -116,7 +116,7 @@
                                             <p class="text-sm text-blue-500 mb-3">{{ assignedCollege.assigned_team.college.name }}</p>
                                         </div>
                                         <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path fill="currentColor" d="M15 14s1 0 1-1s-1-4-5-4s-5 3-5 4s1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276c.593.69.758 1.457.76 1.72l-.008.002l-.014.002zM11 7a2 2 0 1 0 0-4a2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0a3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904c.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>                                            
+                                            <svg class="w-8 h-8 mb-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" d="M15 14s1 0 1-1s-1-4-5-4s-5 3-5 4s1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276c.593.69.758 1.457.76 1.72l-.008.002l-.014.002zM11 7a2 2 0 1 0 0-4a2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0a3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904c.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/></svg>                                            
                                             <p class="text-sm text-blue-600 mb-1.5">Total number of Students</p>
                                             <p class="text-2xl font-bold text-blue-700">{{ students.length }}</p>
                                         </div>
@@ -356,28 +356,28 @@
                                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Upcoming Matches</h2>
                                     
                                     <div v-if="!upcomingSchedules || upcomingSchedules.length === 0" class="text-center py-8">
-                                        <p class="text-gray-500">No upcoming matches scheduled.</p>
+                                        <p class="text-gray-500">No upcoming matches scheduled for your team.</p>
                                     </div>
                                     
                                     <div v-else class="space-y-4">
                                         <div class="flex justify-between mb-4">
-
                                             <div class="flex gap-2 rounded-lg">
                                                 <button 
-                                                    v-for="tab in ['pending','completed' ]"
+                                                    v-for="tab in ['pending', 'completed']"
                                                     :key="tab"
                                                     @click="matchTab = tab"
                                                     :class="[
-                                                    'px-5 py-2 text-sm',
-                                                    matchTab === tab
-                                                        ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-lg'
-                                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 font-medium border-transparent'
+                                                        'px-4 py-2 text-sm font-medium rounded-md',
+                                                        matchTab === tab
+                                                            ? 'bg-blue-100 text-blue-700'
+                                                            : 'text-gray-500 hover:text-gray-700'
                                                     ]"
                                                 >
                                                     {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
                                                 </button>
                                             </div>
                                         </div>
+                                        
                                         <div v-for="match in displayedMatches" :key="match.id" 
                                             class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
                                             <div class="flex items-center justify-between">
@@ -451,6 +451,92 @@
                                                         Loser: {{ match.match_result.losing_team?.assigned_team_name || 'Not specified' }}
                                                     </span>
                                                 </template>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Free for All Matches Section -->
+                                    <div class="mt-8">
+                                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Free for All Events</h2>
+                                        
+                                        <div v-if="!freeForAllMatches || freeForAllMatches.length === 0" class="text-center py-8">
+                                            <p class="text-gray-500">No free for all events scheduled.</p>
+                                        </div>
+                                        
+                                        <div v-else class="space-y-4">
+                                            <div class="flex justify-between mb-4">
+                                                <div class="flex gap-2 rounded-lg">
+                                                    <button 
+                                                        v-for="tab in ['pending', 'completed']"
+                                                        :key="tab"
+                                                        @click="freeForAllTab = tab"
+                                                        :class="[
+                                                            'px-4 py-2 text-sm font-medium rounded-md',
+                                                            freeForAllTab === tab
+                                                                ? 'bg-blue-100 text-blue-700'
+                                                                : 'text-gray-500 hover:text-gray-700'
+                                                        ]"
+                                                    >
+                                                        {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div v-for="match in displayedFreeForAllMatches" :key="match.id" 
+                                                class="bg-blue-50 border border-blue-100 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center gap-2">
+                                                            <h3 class="text-lg font-medium text-blue-900">
+                                                                {{ match.assignedSport?.sport?.name || 'Free for All Event' }}
+                                                                <span class="text-sm font-normal text-blue-700">
+                                                                    - {{ match.sport_variation_name }}
+                                                                </span>
+                                                            </h3>
+                                                            <span :class="[
+                                                                'px-2 py-1 text-xs rounded-full font-medium',
+                                                                match.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                            ]">
+                                                                {{ match.status }}
+                                                            </span>
+                                                        </div>
+                                                        
+                                                        <div class="mt-2 text-sm text-blue-700">
+                                                            <div class="flex items-center gap-1">
+                                                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" />
+                                                                </svg>
+                                                                {{ formatDate(match.date) }} at {{ formatTime(match.time) }}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="mt-2 text-sm text-blue-700" v-if="match.matchVenue">
+                                                            <div class="flex items-center gap-1">
+                                                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" />
+                                                                </svg>
+                                                                {{ match.matchVenue.name }}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="mt-2">
+                                                            <h4 class="text-sm font-medium text-gray-700">Participating Teams:</h4>
+                                                            <div v-if="match.participating_teams?.length" class="mt-1 space-y-1">
+                                                                <div v-for="team in match.participating_teams" :key="team.team_name" 
+                                                                     class="flex justify-between px-3 py-2 bg-gray-50 rounded">
+                                                                    <div>
+                                                                        <span class="text-sm font-medium">{{ team.team_name }}</span>
+                                                                        <span class="text-xs text-gray-500 ml-2">({{ team.college_name }})</span>
+                                                                    </div>
+                                                                    <div v-if="match.status === 'Completed'" class="text-sm">
+                                                                        Rank: {{ team.rank }} ({{ team.points }} pts)
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <p v-else class="text-sm text-gray-500 mt-1">No teams registered yet</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -626,7 +712,7 @@
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     import { ChevronDownIcon } from '@heroicons/vue/20/solid'
     import { Head, useForm, router, Link } from '@inertiajs/vue3';
-    import { ref, onMounted, computed } from 'vue';
+    import { ref, onMounted, computed, watch } from 'vue';
     import { route } from 'ziggy-js';
     import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
     import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
@@ -667,6 +753,10 @@
         totalAssignedStudents: {
             type: Number,
             default: 0
+        },
+        freeForAllMatches: {
+            type: Array,
+            default() { return [] }
         }
     });
 
@@ -832,6 +922,27 @@
 
     const displayedMatches = computed(() => {
         return matchTab.value === 'pending' ? pendingMatches.value : completedMatches.value;
+    });
+
+    const freeForAllTab = ref('pending');
+
+    const displayedFreeForAllMatches = computed(() => {
+        console.log('Free for all matches:', props.freeForAllMatches);
+        console.log('Current tab:', freeForAllTab.value);
+        
+        if (!props.freeForAllMatches) return [];
+        
+        return props.freeForAllMatches.filter(match => {
+            const isCompleted = match.status === 'Completed';
+            const shouldShow = freeForAllTab.value === 'completed' ? isCompleted : !isCompleted;
+            
+            console.log('Match:', match.sport_variation_name, 'Status:', match.status, 'Should show:', shouldShow);
+            return shouldShow;
+        });
+    });
+
+    watch(() => props.freeForAllMatches, (newVal) => {
+        console.log('Free for all matches updated:', newVal);
     });
 </script>
  
