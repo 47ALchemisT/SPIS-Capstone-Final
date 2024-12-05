@@ -68,6 +68,7 @@
                     <div class="space-y-3">
                         <button
                             @click="proceedToReset"
+                            :disabled="foundUser.status === 0"
                             class="w-full py-2.5 text-sm px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium"
                         >
                             Reset Password
@@ -110,6 +111,8 @@ const form = reactive({
 });
 
 const processing = ref(false);
+const error = ref('');
+const foundUser = ref(null);
 
 const searchUser = () => {
     console.log('Submitting search with ID:', form.id_number);
@@ -121,13 +124,22 @@ const searchUser = () => {
             console.log('Search success response:', page.props);
             if (page.props.error) {
                 console.log('Error received:', page.props.error);
+                error.value = page.props.error;
             }
             if (page.props.foundUser) {
                 console.log('User found:', page.props.foundUser);
+                // Check if the found user's account is deactivated
+                if (page.props.foundUser.student_account && page.props.foundUser.student_account.status === false) {
+                    error.value = 'This account has been deactivated.';
+                    foundUser.value = null;
+                } else {
+                    foundUser.value = page.props.foundUser;
+                }
             }
         },
         onError: (errors) => {
             console.error('Search failed:', errors);
+            error.value = 'Failed to find account.';
         },
         onFinish: () => {
             console.log('Search request finished');

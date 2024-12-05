@@ -139,15 +139,30 @@
             </button>
           </div>
           <div class="p-4 pt-0">
-            <label class="text-sm font-medium text-gray-900 mt-5 dark:text-white mb-2 block">
-              Pick your date
-            </label>
             <div class="text-xs p-3 bg-blue-50  text-blue-700 rounded-lg border mb-3 border-blue-400">
               <h1 class="font-semibold mb-1">
                 Note
               </h1>
-              <p>All the time that is available can be selected, the time that are not available will be grayed out and cannot be selected. This is a first come first serve, so make sure you set the time correctly</p>
+              <p>All available times can be selected. Times that are not available will be grayed out. This is first come first serve, so make sure to set the time and venue correctly.</p>
             </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                Select Venue
+              </label>
+              <select
+                v-model="selectedVenue"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                @change="updateAvailableTimeSlots"
+              >
+                <option value="">Select a venue</option>
+                <option v-for="venue in props.venues" :key="venue.id" :value="venue.id">
+                  {{ venue.name }}
+                </option>
+              </select>
+            </div>
+            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+              Pick your date
+            </label>
             <div class="mx-auto sm:mx-0 flex justify-center mb-5">
               <input
                 type="date"
@@ -230,6 +245,7 @@ const winnerFormData = ref({
 const isTimeModalOpen = ref(false);
 const selectedDate = ref('');
 const selectedTime = ref('');
+const selectedVenue = ref('');
 const formError = ref('');
 const availableTimeSlots = ref([]);
 
@@ -237,6 +253,7 @@ const form = useForm({
   matchId: '',
   date: '',
   time: '',
+  venue_id: '',
 });
 
 const timeSlots = [
@@ -349,12 +366,12 @@ const formatDateTime = (date, time) => {
 };
 
 const updateAvailableTimeSlots = () => {
-  if (!selectedDate.value || !selectedMatch.value) return;
+  if (!selectedDate.value || !selectedMatch.value || !selectedVenue.value) return;
 
   const conflictingRecords = props.venueRecords.filter(record => {
     return record.date === selectedDate.value && 
-           record.venue_id === selectedMatch.value.match_venue_id &&
-           record.match_id !== selectedMatch.value.id; // Exclude current match when editing
+           record.venue_id === selectedVenue.value &&
+           record.match_id !== selectedMatch.value.id;
   });
 
   const bookedTimes = new Set(conflictingRecords.map(record => record.time));
@@ -364,8 +381,10 @@ const updateAvailableTimeSlots = () => {
     disabled: bookedTimes.has(slot.value)
   }));
 
-  // If editing existing match, make its current time slot available
-  if (selectedMatch.value.time && selectedMatch.value.date === selectedDate.value) {
+  // If editing existing match and it's the same date and venue, make its current time slot available
+  if (selectedMatch.value.time && 
+      selectedMatch.value.date === selectedDate.value && 
+      selectedMatch.value.match_venue_id === selectedVenue.value) {
     const currentTimeSlot = availableTimeSlots.value.find(slot => 
       slot.value === selectedMatch.value.time
     );
@@ -373,15 +392,13 @@ const updateAvailableTimeSlots = () => {
       currentTimeSlot.disabled = false;
     }
   }
-
-  console.log('Booked times:', Array.from(bookedTimes));
-  console.log('Available slots:', availableTimeSlots.value);
 };
 
 const openTimeModal = (match) => {
   selectedMatch.value = match;
   selectedDate.value = match.date || '';
   selectedTime.value = match.time || '';
+  selectedVenue.value = match.match_venue_id || '';
   formError.value = '';
   isTimeModalOpen.value = true;
   updateAvailableTimeSlots();
@@ -392,21 +409,19 @@ const closeTimeModal = () => {
   selectedMatch.value = null;
   selectedDate.value = '';
   selectedTime.value = '';
+  selectedVenue.value = '';
   formError.value = '';
   availableTimeSlots.value = [];
 };
 
 const saveDateTime = () => {
-  if (!selectedDate.value || !selectedTime.value) {
-    formError.value = 'Please select date and time';
+  if (!selectedDate.value || !selectedTime.value || !selectedVenue.value) {
+    formError.value = 'Please select date, time, and venue';
     return;
   }
 
-  const isTimeSlotAvailable = availableTimeSlots.value.find(
-    slot => slot.value === selectedTime.value && !slot.disabled
-  );
-
-  if (!isTimeSlotAvailable) {
+  const selectedSlot = availableTimeSlots.value.find(slot => slot.value === selectedTime.value);
+  if (!selectedSlot || selectedSlot.disabled) {
     formError.value = 'Selected time slot is not available';
     return;
   }
@@ -414,6 +429,7 @@ const saveDateTime = () => {
   form.matchId = selectedMatch.value.id;
   form.date = selectedDate.value;
   form.time = selectedTime.value;
+  form.venue_id = selectedVenue.value;
 
   form.post(route('matches.updateDateTimeRR'), {
     preserveState: true,
@@ -421,6 +437,7 @@ const saveDateTime = () => {
     onSuccess: () => {
       selectedMatch.value.date = selectedDate.value;
       selectedMatch.value.time = selectedTime.value;
+      selectedMatch.value.match_venue_id = selectedVenue.value;
       closeTimeModal();
     },
     onError: (errors) => {

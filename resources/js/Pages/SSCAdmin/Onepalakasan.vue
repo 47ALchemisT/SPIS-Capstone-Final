@@ -211,10 +211,10 @@
                                 >
                                     <button                                                 
                                     @click="openTeamsModal" 
-                                    :disabled="latestPalakasan?.status !== 'pending'"                                
+                                    :disabled="latestPalakasan?.status !== 'pending' && assignedSports?.length !== 0"                                    
                                     :class="[
                                     'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                    latestPalakasan?.status !== 'pending'
+                                    latestPalakasan?.status !== 'pending' && assignedSports.length !== 0
                                         ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
                                         : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
                                     ]"                            
@@ -224,8 +224,13 @@
                                 </Tooltip>
                                 <button v-else                                               
                                     @click="openTeamsModal" 
-                                    :class="'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'"                            
-                                >
+                                    :disabled="assignedSports?.length !== 0"                                    
+                                    :class="[
+                                        'flex gap-1.5 text-sm focus:outline-none font-medium focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                        assignedSports.length !== 0
+                                            ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
+                                            : 'bg-blue-700 text-white hover:bg-blue-700/90 flex items-center gap-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                    ]"                                    >
                                     Form Line ups
                                 </button>
                             </div>
@@ -239,7 +244,12 @@
                             </select>
                         </div>
                     </div>
-
+                    <!--add a note here taht if there is a sport already you cant add a team anymore-->
+                    <div v-if="assignedSports?.length === 0" class="flex items-center gap-2 p-3 my-3 text-sm bg-blue-50 border border-blue-200 rounded-lg">
+                        <i class="fas fa-info-circle text-blue-600"></i>
+                        <span class="text-blue-700 font-medium">Important:</span>
+                        <span class="text-blue-600">Teams can only be added when no sports are assigned.</span>
+                    </div>
                     <!-- Check if assignedTeams array is empty after search and sort -->
                     <div v-if="filteredAndSortedTeams.length === 0" class="flex flex-col items-center justify-center text-center p-10 bg-blue-50 rounded-lg">
                         <i class="fa-solid fa-people-group text-blue-700 text-6xl mb-4"></i>
@@ -1190,7 +1200,7 @@
             }
         },
     });
-
+    console.log('Assigned Sports Length:', props.assignedSports.length);
     const isPalakasanModalOpen = ref(false);
     const isSportsModalOpen = ref(false);
     const isTeamsModalOpen = ref(false);

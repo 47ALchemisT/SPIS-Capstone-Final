@@ -33,6 +33,7 @@ class OnePalakasanController extends Controller
         // Load facilitators with student relationship
         $facilitator = StudentAccount::with('student')
             ->where('role', 'Facilitator')
+            ->where('status', true)
             ->get();
 
         // Fetch the latest Palakasan
@@ -669,9 +670,14 @@ class OnePalakasanController extends Controller
             $palakasan->status = 'completed';
             $palakasan->save();
 
+            // Update all student accounts status to false
+            DB::table('student_accounts')
+                ->where('status', true)
+                ->update(['status' => false]);
+
             DB::commit();
 
-            return redirect()->back()->with('success', 'Palakasan concluded successfully');
+            return redirect()->back()->with('success', 'Palakasan concluded successfully. All student accounts have been deactivated.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());

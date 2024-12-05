@@ -15,7 +15,7 @@
                     <!-- Create Account Button -->
                     <div class="sticky top-0 bg-white pt-4 pb-2">
                         <button @click="openModal(false)" type="button" class="w-full flex items-center justify-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2.5 mb-4">
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/></svg>
                             Create Account
                         </button>
 
@@ -92,6 +92,7 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Number</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -111,6 +112,14 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500">{{ account.student ? account.student.id_number : '-' }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <button 
+                                                @click="openDeleteModal(account)"
+                                                class="text-red-600 hover:text-red-800 text-sm font-medium"
+                                            >
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -225,69 +234,182 @@
             </div>
 
             <!-- Second modal for listing students -->
-            <div v-if="isStudentModalOpen" class="fixed inset-0 bg-black bg-opacity-10 z-50 flex justify-center items-center">
-                <div class="bg-white relative p-6 rounded-lg shadow-lg h-[28rem] w-full max-w-md">
-                    <h3 class="text-lg font-semibold mb-4">Select a Student</h3>
-                    <div class="grid grid-cols-5  items-center gap-3 mb-3">
-                        <!-- Search Input for students -->
-                        <div class="col-span-3 relative">
-                            <input
-                                v-model="studentSearchQuery"
-                                type="text"
-                                placeholder="Search student..."
-                                class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+            <TransitionRoot appear :show="isStudentModalOpen" as="template">
+                <Dialog as="div" @close="closeStudentModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black bg-opacity-25" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4 text-center">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
                             >
-                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                                <i class="fas fa-search"></i>
-                            </span>
+                                <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900 mb-4">
+                                        Select a Student
+                                    </DialogTitle>
+
+                                    <div class="grid grid-cols-5 items-center gap-3 mb-3">
+                                        <!-- Search Input for students -->
+                                        <div class="col-span-3 relative">
+                                            <input
+                                                v-model="studentSearchQuery"
+                                                type="text"
+                                                placeholder="Search student..."
+                                                class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                                            >
+                                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <span class="text-sm w-full py-2.5 rounded-lg text-blue-700 px-4 bg-blue-50">
+                                                Total Students: <span class="font-bold">{{ students.length }}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                            <!-- Display the message if the student has an active account -->
+                                    <p v-if="studentAccountStatusMessage" class="text-sm p-2 bg-red-50 rounded-lg my-2 text-red-500">
+                                        {{ studentAccountStatusMessage }}
+                                    </p>
+                                    <div class="h-[22rem] overflow-y-auto mb-4">
+                                        <ul>
+                                            <li
+                                                v-for="student in filteredStudents"
+                                                :key="student.id"
+                                                @click="selectStudentForPreview(student)"
+                                                class="py-2 px-4 cursor-pointer transition-colors"
+                                                :class="{ 'bg-blue-100': student.id === selectedStudentId }"
+                                            >
+                                                <div class="flex items-center">
+                                                    
+                                                    <div>
+                                                        <p class="text-sm font-medium text-gray-900">
+                                                            {{ student.first_name }} {{ student.last_name }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-500">
+                                                            ID: {{ student.id_number }}
+                                                        </p>
+
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Modal Buttons -->
+                                    <div class="mt-4 flex justify-end space-x-3">
+                                        <button
+                                            type="button"
+                                            class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                            @click="closeStudentModal"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                            :disabled="!selectedStudentId"
+                                            @click="confirmStudentSelection"
+                                        >
+                                            Select
+                                        </button>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
-                        <div class="col-span-2">
-                            <span class="text-sm w-full py-2.5 rounded-lg text-blue-700 px-4 bg-blue-50">Total Students :  <span class="font-bold">{{ students.length }}</span></span>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
+
+            <!-- Delete Confirmation Modal -->
+            <TransitionRoot appear :show="isDeleteModalOpen" as="template">
+                <Dialog as="div" @close="closeDeleteModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black bg-opacity-25" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4 text-center">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                                        Delete Account
+                                    </DialogTitle>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500">
+                                            Are you sure you want to delete this account? This action cannot be undone.
+                                        </p>
+                                    </div>
+
+                                    <div class="mt-4 flex justify-end space-x-3">
+                                        <button
+                                            type="button"
+                                            class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                            @click="closeDeleteModal"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                                            @click="deleteAccount"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
-
                     </div>
-
-                    <!-- List of students with search filter -->
-                    <ul class="max-h-60 overflow-y-auto mb-4">
-                        <li
-                            v-for="student in filteredStudents"
-                            :key="student.id"
-                            @click="selectStudentForPreview(student)"
-                            class="py-2 px-4 cursor-pointer hover:bg-gray-100 transition-colors "
-                            :class="{ 'bg-gray-200 hover:bg-gray-200': student.id === selectedStudentId }"
-                        >
-                            {{ student.first_name }} {{ student.last_name }}
-                        </li>
-                    </ul>
-
-                    <!-- Modal Buttons -->
-                    <div class="flex absolute bottom-6 right-6 justify-end">
-                        <button type="button" @click="closeStudentModal" class="px-4 py-2.5  font-medium text-sm bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
-                        <button
-                            type="button"
-                            @click="confirmStudentSelection"
-                            class="ml-2 bg-blue-700 hover:bg-blue-700/90 text-white text-sm px-4 py-2.5  font-medium rounded-lg"
-                            :disabled="!selectedStudentId"
-                        >
-                            Select
-                        </button>
-                    </div>
-                </div>
-            </div>
+                </Dialog>
+            </TransitionRoot>
         </template>
     </AppLayout>
 </template>
 
 <script setup>
-import { router,Head, useForm } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { router,Head, useForm, usePage } from '@inertiajs/vue3';
+import { ref, computed, watch, onMounted } from 'vue';
 import AppLayout from '@/Layout/DashboardLayout.vue';
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 
 // Props for students and errors
 const props = defineProps({
     students: Array,
     studentAccounts: Array,
-    errors: Object
+    errors: Object,
 });
 
 // Available students and modal states
@@ -298,13 +420,26 @@ const form = useForm({
     status: true
 });
 
+onMounted(() => {
+    if (props.studentAccounts) {
+        studentAccounts.value = props.studentAccounts;
+    } else {
+        console.error('Failed to load student accounts');
+    }
+});
+
 const isModalOpen = ref(false);
 const isStudentModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
+const accountToDelete = ref(null);
+const studentAccounts = ref([]);
+// State for selected student
+const selectedStudentId = ref(null);
+const selectedStudentName = ref('');
+const studentAccountStatusMessage = ref('');
 
 // Search query for students
 const studentSearchQuery = ref('');
-const selectedStudentId = ref(null);
-const selectedStudentName = ref('');
 
 // Computed property to filter students based on search query
 const filteredStudents = computed(() => {
@@ -336,10 +471,18 @@ const closeStudentModal = () => {
 
 // Function to select a student for preview before confirmation
 const selectStudentForPreview = (student) => {
-    selectedStudentId.value = student.id;
-    selectedStudentName.value = student.first_name;  // Update the name here as well
-};
+    const existingAccount = studentAccounts.value.find(account => account.student_id === student.id);
 
+    if (existingAccount && existingAccount.status) {
+    studentAccountStatusMessage.value = `${student.first_name} ${student.last_name} already has an active account.`;
+    console.log('Message set:', studentAccountStatusMessage.value); // Log the message
+    return;
+}
+
+    selectedStudentId.value = student.id;
+    selectedStudentName.value = student.first_name;
+    studentAccountStatusMessage.value = '';
+};
 
 // Function to confirm student selection
 const confirmStudentSelection = () => {
@@ -353,16 +496,28 @@ const confirmStudentSelection = () => {
 
 // Submit account function
 const submitAccount = () => {
+    // Store the current scroll position
+    localStorage.setItem('scrollPosition', window.scrollY);
+
     form.post(route('account.store'), {
         onSuccess: () => {
             closeModal();
+            // Reload the page
+            window.location.reload();
         }
     });
 };
 
-// Create a ref for student accounts from props
-const studentAccounts = ref(props.accounts);
+// Restore scroll position on page load
+window.addEventListener('load', () => {
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition, 10));
+        localStorage.removeItem('scrollPosition'); // Clean up
+    }
+});
 
+// Create a ref for student accounts from props
 const selectedRole = ref(null);
 
 const uniqueRoles = computed(() => {
@@ -375,6 +530,20 @@ const getRoleCount = (role) => {
     if (!props.studentAccounts) return 0;
     return props.studentAccounts.filter(account => account.role === role).length;
 };
+
+// Auto-select first role on mount
+onMounted(() => {
+    if (props.studentAccounts) {
+        studentAccounts.value = props.studentAccounts;
+        // Get the first available role and select it
+        const roles = uniqueRoles.value;
+        if (roles.length > 0) {
+            selectedRole.value = roles[0];
+        }
+    } else {
+        console.error('Failed to load student accounts');
+    }
+});
 
 // Filter accounts based on selected role and search query
 const filteredAccounts = computed(() => {
@@ -438,6 +607,24 @@ watch(searchQuery, () => {
 const clearSearch = () => {
     searchQuery.value = '';
     currentPage.value = 1;
+};
+
+const openDeleteModal = (account) => {
+    isDeleteModalOpen.value = true;
+    accountToDelete.value = account;
+};
+
+const closeDeleteModal = () => {
+    isDeleteModalOpen.value = false;
+    accountToDelete.value = null;
+};
+
+const deleteAccount = () => {
+    router.delete(`/accounts/${accountToDelete.value.id}`, {
+        onSuccess: () => {
+            closeDeleteModal();
+        },
+    });
 };
 </script>
 

@@ -223,7 +223,7 @@
 
 <script setup>
 
-    import { ref, computed, watch } from 'vue';
+    import { ref, computed, watch, onMounted } from 'vue';
     import { Head, router, useForm } from '@inertiajs/vue3';
     import { route } from 'ziggy-js';
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -287,14 +287,22 @@
     };
 
     // Check for flash message on component mount
-    const onMounted = () => {
+    onMounted(() => {
         if (props.flash && props.flash.message) {
             showSuccessAlert.value = true;
             setTimeout(() => {
                 showSuccessAlert.value = false;
             }, 4000);
         }
-    };
+        
+        // Select the first college if there are any colleges available
+        if (props.students && props.students.length > 0) {
+            const firstCollege = uniqueColleges.value[0];
+            if (firstCollege) {
+                selectedCollege.value = firstCollege;
+            }
+        }
+    });
     // Computed property to filter students based on the search query
     const filteredStudents = computed(() => {
         if (!searchQuery.value) return props.students || [];
@@ -411,7 +419,12 @@
 
     // Handle college selection
     const selectCollege = (college) => {
-        selectedCollege.value = selectedCollege.value === college ? null : college;
+        // Only toggle if clicking the currently selected college
+        if (selectedCollege.value === college) {
+            selectedCollege.value = null;
+        } else {
+            selectedCollege.value = college;
+        }
     };
 
     // Reset pagination when selecting a new college

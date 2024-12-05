@@ -76,12 +76,30 @@ class LoginController extends Controller
             case 'Admin':
                 return redirect()->intended('/admin');
             case 'Facilitator':
+                if (!$studentAccount->status) {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'message' => 'Your account has been deactivated. Please contact the administrator.'
+                    ]);
+                }
                 $encryptedId = Crypt::encryptString($studentAccount->id);
                 return redirect()->intended('/facidashboard/' . $encryptedId);
             case 'College Sport Head':
+                if (!$studentAccount->status) {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'message' => 'Your account has been deactivated. Please contact the administrator.'
+                    ]);
+                }
                 $encryptedId = Crypt::encryptString($studentAccount->id);
                 return redirect()->intended('/cshdashboard/' . $encryptedId);
             case 'Sub Admin':
+                if (!$studentAccount->status) {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'message' => 'Your account has been deactivated. Please contact the administrator.'
+                    ]);
+                }
                 return redirect()->intended('/secretary');
             default:
                 return redirect()->intended('/');

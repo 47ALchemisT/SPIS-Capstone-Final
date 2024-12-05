@@ -153,16 +153,22 @@
   
     // Reset error message before submission
     errorMessage.value = '';
-  
+
     // Submit form via Inertia.js
     router.post('/login', form, {
-      onError: (errors) => {
-          if (errors.username || errors.password || errors.role) {
-              errorMessage.value = errors.username || errors.password || errors.role;
-          } else {
-              errorMessage.value = 'An unexpected error occurred. Please try again.';
-          }
-      }
+        onSuccess: () => {
+            // Clear any existing error messages on success
+            errorMessage.value = '';
+        },
+        onError: (errors) => {
+            if (errors.message) {
+                errorMessage.value = errors.message;
+            } else if (errors.username || errors.password || errors.role) {
+                errorMessage.value = errors.username || errors.password || errors.role;
+            } else {
+                errorMessage.value = 'An unexpected error occurred. Please try again.';
+            }
+        }
     });
   };
   </script>

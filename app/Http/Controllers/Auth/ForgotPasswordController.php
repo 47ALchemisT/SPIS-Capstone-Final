@@ -64,6 +64,12 @@ class ForgotPasswordController extends Controller
                 'student_id' => $student->id
             ]);
 
+            if ($studentAccount->status === false) {
+                return Inertia::render('Auth/ForgotPassword', [
+                    'error' => 'This account has been deactivated.'
+                ]);
+            }
+
             if (!$studentAccount) {
                 return Inertia::render('Auth/ForgotPassword', [
                     'error' => 'No account has been created for this student yet.'
@@ -78,6 +84,7 @@ class ForgotPasswordController extends Controller
                     'role' => $studentAccount->role,
                     'college' => $student->college,
                     'id_number' => $student->id_number,
+                    'status' => $studentAccount->status
                 ]
             ]);
 

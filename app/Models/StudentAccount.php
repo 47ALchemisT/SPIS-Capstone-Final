@@ -23,6 +23,10 @@ class StudentAccount extends Authenticatable
         'password',
     ];
 
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
     protected $hidden = [
         'password',
         'remember_token',

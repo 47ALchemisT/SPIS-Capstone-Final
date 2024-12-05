@@ -213,7 +213,7 @@ const form = useForm({
   matchId: '',
   date: '',
   time: '',
-  venueId: ''
+  venue_id: ''
 });
 
 const timeSlots = [
@@ -382,7 +382,7 @@ const saveDateTime = () => {
   form.matchId = selectedMatch.value.id;
   form.date = selectedDate.value;
   form.time = selectedTime.value;
-  form.venueId = selectedVenue.value;
+  form.venue_id = selectedVenue.value;
 
   form.put(route('matches.updateDateTime'), {
     onSuccess: () => {

@@ -75,7 +75,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::resource('sport', SportController::class);
     Route::resource('points', PointsController::class);
     Route::resource('account', AccountController::class);
-
+    Route::delete('/accounts/{account}', [AccountController::class, 'destroy'])->name('accounts.destroy');
 
     //sports setup
     Route::get('details/sportview/{sport}', function ($sport) {

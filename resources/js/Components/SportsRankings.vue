@@ -294,7 +294,6 @@ const props = defineProps({
         type: Array,
         required: true
     },
-    variationResult: Array,
     teams: {
         type: Array,
         required: true
@@ -359,19 +358,20 @@ const filteredVariations = computed(() => {
     return variations;
 });
 
-// Add a new computed property to check if a sport is completed
-const isSportCompleted = (sportId) => {
-    if (!props.sports) return false;
-    const sport = props.sports.find(s => s.id === sportId);
-    return sport?.status === 'completed';
-};
-
 const filteredAndCompletedVariations = computed(() => {
-    if (!props.sports || !filteredVariations.value) return [];
+    console.log('assignedSports:', props.assignedSports);
+    console.log('filteredVariations:', filteredVariations.value);
+    
+    if (!props.assignedSports || !filteredVariations.value) return [];
     
     return filteredVariations.value.filter(variation => {
-        if (!variation.assigned_sport_id) return false;
-        const sport = props.sports.find(s => s.id === variation.assigned_sport_id);
+        if (!variation.assigned_sport_id) {
+            console.log('Variation missing assigned_sport_id:', variation);
+            return false;
+        }
+        const sport = props.assignedSports.find(s => s.id === variation.assigned_sport_id);
+        console.log('Found sport for variation:', sport);
+        console.log('Sport status:', sport?.status);
         return sport?.status === 'completed';
     });
 });

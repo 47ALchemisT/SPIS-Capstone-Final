@@ -312,6 +312,7 @@ class SingleEliminationController extends Controller
             'matchId' => 'required|exists:sport_matches,id',
             'date' => 'required|date_format:Y-m-d',
             'time' => 'required|string',
+            'venue_id' => 'required|exists:venues,id', // Add venue validation
         ]);
     
         if ($validator->fails()) {
@@ -332,16 +333,17 @@ class SingleEliminationController extends Controller
                 throw new \Exception('Associated sport not found');
             }
     
-            // 1. UPDATE the match schedule
+            // 1. UPDATE the match schedule and venue
             $match->update([
                 'date' => $request->date,
                 'time' => $request->time,
+                'match_venue_id' => $request->venue_id // Add venue update
             ]);
     
             // 2. CREATE a new venue usage record
             $venueRecord = new UsedVenueRecord([
                 'palakasan_id' => $match->assignedSport->palakasan_sport_id,
-                'venue_id' => $match->match_venue_id,
+                'venue_id' => $request->venue_id, // Use the new venue ID
                 'date' => $request->date,
                 'time' => $request->time
             ]);
@@ -349,7 +351,7 @@ class SingleEliminationController extends Controller
     
             DB::commit();
     
-            return redirect()->back()->with('message', 'Match schedule and venue record updated successfully');
+            return redirect()->back()->with('message', 'Match schedule, venue, and venue record updated successfully');
     
         } catch (\Exception $e) {
             DB::rollBack();
