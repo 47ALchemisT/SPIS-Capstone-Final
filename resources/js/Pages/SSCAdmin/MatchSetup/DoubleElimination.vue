@@ -104,11 +104,13 @@
                     <div v-if="activeTab === 'matches'" >
                         <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues"  :allMatches="allMatches" :venueRecords="venueRecords"/>                
                     </div>
+                    
                     <div v-if="activeTab === 'standing'" class="overflow-hidden">
                         <div class="w-full">
                             <Standing :teams="teams" :results="results" />
                         </div>
                     </div>
+
                     <div v-if="activeTab === 'brackets'">
                         <div class="overflow-hidden">
                             <div class="overflow-hidden max-w-full">
@@ -382,6 +384,11 @@
             </div>
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
  </template>
  
  <script setup>
@@ -392,6 +399,7 @@
     import Standing from '@/Components/Standing.vue'
     import GameSchedule from '@/Components/GameSchedule.vue';
     import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+    import SuccessModal from '@/Components/SuccessModal.vue';
 
 const props = defineProps({
     sport: [Array, Object],
@@ -416,6 +424,11 @@ const shuffleTeams = ref(false);
 const showCreateMatchesModal = ref(false);
 const createMatchesLoading = ref(false);
 const createMatchesError = ref('');
+
+   
+const showSuccessModal = ref(false);
+const successMessage = ref('');
+
 
 const openCreateMatchesModal = () => {
     if (hasExistingMatches.value) {
@@ -627,7 +640,9 @@ const createInitialMatches = async () => {
                 console.log('Matches created successfully');
                 loading.value = false;
                 createMatchesLoading.value = false;
-                closeCreateMatchesModal(); // Close the modal after successful creation
+                closeCreateMatchesModal(); 
+                showSuccessModal.value = true;
+                successMessage.value = 'Matches created successfully!';
             },
             onError: (errors) => {
                 console.error('Error creating matches:', errors);
@@ -856,14 +871,11 @@ const handleScheduleClick = () => {
         status: 'scheduled'
     }, {
         onSuccess: () => {
-            if (toastRef.value) {
-                toastRef.value.addToast('Sport status updated to scheduled', 'success');
-            }
+            showSuccessModal.value = true;
+            successMessage.value = 'Successfully scheduled the matches!';
         },
         onError: (errors) => {
-            if (toastRef.value) {
-                toastRef.value.addToast('Failed to update sport status', 'error');
-            }
+            console.error('Error scheduling matches:', errors);
         }
     });
 };

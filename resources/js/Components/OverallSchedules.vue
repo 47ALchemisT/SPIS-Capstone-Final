@@ -208,7 +208,7 @@
                 leave-from="opacity-100"
                 leave-to="opacity-0"
             >
-                <div class="fixed inset-0 bg-black/25" />
+                <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" />
             </TransitionChild>
 
             <div class="fixed inset-0 overflow-y-auto">
@@ -570,7 +570,7 @@ const downloadScheduleAsPDF = () => {
             
             // Add variations if any
             data.variations.forEach((variation, index) => {
-                const variationText = `${variation.sport_variation_name}: ${formatDate(variation.date)} / ${formatTime(variation.time)} / ${variation.venue_id?.name || 'TBA'}`;
+                const variationText = `${variation.sport_variation_name}: ${formatDate(variation.date)} / ${formatTime(variation.time)} / ${variation.venue?.name || 'TBA'}`;
                 
                 if (yPos > 270) {
                     doc.addPage();

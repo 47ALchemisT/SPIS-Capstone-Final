@@ -45,11 +45,6 @@ class ForgotPasswordController extends Controller
             // First find the student by ID number
             $student = Student::where('id_number', $idNumber)->first();
             
-            Log::info('Student search result', [
-                'found' => (bool)$student,
-                'id_number' => $idNumber
-            ]);
-
             if (!$student) {
                 return Inertia::render('Auth/ForgotPassword', [
                     'error' => 'No student found with this ID number.'
@@ -58,11 +53,6 @@ class ForgotPasswordController extends Controller
 
             // Then get their associated student account
             $studentAccount = StudentAccount::where('student_id', $student->id)->first();
-            
-            Log::info('Student account search result', [
-                'found' => (bool)$studentAccount,
-                'student_id' => $student->id
-            ]);
 
             if ($studentAccount->status === false) {
                 return Inertia::render('Auth/ForgotPassword', [

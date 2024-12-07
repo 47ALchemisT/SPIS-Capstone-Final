@@ -1,5 +1,4 @@
 <template>
-  <div>
     <Head :title="sport.sport.name" />
     <AppLayout :facilitator="facilitator">
       <template v-slot:default>
@@ -67,8 +66,6 @@
             {{ rankingsSubmitted ? 'Rankings Submitted' : 'Submit Ranking' }}
           </button>
         </div>
-
-        <Toast ref="toastRef" />
 
         <!-- Tabs Navigation -->
         <nav class="flex relative justify-between mt-4  items-center">
@@ -156,7 +153,11 @@
 
       </template>
     </AppLayout>
-  </div>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
@@ -166,8 +167,8 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
 import Standing from '@/Components/StandingRR.vue';
 import GameSchedule from '@/Components/Facilitator/FGameScheduleRR.vue';
-import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 const props = defineProps({
   sport: Object,
@@ -192,6 +193,8 @@ const showRankingModal = ref(false);
 const isSubmittingRankings = ref(false);
 const rankingTeams = ref([]);
 const rankingsSubmitted = ref(false);
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 const allMatchesCompleted = computed(() => {
   return matches.value.every(match => match.status === 'completed');
@@ -201,26 +204,10 @@ const displayWinner = computed(() => {
   return tournamentWinner.value || props.winner;
 });
 
-const toastRef = ref(null);
-const page = usePage();
 
 const form = useForm({
   rankings: []
 });
-
-// Watch for flash messages
-watch(
-    () => page.props.flash,
-    (flash) => {
-        if (flash.message) {
-            toastRef.value.addToast(flash.message, 'success');
-        }
-        if (flash.error) {
-            toastRef.value.addToast(flash.error, 'error');
-        }
-    },
-    { deep: true }
-);
 
 const returnToFacilitator = () => {
   const currentPath = window.location.pathname;
@@ -329,15 +316,13 @@ const submitRankings = () => {
     onSuccess: () => {
       rankingsSubmitted.value = true;
       closeRankingModal();
-      if (toastRef.value) {
-        toastRef.value.addToast('Rankings submitted successfully', 'success');
-      }
+      showSuccessModal.value = true;
+      successMessage.value = 'Rankings submitted successfully!';
     },
     onError: (errors) => {
       console.error('Submission errors:', errors);
-      if (toastRef.value) {
-        toastRef.value.addToast('Failed to submit rankings', 'error');
-      }
+      showSuccessModal.value = true;
+      successMessage.value = 'Failed to submit rankings';
     }
   });
 };

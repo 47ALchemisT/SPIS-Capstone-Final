@@ -266,12 +266,18 @@
       </div>
     </div>
   </div>
+  <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
 import { ref, computed, watch, nextTick, onMounted } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 import Toast from '@/Components/Toast.vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 const props = defineProps({
   matches: {
@@ -307,6 +313,9 @@ const props = defineProps({
     default: () => []
   }
 });
+
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 const showScoreModal = ref(false);
 const scoreLoading = ref(false);
@@ -564,6 +573,8 @@ const submitScore = async () => {
         showScoreModal.value = false;
         closeScoreModal();
         scoreLoading.value = false;
+        showSuccessModal.value = true;
+        successMessage.value = 'Score submitted successfully!';
       },
       onError: (errors) => {
         console.error('Error updating score:', errors);

@@ -232,12 +232,18 @@
       </div>
     </div>
   </div>
+  <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-  
+import SuccessModal from '@/Components/SuccessModal.vue';
+
 const props = defineProps({
   matches: {
     type: Array,
@@ -264,6 +270,10 @@ const props = defineProps({
     required: true
   }
 });
+
+const showSuccessModal = ref(false);
+const successMessage = ref('');
+
 
 // Refs for signature modal
 const isWinnerModalOpen = ref(false);
@@ -546,7 +556,8 @@ const submitResult = () => {
     onSuccess: () => {
       closeSignatureModal();
       scoreLoading.value = false;
-      window.location.reload();
+      showSuccessModal.value = true;
+      successMessage.value = 'Result submitted successfully!';
     },
     onError: (errors) => {
       console.error('Error submitting result:', errors);

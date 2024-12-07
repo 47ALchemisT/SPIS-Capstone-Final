@@ -2,7 +2,6 @@
     <Head title="Palakasan"/>
     <AppLayout>
         <template v-slot:default>
-            <Toast ref="toastRef" />
             <!-- Tabs Navigation -->
             <nav class="flex relative justify-between  items-center">
                 <div class="flex gap-2 ">
@@ -398,7 +397,7 @@
                             <div class="w-full">
                                 <div class="flex bg-blue-100 w-14 h-14 justify-center items-center rounded-full mb-4">
                                     <svg class="w-6 h-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                        <path fill="currentColor" fill-rule="evenodd" d="M5.166 2.621v.858q-1.553.223-3.071.543a.75.75 0 0 0-.584.859a6.75 6.75 0 0 0 6.138 5.6a6.7 6.7 0 0 0 2.743 1.346A6.7 6.7 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75a2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.7 6.7 0 0 1-1.112-3.173a6.7 6.7 0 0 0 2.743-1.347a6.75 6.75 0 0 0 6.139-5.6a.75.75 0 0 0-.585-.858a47 47 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744a49 49 0 0 0-6.093-.377q-3.096.002-6.093.377a.75.75 0 0 0-.657.744m0 2.629c0 1.196.312 2.32.857 3.294A5.27 5.27 0 0 1 3.16 5.337a46 46 0 0 1 2.006-.343zm13.5 0v-.256q1.011.15 2.006.343a5.27 5.27 0 0 1-2.863 3.207a6.7 6.7 0 0 0 .857-3.294" clip-rule="evenodd"/>
+                                        <path fill="currentColor" fill-rule="evenodd" d="M5.166 2.621v.858q-1.553.223-3.071.543a.75.75 0 0 0-.584.859a6.75 6.75 0 0 0 6.138 5.6a6.7 6.7 0 0 1 2.743 1.346A6.7 6.7 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75a2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.7 6.7 0 0 1-1.112-3.173a6.7 6.7 0 0 0 2.743-1.347a6.75 6.75 0 0 0 6.139-5.6a.75.75 0 0 0-.585-.858a47 47 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744a49 49 0 0 0-6.093-.377q-3.096.002-6.093.377a.75.75 0 0 0-.657.744m0 2.629c0 1.196.312 2.32.857 3.294A5.27 5.27 0 0 1 3.16 5.337a46 46 0 0 1 2.006-.343zm13.5 0v-.256q1.011.15 2.006.343a5.27 5.27 0 0 1-2.863 3.207a6.7 6.7 0 0 0 .857-3.294" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
                                 <div class="flex justify-between items-center">
@@ -511,637 +510,882 @@
 
             <!--add or create modals-->
             <!-- Palakasan Modal -->
-            <div v-if="isPalakasanModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Create New Palakasan</h2>
+            <TransitionRoot appear :show="isPalakasanModalOpen" as="template">
+                <Dialog as="div" @close="closePalakasanModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+                    </TransitionChild>
 
-                        <form @submit.prevent="submitPalakasan">
-                            <!-- Theme -->
-                            <div class="mb-4">
-                                <label for="theme" class="block text-sm font-medium text-gray-700">Theme</label>
-                                <input placeholder="Enter theme of the palakasan..." v-model="form.theme" id="theme" type="text" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
-                                <span v-if="form.errors.theme" class="text-red-600 text-sm">{{ form.errors.theme }}</span>
-                            </div>
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-lg transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all">
+                                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Create New Palakasan</h2>
 
-                            <!-- Tagline -->
-                            <div class="mb-4">
-                                <label for="tagline" class="block text-sm font-medium text-gray-700">Tagline</label>
-                                <input placeholder="Enter tagline for the palakasan..." v-model="form.tagline" id="tagline" type="text" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
-                                <span v-if="form.errors.tagline" class="text-red-600 text-sm">{{ form.errors.tagline }}</span>
-                            </div>
+                                    <form @submit.prevent="submitPalakasan">
+                                        <!-- Theme -->
+                                        <div class="mb-4">
+                                            <label for="theme" class="block text-sm font-medium text-gray-700">Theme</label>
+                                            <input placeholder="Enter theme of the palakasan..." v-model="form.theme" id="theme" type="text" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                                            <span v-if="form.errors.theme" class="text-red-600 text-sm">{{ form.errors.theme }}</span>
+                                        </div>
 
-                            <!-- Description -->
-                            <div class="mb-4">
-                                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                                <textarea placeholder="Explain the palakasan briefly and the theme..." v-model="form.description" rows="6" id="description" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></textarea>
-                                <span v-if="form.errors.description" class="text-red-600 text-sm">{{ form.errors.description }}</span>
-                            </div>
+                                        <!-- Tagline -->
+                                        <div class="mb-4">
+                                            <label for="tagline" class="block text-sm font-medium text-gray-700">Tagline</label>
+                                            <input placeholder="Enter tagline for the palakasan..." v-model="form.tagline" id="tagline" type="text" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                                            <span v-if="form.errors.tagline" class="text-red-600 text-sm">{{ form.errors.tagline }}</span>
+                                        </div>
 
-                            <div class="grid grid-cols-2 gap-3">
-                                <!-- Start Date -->
-                                <div class="mb-4">
-                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
-                                    <input v-model="form.start_date" id="start_date" type="date" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
-                                    <span v-if="form.errors.start_date" class="text-red-600 text-sm">{{ form.errors.start_date }}</span>
-                                </div>
+                                        <!-- Description -->
+                                        <div class="mb-4">
+                                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                            <textarea placeholder="Explain the palakasan briefly and the theme..." v-model="form.description" rows="6" id="description" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></textarea>
+                                            <span v-if="form.errors.description" class="text-red-600 text-sm">{{ form.errors.description }}</span>
+                                        </div>
 
-                                <!-- End Date -->
-                                <div class="mb-4">
-                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
-                                    <input v-model="form.end_date" id="end_date" type="date" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
-                                    <span v-if="form.errors.end_date" class="text-red-600 text-sm">{{ form.errors.end_date }}</span>
-                                </div>
-                            </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <!-- Start Date -->
+                                            <div class="mb-4">
+                                                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                                                <input v-model="form.start_date" id="start_date" type="date" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                                                <span v-if="form.errors.start_date" class="text-red-600 text-sm">{{ form.errors.start_date }}</span>
+                                            </div>
 
-                            <!-- Buttons -->
-                            <div class="flex justify-end space-x-2">
-                                <button @click="closePalakasanModal" type="button" class="bg-gray-100 text-gray-700 py-1.5 px-3 rounded-md hover:bg-gray-200">Cancel</button>
-                                <button
-                                    type="submit"
-                                    :disabled="form.processing"
-                                    class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
-                                >
-                                    <span v-if="!form.processing">
-                                        Create
-                                    </span>
-                                    <span v-else>
-                                        <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Processing...
-                                    </span>
-                                </button>                              
-                            </div>
-                        </form>
+                                            <!-- End Date -->
+                                            <div class="mb-4">
+                                                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                                                <input v-model="form.end_date" id="end_date" type="date" class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                                                <span v-if="form.errors.end_date" class="text-red-600 text-sm">{{ form.errors.end_date }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Buttons -->
+                                        <div class="flex justify-end space-x-2">
+                                            <button @click="closePalakasanModal" type="button" class="bg-gray-100 text-gray-700 py-1.5 px-3 rounded-md hover:bg-gray-200">Cancel</button>
+                                            <button
+                                                type="submit"
+                                                :disabled="form.processing"
+                                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition relative"
+                                            >
+                                                <span v-if="!form.processing">
+                                                    Create
+                                                </span>
+                                                <span v-else>
+                                                    <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Processing...
+                                                </span>
+                                            </button>                              
+                                        </div>
+                                    </form>
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
                     </div>
-            </div>
+                </Dialog>
+            </TransitionRoot>
 
             <!-- Modal for adding sport -->
-            <div v-if="isSportsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
-                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Select sport to be played
-                        </h3>
-                        <button               
-                            @click="closeSportsModal" 
-                            type="button" 
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        >
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <form @submit.prevent="submitSport">
-                        <div class="p-4">
-                            <!-- Hidden Palakasan ID input -->
-                            <input type="text" v-model="form1.palakasan_sport_id" class="hidden" />
-                            
-                            <div class="grid grid-cols-3 gap-2 mb-4">
-                                <label for="sport" class="col-span-3 block text-sm font-medium">Select Sport</label>
-                                <!-- Select Sport -->
-                                <div class="col-span-2 ">
-                                    <div class="relative" ref="dropdownContainer">
-                                        <div class="relative">
-                                            <input
-                                                type="text"
-                                                :value="selectedSportName"
-                                                readonly
-                                                placeholder="Select a sport..."
-                                                class="w-full border px-3 py-2 rounded-lg border-gray-300 cursor-pointer"
-                                                @click="showSportDropdown = true"
-                                            />
-                                            <div 
-                                                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                            </div>
-                                            
-                                            <!-- Dropdown with Search -->
-                                            <div 
-                                                v-show="showSportDropdown"
-                                                class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg"
-                                            >
-                                                <!-- Search input within dropdown -->
-                                                <div class="p-2 border-b border-gray-200">
+            <TransitionRoot appear :show="isSportsModalOpen" as="template">
+                <Dialog as="div" @close="closeSportsModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-lg transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all">
+                                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Select sport to be played</h2>
+
+                                    <form @submit.prevent="submitSport">
+                                        <!-- Hidden Palakasan ID input -->
+                                        <input type="text" v-model="form1.palakasan_sport_id" class="hidden" />
+                                        
+                                        <div class="grid grid-cols-3 gap-2 mb-4">
+                                            <label for="sport" class="col-span-3 block text-sm font-medium">Select Sport</label>
+                                            <!-- Select Sport -->
+                                            <div class="col-span-2 ">
+                                                <div class="relative" ref="dropdownContainer">
                                                     <div class="relative">
                                                         <input
                                                             type="text"
-                                                            v-model="sportSearch"
-                                                            placeholder="Search sports..."
-                                                            class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
-                                                            @input="filterSports"
+                                                            :value="selectedSportName"
+                                                            readonly
+                                                            placeholder="Select a sport..."
+                                                            class="w-full border px-3 py-2 rounded-lg border-gray-300 cursor-pointer"
+                                                            @click="showSportDropdown = true"
                                                         />
-                                                        <button
-                                                            v-if="sportSearch"
-                                                            @click="clearSearch"
-                                                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                                        <div 
+                                                            class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
                                                         >
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                            </svg>
-                                                        </button>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                        </div>
+                                                        
+                                                        <!-- Dropdown with Search -->
+                                                        <div 
+                                                            v-show="showSportDropdown"
+                                                            class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg"
+                                                        >
+                                                            <!-- Search input within dropdown -->
+                                                            <div class="p-2 border-b border-gray-200">
+                                                                <div class="relative">
+                                                                    <input
+                                                                        type="text"
+                                                                        v-model="sportSearch"
+                                                                        placeholder="Search sports..."
+                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
+                                                                        @input="filterSports"
+                                                                    />
+                                                                    <button
+                                                                        v-if="sportSearch"
+                                                                        @click="clearSearch"
+                                                                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                                                    >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Sports list -->
+                                                            <div class="max-h-48 overflow-y-auto">
+                                                                <div 
+                                                                    v-for="sport in filteredSports" 
+                                                                    :key="sport.id"
+                                                                    @mousedown.prevent="selectSport(sport)"
+                                                                    class="px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between"
+                                                                    :class="{
+                                                                        'opacity-50 cursor-not-allowed': isDisabled(sport.id),
+                                                                        'bg-blue-50': form1.sport_id === sport.id
+                                                                    }"
+                                                                >
+                                                                    <span>{{ sport.name }}</span>
+                                                                    <span v-if="form1.sport_id === sport.id" class="text-blue-500">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
+                                                                <div v-if="filteredSports.length === 0" class="px-3 py-2 text-gray-500 text-sm">
+                                                                    No sports found
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                
-                                                <!-- Sports list -->
-                                                <div class="max-h-48 overflow-y-auto">
-                                                    <div 
-                                                        v-for="sport in filteredSports" 
-                                                        :key="sport.id"
-                                                        @mousedown.prevent="selectSport(sport)"
-                                                        class="px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between"
-                                                        :class="{
-                                                            'opacity-50 cursor-not-allowed': isDisabled(sport.id),
-                                                            'bg-blue-50': form1.sport_id === sport.id
-                                                        }"
+
+                                            </div>
+
+                                            <!-- Select Category -->
+                                            <div class="">
+                                                <div class="relative">
+                                                    <select 
+                                                        v-model="form1.categories" 
+                                                        id="category" 
+                                                        class="w-full border px-3 py-2 rounded-lg border-gray-300"
                                                     >
-                                                        <span>{{ sport.name }}</span>
-                                                        <span v-if="form1.sport_id === sport.id" class="text-blue-500">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                            </svg>
-                                                        </span>
-                                                    </div>
-                                                    <div v-if="filteredSports.length === 0" class="px-3 py-2 text-gray-500 text-sm">
-                                                        No sports found
+                                                        <option value="" disabled>Category</option>
+                                                        <option 
+                                                            v-for="category in availableCategories" 
+                                                            :key="category.value"
+                                                            :value="category.value"
+                                                            :disabled="category.disabled"
+                                                        >
+                                                            {{ category.value }}{{ category.disabled ? ' (Already Selected)' : '' }}
+                                                        </option>
+                                                    </select>
+                                                    <div 
+                                                    class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-span-3 flex gap-2">
+                                                <span v-if="form1.errors.sport_id" class="text-red-500 text-xs">{{ form1.errors.sport_id }}</span>
+                                                <span v-if="form1.errors.categories" class="text-red-500 text-xs">{{ form1.errors.categories }}</span>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                </div>
+                                        <div class="mb-4 p-3 bg-gray-100/60 rounded-lg">
+                                            <label for="setup" class="block text-sm font-medium mb-1">Sport Configuration</label>
+                                            <div class="">
+                                                <label for="setup" class="block text-xs text-gray-700 font-medium mb-2">Sport Setup</label>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <label 
+                                                        v-for="setup in ['Single Elimination', 'Double Elimination', 'Free for All', 'Round Robin']" 
+                                                        :key="setup"
+                                                        class="relative cursor-pointer"
+                                                    >
+                                                        <input 
+                                                            type="radio" 
+                                                            :value="setup" 
+                                                            v-model="form1.setup"
+                                                            name="setup"
+                                                            class="peer sr-only hidden"
+                                                            @change="updateCategoryForFreeForAll"
+                                                        />
+                                                        <div class="p-3 rounded-lg ring-1 ring-gray-300 peer-checked:ring-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all duration-300">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">{{ setup }}</span>
+                                                            </div>
+                                                            <div class="mt-1 text-xs text-gray-500 peer-checked:text-blue-600">
+                                                                {{ getSetupDescription(setup) }}
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <span v-if="form1.errors.setup" class="text-red-500 text-xs mt-1">{{ form1.errors.setup }}</span>
+                                            </div>
 
-                                <!-- Select Category -->
-                                <div class="">
-                                    <div class="relative">
-                                        <select 
-                                            v-model="form1.categories" 
-                                            id="category" 
-                                            class="w-full border px-3 py-2 rounded-lg border-gray-300"
-                                        >
-                                            <option value="" disabled>Category</option>
-                                            <option 
-                                                v-for="category in availableCategories" 
-                                                :key="category.value"
-                                                :value="category.value"
-                                                :disabled="category.disabled"
+                                            <!-- Select Type -->
+                                            <div class="mt-4">
+                                                <label class="block text-xs text-gray-700 font-medium mb-3">Pointing System</label>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <label 
+                                                        v-for="type in ['Major', 'Minor']" 
+                                                        :key="type"
+                                                        class="relative cursor-pointer"
+                                                    >
+                                                        <input 
+                                                            type="radio" 
+                                                            :value="type" 
+                                                            v-model="form1.type"
+                                                            name="type"
+                                                            class="peer sr-only"
+                                                        />
+                                                        <div class="p-3 rounded-lg ring-1 ring-gray-300 peer-checked:ring-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all duration-300">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">{{ type }}</span>
+                                                            </div>
+                                                            <div class="mt-1 text-xs text-gray-500 peer-checked:text-blue-600">
+                                                                {{ getTypeDescription(type) }}
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <span v-if="form1.errors.type" class="text-red-500 text-xs mt-1">{{ form1.errors.type }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Select Facilitator -->
+                                        <div class="mb-4">
+                                            <label for="facilitator" class="block text-sm font-medium mb-2">Select Facilitator</label>
+                                            <div class="relative">
+                                                <select 
+                                                    v-model="form1.facilitator_id" 
+                                                    id="facilitator" 
+                                                    class="w-full border px-3 py-2 rounded-lg border-gray-300"
+                                                >
+                                                    <option value="" disabled>Select a facilitator</option>
+                                                    <option 
+                                                    v-for="f in facilitator" 
+                                                    :key="f.id" 
+                                                    :value="f.id"
+                                                    >
+                                                    {{ f.student.first_name }} {{ f.student.last_name }}
+                                                    </option>
+                                                </select>
+                                                <div 
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                </div>
+                                            </div>
+                                            <span v-if="form1.errors.facilitator_id" class="text-red-500 text-xs">{{ form1.errors.facilitator_id }}</span>
+                                        </div>
+
+                                        <!-- Modal Buttons -->
+                                        <div class="flex justify-end">
+                                            <button type="button" @click="closeSportsModal" class="mr-2 px-5 py-2 text-sm font-medium text-gray-500 ring-1 ring-gray-200 rounded-lg">Cancel</button>
+                                            <button
+                                                type="submit"
+                                                :disabled="form1.processing"
+                                                class="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition relative"
                                             >
-                                                {{ category.value }}{{ category.disabled ? ' (Already Selected)' : '' }}
-                                            </option>
-                                        </select>
-                                        <div 
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                                <span v-if="!form1.processing">
+                                                Confirm
+                                                </span>
+                                                <span v-else>
+                                                <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Processing...
+                                                </span>
+                                            </button>  
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-span-3 flex gap-2">
-                                    <span v-if="form1.errors.sport_id" class="text-red-500 text-xs">{{ form1.errors.sport_id }}</span>
-                                    <span v-if="form1.errors.categories" class="text-red-500 text-xs">{{ form1.errors.categories }}</span>
-                                </div>
-                            </div>
-
-                            <div class="mb-4 p-3 bg-gray-100/60 rounded-lg">
-                                <label for="setup" class="block text-sm font-medium mb-1">Sport Configuration</label>
-                                <div class="">
-                                    <label for="setup" class="block text-xs text-gray-700 font-medium mb-2">Sport Setup</label>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <label 
-                                            v-for="setup in ['Single Elimination', 'Double Elimination', 'Free for All', 'Round Robin']" 
-                                            :key="setup"
-                                            class="relative cursor-pointer"
-                                        >
-                                            <input 
-                                                type="radio" 
-                                                :value="setup" 
-                                                v-model="form1.setup"
-                                                name="setup"
-                                                class="peer sr-only hidden"
-                                                @change="updateCategoryForFreeForAll"
-                                            />
-                                            <div class="p-3 rounded-lg ring-1 ring-gray-300 peer-checked:ring-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all duration-300">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">{{ setup }}</span>
-                                                </div>
-                                                <div class="mt-1 text-xs text-gray-500 peer-checked:text-blue-600">
-                                                    {{ getSetupDescription(setup) }}
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <span v-if="form1.errors.setup" class="text-red-500 text-xs mt-1">{{ form1.errors.setup }}</span>
-                                </div>
-
-                                <!-- Select Type -->
-                                <div class="mt-4">
-                                    <label class="block text-xs text-gray-700 font-medium mb-3">Pointing System</label>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <label 
-                                            v-for="type in ['Major', 'Minor']" 
-                                            :key="type"
-                                            class="relative cursor-pointer"
-                                        >
-                                            <input 
-                                                type="radio" 
-                                                :value="type" 
-                                                v-model="form1.type"
-                                                name="type"
-                                                class="peer sr-only"
-                                            />
-                                            <div class="p-3 rounded-lg ring-1 ring-gray-300 peer-checked:ring-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all duration-300">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">{{ type }}</span>
-                                                </div>
-                                                <div class="mt-1 text-xs text-gray-500 peer-checked:text-blue-600">
-                                                    {{ getTypeDescription(type) }}
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <span v-if="form1.errors.type" class="text-red-500 text-xs mt-1">{{ form1.errors.type }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Select Facilitator -->
-                            <div class="mb-4">
-                                <label for="facilitator" class="block text-sm font-medium mb-2">Select Facilitator</label>
-                                <div class="relative">
-                                    <select 
-                                        v-model="form1.facilitator_id" 
-                                        id="facilitator" 
-                                        class="w-full border px-3 py-2 rounded-lg border-gray-300"
-                                    >
-                                        <option value="" disabled>Select a facilitator</option>
-                                        <option 
-                                        v-for="f in facilitator" 
-                                        :key="f.id" 
-                                        :value="f.id"
-                                        >
-                                        {{ f.student.first_name }} {{ f.student.last_name }}
-                                        </option>
-                                    </select>
-                                    <div 
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                                    </div>
-                                </div>
-                                <span v-if="form1.errors.facilitator_id" class="text-red-500 text-xs">{{ form1.errors.facilitator_id }}</span>
-                            </div>
-
-                            <!-- Modal Buttons -->
-                            <div class="flex justify-end">
-                                <button type="button" @click="closeSportsModal" class="mr-2 px-5 py-2.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg">Cancel</button>
-                                <button
-                                    type="submit"
-                                    :disabled="form1.processing"
-                                    class="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm transition relative"
-                                >
-                                    <span v-if="!form1.processing">
-                                    Confirm
-                                    </span>
-                                    <span v-else>
-                                    <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Processing...
-                                    </span>
-                                </button>  
-                            </div>
+                                    </form>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
 
             <!-- Modal for adding new team -->
-            <div v-if="isTeamsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
-                    <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Select college to participate
-                        </h3>
-                        <button               
-                            @click="closeTeamsModal" 
-                            type="button" 
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        >
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <form @submit.prevent="submitTeam">
-                        <div class="p-4">
-                            <!--select college-->
-                            <div class="mb-4">
-                                <label for="college" class="block text-sm mb-2 font-medium">Select College</label>
-                                <div class="relative">
-                                    <select 
-                                        v-model="form2.college_id" 
-                                        id="college" 
-                                        class="w-full appearance-none border border-gray-300 px-3 py-2 pr-10 rounded-lg"
-                                        @focus="isOpen = true"
-                                        @blur="isOpen = false"
-                                    >
-                                        <option value="" disabled>Select a college</option>
-                                        <option
-                                            v-for="college in availableColleges"
-                                            :key="college.id"
-                                            :value="college.id"
-                                            :disabled="isCollegeAssigned(college.id)"
+            <TransitionRoot appear :show="isTeamsModalOpen" as="template">
+                <Dialog as="div" @close="closeTeamsModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-lg transform overflow-hidden rounded-lg bg-white shadow-xl transition-all">
+                                    <div class="flex items-center justify-between p-4 ">
+                                        <DialogTitle as="h3" class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            Select college to participate
+                                        </DialogTitle>
+                                        <button               
+                                            @click="closeTeamsModal" 
+                                            type="button" 
+                                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                         >
-                                            {{ college.shortName }} {{ isCollegeAssigned(college.id) ? ' (Already Selected)' : '' }}
-                                        </option>
-                                    </select>
-                                    <div 
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
                                     </div>
-                                </div>
-                                <span v-if="form2.errors.college_id" class="text-red-500">{{ form2.errors.college_id }}</span>
-                            </div>
 
-                            <!-- Input for Team Name -->
-                            <div class="mb-4">
-                                <label for="teamName" class="block text-sm mb-2 font-medium">Team Name</label>
-                                <input
-                                    v-model="form2.assigned_team_name"
-                                    id="teamName"
-                                    type="text"
-                                    placeholder="Enter the team name..."
-                                    class="w-full border border-gray-300 px-3 py-2 rounded-lg"
-                                />
-                                <span v-if="form2.errors.assigned_team_name" class="text-red-500">{{ form2.errors.assigned_team_name }}</span>
-                            </div>
+                                    <form @submit.prevent="submitTeam" class="p-4">
+                                        <!--select college-->
+                                        <div class="mb-4">
+                                            <label for="college" class="block text-sm font-medium text-gray-700 mb-2">Select College</label>
+                                            <div class="relative mt-1">
+                                                <select 
+                                                    v-model="form2.college_id" 
+                                                    id="college" 
+                                                    class="block w-full rounded-lg bg-white pl-4 pr-10 py-2.5 text-sm border border-gray-300
+                                                    focus:outline-none focus:ring-2 
+                                                    disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
+                                                    transition-all duration-200 ease-in-out shadow-sm"
+                                                    @focus="isOpen = true"
+                                                    @blur="isOpen = false"
+                                                >
+                                                    <option value="" disabled class="py-2 text-gray-500">Choose a college...</option>
+                                                    <option
+                                                        v-for="college in availableColleges"
+                                                        :key="college.id"
+                                                        :value="college.id"
+                                                        :disabled="isCollegeAssigned(college.id)"
+                                                        class="py-2 px-3"
+                                                        :class="{
+                                                            'text-gray-900 hover:bg-blue-50': !isCollegeAssigned(college.id),
+                                                            'text-gray-400 bg-gray-50': isCollegeAssigned(college.id)
+                                                        }"
+                                                    >
+                                                        <span class="font-medium">{{ college.shortName }}</span>
+                                                        <span class="text-gray-500 ml-2">({{ college.name }})</span>
+                                                    </option>
+                                                </select>
 
-                            <!-- Hidden Palakasan ID input -->
-                            <input type="hidden" v-model="form2.palakasan_id" />
+                                                <!-- Animated chevron icon -->
+                                                <div 
+                                                    class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none transition-transform duration-200"
+                                                    :class="{ 'rotate-180': isOpen }"
+                                                >
+                                                    <svg 
+                                                        class="h-5 w-5 text-gray-400" 
+                                                        xmlns="http://www.w3.org/2000/svg" 
+                                                        viewBox="0 0 20 20" 
+                                                        fill="currentColor"
+                                                    >
+                                                        <path 
+                                                            fill-rule="evenodd" 
+                                                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" 
+                                                            clip-rule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                            </div>
 
-                            <!-- Modal Buttons -->
-                            <div class="flex justify-end">
-                                <button type="button" @click="closeTeamsModal" class="mr-2 px-5 text-sm py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg">Cancel</button>
-                                <button
-                                    type="submit"
-                                    :disabled="form2.processing"
-                                    class="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm transition relative"
-                                >
-                                    <span v-if="!form2.processing">
-                                        Confirm
-                                    </span>
-                                    <span v-else>
-                                        <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Processing...
-                                    </span>
-                                </button>  
-                            </div>
+                                            <!-- Error message with icon -->
+                                            <div 
+                                                v-if="form2.errors.college_id" 
+                                                class="mt-2 flex items-center gap-1.5 text-sm text-red-600"
+                                            >
+                                                <svg class="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+                                                </svg>
+                                                {{ form2.errors.college_id }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Input for Team Name -->
+                                        <div class="mb-4">
+                                            <label for="teamName" class="block text-sm font-medium mb-2">Team Name</label>
+                                            <input
+                                                v-model="form2.assigned_team_name"
+                                                id="teamName"
+                                                type="text"
+                                                placeholder="Enter the team name..."
+                                                class="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                            />
+                                            <span v-if="form2.errors.assigned_team_name" class="text-red-500 text-sm mt-1">{{ form2.errors.assigned_team_name }}</span>
+                                        </div>
+
+                                        <!-- Hidden Palakasan ID input -->
+                                        <input type="hidden" v-model="form2.palakasan_id" />
+
+                                        <!-- Modal Buttons -->
+                                        <div class="flex justify-end  mt-6">
+                                            <button 
+                                                type="button" 
+                                                @click="closeTeamsModal" 
+                                                class="mr-2 px-5 py-2 text-sm font-medium text-gray-500 ring-1 ring-gray-200 rounded-lg"                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                :disabled="form2.processing"
+                                                class="px-5 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                                            >
+                                                <span v-if="!form2.processing">
+                                                    Confirm
+                                                </span>
+                                                <span v-else class="flex items-center">
+                                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Processing...
+                                                </span>
+                                            </button>  
+                                        </div>
+                                    </form>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
             
-            <div v-if="isHistoryModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col">
-                <div class="p-6 border-b border-gray-200 sticky top-0 bg-white z-10 flex justify-between items-center rounded-t-lg">
-                    <h3 class="text-2xl font-semibold text-gray-900" id="modal-title">
-                    Palakasan History
-                    </h3>
-                    <button @click="closeHistoryModal" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    </button>
-                </div>
-                
-                <div class="overflow-y-auto flex-grow">
-                    <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 sticky top-0">
-                        <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr v-for="palakasan in completedPalakasans" :key="palakasan.id" class="hover:bg-gray-50 transition-colors duration-200">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ palakasan.year }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ palakasan.theme }}</div>
-                            <div class="text-sm text-gray-500">{{ palakasan.tagline }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ formatDate(palakasan.start_date) }} - {{ formatDate(palakasan.end_date) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            {{ palakasan.status }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button @click="viewPalakasanDetails(palakasan.id)" class="text-blue-600 hover:text-blue-900 transition-colors duration-200">
-                            View
-                            </button>
-                        </td>
-                        </tr>
-                    </tbody>
-                    </table>
-                </div>
-                </div>
-            </div>
+            <TransitionRoot appear :show="isHistoryModalOpen" as="template">
+                <Dialog as="div" @close="closeHistoryModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                    </TransitionChild>
 
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-6xl transform overflow-hidden rounded-lg bg-white shadow-xl transition-all">
+                                    <div class="flex items-center justify-between p-4">
+                                        <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
+                                            Palakasan History
+                                        </DialogTitle>
+                                        <button 
+                                            @click="closeHistoryModal"
+                                            class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors duration-200"
+                                        >
+                                            <span class="sr-only">Close</span>
+                                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="max-h-[calc(90vh-8rem)] overflow-y-auto">
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50 sticky top-0">
+                                                <tr>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Theme</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200">
+                                                <tr v-for="palakasan in completedPalakasans" :key="palakasan.id" class="hover:bg-gray-50/50 transition-colors duration-200">
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ palakasan.year }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <div class="text-sm font-medium text-gray-900">{{ palakasan.theme }}</div>
+                                                        <div class="text-sm text-gray-500">{{ palakasan.tagline }}</div>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {{ formatDate(palakasan.start_date) }} - {{ formatDate(palakasan.end_date) }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-medium rounded-full bg-green-100 text-green-800">
+                                                            {{ palakasan.status }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                        <button 
+                                                            @click="viewPalakasanDetails(palakasan.id)" 
+                                                            class="text-blue-600 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded-md px-2 py-1 transition-colors duration-200"
+                                                        >
+                                                            View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
             <!-- Start Palakasan Modal -->
-            <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white p-5 rounded-lg shadow-xl max-w-md w-full">
-                    <h3 class="text-lg font-bold mb-6">Start Palakasan</h3>
-                    <div v-if="!allSportsScheduled" class="mb-4">
-                        <div class="p-4 bg-yellow-50 rounded-lg">
-                            <div class="space-y-3">
-                                <i class="fas fa-exclamation-triangle text-yellow-600 p-3 bg-yellow-200/50 rounded-md mr-2"></i>
-                                <p class="text-sm text-yellow-700">All sports must be scheduled before starting the Palakasan.</p>
-                            </div>
-                            <ul class="mt-4 ml-6 text-sm text-yellow-600 list-disc">
-                                <li v-for="sport in unscheduledSports" :key="sport.id">
-                                    <span class="font-medium">{{ sport.sport?.name }} {{ sport.categories }}</span> is not yet scheduled
-                                </li>
-                            </ul>
+            <TransitionRoot appear :show="showModal" as="template">
+                <Dialog as="div" @close="showModal = false" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-lg bg-white shadow-xl transition-all p-5">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
+                                            Start Palakasan
+                                        </DialogTitle>
+                                        <button 
+                                            @click="showModal = false"
+                                            class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors duration-200"
+                                        >
+                                            <span class="sr-only">Close</span>
+                                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                                        </button>
+                                    </div>
+
+                                    <div v-if="!allSportsScheduled" class="mb-4">
+                                        <div class="p-4 bg-yellow-50 rounded-lg">
+                                            <div class="space-y-3">
+                                                <i class="fas fa-exclamation-triangle text-yellow-600 p-3 bg-yellow-200/50 rounded-md mr-2"></i>
+                                                <p class="text-sm text-yellow-700">All sports must be scheduled before starting the Palakasan.</p>
+                                            </div>
+                                            <ul class="mt-4 ml-6 text-sm text-yellow-600 list-disc">
+                                                <li v-for="sport in unscheduledSports" :key="sport.id">
+                                                    <span class="font-medium">{{ sport.sport?.name }} {{ sport.categories }}</span> is not yet scheduled
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <p v-else class="mb-6">Are you sure you want to start Palakasan? This action cannot be undone.</p>
+
+                                    <div class="flex justify-end space-x-2">
+                                        <button 
+                                            @click="showModal = false" 
+                                            type="button" 
+                                            class="py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-colors duration-200"
+                                        >
+                                            {{ allSportsScheduled ? 'No, not ready yet' : 'Close' }}
+                                        </button>
+                                        <button 
+                                            v-if="allSportsScheduled"
+                                            @click="confirmStartPalakasan" 
+                                            type="button" 
+                                            class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none transition-colors duration-200"
+                                        >
+                                            Yes, get started
+                                        </button>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
                     </div>
-                    <p v-else class="mb-6">Are you sure you want to start Palakasan? This action cannot be undone.</p>
-                    <div class="flex justify-end space-x-2">
-                        <button @click="showModal = false" type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                            {{ allSportsScheduled ? 'No, not ready yet' : 'Close' }}
-                        </button>
-                        <button 
-                            v-if="allSportsScheduled"
-                            @click="confirmStartPalakasan" 
-                            type="button" 
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                        >
-                            Yes, get started
-                        </button>
-                    </div>
-                </div>
-            </div>
+                </Dialog>
+            </TransitionRoot>
+
             <!-- Logs Modal -->
-             <div v-if="isLogsModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg h-[37rem] w-[62rem] flex flex-col">
-                    <div class="flex items-center justify-between p-4 border-b">
-                        <h3 class="text-lg font-semibold text-gray-900">Activity Logs</h3>
-                        <button 
-                            @click="closeLogsModal" 
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center"
-                        >
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="p-4 space-y-4 overflow-y-auto flex-1">
-                        <!-- Empty State -->
-                        <div v-if="!allSubmits?.length" class="flex flex-col items-center justify-center h-full text-center">
-                            <svg class="w-16 h-16 text-gray-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
-                            </svg>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Activity Logs Yet</h3>
-                            <p class="text-gray-500 text-sm">
-                                Activity logs will appear here once actions are performed.
-                            </p>
-                        </div>
-                        <!-- Logs List -->
-                        <div v-else>
-                        <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg space-y-2 mb-4">
-                                    <!-- Regular Match Result -->
-                                    <template v-if="submit.type === 'regular'">
-                                        <div class="flex justify-between items-center overflow-y-auto ">
-                                            <div class="w-full">
+            <TransitionRoot appear :show="isLogsModalOpen" as="template">
+                <Dialog as="div" @close="closeLogsModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-[62rem] h-[37rem] transform overflow-hidden rounded-lg bg-white shadow-xl transition-all flex flex-col">
+                                    <div class="flex items-center justify-between p-4 border-b">
+                                        <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
+                                            Activity Logs
+                                        </DialogTitle>
+                                        <button 
+                                            @click="closeLogsModal"
+                                            class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors duration-200"
+                                        >
+                                            <span class="sr-only">Close</span>
+                                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="p-4 space-y-4 overflow-y-auto flex-1">
+                                        <!-- Empty State -->
+                                        <div v-if="!allSubmits?.length" class="flex flex-col items-center justify-center h-full text-center">
+                                            <svg class="w-16 h-16 text-gray-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
+                                            </svg>
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Activity Logs Yet</h3>
+                                            <p class="text-gray-500 text-sm">
+                                                Activity logs will appear here once actions are performed.
+                                            </p>
+                                        </div>
+                                        <!-- Logs List -->
+                                        <div v-else>
+                                        <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg space-y-2 mb-4">
+                                            <!-- Regular Match Result -->
+                                            <template v-if="submit.type === 'regular'">
+                                                <div class="flex justify-between items-center overflow-y-auto">
+                                                    <div class="w-full">
+                                                        <div class="flex w-full justify-between gap-2 mb-2">
+                                                            <div class="flex items-center text-gray-600 gap-2">
+                                                                <p class="text-sm">{{ submit.match_result?.sport_match?.assigned_sport?.sport?.name }} {{ submit.match_result?.sport_match?.assigned_sport?.categories }}</p>
+                                                                <span class="text-sm">•</span>
+                                                                <p class="text-sm">Round {{ submit.match_result?.sport_match?.round }}</p>
+                                                                <span class="text-sm">•</span>
+                                                                <p class="text-sm">{{ submit.match_result?.sport_match?.game }}</p>
+                                                            </div>
+                                                            <p class="text-xs text-right text-gray-500">
+                                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
+                                                            </p>
+                                                        </div>
+
+                                                        <p class="text-sm font-medium text-gray-800">
+                                                            Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600">
+                                                            {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} won against {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
+                                                        </p>
+                                                        <div class="flex justify-between">
+                                                            <div class="mt-3 flex gap-2">
+                                                                <p class="text-xs text-gray-500">
+                                                                    Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                                </p>
+                                                                <span class="text-xs text-gray-500">•</span>
+                                                                <p class="text-xs text-gray-500">
+                                                                    Validated by: {{ submit.official_name }}
+                                                                </p>
+                                                            </div>
+                                                            <button 
+                                                                @click="openSignature(submit.signature)"
+                                                                class="mt-2 py-1.5 px-2.5 rounded-full bg-blue-100 text-xs hover:bg-blue-200 text-blue-600 hover:text-blue-800 font-medium"
+                                                            >
+                                                                View Signature
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <!-- FFO Match Result -->
+                                            <template v-else>
                                                 <div class="flex w-full justify-between gap-2 mb-2">
-                                                    <div class="flex items-center text-gray-600 gap-2 ">
-                                                        <p class="text-sm"> {{  submit.match_result?.sport_match?.assigned_sport?.sport?.name }} {{ submit.match_result?.sport_match?.assigned_sport?.categories }}</p>
+                                                    <div class="flex items-center text-gray-600 gap-2">
+                                                        <p class="text-sm">{{ submit.match?.sport_id?.sport?.name }} {{ submit.match?.sport_id?.categories }}</p>
                                                         <span class="text-sm">•</span>
-                                                        <p class=" text-sm">Round {{  submit.match_result?.sport_match?.round }}</p>
-                                                        <span class="text-sm">•</span>
-                                                        <p class=" text-sm">{{  submit.match_result?.sport_match?.game }}</p>
+                                                        <p class="text-sm">{{ submit.match?.sport_variation_name }}</p>
                                                     </div>
                                                     <p class="text-xs text-right text-gray-500">
                                                         <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
                                                     </p>
-
                                                 </div>
-
-                                                <p class="text-sm font-medium text-gray-800">
-                                                    Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
-                                                </p>
+                                                <h1 class="text-sm font-semibold text-gray-800">Game has been completed</h1>
                                                 <p class="text-sm text-gray-600">
-                                                    {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} won against {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
+                                                    You can now check the {{ submit.match?.sport_id?.sport?.name }} to see the results
                                                 </p>
                                                 <div class="flex justify-between">
                                                     <div class="mt-3 flex gap-2">
                                                         <p class="text-xs text-gray-500">
-                                                            Submitted by : {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                            Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
                                                         </p>
                                                         <span class="text-xs text-gray-500">•</span>
                                                         <p class="text-xs text-gray-500">
-                                                            Validated by : {{ submit.official_name }}
+                                                            Validated by: {{ submit.official_name }}
                                                         </p>
                                                     </div>
                                                     <button 
                                                         @click="openSignature(submit.signature)"
-                                                        class="mt-2 py-1.5 px-2.5 rounded-full bg-blue-100 text-xs hover:bg-blue-200  text-blue-600 hover:text-blue-800 font-medium"
+                                                        class="mt-2 text-xs text-blue-600 py-1.5 px-2.5 rounded-full bg-blue-100 hover:bg-blue-200 hover:text-blue-800 font-medium"
                                                     >
                                                         View Signature
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </template>
                                         </div>
-                                    </template>
-
-                                    <!-- FFO Match Result -->
-                                    <template v-else>
-                                        <div class="flex w-full justify-between gap-2 mb-2">
-                                            <div class="flex items-center text-gray-600 gap-2 ">
-                                                <p class="text-sm">{{ submit.match?.sport_id?.sport?.name }} {{ submit.match?.sport_id?.categories }}</p>
-                                                <span class="text-sm">•</span>
-                                                <p class="text-sm">{{ submit.match?.sport_variation_name }}</p>
-                                            </div>
-                                            <p class="text-xs text-right text-gray-500">
-                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
-                                            </p>
-
-                                        </div>
-                                        <h1 class="text-sm font-semibold text-gray-800">Game has been completed</h1>
-                                        <p class="text-sm text-gray-600">
-                                            You can now check the {{ submit.match?.sport_id?.sport?.name }} to see the results
-                                        </p>
-                                        <div class="flex justify-between">
-                                            <div class="mt-3 flex gap-2">
-                                                <p class="text-xs text-gray-500">
-                                                    Submitted by : {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
-                                                </p>
-                                                <span class="text-xs text-gray-500">•</span>
-                                                <p class="text-xs text-gray-500">
-                                                    Validated by : {{ submit.official_name }}
-                                                </p>
-                                            </div>
-                                            <button 
-                                                @click="openSignature(submit.signature)"
-                                                class="mt-2 text-xs text-blue-600 py-1.5 px-2.5 rounded-full bg-blue-100 hover:bg-blue-200 hover:text-blue-800 font-medium"
-                                            >
-                                                View Signature
-                                            </button>
-                                        </div>
-                                    </template>
-                                </div>
+                                    </div>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
                     </div>
-                </div>
-            </div>
+                </Dialog>
+            </TransitionRoot>
+
             <!-- Signature Modal -->
-            <div v-if="showSignature" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Official Signature</h3>
-                        <button 
-                            @click="closeSignature"
-                            class="text-gray-400 hover:text-gray-600"
-                        >
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+            <TransitionRoot appear :show="showSignature" as="template">
+                <Dialog as="div" @close="closeSignature" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="max-w-md w-full mx-4 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
+                                            Official Signature
+                                        </DialogTitle>
+                                        <button 
+                                            @click="closeSignature"
+                                            class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors duration-200"
+                                        >
+                                            <span class="sr-only">Close</span>
+                                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                                        </button>
+                                    </div>
+                                    <div class="flex justify-center">
+                                        <img 
+                                            :src="selectedSignature" 
+                                            alt="Official Signature" 
+                                            class="max-w-full max-h-[300px] object-contain border border-gray-200 rounded-lg bg-white p-2"
+                                        />
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
                     </div>
-                    <div class="flex justify-center">
-                        <img 
-                            :src="selectedSignature" 
-                            alt="Official Signature" 
-                            class="max-w-full max-h-[300px] object-contain border border-gray-200 rounded-lg bg-white p-2"
-                        />
-                    </div>
-                </div>
-            </div>
+                </Dialog>
+            </TransitionRoot>
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
     import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
     import { ref, computed, onMounted, watch, watchEffect } from 'vue';
     import AppLayout from '@/Layout/DashboardLayout.vue';
+    import { XMarkIcon } from '@heroicons/vue/24/outline'
     import { Disclosure, DisclosureButton, DisclosurePanel, TransitionChild } from '@headlessui/vue';
-    import Toast from '@/Components/Toast.vue';
     import Tooltip from '@/Components/Tooltip.vue';
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
     import Graph from '@/Components/BarGraph.vue';  // Adjust the path as necessary
@@ -1149,6 +1393,8 @@
     import Settings from '@/Components/Settings.vue';
     import OverallSchedules from '@/Components/OverallSchedules.vue';
     import SportsRankings from '@/Components/SportsRankings.vue';
+    import SuccessModal from '@/Components/SuccessModal.vue';
+    import { Dialog, DialogPanel, DialogTitle, TransitionRoot } from '@headlessui/vue';
 
     const props = defineProps({
         colleges: Array,
@@ -1200,13 +1446,15 @@
             }
         },
     });
-    console.log('Assigned Sports Length:', props.assignedSports.length);
+
+    const showSuccessModal = ref(false);
+    const successMessage = ref('');
+
     const isPalakasanModalOpen = ref(false);
     const isSportsModalOpen = ref(false);
     const isTeamsModalOpen = ref(false);
     const isStatusModalOpen = ref(false);
     const isHistoryModalOpen = ref(false);
-    const toastRef = ref(null);
     const page = usePage();
     const showSignature = ref(false);
     const selectedSignature = ref(null);
@@ -1218,22 +1466,7 @@
 
     const closeSignature = () => {
         showSignature.value = false;
-        selectedSignature.value = null;
     };
-
-    // Watch for flash messages
-    watch(
-        () => page.props.flash,
-        (flash) => {
-            if (flash.message) {
-                toastRef.value.addToast(flash.message, 'success');
-            }
-            if (flash.error) {
-                toastRef.value.addToast(flash.error, 'error');
-            }
-        },
-        { deep: true }
-    );
 
     const allSubmits = computed(() => {
         const combined = [
@@ -1324,15 +1557,10 @@
                 status: 'live'
             }, {
                 preserveScroll: true,
-                preserveState: false,
                 onSuccess: () => {
-                    console.log('Palakasan and sports updated successfully');
                     showModal.value = false;
-                    router.visit(window.location.href, {
-                        preserveScroll: true,
-                        preserveState: false,
-                        replace: true
-                    });
+                    showSuccessModal.value = true;
+                    successMessage.value = 'Palakasan is now live!';
                 },
                 onError: (errors) => {
                     console.error('Failed to update Palakasan:', errors);
@@ -1361,26 +1589,11 @@
 
         router.post(route('palakasan.conclude'), {}, {
             onSuccess: () => {
-                toastRef.value.show({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Palakasan concluded successfully',
-                    life: 3000
-                });
-                // Refresh the page to show updated status
-                router.visit(route('palakasan.details'), {
-                    preserveScroll: true,
-                    preserveState: false,
-                    replace: true
-                });
+                showSuccessModal.value = true;
+                successMessage.value = 'Palakasan has been concluded!';
             },
             onError: (errors) => {
-                toastRef.value.show({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: errors.message || 'Failed to conclude Palakasan',
-                    life: 3000
-                });
+                console.error('Failed to conclude Palakasan:', errors);
             }
         });
     };
@@ -1434,11 +1647,8 @@
         form.post(route('palakasan.store'), {
             onSuccess: () => {
                 closePalakasanModal();
-                router.visit(route('palakasan.details'), {
-                    preserveScroll: true,
-                    preserveState: false,
-                    replace: true
-                });
+                showSuccessModal.value = true;
+                successMessage.value = 'Palakasan created successfully!';
             },
         });
     };
@@ -1461,6 +1671,8 @@
         form1.post(route('palakasanSport.store'), {
         onSuccess: () => {
             closeSportsModal();
+            showSuccessModal.value = true;
+            successMessage.value = 'League created successfully!';
             },
             onError: () => {
                 console.error('Form submission error');
@@ -1511,6 +1723,8 @@ const openTeamsModal = () => {
             onSuccess: () => {
                 closeTeamsModal();
                 form2.reset();
+                showSuccessModal.value = true;
+                successMessage.value = 'Line up has been formed!';
             },
             onError: () => {
                 console.error('Form submission error');
@@ -1702,6 +1916,8 @@ const openTeamsModal = () => {
                 onSuccess: () => {
                     selectedSports.value = [];
                     isSelectionMode.value = false;
+                    showSuccessModal.value = true;
+                    successMessage.value = 'Succesfully deleted a League!';
                 },
                 onError: (errors) => {
                     alert('Failed to delete sports. Please try again.');

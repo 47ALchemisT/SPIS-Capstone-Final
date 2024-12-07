@@ -254,100 +254,140 @@
         </div>
 
         <!-- Update Time Modal -->
-        <div v-if="showUpdateTimeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div class="relative p-4 w-full max-w-[30rem] max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
-              <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Update Schedule
-                </h3>
-                <button @click="closeUpdateTimeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                  </svg>
-                  <span class="sr-only">Close modal</span>
-                </button>
-              </div>
-              <div class="p-4 pt-0">
-                <!-- Venue Selection -->
-                <div class="mb-4">
-                  <label class="block text-sm font-medium text-gray-700 mt-5 mb-2">Venue</label>
-                  <select 
-                    v-model="updateTimeForm.sport_variation_venue_id"
-                    @change="updateAvailableTimeSlots"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="" disabled>Select a venue</option>
-                    <option v-for="venue in venues" :key="venue.id" :value="venue.id">
-                      {{ venue.name }}
-                    </option>
-                  </select>
-                </div>
+        <TransitionRoot appear :show="showUpdateTimeModal" as="template">
+          <Dialog as="div" @close="closeUpdateTimeModal" class="relative z-50">
+            <TransitionChild
+              as="template"
+              enter="duration-300 ease-out"
+              enter-from="opacity-0"
+              enter-to="opacity-100"
+              leave="duration-200 ease-in"
+              leave-from="opacity-100"
+              leave-to="opacity-0"
+            >
+              <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+            </TransitionChild>
 
-                <!-- Date Selection -->
-                <label class="text-sm font-medium text-gray-900 mt-5 dark:text-white mb-2 block">
-                  Pick your date
-                </label>
-                <div class="mx-auto sm:mx-0 flex justify-center mb-5">
-                  <input
-                    type="date"
-                    v-model="updateTimeForm.date"
-                    :min="getCurrentDate()"
-                    @change="updateAvailableTimeSlots"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+            <div class="fixed inset-0 overflow-y-auto">
+              <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <TransitionChild
+                  as="template"
+                  enter="duration-300 ease-out"
+                  enter-from="opacity-0 scale-95"
+                  enter-to="opacity-100 scale-100"
+                  leave="duration-200 ease-in"
+                  leave-from="opacity-100 scale-100"
+                  leave-to="opacity-0 scale-95"
+                >
+                  <DialogPanel class="relative w-full max-w-[30rem] transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 border-b">
+                      <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
+                        Update Schedule
+                      </DialogTitle>
+                      <button @click="closeUpdateTimeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                      </button>
+                    </div>
 
-                <!-- Time Slots -->
-                <label class="text-sm font-medium text-gray-900 dark:text-white mb-2 block">
-                  Pick your time
-                </label>
-                <ul class="grid w-full grid-cols-4 gap-2 mb-5">
-                  <li v-for="slot in availableTimeSlots" :key="slot.value">
-                    <input 
-                      type="radio" 
-                      :id="slot.value" 
-                      :value="slot.value" 
-                      v-model="updateTimeForm.time" 
-                      class="hidden peer" 
-                      name="timetable"
-                      :disabled="slot.disabled"
-                    >
-                    <label :for="slot.value"
-                      :class="[
-                        'inline-flex items-center justify-center w-full px-2 py-1.5 text-sm font-medium text-center',
-                        slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
-                      ]"
-                    >
-                      {{ slot.label }}
-                    </label>
-                  </li>
-                </ul>
+                    <!-- Modal body -->
+                    <div class="p-4 pt-0">
+                      <div class="text-xs p-3 bg-blue-50 text-blue-700 rounded-lg border mb-3 border-blue-400">
+                        <h1 class="font-semibold mb-1">Note</h1>
+                        <p>All available times can be selected. Times that are not available will be grayed out. This is first come first serve, so make sure to set the time and venue correctly.</p>
+                      </div>
 
-                <div v-if="errorMessage" class="mb-4 text-red-500 text-sm">{{ errorMessage }}</div>
+                      <!-- Venue Selection -->
+                      <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-900 mb-2">
+                          Select Venue
+                        </label>
+                        <select 
+                          v-model="updateTimeForm.sport_variation_venue_id"
+                          @change="updateAvailableTimeSlots"
+                          required
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="" disabled>Select a venue</option>
+                          <option v-for="venue in venues" :key="venue.id" :value="venue.id">
+                            {{ venue.name }}
+                          </option>
+                        </select>
+                      </div>
 
-                <!-- Modal Buttons -->
-                <div class="grid grid-cols-2 gap-2">
-                  <button 
-                    type="button"
-                    @click="closeUpdateTimeModal"
-                    class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                  >
-                    Discard
-                  </button>
-                  <button 
-                    @click="updateTime"
-                    :disabled="updateTimeForm.processing || !isValidTimeSelection"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {{ updateTimeForm.processing ? 'Saving...' : 'Save' }}
-                  </button>
-                </div>
+                      <!-- Date Selection -->
+                      <label class="block text-sm font-medium text-gray-900 mb-2">
+                        Pick the Date and Time
+                      </label>
+                      <div class="mx-auto sm:mx-0 flex justify-center mb-5">
+                        <input
+                          type="date"
+                          v-model="updateTimeForm.date"
+                          :min="getCurrentDate()"
+                          @change="updateAvailableTimeSlots"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <!-- Time Selection -->
+                      <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
+                        <li v-for="slot in availableTimeSlots" :key="slot.value">
+                          <input 
+                            type="radio" 
+                            :id="slot.value" 
+                            :value="slot.value" 
+                            v-model="updateTimeForm.time" 
+                            class="hidden peer" 
+                            name="timetable"
+                            :disabled="slot.disabled"
+                          >
+                          <label :for="slot.value"
+                            :class="[
+                              'inline-flex items-center justify-center w-full px-2 py-1.5 text-sm font-medium text-center',
+                              slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400 rounded-md' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
+                            ]"
+                          >
+                            {{ slot.label }}
+                          </label>
+                        </li>
+                      </ul>
+
+                      <div v-if="errorMessage" class="mb-4 text-red-500 text-sm">{{ errorMessage }}</div>
+
+                      <!-- Action Buttons -->
+                      <div class="grid grid-cols-2 gap-2">
+                        <button 
+                          @click="closeUpdateTimeModal" 
+                          type="button" 
+                          :disabled="updateTimeForm.processing"
+                          class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Discard
+                        </button>
+                        <button 
+                          @click="updateTime" 
+                          type="button"
+                          :disabled="updateTimeForm.processing || !isValidTimeSelection"
+                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                          <svg v-if="updateTimeForm.processing" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>{{ updateTimeForm.processing ? 'Saving...' : 'Save' }}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </DialogPanel>
+                </TransitionChild>
               </div>
             </div>
-          </div>
-        </div>
+          </Dialog>
+        </TransitionRoot>
+
         <div v-if="showRankModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div class="relative p-4 w-full max-w-[32rem] max-h-full">
             <div class="relative bg-white rounded-lg shadow">
@@ -430,6 +470,11 @@
         </div>
       </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
   </div>
 </template>
 
@@ -439,6 +484,8 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 
 const props = defineProps({
   sport: {
@@ -485,6 +532,9 @@ const props = defineProps({
 
 });
 
+const showSuccessModal = ref(false);
+const successMessage = ref('');
+
 const showModal = ref(false);
 const errorMessage = ref('');
 const showRankModal = ref(false);
@@ -512,6 +562,8 @@ const handleScheduleClick = async () => {
     });
     // Update local state
     props.sport.status = 'scheduled';
+    showSuccessModal.value = true;
+    successMessage.value = 'Successfully scheduled the matches!';
   } catch (error) {
     console.error('Failed to update sport status:', error);
   }
@@ -555,6 +607,8 @@ const submitForm = async () => {
         form.reset();
         showModal.value = false;
         errorMessage.value = '';
+        showSuccessModal.value = true;
+        successMessage.value = 'Successfully created a Sport Variation!';
       },
       onError: (errors) => {
         console.error('Validation errors:', errors);
@@ -621,6 +675,8 @@ const updateTime = async () => {
       preserveScroll: true,
       onSuccess: () => {
         closeUpdateTimeModal();
+        showSuccessModal.value = true;
+        successMessage.value = 'Successfully scheduled the time!';
       },
       onError: (errors) => {
         console.error('Update time errors:', errors);

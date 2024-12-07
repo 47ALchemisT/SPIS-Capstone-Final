@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -76,7 +77,8 @@ class LoginController extends Controller
             case 'Admin':
                 return redirect()->intended('/admin');
             case 'Facilitator':
-                if (!$studentAccount->status) {
+                
+                if ($studentAccount->status == 0 || $studentAccount->status === false || $studentAccount->status === '0') {
                     Auth::logout();
                     return back()->withErrors([
                         'message' => 'Your account has been deactivated. Please contact the administrator.'
@@ -85,7 +87,12 @@ class LoginController extends Controller
                 $encryptedId = Crypt::encryptString($studentAccount->id);
                 return redirect()->intended('/facidashboard/' . $encryptedId);
             case 'College Sport Head':
-                if (!$studentAccount->status) {
+                Log::info('Student Account Status:', [
+                    'status' => $studentAccount->status,
+                    'type' => gettype($studentAccount->status)
+                ]);
+                
+                if ($studentAccount->status == 0 || $studentAccount->status === false || $studentAccount->status === '0') {
                     Auth::logout();
                     return back()->withErrors([
                         'message' => 'Your account has been deactivated. Please contact the administrator.'
@@ -94,7 +101,12 @@ class LoginController extends Controller
                 $encryptedId = Crypt::encryptString($studentAccount->id);
                 return redirect()->intended('/cshdashboard/' . $encryptedId);
             case 'Sub Admin':
-                if (!$studentAccount->status) {
+                Log::info('Student Account Status:', [
+                    'status' => $studentAccount->status,
+                    'type' => gettype($studentAccount->status)
+                ]);
+                
+                if ($studentAccount->status == 0 || $studentAccount->status === false || $studentAccount->status === '0') {
                     Auth::logout();
                     return back()->withErrors([
                         'message' => 'Your account has been deactivated. Please contact the administrator.'

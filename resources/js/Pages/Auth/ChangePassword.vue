@@ -106,6 +106,15 @@
                         <p v-if="form.errors.new_password_confirmation" class="mt-1 text-sm text-red-600">
                             {{ form.errors.new_password_confirmation }}
                         </p>
+                        <p v-if="!passwordsMatch" class="mt-1 text-sm text-red-600">
+                            Passwords do not match
+                        </p>
+                        <p v-if="form.new_password.length < 8" class="mt-1 text-sm text-red-600">
+                            Password must be at least 8 characters long
+                        </p>
+                        <p v-if="form.new_password.length > 16" class="mt-1 text-sm text-red-600">
+                            Password must be no more than 16 characters long
+                        </p>
                     </div>
 
                     <!-- Submit Button -->
@@ -118,7 +127,7 @@
                         </Link>
                         <button
                             type="submit"
-                            :disabled="form.processing"
+                            :disabled="form.processing || !isFormValid"
                             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                         >
                             <span v-if="form.processing">Changing...</span>
@@ -159,7 +168,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 
@@ -178,6 +187,19 @@ const form = useForm({
     current_password: '',
     new_password: '',
     new_password_confirmation: '',
+});
+
+const passwordsMatch = computed(() => {
+    return form.new_password === form.new_password_confirmation;
+});
+
+const isFormValid = computed(() => {
+    return form.current_password && 
+           form.new_password && 
+           form.new_password_confirmation && 
+           passwordsMatch.value &&
+           form.new_password.length >= 8 &&
+           form.new_password.length <= 16;
 });
 
 const changePassword = () => {

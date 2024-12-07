@@ -1,5 +1,4 @@
 <template>
-  <div>
     <Head :title="sport.sport.name" />
     <AppLayout :facilitator="facilitator">
       <template v-slot:default>
@@ -302,7 +301,11 @@
         </div>
       </template>
     </AppLayout>
-  </div>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
@@ -311,6 +314,7 @@ import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 const props = defineProps({
   players: {
@@ -366,6 +370,9 @@ const props = defineProps({
     type: Array
   }
 });
+
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 const showRankModal = ref(false);
 const selectedVariationMatches = ref([]);
@@ -676,8 +683,8 @@ const updateRanks = async () => {
       preserveScroll: true,
       onSuccess: () => {
         closeRankModal();
-        // Refresh the page to show updated data
-        window.location.reload();
+        showSuccessModal.value = true;
+        successMessage.value = 'Rankings submitted successfully!';
       },
       onError: (errors) => {
         console.error('Update ranks errors:', errors);

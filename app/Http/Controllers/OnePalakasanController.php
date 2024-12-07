@@ -409,6 +409,7 @@ class OnePalakasanController extends Controller
             'colleges' => $colleges,
             'latestPalakasan' => [
                 'id' => $latestPalakasan?->id,
+                'theme' => $latestPalakasan?->theme,
                 'year' => $latestPalakasan?->year,
                 'start_date' => $latestPalakasan?->start_date,
                 'end_date' => $latestPalakasan?->end_date,

@@ -78,7 +78,7 @@
                     <button
                         @click="openCreateMatchesModal"
                         type="button"
-                        class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
+                        class="flex items-center gap-2 text-white font-medium bg-blue-700 hover:bg-blue-700/90 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 disabled:bg-blue-100 disabled:text-blue-700 "
                         :disabled="hasExistingMatches"
                     >
                         {{ hasExistingMatches ? 'Game Already Started' : 'Start Game' }}
@@ -367,6 +367,11 @@
 
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
  
 <script setup>
@@ -376,9 +381,8 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/GameSchedule.vue';
-import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
-
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 const props = defineProps({
     sport: [Array, Object],
@@ -392,22 +396,9 @@ const props = defineProps({
     players: Array
 });
 
-const toastRef = ref(null);
-const page = usePage();
-
-// Watch for flash messages
-watch(
-    () => page.props.flash,
-    (flash) => {
-        if (flash.message) {
-            toastRef.value.addToast(flash.message, 'success');
-        }
-        if (flash.error) {
-            toastRef.value.addToast(flash.error, 'error');
-        }
-    },
-    { deep: true }
-);
+   
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 const activeTab = ref('matches');
 const selectedVenue = ref('');
@@ -553,6 +544,8 @@ const createInitialMatches = async () => {
                 console.log('Success response:', page);
                 createMatchesLoading.value = false;
                 closeCreateMatchesModal();
+                showSuccessModal.value = true;
+                successMessage.value = 'Matches created successfully!';
             },
             onError: (errors) => {
             console.error('Error creating matches:', errors);
@@ -733,14 +726,11 @@ const handleScheduleClick = () => {
         status: 'scheduled'
     }, {
         onSuccess: () => {
-            if (toastRef.value) {
-                toastRef.value.addToast('Sport status updated to scheduled', 'success');
-            }
+            showSuccessModal.value = true;
+            successMessage.value = 'Successfully scheduled the matches!';
         },
         onError: (errors) => {
-            if (toastRef.value) {
-                toastRef.value.addToast('Failed to update sport status', 'error');
-            }
+            console.error('Error scheduling matches:', errors);
         }
     });
 };

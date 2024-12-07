@@ -12,7 +12,7 @@
             </div>
             
             <!--Content-->
-            <div class="mt-3 space-y-4">
+            <div class="mt-5 space-y-4">
                 <!--Utility-->
                 <div class="utility">
                     <div class="flex justify-between items-center">
@@ -28,8 +28,8 @@
                                 <input
                                     v-model="searchQuery"
                                     type="text"
-                                    placeholder="Search college..."
-                                    class="w-64 pl-10 pr-10 py-2 bg-white shadow-sm border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                                    placeholder="Search sports..."
+                                    class="w-72 pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                                 >
 
                                 <!-- Clear Button (Right) -->
@@ -41,152 +41,288 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                            <p class="text-2xl text-gray-400 mb-1">|</p>
-                            <div class="text-sm font-medium text-gray-700">
-                                <p>Number of sports: <span>{{ sports.length }}</span></p>
-                            </div>                       
-                         </div>
+                            <div class="flex items-center gap-3">
+                                <div class="h-6 w-px bg-gray-200"></div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-trophy text-blue-600"></i>
+                                    <span class="text-sm font-medium text-gray-700">
+                                        {{ filteredSports.length }} {{ filteredSports.length === 1 ? 'sport' : 'sports' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                         <!--Buttons-->
                         <div class="flex items-center space-x-2.5">
-                            <button @click="openModal(false)" type="button" class="flex items-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18 6h-6a2 2 0 0 0-2-2H6C4.346 4 3 5.346 3 7v10c0 1.654 1.346 3 3 3h12c1.654 0 3-1.346 3-3V9c0-1.654-1.346-3-3-3m0 12H6a1 1 0 0 1-1-1v-7h4c.275 0 .5-.225.5-.5S9.275 9 9 9H5V7a1 1 0 0 1 1-1h4a2 2 0 0 0 2 2h6a1 1 0 0 1 1 1h-4c-.275 0-.5.225-.5.5s.225.5.5.5h4v7a1 1 0 0 1-1 1m-3-6h-2v-2a1 1 0 1 0-2 0v2H9a1 1 0 1 0 0 2h2v2a1 1 0 1 0 2 0v-2h2a1 1 0 1 0 0-2"/></svg>
-                                Sport
+                            <button 
+                                @click="openModal(false)" 
+                                type="button" 
+                                class="inline-flex items-center gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 font-medium rounded-lg px-4 py-2.5 transition-all duration-200 shadow-sm"
+                            >
+                                Add Sport
                             </button>
                         </div>
                     </div>
                 </div>
-                <Toast ref="toastRef" />
 
                 <!--Main Content, List of Cards-->
-                <div>
-                    <div  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-4">
-                        <div v-for="sport in sports" :key="sport.id" class="bg-white rounded-lg shadow  transition-all ring-1 ring-gray-300 hover:ring-blue-400 hover:bg-blue-50 transition group">
-                            <div class="p-4 relative">
-                                <div class="absolute right-3 top-3">
-                                    <Menu as="div" class="relative inline-block text-left">
-                                        <MenuButton class="inline-flex items-center justify-center w-full rounded-lg  px-2.5 py-2.5 text-sm font-medium text-gray-700 " >
-                                            <i class="fa-solid fa-ellipsis"></i>                                    
-                                        </MenuButton>
-                                        <transition
-                                            enter-active-class="transition ease-out duration-100"
-                                            enter-from-class="transform opacity-0 scale-95"
-                                            enter-to-class="transform opacity-100 scale-100"
-                                            leave-active-class="transition ease-in duration-75"
-                                            leave-from-class="transform opacity-100 scale-100"
-                                            leave-to-class="transform opacity-0 scale-95"
-                                            >
-                                            <MenuItems class="origin-top-right absolute right-0 z-10 mt-2 w-36 rounded-lg shadow bg-white ring-1 ring-gray-300 focus:outline-none">
-                                                <div class="p-1">
-                                                <MenuItem >
-                                                    <button @click="openModal(true, sport)" class="w-full text-sm text-left p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
-                                                        <i class="fas fa-edit mr-2"></i> Update
-                                                    </button>
-                                                </MenuItem>
-                                                <MenuItem >
-                                                    <button @click="confirmDelete(sport.id)" class="w-full text-sm text-left p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
-                                                        <i class="fa-regular fa-trash-can mr-2"></i> Remove
-                                                    </button>
-                                                </MenuItem>
+                <div v-if="filteredSports.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
+                    <div 
+                        v-for="sport in filteredSports" 
+                        :key="sport.id" 
+                        class="bg-white rounded-xl ring-1 ring-gray-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md group relative"
+                    >
+                        <!-- Card Header with Menu -->
+                        <div class="absolute right-3 top-3 z-10">
+                            <Menu as="div" class="relative inline-block text-left">
+                                <MenuButton class="py-2 px-3 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </MenuButton>
+                                <transition
+                                    enter-active-class="transition ease-out duration-100"
+                                    enter-from-class="transform opacity-0 scale-95"
+                                    enter-to-class="transform opacity-100 scale-100"
+                                    leave-active-class="transition ease-in duration-75"
+                                    leave-from-class="transform opacity-100 scale-100"
+                                    leave-to-class="transform opacity-0 scale-95"
+                                >
+                                    <MenuItems class="absolute right-0 z-10 mt-2 w-36 rounded-lg shadow-lg bg-white ring-1 ring-gray-200 focus:outline-none">
+                                        <div class="py-1">
+                                            <MenuItem v-slot="{ active }">
+                                                <button 
+                                                    @click="openModal(true, sport)" 
+                                                    :class="[
+                                                        active ? 'bg-gray-50 text-gray-700' : 'text-gray-600',
+                                                        'w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors'
+                                                    ]"
+                                                >
+                                                    <i class="fas fa-edit"></i>
+                                                    Update
+                                                </button>
+                                            </MenuItem>
+                                            <MenuItem v-slot="{ active }">
+                                                <button 
+                                                    @click="confirmDelete(sport.id)" 
+                                                    :class="[
+                                                        active ? 'bg-gray-50 text-red-600' : 'text-gray-600',
+                                                        'w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors'
+                                                    ]"
+                                                >
+                                                    <i class="fa-regular fa-trash-can"></i>
+                                                    Remove
+                                                </button>
+                                            </MenuItem>
+                                        </div>
+                                    </MenuItems>
+                                </transition>
+                            </Menu>
+                        </div>
 
-                                                </div>
-                                            </MenuItems>
-                                        </transition>
-                                    </Menu>
-                                </div>
-                                <svg class="h-8 w-8 mb-2 group-hover:text-blue-600 transition-colors" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.035 15.096a6.5 6.5 0 0 1-2.154 1.128q.118.745.119 1.524a8.003 8.003 0 0 0-.12-15.526A8.003 8.003 0 0 0 6.252 8q.778 0 1.523.119a6.5 6.5 0 0 1 1.128-2.154zm1.06-1.06L15.062 10l.761-.761a4.23 4.23 0 0 0 2.428.76a4.23 4.23 0 0 0 2.22-.624q.03.308.03.625a6.47 6.47 0 0 1-1.404 4.035M16.225 3.89c.66.24 1.27.585 1.811 1.014l-2.187 2.187A2.74 2.74 0 0 1 15.5 5.75c0-.717.274-1.37.724-1.86M14.76 8.178l-.76.761l-4.035-4.035a6.47 6.47 0 0 1 4.66-1.374A4.23 4.23 0 0 0 14 5.75c0 .903.281 1.74.761 2.428m5.349-.402a2.74 2.74 0 0 1-1.86.724c-.487 0-.944-.127-1.34-.349l2.186-2.186a6.5 6.5 0 0 1 1.014 1.81M4.25 10.5a.75.75 0 0 0-.75.75v2a7.25 7.25 0 0 0 7.25 7.25h2a.75.75 0 0 0 .75-.75v-2a7.25 7.25 0 0 0-7.25-7.25zM2 11.25A2.25 2.25 0 0 1 4.25 9h2A8.75 8.75 0 0 1 15 17.75v2A2.25 2.25 0 0 1 12.75 22h-2A8.75 8.75 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/></svg>
-                                <div class="flex items-center justify-between mb-2">
+                        <!-- Card Content -->
+                        <div class="p-6">
+                            <!-- Sport Icon with Background -->
+                            <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-50 text-blue-600">
+                                <i class="fa-solid fa-trophy text-xl"></i>
+                            </div>
 
-                                    <h2 class="text-gray-800 text-xl font-semibold">{{ sport.name }}</h2>
-                                </div>
+                            <!-- Sport Information -->
+                            <div class="space-y-1">
+                                <h3 class="text-xl font-semibold text-gray-900">{{ sport.name }}</h3>
+                            </div>
 
-                                <p class="text-gray-600 text-sm mb-4">{{ sport.description }}</p>
+                            <!-- Description with fade effect -->
+                            <div class="mt-4 relative">
+                                <p class="text-sm text-gray-600 line-clamp-2">{{ sport.description || 'No description available' }}</p>
+                                <div class="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Empty State -->
+                <div v-else class="flex flex-col items-center justify-center py-12">
+                    <div class="text-gray-400 mb-4">
+                        <i class="fa-solid fa-trophy text-5xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-1">No sports found</h3>
+                    <p class="text-gray-500 text-sm">Try adjusting your search or add a new sport</p>
+                </div>
             </div>
 
             <!-- Modal for Add/Edit -->
-            <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
-                <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal"></div>
-                <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full">
-                    <h2 class="text-xl font-bold mb-4">{{ isEditing ? 'Edit Sport' : 'Add Sport' }}</h2>
-                    <form @submit.prevent="submitSport">
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm mb-1.5 font-medium">Sport Name</label>
-                            <input v-model="form.name" required placeholder="Enter the full name of the sport..." type="text" class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2"/>
-                        </div>
+            <TransitionRoot appear :show="isModalOpen" as="template">
+                <Dialog as="div" @close="closeModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                    </TransitionChild>
 
-                        <div class="mb-4">            
-                            <label for="description" class="block mb-1.5 text-sm font-medium text-gray-700">Description</label>
-                            <textarea v-model="form.description" id="description" rows="3" class="block p-2.5 transition w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter a brief description about the college..."></textarea>
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="button" @click="closeModal" class="mr-2 bg-gray-100 hover:bg-gray-200 px-4 py-2.5 font-medium text-sm rounded-lg transition">Cancel</button>
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2.5 font-medium rounded-lg text-sm transition relative"
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
                             >
-                                <span v-if="!form.processing">
-                                    {{ isEditing ? 'Save' : 'Confirm' }}
-                                </span>
-                                <span v-else>
-                                    <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Processing...
-                                </span>
-                            </button>
+                                <DialogPanel class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md transform transition-all">
+                                    <DialogTitle class="text-xl font-bold text-gray-900 mb-4">{{ isEditing ? 'Edit Sport' : 'Add Sport' }}</DialogTitle>
+                                    <form @submit.prevent="submitSport">
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-gray-700 text-sm mb-1.5 font-medium">Sport Name</label>
+                                                <input 
+                                                    v-model="form.name" 
+                                                    required 
+                                                    placeholder="Enter the full name of the sport..." 
+                                                    type="text" 
+                                                    class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2.5 "
+                                                />
+                                            </div>
+
+                                            <div>            
+                                                <label for="description" class="block mb-1.5 text-sm font-medium text-gray-700">Description</label>
+                                                <textarea 
+                                                    v-model="form.description" 
+                                                    id="description" 
+                                                    rows="3" 
+                                                    class="block p-2.5 transition w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 " 
+                                                    placeholder="Enter a brief description about the sport..."
+                                                ></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex justify-end gap-3 mt-6">
+                                            <button 
+                                                type="button" 
+                                                @click="closeModal" 
+                                                class="px-4 py-2.5 text-sm font-medium text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-gray-300"
+                                                >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                :disabled="form.processing"
+                                                class="px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-75 disabled:cursor-not-allowed"
+                                            >
+                                                <span v-if="!form.processing">
+                                                    {{ isEditing ? 'Save Changes' : 'Add Sport' }}
+                                                </span>
+                                                <span v-else class="flex items-center">
+                                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Processing...
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
 
             <!-- Modal for Delete Confirmation -->
-            <div v-if="isDeleteModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
-                <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeDeleteModal"></div>
-                <div class="bg-white p-6 rounded-xl shadow-lg z-50 max-w-md w-full">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Confirm Delete</h2>
-                        <i class="fa-regular fa-trash-can text-xl"></i>
-                    </div>
-                    <p>Are you sure you want to remove this Venue from the list?</p>
-                    <div class="flex justify-end mt-4">
-                        <button type="button" @click="closeDeleteModal" class="mr-2 bg-gray-100  hover:bg-gray-200 px-4 py-2 rounded-lg text-sm transition">No, keep it</button>
-                        <button 
-                            :disabled="form.processing"
-                            @click="deleteSport" 
-                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition">
-                            <span v-if="form.processing">Deleting...</span>
-                            <span v-else>Yes, delete it</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <TransitionRoot appear :show="isDeleteModalOpen" as="template">
+                <Dialog as="div" @close="closeDeleteModal" class="relative z-50">
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                    </TransitionChild>
 
-            <!--Tooltip-->
-            <div class="tooltip absolute z-10 invisible py-2 px-3 text-xs text-white bg-blue-800 rounded-lg opacity-0 transition-opacity duration-300">
-                <div class="tooltip-content">Hello</div>
-            </div>
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md transform transition-all">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="p-3 bg-red-100 rounded-full">
+                                            <i class="fa-regular fa-trash-can text-xl text-red-600"></i>
+                                        </div>
+                                        <DialogTitle class="text-xl font-bold text-gray-900">Delete Sport</DialogTitle>
+                                    </div>
+                                    <p class="text-gray-600">Are you sure you want to remove this sport? This action cannot be undone.</p>
+                                    <div class="flex justify-end gap-3 mt-6">
+                                        <button 
+                                            type="button" 
+                                            @click="closeDeleteModal"
+                                            class="px-4 py-2.5 text-sm font-medium text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-gray-300"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            :disabled="form.processing"
+                                            @click="deleteSport" 
+                                            class="px-4 py-2.5 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-75 disabled:cursor-not-allowed"
+                                        >
+                                            <span v-if="!form.processing">Yes, delete sport</span>
+                                            <span v-else class="flex items-center">
+                                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Deleting...
+                                            </span>
+                                        </button>
+                                    </div>
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
 
+            <!-- Modal for Success -->
+            <SuccessModal
+                :show="showSuccessModal"
+                :message="successMessage"
+                @close="showSuccessModal = false"
+             />
         </template>
     </AppLayout>
- </template>
+</template>
  
- <script setup>
+<script setup>
     import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
     import { ChevronDownIcon } from '@heroicons/vue/20/solid'
     import { Head, useForm, router, usePage } from '@inertiajs/vue3';
-    import { ref, onMounted, watch } from 'vue';
+    import { ref, onMounted, watch, computed } from 'vue';
     import AppLayout from '@/Layout/DashboardLayout.vue';
-    import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
-
+    import SuccessModal from '@/Components/SuccessModal.vue';
+    import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 
     const props = defineProps({
         sports: Array,
     });
+    //modal
+    const showSuccessModal = ref(false);
+    const successMessage = ref('');
 
     const isModalOpen = ref(false);
     const isDeleteModalOpen = ref(false);
@@ -197,24 +333,23 @@
         description: '',
     });
 
-    const toastRef = ref(null);
-    const page = usePage();
-
-    // Watch for flash messages
-    watch(
-        () => page.props.flash,
-        (flash) => {
-            if (flash.message) {
-            toastRef.value.addToast(flash.message, 'success');
-            }
-            if (flash.error) {
-            toastRef.value.addToast(flash.error, 'error');
-            }
-        },
-        { deep: true, immediate: true }
-    );
-
     const sportIdToDelete = ref(null);
+
+    const searchQuery = ref('');
+
+    const filteredSports = computed(() => {
+        if (!searchQuery.value) return props.sports;
+        
+        const query = searchQuery.value.toLowerCase();
+        return props.sports.filter(sport => 
+            sport.name.toLowerCase().includes(query) ||
+            (sport.description && sport.description.toLowerCase().includes(query))
+        );
+    });
+
+    const clearSearch = () => {
+        searchQuery.value = '';
+    };
 
     const openModal = (editMode = false, sports = null) => {
         isModalOpen.value = true;
@@ -240,6 +375,8 @@
                 preserveScroll: true,
                 onSuccess: () => {
                     closeModal();
+                    showSuccessModal.value = true;
+                    successMessage.value = 'Sport updated successfully!';
                 },
             });
         } else {
@@ -247,6 +384,8 @@
                 preserveScroll: true,
                 onSuccess: () => {
                     closeModal();
+                    showSuccessModal.value = true;
+                    successMessage.value = 'Sport created successfully!';
                 },
             });
         }
@@ -264,10 +403,13 @@
 
     const deleteSport = () => {
         router.delete(route('sport.destroy', sportIdToDelete.value), {
-            preserveState: false,
             preserveScroll: true,
+            onSuccess: () => {
+                closeDeleteModal();
+                showSuccessModal.value = true;
+                successMessage.value = 'Sport deleted successfully!';
+            }
         });
-        closeDeleteModal();
     };
     
  </script>
@@ -275,4 +417,3 @@
  <style scoped>
     /* Home page specific styles */
  </style>
- 

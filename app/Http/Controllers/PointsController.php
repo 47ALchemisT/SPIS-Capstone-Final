@@ -106,8 +106,9 @@ class PointsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Points $points)
+    public function destroy($id)
     {
+        $points = Points::findOrFail($id);
         $points->delete();
     
         return redirect()->route('points.index')->with('success', 'Points deleted successfully.');

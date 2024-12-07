@@ -37,9 +37,6 @@
                     </div>
                 </div>
 
-
-                <Toast ref="toastRef" />
-
                 <!-- Tournament Winner Display -->
                 <div v-if="tournamentWinner" class="mt-6 p-6 bg-green-50 flex justify-center flex-col items-center border border-green-200 rounded-lg">
                     <h2 class="text-md font-medium text-green-800">Game Winner</h2>
@@ -275,6 +272,11 @@
             </div>
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
  </template>
  
  <script setup>
@@ -284,8 +286,9 @@
     import AppLayout from '@/Layout/DashboardLayoutF.vue';
     import Standing from '@/Components/Standing.vue'
     import GameSchedule from '@/Components/Facilitator/FGameSchedule.vue';
-    import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
     import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+    import SuccessModal from '@/Components/SuccessModal.vue';
+
 
 const props = defineProps({
     sport: [Array, Object],
@@ -310,22 +313,10 @@ const props = defineProps({
       default: () => []
     },
 });
-const toastRef = ref(null);
-const page = usePage();
 
-// Watch for flash messages
-watch(
-    () => page.props.flash,
-    (flash) => {
-        if (flash.message) {
-            toastRef.value.addToast(flash.message, 'success');
-        }
-        if (flash.error) {
-            toastRef.value.addToast(flash.error, 'error');
-        }
-    },
-    { deep: true }
-);
+
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 const activeTab = ref('matches');  // Default to "matches" 
 
@@ -531,12 +522,13 @@ const submitRankings = () => {
   }))
 
   form.post(route('overall-results.store'), {
-    preserveState: true,
     preserveScroll: true,
     onSuccess: () => {
       closeRankingModal()
       isSubmittingRankings.value = false
       rankingsSubmitted.value = true
+      showSuccessModal.value = true;
+      successMessage.value = 'Rankings submitted successfully!';
     },
     onError: () => {
       isSubmittingRankings.value = false

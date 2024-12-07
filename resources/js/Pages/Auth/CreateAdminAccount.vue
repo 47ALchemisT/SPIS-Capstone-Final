@@ -115,7 +115,7 @@ const form = reactive({
     username: '',
     password: '',
     password_confirmation: '',
-    student_id: props.student.id
+    student_id: props.student.id,
 });
 
 const goBack = () => {

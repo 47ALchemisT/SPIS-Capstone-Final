@@ -9,18 +9,22 @@
             </div>
 
             <!--Content-->
-            <div class="mt-3 flex">
+            <div class="mt-3 flex gap-6">
                 <!-- Sidebar -->
-                <div class="w-[20rem] sticky top-0 overflow-y-auto bg-white px-2">
+                <div class="w-[20rem] sticky top-0 overflow-y-auto bg-white px-2 py-4 h-[calc(100vh-4rem)]">
                     <!-- Create Account Button -->
-                    <div class="sticky top-0 bg-white pt-4 pb-2">
-                        <button @click="openModal(false)" type="button" class="w-full flex items-center justify-center gap-2 text-white text-sm bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2.5 mb-4">
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/></svg>
+                    <div class="sticky top-0 bg-white pb-4">
+                        <button 
+                            @click="openModal(false)" 
+                            type="button" 
+                            class="w-full flex items-center justify-center gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2.5 shadow-sm transition-all duration-200"
+                        >
+                            <i class="fas fa-user-plus"></i>
                             Create Account
                         </button>
 
                         <!-- Search -->
-                        <div class="relative mb-4">
+                        <div class="relative mt-4">
                             <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                                 <i class="fas fa-search"></i>
                             </span>
@@ -28,7 +32,7 @@
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Search accounts..."
-                                class="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-300 focus:border-blue-500 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                                class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm transition-all duration-300"
                             >
                             <button
                                 v-if="searchQuery"
@@ -41,7 +45,7 @@
                     </div>
 
                     <!-- Role Folders -->
-                    <div class="space-y-2 pb-4">
+                    <div class="space-y-2">
                         <div 
                             v-for="role in uniqueRoles" 
                             :key="role"
@@ -49,17 +53,12 @@
                             class="cursor-pointer"
                         >
                             <div class="p-3 rounded-lg transition-all duration-200"
-                                :class="{ 'bg-gray-100': selectedRole === role }">
-                                <div class="flex gap-3">
-                                    <div class="text-gray-400">
-                                        <svg v-if="selectedRole === role" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M19 20H4c-1.11 0-2-.9-2-2V6c0-1.11.89-2 2-2h6l2 2h7c1.097 0 2 .903 2 2H4v10l2.14-8h17.07l-2.28 8.5c-.23.87-1.01 1.5-1.93 1.5z"/>
-                                        </svg>
-                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
-                                        </svg>
+                                :class="{ 'bg-blue-50 ring-1 ring-blue-500/20': selectedRole === role }">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-blue-600">
+                                        <i class="fas fa-folder" :class="{ 'fa-folder-open': selectedRole === role }"></i>
                                     </div>
-                                    <div>
+                                    <div class="flex-1">
                                         <h3 class="text-sm font-medium text-gray-900">{{ role }}</h3>
                                         <p class="text-xs text-gray-500">{{ getRoleCount(role) }} accounts</p>
                                     </div>
@@ -70,20 +69,27 @@
                 </div>
 
                 <!-- Main Content -->
-                <div class="flex-1 p-4">
-                    <!-- Table View (shows when folder is clicked) -->
-                    <div v-if="selectedRole" class="bg-white rounded-lg border border-gray-200">
+                <div class="flex-1 py-4">
+                    <!-- Table View -->
+                    <div v-if="selectedRole" class="bg-white rounded-lg border border-gray-200 shadow-sm">
                         <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                            <h2 class="text-lg font-semibold text-gray-900">{{ selectedRole }} Accounts</h2>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900">{{ selectedRole }} Accounts</h2>
+                                    <p class="text-sm text-gray-500">Manage {{ selectedRole.toLowerCase() }} accounts</p>
+                                </div>
+                            </div>
                             <button 
                                 @click="selectedRole = null" 
-                                class="text-gray-500 hover:text-gray-700"
+                                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
+
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -116,7 +122,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <button 
                                                 @click="openDeleteModal(account)"
-                                                class="text-red-600 hover:text-red-800 text-sm font-medium"
+                                                class="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1 rounded-lg text-sm font-medium transition-all"
                                             >
                                                 Delete
                                             </button>
@@ -134,11 +140,11 @@
                                         Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ filteredAccounts.length }} entries
                                     </span>
                                 </div>
-                                <div class="flex items-center space-x-2">
+                                <div class="flex items-center gap-2">
                                     <button 
                                         @click="currentPage--" 
                                         :disabled="currentPage === 1"
-                                        class="px-3 py-1 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                     >
                                         Previous
                                     </button>
@@ -146,7 +152,7 @@
                                     <button 
                                         @click="currentPage++" 
                                         :disabled="currentPage === totalPages"
-                                        class="px-3 py-1 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                     >
                                         Next
                                     </button>
@@ -155,83 +161,110 @@
                         </div>
                     </div>
 
-                    <p v-else class="text-gray-500 text-center mt-4">Select a role to view accounts</p>
+                    <!-- Empty State -->
+                    <div v-else class="h-[calc(100vh-12rem)] flex flex-col items-center justify-center text-center">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                            <i class="fas fa-folder-open text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-1">No folder selected</h3>
+                        <p class="text-sm text-gray-500">Select a role folder to view accounts</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Modal for adding new account -->
-            <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-                    <h3 class="text-lg font-semibold mb-4">Add New Account</h3>
+            <transition
+                enter-active-class="transition ease-out duration-300"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition ease-in duration-200"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div v-if="isModalOpen" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
+                    <transition
+                        enter-active-class="transition ease-out duration-300"
+                        enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enter-to-class="opacity-100 translate-y-0 sm:scale-100"
+                        leave-active-class="transition ease-in duration-200"
+                        leave-from-class="opacity-100 translate-y-0 sm:scale-100"
+                        leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <div v-if="isModalOpen" class="fixed inset-0 flex items-center justify-center p-4">
+                            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg transform">
+                                <h3 class="text-lg font-semibold mb-4">Add New Account</h3>
 
-                    <form @submit.prevent="submitAccount">
-                        <!-- Display selected student -->
-                        <label for="student" class=" text-gray-800 text-sm font-medium">Select a student</label>
-                        <div class="mb-2 mt-1.5 grid grid-cols-4 items-center gap-3">
-                            <div class="col-span-3 py-2.5 px-4 bg-gray-50 ring-1 ring-gray-300 rounded-lg text-sm w-full">
-                                <span v-if="selectedStudentName" class="text-sm text-gray-700"><strong>{{ selectedStudentName }}</strong></span>
-                                <span v-else class="text-sm text-gray-500">No student selected</span>
+                                <form @submit.prevent="submitAccount">
+                                    <!-- Display selected student -->
+                                    <label for="student" class=" text-gray-800 text-sm font-medium">Select a student</label>
+                                    <div class="mb-2 mt-1.5 grid grid-cols-4 items-center gap-3">
+                                        <div class="col-span-3 py-2.5 px-4 bg-gray-50 ring-1 ring-gray-300 rounded-lg text-sm w-full">
+                                            <span v-if="selectedStudentName" class="text-sm text-gray-700"><strong>{{ selectedStudentName }} </strong></span>
+                                            <span v-else class="text-sm text-gray-500">No student selected</span>
+                                        </div>
+                                        <button type="button" @click="openStudentModal" class="col-span-1 bg-blue-600 hover:bg-blue-700/90 text-white py-2.5 px-3 rounded-lg text-sm font-medium shadow  transition-colors">
+                                            <i class="fa-solid fa-file mr-1"></i>   
+                                            Student                          
+                                        </button>
+                                        <span v-if="form.errors.student_id" class="text-red-500">{{ form.errors.student_id }}</span>
+                                    </div>
+                                    <div class="p-3 mb-4 text-xs bg-blue-50 text-blue-700 rounded-lg">
+                                        <h1 class="font-bold mb-1">Note</h1>
+                                        <p>
+                                            In selecting a student, you need to click the <span class="font-semibold">Student</span> button at the right side of the form and select a student you want to put in this role.
+                                        </p>
+                                        <div class=" mt-2">
+                                            <h1 class="font-medium">Roles</h1>
+                                            <div class="px-2 mt-1">
+                                                <div class="font-medium">- Sub Admin : <span class="font-normal">helps in scheduling the sports game</span></div>
+                                                <div class="font-medium">- College Sport Head : <span class="font-normal">Assigns student as players in their specific sport</span></div>
+                                                <div class="font-medium">- Facilitator : <span class="font-normal">Manages their assigned sport</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Input for Role -->
+                                    <div class="mb-4">
+                                        <label for="role" class="block font-medium mb-1.5 text-sm text-gray-800">Role</label>
+                                        <select
+                                            v-model="form.role"
+                                            id="role"
+                                            class="w-full border px-3 py-2.5 text-sm text-gray rounded-lg border-gray-300"
+                                        >
+                                            <option value="" disabled>Select role...</option>
+                                            <option value="Sub Admin">Sub Admin</option>
+                                            <option value="Facilitator">Facilitator</option>
+                                            <option value="College Sport Head">College Sport Head</option>
+                                        </select>
+                                        <span v-if="form.errors.role" class="text-red-500">{{ form.errors.role }}</span>
+                                    </div>
+
+                                    <!-- Modal Buttons -->
+                                    <div class="flex justify-end text-sm font-medium">
+                                        <button type="button" @click="closeModal" class="mr-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
+                                        <button
+                                            type="submit"
+                                            :disabled="form.processing"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm transition relative"
+                                        >
+                                            <span v-if="!form.processing">
+                                                Create account
+                                            </span>
+                                            <span v-else>
+                                                <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Processing...
+                                            </span>
+                                        </button>  
+                                    </div>
+                                </form>
                             </div>
-                            <button type="button" @click="openStudentModal" class="col-span-1 bg-blue-700 hover:bg-blue-700/90 text-white py-2.5 px-3 rounded-lg text-sm font-medium shadow  transition-colors">
-                                <i class="fa-solid fa-file mr-1"></i>   
-                                Student                          
-                            </button>
-                            <span v-if="form.errors.student_id" class="text-red-500">{{ form.errors.student_id }}</span>
                         </div>
-                        <div class="p-3 mb-4 text-xs bg-blue-50 text-blue-700 rounded-lg">
-                            <h1 class="font-bold mb-1">Note</h1>
-                            <p>
-                                In selecting a student, you need to click the <span class="font-semibold">Student</span> button at the right side of the form and select a student you want to put in this role.
-                            </p>
-                            <div class=" mt-2">
-                                <h1 class="font-medium">Roles</h1>
-                                <div class="px-2 mt-1">
-                                    <div class="font-medium">- Sub Admin : <span class="font-normal">helps in scheduling the sports game</span></div>
-                                    <div class="font-medium">- College Sport Head : <span class="font-normal">Assigns student as players in their specific sport</span></div>
-                                    <div class="font-medium">- Facilitator : <span class="font-normal">Manages their assigned sport</span></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Input for Role -->
-                        <div class="mb-4">
-                            <label for="role" class="block font-medium mb-1.5 text-sm text-gray-800">Role</label>
-                            <select
-                                v-model="form.role"
-                                id="role"
-                                class="w-full border px-3 py-2.5 text-sm text-gray rounded-lg border-gray-300"
-                            >
-                                <option value="" disabled>Select role...</option>
-                                <option value="Sub Admin">Sub Admin</option>
-                                <option value="Facilitator">Facilitator</option>
-                                <option value="College Sport Head">College Sport Head</option>
-                            </select>
-                            <span v-if="form.errors.role" class="text-red-500">{{ form.errors.role }}</span>
-                        </div>
-
-                        <!-- Modal Buttons -->
-                        <div class="flex justify-end text-sm font-medium">
-                            <button type="button" @click="closeModal" class="mr-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg">Cancel</button>
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm transition relative"
-                            >
-                                <span v-if="!form.processing">
-                                    Create account
-                                </span>
-                                <span v-else>
-                                    <svg class="animate-spin h-4 w-4 mr-3 border-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.969 7.969 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Processing...
-                                </span>
-                            </button>  
-                        </div>
-                    </form>
+                    </transition>
                 </div>
-            </div>
+            </transition>
 
             <!-- Second modal for listing students -->
             <TransitionRoot appear :show="isStudentModalOpen" as="template">
@@ -397,6 +430,11 @@
             </TransitionRoot>
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
@@ -404,6 +442,7 @@ import { router,Head, useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted } from 'vue';
 import AppLayout from '@/Layout/DashboardLayout.vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 // Props for students and errors
 const props = defineProps({
@@ -411,6 +450,9 @@ const props = defineProps({
     studentAccounts: Array,
     errors: Object,
 });
+
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 // Available students and modal states
 const availableStudents = ref(props.students || []);
@@ -480,7 +522,7 @@ const selectStudentForPreview = (student) => {
 }
 
     selectedStudentId.value = student.id;
-    selectedStudentName.value = student.first_name;
+    selectedStudentName.value = student.first_name + ' ' + student.last_name;
     studentAccountStatusMessage.value = '';
 };
 
@@ -489,7 +531,7 @@ const confirmStudentSelection = () => {
     const selectedStudent = availableStudents.value.find(student => student.id === selectedStudentId.value);
     if (selectedStudent) {
         form.student_id = selectedStudent.id;
-        selectedStudentName.value = selectedStudent.first_name;
+        selectedStudentName.value = selectedStudent.first_name + ' ' + selectedStudent.last_name;
     }
     closeStudentModal();
 };
@@ -502,8 +544,8 @@ const submitAccount = () => {
     form.post(route('account.store'), {
         onSuccess: () => {
             closeModal();
-            // Reload the page
-            window.location.reload();
+            showSuccessModal.value = true;
+            successMessage.value = 'Account created successfully!';
         }
     });
 };

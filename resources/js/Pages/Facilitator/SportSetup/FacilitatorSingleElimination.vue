@@ -51,7 +51,6 @@
                     </button>
                 </div>
 
-            <Toast ref="toastRef" />
 
 
             <!--tab navigation-->
@@ -77,7 +76,15 @@
 
             <div class="mt-4 pb-6">
                 <div v-if="activeTab === 'matches'">
-                    <GameSchedule :matches="matches" :teams="teams" :results="results" :venues="venues"  :allMatches="allMatches" :venueRecords="venueRecords"/>                
+                    <GameSchedule 
+                        :matches="matches" 
+                        :teams="teams" 
+                        :results="results" 
+                        :venues="venues"  
+                        :allMatches="allMatches" 
+                        :venueRecords="venueRecords"
+                        @resultUpdated="refreshData"
+                    />                
                 </div>
                 <div v-if="activeTab === 'standing'">
                     <div class="w-full">
@@ -201,6 +208,11 @@
             </div>
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
  
 <script setup>
@@ -210,8 +222,8 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/Facilitator/FGameSchedule.vue';
-import Toast from '@/Components/Toast.vue';  // Ad/just the import path as needed
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 
 const props = defineProps({
@@ -236,23 +248,8 @@ const props = defineProps({
 
 });
 
-
-const toastRef = ref(null);
-const page = usePage();
-
-// Watch for flash messages
-watch(
-    () => page.props.flash,
-    (flash) => {
-        if (flash.message) {
-            toastRef.value.addToast(flash.message, 'success');
-        }
-        if (flash.error) {
-            toastRef.value.addToast(flash.error, 'error');
-        }
-    },
-    { deep: true }
-);
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 
 const activeTab = ref('matches');
 
@@ -419,8 +416,11 @@ const submitRankings = async () => {
 
   try {
     await router.post(route('overall-results.store'), { rankings }, {
-      preserveState: true,
       preserveScroll: true,
+      onSuccess: () => {
+        showSuccessModal.value = true;
+        successMessage.value = 'Rankings submitted successfully!';
+      },
     });
     rankingsSubmitted.value = true;
     closeRankingModal();
@@ -430,6 +430,10 @@ const submitRankings = async () => {
   } finally {
     isSubmittingRankings.value = false;
   }
+};
+
+const refreshData = () => {
+    router.reload({ only: ['matches', 'results'] });
 };
 </script>
  

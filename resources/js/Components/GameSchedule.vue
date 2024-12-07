@@ -80,98 +80,150 @@
     </div>
 
     <!-- Updated Modal -->
-    <div v-if="isTimeModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="relative p-4 w-full max-w-[30rem] max-h-full">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-800">
-          <!-- Modal header -->
-          <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-              Schedule match
-            </h3>
-            <button @click="closeTimeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-              </svg>
-              <span class="sr-only">Close modal</span>
-            </button>
-          </div>
-          <!-- Modal body -->
-          <div class="p-4 pt-0">
-            <div class="text-xs p-3 bg-blue-50 text-blue-700 rounded-lg border mb-3 border-blue-400">
-              <h1 class="font-semibold mb-1">Note</h1>
-              <p>All available times can be selected. Times that are not available will be grayed out. This is first come first serve, so make sure to set the time and venue correctly.</p>
-            </div>
+    <TransitionRoot appear :show="isTimeModalOpen" as="template">
+      <Dialog as="div" @close="closeTimeModal" class="relative z-50">
+        <TransitionChild
+          as="template"
+          enter="duration-300 ease-out"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="duration-200 ease-in"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+        </TransitionChild>
 
-            <!-- Venue Selection -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                Select Venue
-              </label>
-              <select
-                v-model="selectedVenue"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select a venue</option>
-                <option v-for="venue in props.venues" :key="venue.id" :value="venue.id">
-                  {{ venue.name }}
-                </option>
-              </select>
-            </div>
+        <div class="fixed inset-0 overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center p-4 text-center">
+            <TransitionChild
+              as="template"
+              enter="duration-300 ease-out"
+              enter-from="opacity-0 scale-95"
+              enter-to="opacity-100 scale-100"
+              leave="duration-200 ease-in"
+              leave-from="opacity-100 scale-100"
+              leave-to="opacity-0 scale-95"
+            >
+              <DialogPanel class="relative w-full max-w-[30rem] transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 border-b">
+                  <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
+                    Schedule match
+                  </DialogTitle>
+                  <button @click="closeTimeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                  </button>
+                </div>
 
-            <!-- Date Selection -->
-            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-              Pick the Date and Time
-            </label>
-            <div class="mx-auto sm:mx-0 flex justify-center mb-5">
-              <input
-                type="date"
-                v-model="selectedDate"
-                :min="getCurrentDate()"
-                @change="updateAvailableTimeSlots"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+                <!-- Modal body -->
+                <div class="p-4 pt-0">
+                  <div class="text-xs p-3 bg-blue-50 text-blue-700 rounded-lg border mb-3 border-blue-400">
+                    <h1 class="font-semibold mb-1">Note</h1>
+                    <p>All available times can be selected. Times that are not available will be grayed out. This is first come first serve, so make sure to set the time and venue correctly.</p>
+                  </div>
 
-            <!-- Time Selection -->
-            <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
-              <li v-for="slot in availableTimeSlots" :key="slot.value">
-                <input 
-                  type="radio" 
-                  :id="slot.value" 
-                  :value="slot.value" 
-                  v-model="selectedTime" 
-                  class="hidden peer" 
-                  name="timetable"
-                  :disabled="slot.disabled"
-                >
-                <label :for="slot.value"
-                  :class="[
-                    'inline-flex items-center justify-center w-full px-2 py-1.5 text-sm font-medium text-center',
-                    slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400 rounded-md' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
-                  ]"
-                >
-                  {{ slot.label }}
-                </label>
-              </li>
-            </ul>
+                  <!-- Venue Selection -->
+                  <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-900 mb-2">
+                      Select Venue
+                    </label>
+                    <select
+                      v-model="selectedVenue"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select a venue</option>
+                      <option v-for="venue in props.venues" :key="venue.id" :value="venue.id">
+                        {{ venue.name }}
+                      </option>
+                    </select>
+                  </div>
 
-            <div v-if="formError" class="mb-4 text-red-500 text-sm">{{ formError }}</div>
+                  <!-- Date Selection -->
+                  <label class="block text-sm font-medium text-gray-900 mb-2">
+                    Pick the Date and Time
+                  </label>
+                  <div class="mx-auto sm:mx-0 flex justify-center mb-5">
+                    <input
+                      type="date"
+                      v-model="selectedDate"
+                      :min="getCurrentDate()"
+                      @change="updateAvailableTimeSlots"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
 
-            <!-- Action Buttons -->
-            <div class="grid grid-cols-2 gap-2">
-              <button @click="closeTimeModal" type="button" class="py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Discard</button>
-              <button @click="saveDateTime" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
-            </div>
+                  <!-- Time Selection -->
+                  <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
+                    <li v-for="slot in availableTimeSlots" :key="slot.value">
+                      <input 
+                        type="radio" 
+                        :id="slot.value" 
+                        :value="slot.value" 
+                        v-model="selectedTime" 
+                        class="hidden peer" 
+                        name="timetable"
+                        :disabled="slot.disabled"
+                      >
+                      <label :for="slot.value"
+                        :class="[
+                          'inline-flex items-center justify-center w-full px-2 py-1.5 text-sm font-medium text-center',
+                          slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400 rounded-md' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
+                        ]"
+                      >
+                        {{ slot.label }}
+                      </label>
+                    </li>
+                  </ul>
+
+                  <div v-if="formError" class="mb-4 text-red-500 text-sm">{{ formError }}</div>
+
+                  <!-- Action Buttons -->
+                  <div class="grid grid-cols-2 gap-2">
+                    <button 
+                      @click="closeTimeModal" 
+                      type="button" 
+                      :disabled="isProcessing"
+                      class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Discard
+                    </button>
+                    <button 
+                      @click="saveDateTime" 
+                      type="button"
+                      :disabled="isProcessing"
+                      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      <svg v-if="isProcessing" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {{ isProcessing ? 'Saving...' : 'Save' }}
+                    </button>
+                  </div>
+                </div>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
-      </div>
-    </div>
+      </Dialog>
+    </TransitionRoot>
   </div>
+  <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
 
 const props = defineProps({
   matches: {
@@ -200,6 +252,10 @@ const props = defineProps({
   }
 });
 
+const showSuccessModal = ref(false);
+const successMessage = ref('');
+
+const isProcessing = ref(false);
 const isTimeModalOpen = ref(false);
 const selectedMatch = ref(null);
 const selectedDate = ref('');
@@ -384,12 +440,17 @@ const saveDateTime = () => {
   form.time = selectedTime.value;
   form.venue_id = selectedVenue.value;
 
+  isProcessing.value = true;
   form.put(route('matches.updateDateTime'), {
     onSuccess: () => {
       closeTimeModal();
+      showSuccessModal.value = true;
+      successMessage.value = 'Match time set successfully!';
+      isProcessing.value = false;
     },
     onError: (errors) => {
       formError.value = Object.values(errors)[0];
+      isProcessing.value = false;
     },
   });
 };

@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class StudentAccount extends Authenticatable
 {
-    use HasFactory, Notifiable, LogsActivity;
+    use HasFactory;
 
     protected $table = 'student_accounts';
 
