@@ -145,6 +145,18 @@
                                     </div>
                                 </Link>
                             </li>
+                            <li>
+                                <Link 
+                                    href="/account" 
+                                    class="flex items-center py-2.5 px-3 text-sm rounded-lg transition-all"
+                                    :class="{'bg-blue-700 text-white': currentRoute === '/account', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/account'}"
+                                >
+                                    <div    >
+                                        <i class="fa-solid fa-users w-5 h-5"></i>
+                                        <span class="ms-3">Accounts</span>
+                                    </div>
+                                </Link>
+                            </li>
                         </ul>
                         <div class="text-xs mb-2 mt-1 text-gray-500 font-medium">Main</div>
                         <ul class="space-y-1.5" style="margin-bottom: 6px;">
@@ -160,18 +172,6 @@
                                     <div>
                                         <i class="fa-solid fa-flag-checkered w-5 h-5"></i>
                                         <span class="ms-3">Palakasan</span>
-                                    </div>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link 
-                                    href="/account" 
-                                    class="flex items-center py-2.5 px-3 text-sm rounded-lg transition-all"
-                                    :class="{'bg-blue-700 text-white': currentRoute === '/account', 'text-gray-700 hover:bg-blue-100 hover:text-blue-600': currentRoute !== '/account'}"
-                                >
-                                    <div    >
-                                        <i class="fa-solid fa-users w-5 h-5"></i>
-                                        <span class="ms-3">Accounts</span>
                                     </div>
                                 </Link>
                             </li>

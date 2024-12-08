@@ -148,7 +148,8 @@ class SingleEliminationController extends Controller
             'venues' => $venues,
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
-            'players' => $players
+            'players' => $players,
+            'latestPalakasan' => $latestPalakasan
         ]);
     }  
 

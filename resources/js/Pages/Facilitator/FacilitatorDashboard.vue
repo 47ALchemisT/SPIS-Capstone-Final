@@ -39,7 +39,7 @@
               </div>
 
               <div class="hidden md:block w-full h-96">
-                <img class="w-full h-full object- rounded-lg" src="/resources/assets/phone.gif" alt="Phone Animation">
+                <img class="w-full h-full object- rounded-lg" src="/resources/assets/phone.jpg" alt="Phone Animation">
               </div>
 
             </div>

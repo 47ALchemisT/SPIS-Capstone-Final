@@ -1,6 +1,6 @@
 <template>
     <Head title="Schedule" />
-    <MainLayout>
+    <MainLayout :latestPalakasan="latestPalakasan">
         <div class="py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                 <!-- Header Section -->
@@ -372,6 +372,10 @@ const props = defineProps({
     sportVariations: {
         type: Array,
         default: () => []
+    },
+    latestPalakasan: {
+        type: Object,
+        default: null
     }
 })
 

@@ -1,6 +1,6 @@
 <template>
     <Head title="Sports" />
-    <MainLayout>
+    <MainLayout :latestPalakasan="latestPalakasan">
         <div class="min-h-screen">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-4">
                 <div class="sm:text-left text-center mb-8">

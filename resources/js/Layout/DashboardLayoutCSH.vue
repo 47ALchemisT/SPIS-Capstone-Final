@@ -1,68 +1,81 @@
 <template>
     <div>
         <!-- Navbar -->
-        <nav class="bg-blue-700 fixed top-0 left-0 right-0 z-50">
-            <div class="px-6">
+        <nav class="bg-blue-700 fixed top-0 left-0 right-0 z-50 shadow-md">
+            <div class="px-4 sm:px-6">
                 <div class="flex justify-between h-16">
-                    <div class="flex-shrink-0 flex space-x-3 items-center">
-                        <img class="w-10 h-10 rounded-full object-cover cursor-pointer" src='/resources/assets/ssclogo.jpg' alt="User dropdown">
-                        <span class="text-xl font-semibold text-white">SPSIS</span>
+                    <div class="flex-shrink-0 flex space-x-2 sm:space-x-3 items-center">
+                        <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer shadow-md ring-2 ring-blue-400" src='/resources/assets/ssclogo.jpg' alt="SSC Logo">
+                        <span class="text-lg sm:text-xl font-semibold text-white tracking-wide">SPSIS</span>
                     </div>
-                    <div class="ml-3 relative flex items-center gap-3">
-                        <div>
-                            <p class="text-white text-right text-sm font-semibold ">{{ comHead.student.first_name }} {{ comHead.student.last_name }}</p>
-                            <p class="text-white text-xs text-right ">College Committee Head</p>
+                    <div class="ml-2 sm:ml-3 relative flex items-center gap-2 sm:gap-3">
+                        <div class="hidden sm:block">
+                            <p class="text-white text-sm font-semibold text-right tracking-wide">{{ comHead.student.first_name }} {{ comHead.student.last_name }}</p>
+                            <p class="text-blue-100 text-xs text-right">College Committee Head</p>
                         </div>
                         <Menu as="div" class="relative inline-block text-left">
-                                    <MenuButton class="mt-1.5 inline-flex items-center justify-center w-full rounded-lg  text-sm font-medium text-gray-700 ">
-                                        <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-400 cursor-pointer" src='/resources/assets/user.png' alt="User dropdown">
-
-                                    </MenuButton>
-                                    <transition
-                                    enter-active-class="transition ease-out duration-100"
-                                    enter-from-class="transform opacity-0 scale-95"
-                                    enter-to-class="transform opacity-100 scale-100"
-                                    leave-active-class="transition ease-in duration-75"
-                                    leave-from-class="transform opacity-100 scale-100"
-                                    leave-to-class="transform opacity-0 scale-95"
-                                    >
-                                    <MenuItems class="origin-top-right absolute right-0 z-10 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div class="py-1">
-                                            <MenuItem v-slot="{ active }">
-                                                <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 border-b text-sm hover:bg-white font-medium']">
-                                                    {{ comHead.student.first_name }} {{ comHead.student.last_name }}
-                                                    <p class="text-xs text-gray-500 font-normal">{{ comHead.student.univ_email }}</p>
-                                                </a>
-                                            </MenuItem>
-                                            <MenuItem v-slot="{ active }">
-                                                <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
+                            <MenuButton class="mt-1.5 inline-flex items-center justify-center rounded-lg text-sm font-medium focus:outline-none">
+                                <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown" 
+                                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ring-blue-400 cursor-pointer hover:ring-blue-300 transition-all duration-200 shadow-md" 
+                                    src='/resources/assets/user.png' alt="User dropdown">
+                            </MenuButton>
+                            <transition
+                                enter-active-class="transition ease-out duration-200"
+                                enter-from-class="transform opacity-0 scale-95"
+                                enter-to-class="transform opacity-100 scale-100"
+                                leave-active-class="transition ease-in duration-150"
+                                leave-from-class="transform opacity-100 scale-100"
+                                leave-to-class="transform opacity-0 scale-95"
+                            >
+                                <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <div class="py-1">
+                                        <MenuItem v-slot="{ active }">
+                                            <a href="#" :class="[
+                                                active ? 'bg-gray-50' : '',
+                                                'block px-4 py-3 border-b text-sm hover:bg-gray-50 transition-colors duration-150'
+                                            ]">
+                                                <div class="font-medium text-gray-900">{{ comHead.student.first_name }} {{ comHead.student.last_name }}</div>
+                                                <div class="text-xs text-gray-500 mt-0.5">{{ comHead.student.univ_email }}</div>
+                                            </a>
+                                        </MenuItem>
+                                        <MenuItem v-slot="{ active }">
+                                            <a href="#" :class="[
+                                                active ? 'bg-gray-50 text-gray-900' : 'text-gray-700',
+                                                'block px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors duration-150'
+                                            ]">
+                                                <div class="flex items-center">
+                                                    <i class="fa-solid fa-gear w-4 h-4 mr-2"></i>
                                                     Settings
-                                                </a>
-                                            </MenuItem>
-                                            <MenuItem v-slot="{ active }">
-                                                <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
-                                                    <Link 
-                                                        :href="route('logout')" 
-                                                        method="post"
-                                                        as="button"
-                                                        class="flex w-full rounded-lg transition-all"
-                                                        :class="{'text-white': currentRoute === route('logout'), 'text-gray-700 ': currentRoute !== route('logout')}"
-                                                    >
-                                                        <span class="">Sign out</span>
-                                                    </Link>
-                                                </a>
-    
-                                            </MenuItem>
-                                        </div>
-                                    </MenuItems>
-                                    </transition>
+                                                </div>
+                                            </a>
+                                        </MenuItem>
+                                        <MenuItem v-slot="{ active }">
+                                            <Link 
+                                                :href="route('logout')" 
+                                                method="post"
+                                                as="button"
+                                                class="w-full text-left px-4 py-2.5 text-sm transition-colors duration-150"
+                                                :class="[
+                                                    active ? 'bg-gray-50 text-red-600' : 'text-red-600',
+                                                    'hover:bg-gray-50'
+                                                ]"
+                                            >
+                                                <div class="flex items-center">
+                                                    <i class="fa-solid fa-right-from-bracket w-4 h-4 mr-2"></i>
+                                                    Sign out
+                                                </div>
+                                            </Link>
+                                        </MenuItem>
+                                    </div>
+                                </MenuItems>
+                            </transition>
                         </Menu>
                     </div>
                 </div>
             </div>
         </nav>
 
-                <!-- Main content -->
+        <!-- Main content -->
         <div class="contatiner flex-1 px-48 mt-16">
             <slot />
         </div>

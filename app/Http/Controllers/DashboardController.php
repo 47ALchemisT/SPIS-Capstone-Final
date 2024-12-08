@@ -26,7 +26,15 @@ class DashboardController extends Controller
         $account = StudentAccount::all();
         $students = Student::where('status', 'active')->get();
         $palakasans = Palakasan::all();
-        $latestPalakasan = Palakasan::latest()->first();
+        $latestPalakasan = Palakasan::where('status', 'live')
+            ->orWhere('status', 'completed')
+            ->latest()
+            ->first();
+
+        if (!$latestPalakasan) {
+            $latestPalakasan = Palakasan::latest()->first();
+        }
+
         $assignedSports = AssignedSports::with('sport')->where('palakasan_sport_id', $latestPalakasan->id)->get();
         $assgnedTeams = AssignedTeams::with('college')->where('palakasan_id', $latestPalakasan->id)->get();
 

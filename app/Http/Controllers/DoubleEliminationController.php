@@ -148,6 +148,7 @@ class DoubleEliminationController extends Controller
             'allMatches' => $allMatches,
             'venueRecords' => $venueRecords,
             'players' => $players,
+            'latestPalakasan' => $latestPalakasan
         ]);
     }   
 

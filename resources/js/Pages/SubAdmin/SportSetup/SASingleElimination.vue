@@ -33,8 +33,6 @@
                 <p class="text-xs">|</p>
                 <p class=" text-sm">{{ sport.status }}</p>
             </div>
-            <Toast ref="toastRef" />
-
             <div v-if="tournamentWinner" class="mt-6 p-8 bg-blue-100 flex justify-center items-center flex-col rounded-lg">
                     <h2 class="text-xs font-semibold mb-2 text-blue-700">Game Winner</h2>
 
@@ -173,7 +171,6 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutSA.vue';
 import Standing from '@/Components/Standing.vue';
 import GameSchedule from '@/Components/GameSchedule.vue';
-import Toast from '@/Components/Toast.vue';  // Adjust the import path as needed
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 
 
@@ -189,23 +186,6 @@ const props = defineProps({
     players: Array,
     user: Object
 });
-
-const toastRef = ref(null);
-const page = usePage();
-
-// Watch for flash messages
-watch(
-    () => page.props.flash,
-    (flash) => {
-        if (flash.message) {
-            toastRef.value.addToast(flash.message, 'success');
-        }
-        if (flash.error) {
-            toastRef.value.addToast(flash.error, 'error');
-        }
-    },
-    { deep: true }
-);
 
 const activeTab = ref('matches');
 const selectedVenue = ref('');

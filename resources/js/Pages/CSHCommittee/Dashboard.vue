@@ -130,111 +130,121 @@
                                 </div>
                             </div>
 
-                            <div v-if="activeTab === 'sports'">
+                            <div v-if="activeTab === 'sports'" class="min-h-screen">
                                 <!--Content-->
-                                <div class="space-y-3 py-6">
+                                <div class="space-y-6 py-8 px-4">
                                     <div>
-                                        <div class="mb-4 flex justify-between">
-                                            <div class="flex items-center gap-3">
-                                                <div class="relative w-full sm:w-64 sm:mb-0">
-                                                    <input
-                                                        v-model="sportsSearchQuery"
-                                                        type="text"
-                                                        placeholder="Search sport..."
-                                                        class="w-full pl-10 pr-10 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                                                    >
-                                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                                                    <button
-                                                        v-if="sportsSearchQuery"
-                                                        @click="clearSearch"
-                                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                                                        >
-                                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                                <h2 class="text-md font-medium text-gray-700">Assigned Sports ({{ assignedSports.length }})</h2>
+                                        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                            <h2 class="text-2xl font-semibold text-gray-900">Sports Management</h2>
+                                            <div class="relative w-full sm:w-72">
+                                                <input
+                                                    v-model="sportsSearchQuery"
+                                                    type="text"
+                                                    placeholder="Search sports..."
+                                                    class="w-full pl-11 pr-10 py-3 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200"
+                                                >
+                                                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                                <button
+                                                    v-if="sportsSearchQuery"
+                                                    @click="clearSearch"
+                                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                                >
+                                                    <i class="fa-solid fa-xmark w-5 h-5"></i>
+                                                </button>
                                             </div>
                                         </div>
 
-                                        <ul class="space-y-4">
-                                            <li v-for="sport in filteredSports" :key="sport.id" class="p-5 bg-white rounded-lg ring-1 ring-gray-200">
-                                                <div class="flex justify-between mb-2">
-                                                    <div>
-                                                        <p class="text-gray-800 text-lg font-medium">{{ sport.sport.name }} {{ sport.categories }}</p>
-                                                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                                                            <span>{{ sport.setup }}</span>
-                                                            <span class="text-xs">•</span>
-                                                            <span>{{ sport.type }}</span>
+                                        <div class="mb-4 flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-sm font-medium text-gray-600">Total Sports</span>
+                                                <span class="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-blue-700 rounded-full">{{ assignedSports.length }}</span>
+                                            </div>
+                                        </div>
+
+                                        <ul class="grid grid-cols-1 gap-6">
+                                            <li v-for="sport in filteredSports" :key="sport.id" 
+                                                class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200"
+                                            >
+                                                <div class="p-6">
+                                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                                                        <div class="flex items-center gap-4">
+                                                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                                                <i class="fa-solid fa-trophy text-blue-600 text-xl"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h3 class="text-lg font-semibold text-gray-900">
+                                                                    {{ sport.sport.name }} {{ sport.categories }}
+                                                                </h3>
+                                                                <div class="flex items-center gap-2 mt-1">
+                                                                    <span class="px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">{{ sport.setup }}</span>
+                                                                    <span class="px-2.5 py-1 text-xs font-medium bg-gray-50 text-gray-600 rounded-full">{{ sport.type }}</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div>
                                                         <button
                                                             @click="openPlayerModal(sport)"
-                                                            class="bg-blue-700 hover:bg-blue-600 font-medium text-white py-2 px-4 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700"
+                                                            class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                                                             :disabled="palakasan.status === 'live' || palakasan.status === 'completed'"
-                                                            >
+                                                        >
+                                                            <i class="fa-solid fa-user-plus mr-2"></i>
                                                             Assign Players
                                                         </button>
                                                     </div>
-                                                </div>
-                                                
-                                                <!-- Assigned Players List Accordion -->
-                                                <Disclosure v-slot="{ open }" as="div" class="mt-4 rounded-lg bg-gray-50" v-if="sport.assigned_players">
-                                                    <DisclosureButton class="flex w-full justify-between rounded-lg  bg-gray-50 px-4 py-4 text-left text-sm font-medium text-gray-900 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
-                                                        <span>Players ({{ sport.assigned_players.length }})</span>
-                                                        <svg
-                                                            :class="[open ? 'rotate-180 transform' : '', 'h-4 w-4 text-gray-500']"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
+                                                    
+                                                    <!-- Assigned Players List Accordion -->
+                                                    <Disclosure v-slot="{ open }" as="div" class="mt-4" v-if="sport.assigned_players">
+                                                        <DisclosureButton 
+                                                            class="flex w-full items-center justify-between rounded-lg bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500/50 focus-visible:ring-opacity-75 transition-all duration-200"
                                                         >
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7V5a2 2 0 012-2h10a2 2 0 012 2v16z"/>
-                                                        </svg>
-                                                    </DisclosureButton>
-                                                    <TransitionChild
-                                                        enter="transition duration-100 ease-out"
-                                                        enterFrom="transform scale-95 opacity-0"
-                                                        enterTo="transform scale-100 opacity-100"
-                                                        leave="transition duration-75 ease-out"
-                                                        leaveFrom="transform scale-100 opacity-100"
-                                                        leaveTo="transform scale-95 opacity-0"
-                                                    >
-                                                        <DisclosurePanel class="px-4 pt-4 pb-2 text-sm text-gray-500">
-                                                            <div v-if="sport.assigned_players.length > 0" class="space-y-2">
-                                                                <div v-for="player in sport.assigned_players" :key="player.id" 
-                                                                    class="flex items-center justify-between"
-                                                                >
-                                                                    <div class="flex gap-2 items-center">
-                                                                        <div class="flex-shrink-0">
-                                                                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                                                                <span class="text-gray-700 font-medium">
+                                                            <div class="flex items-center gap-2">
+                                                                <i class="fa-solid fa-users text-gray-400"></i>
+                                                                <span>Players</span>
+                                                                <span class="ml-1 px-2 py-0.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-full">
+                                                                    {{ sport.assigned_players.length }}
+                                                                </span>
+                                                            </div>
+                                                            <i :class="[open ? 'fa-chevron-up' : 'fa-chevron-down', 'fa-solid text-gray-400']"></i>
+                                                        </DisclosureButton>
+                                                        <TransitionChild
+                                                            enter="transition duration-100 ease-out"
+                                                            enterFrom="transform scale-95 opacity-0"
+                                                            enterTo="transform scale-100 opacity-100"
+                                                            leave="transition duration-75 ease-out"
+                                                            leaveFrom="transform scale-100 opacity-100"
+                                                            leaveTo="transform scale-95 opacity-0"
+                                                        >
+                                                            <DisclosurePanel class="px-4 pt-4 pb-2">
+                                                                <div v-if="sport.assigned_players.length > 0" class="divide-y divide-gray-100">
+                                                                    <div v-for="player in sport.assigned_players" :key="player.id" 
+                                                                        class="flex items-center justify-between py-3"
+                                                                    >
+                                                                        <div class="flex items-center gap-3">
+                                                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                                                                                <span class="text-sm font-medium text-gray-700">
                                                                                     {{ player.student.first_name[0] }}
                                                                                 </span>
                                                                             </div>
+                                                                            <div>
+                                                                                <p class="text-sm font-medium text-gray-900">
+                                                                                    {{ player.student.first_name }} {{ player.student.last_name }}
+                                                                                </p>
+                                                                            </div>
                                                                         </div>
-                                                                        <div>
-                                                                            <p class="text-sm font-medium text-gray-900">
-                                                                                {{ player.student.first_name }} {{ player.student.last_name }}
-                                                                            </p>
-                                                                        </div>
+                                                                        <button 
+                                                                            @click="removePlayer(sport.id, player.id)"
+                                                                            class="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all duration-200"
+                                                                            title="Remove player"
+                                                                        >
+                                                                            <i class="fa-solid fa-xmark"></i>
+                                                                        </button>
                                                                     </div>
-                                                                    <button 
-                                                                        @click="removePlayer(sport.id, player.id)"
-                                                                        class="p-1 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50"
-                                                                        title="Remove player"
-                                                                    >
-                                                                        <i class="fa-solid fa-xmark"></i>
-                                                                    </button>
                                                                 </div>
-                                                            </div>
-                                                            <p v-else class="text-center text-gray-500 py-2">No players assigned yet</p>
-                                                        </DisclosurePanel>
-                                                    </TransitionChild>
-                                                </Disclosure>
-                                                <p v-else class="text-sm text-gray-500 italic mt-2">No players assigned yet</p>
+                                                                <p v-else class="text-center text-sm text-gray-500 py-4">No players assigned yet</p>
+                                                            </DisclosurePanel>
+                                                        </TransitionChild>
+                                                    </Disclosure>
+                                                    <p v-else class="mt-4 text-sm text-gray-500 text-center py-3 bg-gray-50 rounded-lg">No players assigned yet</p>
+                                                </div>
                                             </li>
                                         </ul>
                                     </div>
@@ -629,8 +639,7 @@
                                                             </div>
                                                             <div v-if="selectedTeam === team.id && !team.is_assigned" class="text-blue-600">
                                                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" />
-                                                                </svg>
+                                                                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"/></svg>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -657,9 +666,21 @@
                                 </div>
                             </Dialog>
                 </TransitionRoot>
+                <ConfirmModal
+                    :show="showConfirmModal"
+                    title="Remove Player"
+                    message="Are you sure you want to remove this player from the sport?"
+                    @confirm="confirmRemovePlayer"
+                    @close="showConfirmModal = false"
+                />
             </div>
         </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
 </template>
  
 <script setup>
@@ -671,6 +692,9 @@
     import AppLayout from '@/Layout/DashboardLayoutCSH.vue';
     import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot, Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
     import CSHSettings from '@/Components/CSHSettings.vue'
+    import SuccessModal from '@/Components/SuccessModal.vue';
+    import ConfirmModal from '@/Components/ConfirmModal.vue';
+    import axios from 'axios';
 
     const props = defineProps({
         comHead: {
@@ -714,6 +738,12 @@
             default() { return [] }
         }
     });
+
+    const showSuccessModal = ref(false);
+    const successMessage = ref('');
+    const showConfirmModal = ref(false);
+    const playerToRemove = ref(null);
+    const sportIdToRemove = ref(null);
 
     const isModalOpen = ref(false);
     const selectedTeam = ref(null);
@@ -782,6 +812,8 @@
         }, {
             onSuccess: () => {
                 closeAssignModal();
+                showSuccessModal.value = true;
+                successMessage.value = 'College assigned successfully!';
             }
         });
     };
@@ -821,7 +853,7 @@
             assigned_team_id: props.assignedCollege.assigned_team.id
         }, {
             onSuccess: () => {
-                // Add newly assigned players to the list
+                
                 const newPlayers = selectedStudents.value.map(studentId => {
                     const student = props.students.find(s => s.id === studentId);
                     return {
@@ -831,23 +863,42 @@
                             last_name: student.last_name
                         }
                     };
+
                 });
                 newlyAssignedPlayers.value = [...newlyAssignedPlayers.value, ...newPlayers];
                 
                 closePlayerModal();
+                showSuccessModal.value = true;
+                successMessage.value = 'Players assigned successfully!';
             }
         });
     };
 
-    const removePlayer = async (sportId, playerId) => {
+    const removePlayer = (sportId, playerId) => {
+        sportIdToRemove.value = sportId;
+        playerToRemove.value = playerId;
+        showConfirmModal.value = true;
+    };
+
+    const confirmRemovePlayer = async () => {
         try {
-            const response = await axios.delete(route('assigned-players.destroy', { sport: sportId, player: playerId }));
+            const response = await axios.delete(route('assigned-players.destroy', {
+                sport: sportIdToRemove.value,
+                player: playerToRemove.value
+            }));
+            
             if (response.status === 200) {
-                // Remove the player from the local state
-                const sport = props.assignedSports.find(s => s.id === sportId);
-                if (sport) {
-                    sport.assigned_players = sport.assigned_players.filter(p => p.id !== playerId);
-                }
+                showConfirmModal.value = false;
+                showSuccessModal.value = true;
+                successMessage.value = 'Player removed successfully!';
+                
+                // Reload the page after a short delay to show the success message
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                showConfirmModal.value = false;
+                showSuccessModal.value = true;
+                successMessage.value = 'Player removed successfully!';
             }
         } catch (error) {
             console.error('Error removing player:', error);

@@ -551,7 +551,6 @@ const submitResult = () => {
 
   const form = useForm(formData);
   form.post(route('resultsRR.store'), {
-    preserveState: true,
     preserveScroll: true,
     onSuccess: () => {
       closeSignatureModal();

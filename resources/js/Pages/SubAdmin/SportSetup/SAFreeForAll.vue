@@ -242,6 +242,11 @@
 
       </template>
     </AppLayout>
+    <SuccessModal
+        :show="showSuccessModal"
+        :message="successMessage"
+        @close="showSuccessModal = false"
+     />
   </div>
 </template>
 
@@ -251,6 +256,8 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutSA.vue';
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
+import SuccessModal from '@/Components/SuccessModal.vue';
+
 
 const props = defineProps({
   sport: {
@@ -293,7 +300,8 @@ const props = defineProps({
   user: Object
 
 });
-
+const showSuccessModal = ref(false);
+const successMessage = ref('');
 const showModal = ref(false);
 const errorMessage = ref('');
 const showRankModal = ref(false);
@@ -384,6 +392,8 @@ const updateTime = async () => {
       preserveScroll: true,
       onSuccess: () => {
         closeUpdateTimeModal();
+        showSuccessModal.value = true;
+        successMessage.value = 'Time updated successfully!';
       },
       onError: (errors) => {
         console.error('Update time errors:', errors);

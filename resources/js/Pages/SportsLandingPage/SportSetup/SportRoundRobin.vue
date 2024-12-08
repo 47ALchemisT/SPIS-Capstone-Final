@@ -1,7 +1,7 @@
 <template>
   <div>
     <Head title="College"/>
-    <MainLayout>
+    <MainLayout :latestPalakasan="latestPalakasan">
       <template v-slot:default>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
           <div class="flex flex-col">
@@ -122,6 +122,7 @@ const props = defineProps({
   winner: Number,
   venueRecords: Array,
   players: Array,
+  latestPalakasan: Object
 });
 
 const activeTab = ref('matches');
