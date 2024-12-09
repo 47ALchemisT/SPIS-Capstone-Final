@@ -39,17 +39,6 @@
                                             </a>
                                         </MenuItem>
                                         <MenuItem v-slot="{ active }">
-                                            <a href="#" :class="[
-                                                active ? 'bg-gray-50 text-gray-900' : 'text-gray-700',
-                                                'block px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors duration-150'
-                                            ]">
-                                                <div class="flex items-center">
-                                                    <i class="fa-solid fa-gear w-4 h-4 mr-2"></i>
-                                                    Settings
-                                                </div>
-                                            </a>
-                                        </MenuItem>
-                                        <MenuItem v-slot="{ active }">
                                             <Link 
                                                 :href="route('logout')" 
                                                 method="post"

@@ -66,6 +66,8 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 // Sports Landing Page routes
 Route::get('/sports', [SportsLandingController::class, 'sports'])->name('sports.index');
 Route::get('/home-sportview/{sport}', [SportsLandingController::class, 'sportsIndex'])->name('home-sportview.index');
+Route::get('/sports/history', [PalakasanHistoryController::class, 'index'])->name('sports.history');
+Route::get('/palakasan-history/{palakasan}', [PalakasanHistoryController::class, 'homeShow'])->name('history.show');
 
 // Admin routes
 Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
@@ -131,6 +133,10 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::post('/admin/change-password', [DashboardController::class, 'changePassword'])->name('admin.change-password');
     Route::get('/account-settings', [DashboardController::class, 'accountSettings'])->name('admin.account-settings');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/palakasan/{id}/emergency-cancel', [PalakasanController::class, 'emergencyCancel'])->name('palakasan.emergency-cancel');
 });
 
 Route::put('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');

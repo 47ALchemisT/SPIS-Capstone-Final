@@ -15,6 +15,7 @@ use App\Models\StudentAccount;
 use App\Models\StudentPlayer;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -482,6 +483,11 @@ class DoubleEliminationController extends Controller
         try {
             DB::beginTransaction();
     
+            // Get the sport name from the first ranking entry
+            $firstRanking = $request->rankings[0];
+            $assignedSport = AssignedSports::with('sport')->find($firstRanking['assigned_sport_id']);
+            $sportName = $assignedSport ? $assignedSport->sport->name : 'Unknown Sport';
+
             foreach ($request->rankings as $ranking) {
                 // Update or create the overall result
                 $overallResult = OverallResult::updateOrCreate(
@@ -495,16 +501,26 @@ class DoubleEliminationController extends Controller
                     ]
                 );
 
-                // Store facilitator rank submission
-                FacilitatorRankSubmitions::create([
-                    'facilitator_id' => auth()->user()->id,
-                    'overall_result_id' => $overallResult->id
-                ]);
-    
                 // Update the status of the assigned sport to 'completed'
                 AssignedSports::where('id', $ranking['assigned_sport_id'])
                     ->update(['status' => 'completed']);
             }
+
+            // Log the overall result submission using our custom ActivityLog model - moved outside the loop
+            ActivityLog::create([
+                'description' => "Submitted final rankings for {$sportName}",
+                'type' => 'create',
+                'model_type' => 'OverallResult',
+                'model_id' => $assignedSport->id,
+                'properties' => json_encode([
+                    'action' => 'submit_overall_result',
+                    'assigned_sport_id' => $assignedSport->id,
+                    'sport_name' => $sportName,
+                    'rankings_count' => count($request->rankings)
+                ]),
+                'causer_type' => 'StudentAccount',
+                'causer_id' => auth()->user()->id
+            ]);
     
             DB::commit();
             return redirect()->back()->with('message', 'Ranking successfully submitted');

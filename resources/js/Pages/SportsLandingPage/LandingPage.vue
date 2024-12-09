@@ -142,7 +142,7 @@
                         <!-- Schedules Section -->
                         <div class="lg:col-span-2">
                             <div class="space-y-6">
-                                <div v-if="!sportMatches?.length" 
+                                <div v-if="!sportMatches?.length || latestPalakasan?.status !== 'live'" 
                                      class="bg-white p-12 rounded-xl shadow-sm shadow-blue-100 text-center">
                                     <div class="text-gray-400 mb-4">
                                         <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,13 +150,15 @@
                                                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
-                                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No Matches Scheduled</h3>
+                                    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                                        {{ latestPalakasan?.status !== 'live' ? 'No Live Event' : 'No Matches Scheduled' }}
+                                    </h3>
                                     <p class="text-gray-600">
-                                        Check back later for upcoming matches and events
+                                        {{ latestPalakasan?.status !== 'live' ? 'Please wait for the event to go live' : 'Check back later for upcoming matches and events' }}
                                     </p>
                                 </div>
                                 
-                                <template v-else>
+                                <template v-else-if="latestPalakasan?.status === 'live'">
                                     <div v-for="(match, index) in displayedMatches" 
                                          :key="match?.id" 
                                          class="group bg-white rounded-xl shadow-sm shadow-blue-100 hover:shadow-md transition-all duration-300 overflow-hidden">
@@ -521,16 +523,19 @@ const goToAllRankings = () => {
 
 const teamRankings = computed(() => {
     return props.assignedTeams.map(team => {
+        // Calculate overall points
         const teamOverallResults = props.overallResult.filter(
             result => result.assigned_team_id === team.id
         );
         const overallPoints = teamOverallResults.reduce((sum, result) => sum + (result.points || 0), 0);
         
+        // Calculate variation points - using the correct field for filtering
         const teamVariationResults = props.variationResult.filter(
             result => result.sport_variation_team_id === team.id
         );
         const variationPoints = teamVariationResults.reduce((sum, result) => sum + (result.points || 0), 0);
         
+        // Calculate total points
         const totalPoints = overallPoints + variationPoints;
         
         return {
@@ -545,21 +550,28 @@ const teamRankings = computed(() => {
 // Debug log to check data
 onMounted(() => {
     console.log('Sport Matches:', props.sportMatches);
+    console.log('Overall Results:', props.overallResult);
+    console.log('Variation Results:', props.variationResult);
+    console.log('Team Rankings:', teamRankings.value);
 });
 
 const displayedMatches = computed(() => {
-    // Filter only pending and ongoing matches and sort by date and time
-    const upcomingMatches = props.sportMatches
-        .filter(match => match?.status !== 'completed') // Only show pending and ongoing matches
-        .sort((a, b) => {
-            // Create Date objects for comparison
-            const dateA = new Date(`${a.date} ${a.time}`);
-            const dateB = new Date(`${b.date} ${b.time}`);
-            return dateA - dateB; // Sort ascending by date and time
-        })
-        .slice(0, 6); // Take only the first 5 matches
-
-    return upcomingMatches;
+    // If all matches are completed, sort by completion date in reverse order
+    const allCompleted = props.sportMatches.every(match => match.status === 'completed');
+    
+    if (allCompleted) {
+        // Sort matches by date in reverse chronological order
+        return [...props.sportMatches]
+            .sort((a, b) => {
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateB - dateA;
+            })
+            .slice(0, 4); // Keep only the first 4 matches
+    }
+    
+    // If not all completed, return first 4 matches as is
+    return props.sportMatches.slice(0, 4);
 });
 
 const liveSports = computed(() => {

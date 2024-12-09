@@ -19,7 +19,7 @@ class SportsLandingController extends Controller
     {
         $latestPalakasan = Palakasan::latest()->first();
         $overallResult = OverallResult::all();
-        $variationResult = SportsVariationsMatches::all();
+        $variationResult = collect();
         $sportVariations = collect();
         $assignedSports = collect();
         $assignedTeams = collect();
@@ -29,6 +29,11 @@ class SportsLandingController extends Controller
             $assignedSports = AssignedSports::with('sport')
                 ->where('palakasan_sport_id', $latestPalakasan->id)
                 ->get();
+
+            // Get variation results for the current Palakasan's assigned sports
+            $variationResult = SportsVariationsMatches::whereHas('sportVariationID', function($query) use ($assignedSports) {
+                $query->whereIn('assigned_sport_id', $assignedSports->pluck('id'));
+            })->get();
 
             // Get sports variations only for the assigned sports in current Palakasan
             $sportVariations = SportsVariations::with([
@@ -194,6 +199,7 @@ class SportsLandingController extends Controller
             'activeTeams' => $activeTeams,
             'overallRankings' => $overallRankings,
             'overallResult' => $overallResult,
+            'variationResult' => $variationResult,
             'sportsVariationMatches' => $sportVariations,
             'assignedSports' => $assignedSports,
             'assignedTeams' => $assignedTeams
@@ -204,7 +210,7 @@ class SportsLandingController extends Controller
     {
         $latestPalakasan = Palakasan::latest()->first();
         $overallResult = OverallResult::all();
-        $variationResult = SportsVariationsMatches::all();
+        $variationResult = collect();
         $sportVariations = collect();
         $assignedSports = collect();
         $assignedTeams = collect();
@@ -214,6 +220,11 @@ class SportsLandingController extends Controller
             $assignedSports = AssignedSports::with('sport')
                 ->where('palakasan_sport_id', $latestPalakasan->id)
                 ->get();
+
+            // Get variation results for the current Palakasan's assigned sports
+            $variationResult = SportsVariationsMatches::whereHas('sportVariationID', function($query) use ($assignedSports) {
+                $query->whereIn('assigned_sport_id', $assignedSports->pluck('id'));
+            })->get();
 
             // Get sports variations only for the assigned sports in current Palakasan
             $sportVariations = SportsVariations::with([
@@ -389,7 +400,7 @@ class SportsLandingController extends Controller
     {
         $latestPalakasan = Palakasan::latest()->first();
         $overallResult = OverallResult::all();
-        $variationResult = SportsVariationsMatches::all();
+        $variationResult = collect();
         $sportVariations = collect();
         $assignedSports = collect();
         $assignedTeams = collect();
@@ -399,6 +410,11 @@ class SportsLandingController extends Controller
             $assignedSports = AssignedSports::with('sport')
                 ->where('palakasan_sport_id', $latestPalakasan->id)
                 ->get();
+
+            // Get variation results for the current Palakasan's assigned sports
+            $variationResult = SportsVariationsMatches::whereHas('sportVariationID', function($query) use ($assignedSports) {
+                $query->whereIn('assigned_sport_id', $assignedSports->pluck('id'));
+            })->get();
 
             // Get sports variations only for the assigned sports in current Palakasan
             $sportVariations = SportsVariations::with([
@@ -575,7 +591,7 @@ class SportsLandingController extends Controller
     {
         $latestPalakasan = Palakasan::latest()->first();
         $overallResult = OverallResult::all();
-        $variationResult = SportsVariationsMatches::all();
+        $variationResult = collect();
         $sportVariations = collect();
         $assignedSports = collect();
         $assignedTeams = collect();
@@ -585,6 +601,11 @@ class SportsLandingController extends Controller
             $assignedSports = AssignedSports::with('sport')
                 ->where('palakasan_sport_id', $latestPalakasan->id)
                 ->get();
+
+            // Get variation results for the current Palakasan's assigned sports
+            $variationResult = SportsVariationsMatches::whereHas('sportVariationID', function($query) use ($assignedSports) {
+                $query->whereIn('assigned_sport_id', $assignedSports->pluck('id'));
+            })->get();
 
             // Get sports variations only for the assigned sports in current Palakasan
             $sportVariations = SportsVariations::with([
@@ -772,7 +793,8 @@ class SportsLandingController extends Controller
             'overallResult' => $overallResult,
             'sportsVariationMatches' => $sportVariations,
             'assignedSports' => $assignedSports,
-            'assignedTeams' => $assignedTeams
+            'assignedTeams' => $assignedTeams,
+            'variationResult' => $variationResult
         ]);
     }
 

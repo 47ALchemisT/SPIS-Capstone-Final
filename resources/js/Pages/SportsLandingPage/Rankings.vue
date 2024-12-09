@@ -10,16 +10,14 @@
                 </div>
 
                 <div class="p-6">
-                    <RankingsComponent 
-                        :latestPalakasan="latestPalakasan"
-                        :sportMatches="sportMatches"
-                        :overallResult="overallResult"
-                        :sportsVariationMatches="sportsVariationMatches"
-                        :sportsVariations="sportsVariations"
-                        :activeSports="activeSports"
-                        :activeTeams="activeTeams"
-                        :assignedTeams="assignedTeams"
+                    <PalakasanRankings 
+                        :assignedTeams="assignedTeams" 
+                        :overallResult="overallResult" 
+                        :variationResult="variationResult"
                         :assignedSports="assignedSports"
+                        :sportsVariations="sportsVariationMatches"
+                        :sportMatches="sportMatches"
+                        :latestPalakasan="latestPalakasan"
                     />
                 </div>
             </div>
@@ -31,11 +29,18 @@
 import { Head } from '@inertiajs/vue3';
 import MainLayout from '@/Layouts/MainLayout.vue';
 import RankingsComponent from '@/Components/RankingsComponent.vue';
+import PalakasanRankings from '@/Components/SportsRankings.vue';
 
 defineProps({
     latestPalakasan: {
         type: Object,
         required: true
+    },
+    variationResult: {
+        type: Array,
+        default() {
+            return [];
+        }
     },
     sportMatches: {
         type: Array,

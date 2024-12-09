@@ -497,8 +497,10 @@ const confirmEmergencyCancel = async () => {
             },
             onError: (errors) => {
                 showError.value = true;
-                errorMessage.value = errors.message || 'Invalid credentials. Please try again.';
+                errorMessage.value = 'Invalid credentials. Please check your username and password.';
                 showFinalConfirmationModal.value = false;
+                showModal.value = true;
+                form.password = ''; // Clear password on error
             }
         });
     } catch (error) {
@@ -506,6 +508,8 @@ const confirmEmergencyCancel = async () => {
         errorMessage.value = 'An unexpected error occurred. Please try again.';
         console.error('Emergency cancel error:', error);
         showFinalConfirmationModal.value = false;
+        showModal.value = true;
+        form.password = ''; // Clear password on error
     }
 };
 
