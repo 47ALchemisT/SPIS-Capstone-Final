@@ -29,7 +29,7 @@
 import { Head } from '@inertiajs/vue3';
 import MainLayout from '@/Layouts/MainLayout.vue';
 import RankingsComponent from '@/Components/RankingsComponent.vue';
-import PalakasanRankings from '@/Components/SportsRankings.vue';
+import PalakasanRankings from '@/Components/SportsRankingsHome.vue';
 
 defineProps({
     latestPalakasan: {

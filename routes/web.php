@@ -97,7 +97,26 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
         }
     })->name('sportview.index');
 
+        //sports setup
+    Route::get('details/sportview/{sport}', function ($sport) {
+        $sportModel = AssignedSports::findOrFail($sport);
+    
+        switch ($sportModel->setup) {
+            case 'Single Elimination':
+                return app(SingleEliminationController::class)->historyIndex($sportModel);
+            case 'Double Elimination':
+                return app(DoubleEliminationController::class)->historyIndex($sportModel);
+            case 'Free for All':
+                return app(FreeForAllController::class)->historyIndex($sportModel);
+            case 'Round Robin':
+                return app(RoundRobinController::class)->historyIndex($sportModel);
+            default:
+                abort(404, 'Invalid sport setup');
+        }
+    })->name('history-sportview.index');
+
     Route::get('details', [OnePalakasanController::class, 'details'])->name('palakasan.details');
+    Route::get('/details/documentation', [OnePalakasanController::class, 'documentation'])->name('palakasan.documentation');
     Route::post('detail/store', [OnePalakasanController::class, 'store_palakasan'])->name('palakasan.store');
     Route::post('sport/store', [OnePalakasanController::class, 'store_sports'])->name('palakasanSport.store');
     Route::post('team/store', [OnePalakasanController::class, 'store_teams'])->name('team.store');

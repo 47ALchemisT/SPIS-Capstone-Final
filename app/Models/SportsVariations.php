@@ -23,6 +23,11 @@ class SportsVariations extends Model
         return $this->belongsTo(AssignedSports::class, 'assigned_sport_id');
     }
 
+    public function assignedSport()
+    {
+        return $this->belongsTo(AssignedSports::class, 'assigned_sport_id');
+    }
+
     public function venue_id()
     {
         return $this->belongsTo(Venue::class, 'sport_variation_venue_id');

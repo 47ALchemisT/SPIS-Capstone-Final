@@ -36,7 +36,6 @@ class CollegeController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'shortName' => 'required|string|max:255',
-            'teamName' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
     
@@ -73,13 +72,12 @@ class CollegeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'shortName' => 'required|string|max:255',
-            'teamName' => 'required|string|max:255',
             'description' => 'nullable|string',
 
 
         ]);
 
-        $colleges->update($request->only('name', 'shortName', 'teamName', 'description')); // Update the product
+        $colleges->update($request->only('name', 'shortName', 'description')); // Update the product
 
         return redirect()->back()->with('success', 'Product updated successfully.');
     }

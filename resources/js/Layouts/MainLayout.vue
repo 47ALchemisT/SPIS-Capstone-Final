@@ -79,11 +79,11 @@
                             </ul>
                         </div>
                         <div>
-                            <h3 class="text-gray-900 text-lg font-semibold mb-3">Quick Links</h3>
+                            <h3 class="text-gray-900 text-lg font-semibold mb-3">Web Developement Team</h3>
                             <ul class="space-y-2">
-                                <li><Link href="/sports" class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Sports Schedule</Link></li>
-                                <li><Link href="/teams" class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Teams</Link></li>
-                                <li><Link href="/rankings" class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Rankings</Link></li>
+                                <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Jolander C. Guiral</li>
+                                <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Kent Remar L. Cuñado</li>
+                                <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">James Bryan V. Balambao</li>
                             </ul>
                         </div>
                         <div>
@@ -96,7 +96,9 @@
                         </div>
                     </div>
                     <div class="mt-12 pt-8 border-t border-gray-200">
-                        <p class="text-center text-gray-600 text-sm"> {{ new Date().getFullYear() }} Palakasan. All rights reserved.</p>
+                        <p class="text-center text-gray-600 text-sm"> {{ new Date().getFullYear() }} Supreme Student Council - Mindanao State University at Naawan</p>
+                        <p class="text-center text-gray-600 text-sm"></p>
+
                     </div>
                 </div>
             </footer>

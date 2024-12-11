@@ -23,6 +23,10 @@ use Illuminate\Support\Facades\DB;
 
 class OnePalakasanController extends Controller
 {
+    public function documentation()
+    {
+        return Inertia::render('SSCAdmin/Documentation');
+    }
     public function details()
     {   
         $sports = Sport::all();

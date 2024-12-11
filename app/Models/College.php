@@ -10,7 +10,7 @@ class College extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['name', 'shortName', 'teamName', 'description'];
+    protected $fillable = ['name', 'shortName', 'description'];
 
     // Custom activity description for better logging
     protected function getActivityDescription($type)
@@ -33,7 +33,6 @@ class College extends Model
         return [
             'name' => $this->name,
             'short_name' => $this->shortName,
-            'team_name' => $this->teamName,
             'changes' => $this->getDirty()
         ];
     }

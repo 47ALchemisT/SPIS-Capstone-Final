@@ -3,24 +3,24 @@
     <MainLayout :latestPalakasan="latestPalakasan">
         <template v-slot:default>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
-                <div>
-                        <button 
-                            @click="returnToPalakasan" 
-                            type="button" 
-                            class="text-white mb-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            >
-                            <i class="fa-solid fa-arrow-left mr-2"></i>
-                            Return
-                        </button>
-                        <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                <div class="flex justify-between">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                    <button 
+                        @click="redirectToDashboard" 
+                        type="button" 
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        >
+                        <i class="fa-solid fa-arrow-left mr-2"></i>
+                        Return
+                    </button>
                 </div>
-
+                <!--add a text if the view is from the history or current-->
                 <div class="flex items-center text-gray-600 gap-2 ">
                         <p class="text-sm"> {{ sport.setup }}</p>
                         <span class="text-sm">•</span>
                         <p class=" text-sm">{{ sport.type }}</p>
                         <span class="text-sm">•</span>
-                        <p class=" text-sm">{{ sport.status }}</p>
+                        <p class=" text-sm capitalize">{{ sport.status }}</p>
                 </div>
                     
                 <!-- Progress Bar -->
@@ -216,6 +216,13 @@ const hasExistingMatches = computed(() => {
     return props.matches.some(match => match.assigned_sport_id === props.sport.id);
 });
 
+const redirectToDashboard = () => {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = '/sports/history';
+    }
+};
 const getTeamName = (teamId) => {
     if (!teamId) return 'TBD';
     if (typeof teamId === 'string' && teamId.startsWith('winner:')) {

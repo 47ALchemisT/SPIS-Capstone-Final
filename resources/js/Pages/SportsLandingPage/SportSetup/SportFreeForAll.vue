@@ -6,16 +6,17 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
           <!-- Header Section -->
           <div class="flex flex-col">
-                  <div>
+                  <div class="flex justify-between">
+
+                        <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                         <button 
-                            @click="returnToPalakasan" 
+                            @click="redirectToDashboard" 
                             type="button" 
-                            class="text-white mb-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
-                        <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
                 </div>
 
                   <div class="flex items-center text-gray-600 gap-2 ">
@@ -23,7 +24,7 @@
                       <span class="text-sm">•</span>
                       <p class=" text-sm">{{ sport.type }}</p>
                       <span class="text-sm">•</span>
-                      <p class=" text-sm">{{ sport.status }}</p>
+                      <p class=" text-sm capitalize">{{ sport.status }}</p>
                   </div>
                   
                   <!-- Progress Bar -->
@@ -205,6 +206,15 @@ const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMat
 const returnToPalakasan = () => {
   router.get(route('sports.sports'));
 };
+
+const redirectToDashboard = () => {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = '/sports/history';
+    }
+};
+
 
 const getVenueName = (venueId) => {
   if (!venueId) return 'No venue assigned';

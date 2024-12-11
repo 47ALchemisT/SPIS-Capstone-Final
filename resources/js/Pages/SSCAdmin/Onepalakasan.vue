@@ -23,19 +23,31 @@
                     </div>
                     <div class="flex space-x-3">
                         <button
-                            @click="openHistoryModal" 
+                            @click="openHistoryModal"
                             type="button"
-                            class="text-gray-600 ring-1 font-medium flex items-center ring-gray-300 hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-2 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 group transition-all duration-500 ease-in-out"
+                            class="text-gray-600 ring-1 font-medium flex items-center ring-gray-300 hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-2 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                         >
-                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4.5 0 0 1 4-4h8.5a4 4.5 0 0 1 4 4v8.5a4 4.5 0 0 1-4 4h-8.5a4 4.5 0 0 1-4-4zm0 1h16.5"/></svg>                        
-                            <span class="max-w-0 overflow-hidden group-hover:ml-1.5 group-hover:max-w-[200px] whitespace-nowrap transition-all duration-500 ease-in-out">
-                            Archive
-                            </span>
+                            <svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4.5 0 0 1 4-4h8.5a4 4.5 0 0 1 4 4v8.5a4 4.5 0 0 1-4 4h-8.5a4 4.5 0 0 1-4-4zm0 1h16.5"/>
+                            </svg>
+                            <span>Archive</span>
                         </button>
-                        <HowToStartModal
-                            :is-open="showHowToStart"
-                            @close="showHowToStart = false"
-                        />
+                        <Link
+                            :href="route('palakasan.documentation')"
+                                class="text-gray-600 ring-1 font-medium flex items-center ring-gray-300 hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-2 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                            >
+                            <svg
+                                class="w-5 h-5 mr-1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M11 8.018a.75.75 0 0 1-.75.732c-.75 0-.75-.751-.75-.751V7.99a1 1 0 0 1 .008-.134a2.2 2.2 0 0 1 .42-1.067c.454-.613 1.27-1.062 2.585-1.039c.95.017 1.793.415 2.321 1.07c.537.667.718 1.57.362 2.459c-.362.905-1.181 1.265-1.652 1.471l-.05.023c-.28.123-.413.187-.493.251l-.001.001v.724a.75.75 0 0 1-1.5.001V11c0-.523.252-.897.563-1.147c.25-.2.565-.338.786-.436l.038-.017c.542-.239.8-.387.917-.679a.92.92 0 0 0-.138-.96c-.222-.275-.629-.502-1.179-.511c-.935-.016-1.245.285-1.353.432a.7.7 0 0 0-.134.33zm1.25 7.482a1 1 0 1 0 0-2a1 1 0 0 0 0 2M4 4.5A2.5 2.5 0 0 1 6.5 2H18a2.5 2.5 0 0 1 2.5 2.5v14.25a.75.75 0 0 1-.75.75H5.5a1 1 0 0 0 1 1h13.25a.75.75 0 0 1 0 1.5H6.5A2.5 2.5 0 0 1 4 19.5zm1.5 0V18H19V4.5a1 1 0 0 0-1-1H6.5a1 1 0 0 0-1 1"
+                                />
+                            </svg>
+                            <span>Documentation</span>
+                        </Link>
                     </div>
                 </nav>
 
@@ -453,9 +465,7 @@
                 <!-- Not Enough Teams State -->
                 <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4">
                         <div class="flex flex-col items-center justify-center text-center p-10 bg-yellow-50 rounded-lg">
-                            <svg class="w-16 h-16 text-yellow-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2A2.25 2.25 0 0 1 12.75 22h-2A8.75 8.75 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
-                            </svg>
+                            <i class="fa-solid fa-people-group text-yellow-700 text-6xl mb-4"></i>
                             <h3 class="text-xl font-semibold text-yellow-700 mb-2">Not Enough Teams</h3>
                             <p class="text-gray-600 text-sm mb-4">
                                 You need at least 4 teams to create leagues and start matches. <br>
@@ -466,7 +476,7 @@
                                 @click="activeTab = 'line ups'" 
                                 class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
                             >
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2A2.25 2.25 0 0 1 12.75 22h-2A8.75 8.75 0 0 1 2 13.25zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/></svg>
+                                <i class="fa-solid fa-users text-white text-lg"></i>
                                 Go to Teams
                             </button>
                         </div>
@@ -1389,7 +1399,6 @@
     import Tooltip from '@/Components/Tooltip.vue';
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
     import Graph from '@/Components/BarGraph.vue';  // Adjust the path as necessary
-    import HowToStartModal from '@/Components/HowToStart.vue';
     import Settings from '@/Components/Settings.vue';
     import OverallSchedules from '@/Components/OverallSchedules.vue';
     import SportsRankings from '@/Components/SportsRankings.vue';
@@ -1489,6 +1498,10 @@
 
     const viewPalakasanDetails = (palakasanId) => {
     router.get(route('palakasanHistory.show', { palakasan: palakasanId }));
+    };
+
+    const goToDocumentation = () => {
+    router.get(route('palakasan.documentation'));
     };
 
     //tabs funtcions
@@ -1835,7 +1848,9 @@ const openTeamsModal = () => {
     };
 
     const completedPalakasans = computed(() => {
-    return props.palakasans.filter(palakasan => palakasan.status === 'completed');
+    return props.palakasans
+        .filter(palakasan => palakasan.status === 'completed')
+        .sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
     });
 
     const formatDate = (dateString) => {

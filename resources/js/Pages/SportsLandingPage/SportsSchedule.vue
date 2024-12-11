@@ -12,6 +12,12 @@
                 <!-- Tabs -->
                 <div class="border-b border-gray-200 mb-4">
                     <nav class="-mb-px flex space-x-8">
+                        <a @click="activeTab = 'all'" :class="getTabClass('all')">
+                            All
+                            <span class="ml-2 bg-gray-100 text-gray-900 px-2.5 py-0.5 rounded-full text-xs">
+                                {{ matchCounts.all }}
+                            </span>
+                        </a>
                         <a @click="activeTab = 'pending'"
                         :class="getTabClass('pending')">
                             Pending
@@ -391,7 +397,7 @@ const viewSport = (sportId) => {
 const selectedSport = ref('')
 const selectedCategory = ref('')
 const selectedTeam = ref('')
-const activeTab = ref('pending') // 'all', 'pending', 'ongoing', 'completed'
+const activeTab = ref('all') // 'all', 'pending', 'ongoing', 'completed'
 
 const allMatches = computed(() => {
     const regularMatches = props.sportMatches.map(match => ({

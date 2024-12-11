@@ -10,6 +10,7 @@ use App\Models\MatchResult;
 use App\Models\OverallResult;
 use App\Models\SportsVariationsMatches;
 use App\Models\SportsVariations;
+use App\Models\StudentPlayer;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -191,6 +192,10 @@ class SportsLandingController extends Controller
             ->sortByDesc('points')
             ->values();
 
+        $studentPlayers = StudentPlayer::whereHas('assignedSport', function($query) use ($latestPalakasan) {
+            $query->where('palakasan_sport_id', $latestPalakasan->id);
+        })->get();
+
         return Inertia::render('SportsLandingPage/LandingPage', [
             'latestPalakasan' => $latestPalakasan,
             'sportMatches' => $sportMatches,
@@ -202,7 +207,8 @@ class SportsLandingController extends Controller
             'variationResult' => $variationResult,
             'sportsVariationMatches' => $sportVariations,
             'assignedSports' => $assignedSports,
-            'assignedTeams' => $assignedTeams
+            'assignedTeams' => $assignedTeams,
+            'studentPlayers' => $studentPlayers
         ]);
     }
 

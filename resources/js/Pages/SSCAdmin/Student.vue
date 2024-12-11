@@ -10,9 +10,9 @@
             <!-- Content -->
             <div class="mt-3 flex gap-6">
                 <!-- Sidebar -->
-                <div class="w-[20rem] sticky top-2 overflow-y-auto bg-white px-2 py-4 h-[calc(100vh-4rem)]">
+                <div class="w-[20rem] sticky top-2 overflow-y-auto bg-white px-2 py-4 h-[calc(100vh)]">
                     <!-- Import Button -->
-                    <div class="sticky top-0 bg-white pb-4">
+                    <div class="sticky top-0 bg-white">
                         <button 
                             @click="showModal = true" 
                             type="button" 
@@ -44,7 +44,7 @@
                     </div>
 
                     <!-- College Folders -->
-                    <div class="space-y-2">
+                    <div class="space-y-2 mt-4">
                         <div 
                             v-for="college in uniqueColleges" 
                             :key="college"
@@ -68,7 +68,7 @@
                 </div>
 
                 <!-- Main Content Area -->
-                <div class="flex-1 py-4 ">
+                <div class="flex-1 py-4 overflow-x-hidden">
                     <!-- Table View -->
                     <div v-if="selectedCollege" class="bg-white rounded-xl border border-gray-200 shadow-sm">
                         <div class="p-4 border-b border-gray-200 flex justify-between items-center">

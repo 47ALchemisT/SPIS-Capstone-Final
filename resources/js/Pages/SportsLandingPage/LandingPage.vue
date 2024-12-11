@@ -11,7 +11,7 @@
                     <img src="/resources/assets/Ball animation.gif" alt="Background" class="w-full h-full object-cover">
                 </div>
                 
-                <main class="grid grid-cols-2 mx-auto max-w-7xl h-[100vh] overflow-hidden px-4 sm:px-6 lg:px-8">
+                <main class="grid grid-cols-1 md:grid-cols-2 mx-auto max-w-7xl h-[100vh] overflow-hidden px-4 sm:px-6 lg:px-8">
                     <div class="relative px-6 lg:px-8">
                         <div class="w-full py-44 ">
                             <!-- Hero content -->
@@ -41,16 +41,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="relative flex items-center justify-center gap-4">
+                    <div class="relative hidden md:flex items-center justify-center gap-8">
                         <div class="flex items-center justify-center h-full overflow-hidden">
                             <div class="flex gap-2 items-center w-full h-full justify-center">
                                 <template v-for="(image, index) in getVisibleImages()" :key="currentIndex + index">
-                                    <div class="carousel-slide relative">
+                                    <div class="carousel-slide relative" :style="{ 
+                                        width: `${400 - (index * 50)}px`,
+                                        height: `${525 - (index * 40)}px`
+                                    }">
                                         <img 
                                             :src="image" 
                                             alt="Carousel Image" 
                                             :class="[
-                                                'carousel-image h-full object-cover',
+                                                'carousel-image h-full w-full object-cover transition-opacity duration-1000 ease-in-out',
                                                 index === 0 ? '' : ''
                                             ]"
                                         >
@@ -74,7 +77,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="text-center">
                             <div class="flex flex-col items-center justify-center p-6 bg-white">
-                                <div class="text-4xl font-bold text-gray-900 mb-2">12</div>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">{{ activeSports.length }}</div>
                                 <div class="text-lg text-gray-600">Active Sports</div>
                                 <div class="mt-4 p-2 bg-blue-50 rounded-full">
                                     <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,7 +88,7 @@
                         </div>
                         <div class="text-center">
                             <div class="flex flex-col items-center justify-center p-6 bg-white">
-                                <div class="text-4xl font-bold text-gray-900 mb-2">24</div>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">{{ assignedTeams.length }}</div>
                                 <div class="text-lg text-gray-600">Teams Participating</div>
                                 <div class="mt-4 p-2 bg-green-50 rounded-full">
                                     <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,7 +99,7 @@
                         </div>
                         <div class="text-center">
                             <div class="flex flex-col items-center justify-center p-6 bg-white">
-                                <div class="text-4xl font-bold text-gray-900 mb-2">288</div>
+                                <div class="text-4xl font-bold text-gray-900 mb-2">{{ studentPlayers.length }}</div>
                                 <div class="text-lg text-gray-600">Active Players</div>
                                 <div class="mt-4 p-2 bg-purple-50 rounded-full">
                                     <svg class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,7 +162,7 @@
                                 </div>
                                 
                                 <template v-else-if="latestPalakasan?.status === 'live'">
-                                    <div v-for="(match, index) in displayedMatches" 
+                                    <div v-for="(match, index) in sortedMatches" 
                                          :key="match?.id" 
                                          class="group bg-white rounded-xl shadow-sm shadow-blue-100 hover:shadow-md transition-all duration-300 overflow-hidden">
                                         <div class="p-6">
@@ -268,7 +271,7 @@
                         <div class="text-blue-200">
                             <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
-                                      d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                      d="M19.428 15.428a2 2 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
                         </div>
                         <h3 class="mt-4 text-xl font-semibold text-white">No Ongoing Sports</h3>
@@ -453,6 +456,7 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
+    studentPlayers: Array,
 });
 
 import img1 from '../../../assets/Carousel/1.png';
@@ -555,23 +559,26 @@ onMounted(() => {
     console.log('Team Rankings:', teamRankings.value);
 });
 
-const displayedMatches = computed(() => {
-    // If all matches are completed, sort by completion date in reverse order
-    const allCompleted = props.sportMatches.every(match => match.status === 'completed');
+const sortedMatches = computed(() => {
+    if (!props.sportMatches) return [];
     
-    if (allCompleted) {
-        // Sort matches by date in reverse chronological order
-        return [...props.sportMatches]
-            .sort((a, b) => {
-                const dateA = new Date(a.date + ' ' + a.time);
-                const dateB = new Date(b.date + ' ' + b.time);
-                return dateB - dateA;
-            })
-            .slice(0, 4); // Keep only the first 4 matches
-    }
+    const currentTime = new Date('2024-12-10T15:47:17+08:00');
+    const MAX_CARDS = 7;
     
-    // If not all completed, return first 4 matches as is
-    return props.sportMatches.slice(0, 4);
+    return [...props.sportMatches]
+        .filter(match => match.status !== 'completed') 
+        .sort((a, b) => {
+            const timeA = new Date(`${a.date} ${a.time}`);
+            const timeB = new Date(`${b.date} ${b.time}`);
+            
+            // If the match time has passed, move it to the bottom
+            if (timeA < currentTime && timeB >= currentTime) return 1;
+            if (timeB < currentTime && timeA >= currentTime) return -1;
+            
+            // Sort by date and time
+            return timeA - timeB;
+        })
+        .slice(0, MAX_CARDS); 
 });
 
 const liveSports = computed(() => {

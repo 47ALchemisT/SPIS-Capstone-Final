@@ -194,17 +194,6 @@
                                             />
                                         </div>
 
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Team Name</label>
-                                            <input 
-                                                v-model="form.teamName" 
-                                                required 
-                                                placeholder="Enter the college team name..." 
-                                                type="text" 
-                                                class="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                        </div>
-
                                         <div>            
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
                                             <textarea 
@@ -347,7 +336,6 @@
         id: null,
         name: '',
         shortName: '',
-        teamName: '',
         description: '',
     });
 
@@ -361,7 +349,6 @@
             form.id = colleges.id;
             form.name = colleges.name;
             form.shortName = colleges.shortName;
-            form.teamName = colleges.teamName;
             form.description = colleges.description;
 
         } else {

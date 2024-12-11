@@ -166,6 +166,40 @@ class RoundRobinController extends Controller
         ]);
     }   
 
+    public function historyIndex(AssignedSports $assignedSports)
+    {
+        $venues = Venue::all();
+        $allMatches = SportMatch::all();
+        $assignedSports->load('sport');
+        $tournaments = Palakasan::all();
+        $latestPalakasan = Palakasan::latest()->first();
+        $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+        $matches = SportMatch::where('assigned_sport_id', $assignedSports->id)->get();
+        $results = MatchResult::whereIn('sport_match_id', $matches->pluck('id'))->get();
+        $standings = TeamStanding::where('assigned_sport_id', $assignedSports->id)
+                                 ->get();
+        $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+        $players = StudentPlayer::with(['student', 'assignedTeam'])
+        ->where('student_assigned_sport_id', $assignedSports->id)
+        ->get();
+
+
+        return Inertia::render('SSCAdmin/HistoryMatches/RoundRobin', [
+            'sport' => $assignedSports,
+            'tournaments' => $tournaments,
+            'teams' => $teams,
+            'matches' => $matches,
+            'results' => $results,
+            'venues' => $venues,
+            'standings' => $standings,
+            'allMatches' => $allMatches,
+            'venueRecords' => $venueRecords,
+            'players' => $players
+
+        ]);
+    }   
+
+
     public function store_round_robin(Request $request)
     {
         try {

@@ -190,6 +190,43 @@ class FreeForAllController extends Controller
             ]);
 
     }
+    public function historyIndex(AssignedSports $assignedSports)
+    {
+
+            $points = Points::all();
+            $colleges = College::all();
+            $venues = Venue::all();
+            $assignedSports->load('sport');
+            $tournaments = Palakasan::all();
+            $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
+            $allMatches = SportMatch::all();
+            $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)
+                ->get();
+            $sportVariationMatches = SportsVariationsMatches::all();
+            $latestPalakasan = Palakasan::latest()->first();
+            $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+            $players = StudentPlayer::with(['student', 'assignedTeam'])
+            ->where('student_assigned_sport_id', $assignedSports->id)
+            ->get();
+
+    
+            return Inertia::render('SSCAdmin/HistoryMatches/FreeForAll', [
+                'sport' => $assignedSports,
+                'tournaments' => $tournaments,
+                'teams' => $teams,
+                'venues' => $venues,
+                'allMatches' => $allMatches,
+                'sportVariations' => $sportVariations,
+                'colleges' => $colleges,
+                'sportVariationMatches' => $sportVariationMatches,
+                'points' => $points,
+                'venueRecords' => $venueRecords,
+                'players' => $players,
+                'latestPalakasan' => $latestPalakasan,
+
+            ]);
+
+    }
 
     public function store(Request $request)
     {

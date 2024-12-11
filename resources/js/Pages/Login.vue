@@ -1,8 +1,8 @@
 <template>
     <Head title="Login" />
     <section class="grid grid-cols-2  dark:bg-gray-900 min-h-screen flex items-center justify-center relative">
-      <div class="h-full">
-        <img class="h-full w-full object-cover" src="/resources/assets/torches.png" alt="">
+      <div class="h-screen">
+        <img class="h-screen w-full object-cover" src="/resources/assets/U.png" alt="">
       </div>
       <div class="flex items-center justify-center">
         <div class="w-full max-w-xl p-4 relative z-10">
