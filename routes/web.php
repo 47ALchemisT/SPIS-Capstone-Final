@@ -98,7 +98,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     })->name('sportview.index');
 
         //sports setup
-    Route::get('details/sportview/{sport}', function ($sport) {
+    Route::get('history/sportview/{sport}', function ($sport) {
         $sportModel = AssignedSports::findOrFail($sport);
     
         switch ($sportModel->setup) {
