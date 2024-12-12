@@ -11,9 +11,9 @@
             <!--Content-->
             <div class="mt-3 flex gap-6">
                 <!-- Sidebar -->
-                <div class="w-[20rem] sticky top-0 overflow-y-auto bg-white px-2 py-4 h-[calc(100vh-4rem)]">
+                <div class="w-[20rem] sticky top-0 overflow-y-auto bg-white px-2 py-4 h-full">
                     <!-- Create Account Button -->
-                    <div class="sticky top-0 bg-white pb-4">
+                    <div class="sticky top-0 bg-white">
                         <button 
                             @click="openModal(false)" 
                             type="button" 
@@ -45,7 +45,7 @@
                     </div>
 
                     <!-- Role Folders -->
-                    <div class="space-y-2">
+                    <div class="space-y-2 mt-4">
                         <div 
                             v-for="role in uniqueRoles" 
                             :key="role"

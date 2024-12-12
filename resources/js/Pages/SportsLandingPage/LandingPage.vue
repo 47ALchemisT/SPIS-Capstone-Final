@@ -551,14 +551,6 @@ const teamRankings = computed(() => {
     }).sort((a, b) => b.totalPoints - a.totalPoints);
 });
 
-// Debug log to check data
-onMounted(() => {
-    console.log('Sport Matches:', props.sportMatches);
-    console.log('Overall Results:', props.overallResult);
-    console.log('Variation Results:', props.variationResult);
-    console.log('Team Rankings:', teamRankings.value);
-});
-
 const sortedMatches = computed(() => {
     if (!props.sportMatches) return [];
     

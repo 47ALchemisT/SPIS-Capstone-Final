@@ -14,8 +14,10 @@ class PointsController extends Controller
     public function index()
     {
         $points = Points::all(); // Fetch from the database
+        $latestPalakasan = Palakasan::latest()->first(); // Fetch the latest Palakasan
         return Inertia::render('SSCAdmin/Points', [
             'points' => $points, // Pass to the view
+            'latestPalakasan' => $latestPalakasan, // Pass to the view
         ]);
     }
 

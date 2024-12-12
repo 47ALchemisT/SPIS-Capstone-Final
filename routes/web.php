@@ -127,6 +127,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/palakasan/{palakasan}/continue', [OnePalakasanController::class, 'continuePalakasan'])->name('palakasan.continue');
 
     Route::resource('student', StudentController::class);
+    Route::post('student/store', [StudentController::class, 'store'])->name('student.store');
     Route::post('student/import', [StudentController::class, 'import'])->name('student.import');
 
     Route::get('details/palakasan-history/{palakasan}', [PalakasanHistoryController::class, 'show'])->name('palakasanHistory.show');

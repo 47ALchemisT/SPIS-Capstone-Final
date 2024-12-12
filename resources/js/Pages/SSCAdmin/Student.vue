@@ -10,20 +10,11 @@
             <!-- Content -->
             <div class="mt-3 flex gap-6">
                 <!-- Sidebar -->
-                <div class="w-[20rem] sticky top-2 overflow-y-auto bg-white px-2 py-4 h-[calc(100vh)]">
+                <div class="w-[20rem] sticky top-2 overflow-y-auto bg-white px-2 py-4 ">
                     <!-- Import Button -->
-                    <div class="sticky top-0 bg-white">
-                        <button 
-                            @click="showModal = true" 
-                            type="button" 
-                            class="w-full flex items-center justify-center gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2.5 shadow-sm transition-all duration-200"
-                        >
-                            <i class="fa-solid fa-file-import"></i>
-                            Import Students
-                        </button>
-
+                    <div class="sticky top-0 bg-white space-y-2">
                         <!-- Search -->
-                        <div class="relative mt-4">
+                        <div class="relative">
                             <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                                 <i class="fas fa-search"></i>
                             </span>
@@ -41,6 +32,33 @@
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
+                        <button 
+                            @click="showModal = true" 
+                            type="button" 
+                            class="w-full flex items-center justify-between gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-3 shadow-sm transition-all duration-200"
+                        >
+                            <p>
+                                <i class="mr-2 fa-solid fa-file-import"></i>
+                                Import Students
+                            </p>
+                            <p>
+                                <i class="fa-solid fa-users"></i>
+                            </p>
+
+                        </button>
+                        <button 
+                            @click="showAddEmployeeModal = true" 
+                            type="button" 
+                            class="w-full flex items-center justify-between gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-3 shadow-sm transition-all duration-200"
+                        >
+                        <p>
+                                <i class="mr-2 fa-solid fa-file-import"></i>
+                                Add Employee
+                            </p>
+                            <p>
+                                <i class=" fa-solid fa-user"></i>
+                            </p>
+                        </button>
                     </div>
 
                     <!-- College Folders -->
@@ -59,7 +77,7 @@
                                     </div>
                                     <div class="flex-1">
                                         <h3 class="text-sm font-medium text-gray-900">{{ college }}</h3>
-                                        <p class="text-xs text-gray-500">{{ getCollegeCount(college) }} students</p>
+                                        <p class="text-xs text-gray-500">{{ getCollegeCount(college) }} Participants</p>
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +92,7 @@
                         <div class="p-4 border-b border-gray-200 flex justify-between items-center">
                             <div class="flex items-center gap-3">
                                 <i class="fa-solid fa-graduation-cap text-blue-600"></i>
-                                <h2 class="text-lg font-semibold text-gray-900">{{ selectedCollege }} Students</h2>
+                                <h2 class="text-lg font-semibold text-gray-900">{{ selectedCollege }} Participants</h2>
                             </div>
                             <button 
                                 @click="selectedCollege = null" 
@@ -269,6 +287,115 @@
                     </div>
                 </Dialog>
             </TransitionRoot>
+                        <!-- Modal for File Import -->
+            <TransitionRoot appear :show="showAddEmployeeModal" as="template">
+                <Dialog as="div" @close="showAddEmployeeModal = false" class="relative z-50">
+                    <!-- Backdrop -->
+                    <TransitionChild
+                        as="template"
+                        enter="duration-300 ease-out"
+                        enter-from="opacity-0"
+                        enter-to="opacity-100"
+                        leave="duration-200 ease-in"
+                        leave-from="opacity-100"
+                        leave-to="opacity-0"
+                    >
+                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" aria-hidden="true" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4">
+                            <!-- Modal Panel -->
+                            <TransitionChild
+                                as="template"
+                                enter="duration-300 ease-out"
+                                enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100"
+                                leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100"
+                                leave-to="opacity-0 scale-95"
+                            >
+                                <DialogPanel class="w-full max-w-xl transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <DialogTitle as="h3" class="text-lg font-semibold leading-6 text-gray-900">
+                                            Add Employee
+                                        </DialogTitle>
+                                        <button @click="showAddEmployeeModal = false" class="text-gray-400 hover:text-gray-500">
+                                            <span class="sr-only">Close</span>
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+
+                                    <form @submit.prevent="addEmployee">
+                                        <div class="grid grid-cols-2 gap-4 mb-4">
+                                            <div class="">
+                                                <label class="block text-gray-700 text-sm mb-1.5 font-medium">First Name</label>
+                                                <input 
+                                                    v-model="form1.first_name" 
+                                                    required 
+                                                    placeholder="Enter first name..." 
+                                                    type="text" 
+                                                    class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2.5 "
+                                                />
+                                            </div>
+                                            <div class="">
+                                                <label class="block text-gray-700 text-sm mb-1.5 font-medium">Last Name</label>
+                                                <input 
+                                                    v-model="form1.last_name" 
+                                                    required 
+                                                    placeholder="Enter last name..." 
+                                                    type="text" 
+                                                    class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2.5 "
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="block text-gray-700 text-sm mb-1.5 font-medium">University Email</label>
+                                            <input 
+                                                v-model="form1.univ_email" 
+                                                required 
+                                                placeholder="Enter university email..." 
+                                                type="email" 
+                                                class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2.5 "
+                                            />
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="block text-gray-700 text-sm mb-1.5 font-medium">Contact Number</label>
+                                            <input 
+                                                v-model="form1.contact" 
+                                                required 
+                                                placeholder="Enter contact number..." 
+                                                type="text" 
+                                                class="border transition border-gray-300 rounded-lg bg-gray-50 text-sm w-full p-2.5 "
+                                            />
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="flex justify-end space-x-3">
+                                            <button
+                                                type="button"
+                                                @click="showAddEmployeeModal = false"
+                                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                :disabled="form1.processing"
+                                                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <i v-if="form1.processing" class="fa-solid fa-circle-notch fa-spin mr-2"></i>
+                                                {{ form.processing ? 'Adding...' : 'Add Employee' }}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
         </template>
     </AppLayout>
     <SuccessModal
@@ -281,7 +408,7 @@
 <script setup>
 
     import { ref, computed, watch, onMounted } from 'vue';
-    import { TransitionRoot, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
+    import { TransitionRoot,TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
     import { Head, router, useForm } from '@inertiajs/vue3';
     import { route } from 'ziggy-js';
     import AppLayout from '@/Layout/DashboardLayout.vue';
@@ -298,9 +425,31 @@
 
     const searchQuery = ref('');
     const showModal = ref(false);
+    const showAddEmployeeModal = ref(false);
     const selectedFile = ref('');
     const currentPage = ref(1);
     const itemsPerPage = 16;
+
+    const form1 = useForm({
+        id: null,
+        first_name: '',
+        last_name: '',
+        id_number: 'N/A',
+        univ_email: '',
+        college: 'Employee',
+        contact: '',
+        status: 'active'
+    });
+
+    const addEmployee = () => {
+        form1.post(route('student.store'), {
+            onSuccess: () => {
+                showSuccessModal.value = true;
+                successMessage.value = 'Employee added successfully!';
+                showAddEmployeeModal.value = false; // Close the modal
+            },
+        });
+    };
 
     // Define the form object using useForm
     const form = useForm({

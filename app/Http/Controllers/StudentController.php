@@ -78,4 +78,24 @@ class StudentController extends Controller
 
         return redirect()->route('student.index')->with('success', "Import completed. Created: $createdCount, Updated: $updatedCount");
     }
+
+    public function store(Request $request)
+    {
+        // Validate the input fields in a single call
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'id_number' => 'required|string|max:255',
+            'univ_email' => 'required|string|max:255',
+            'college' => 'required|string|max:255',
+            'contact' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
+        ]);
+                    
+        // Create a new college using the validated data
+        Student::create($validated);
+                    
+        // Redirect with a success message
+        return redirect()->back()->with('success', 'Student successfully added.');
+    }
 }
