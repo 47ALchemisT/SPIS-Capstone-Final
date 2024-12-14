@@ -52,7 +52,7 @@
                             class="w-full flex items-center justify-between gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-3 shadow-sm transition-all duration-200"
                         >
                         <p>
-                                <i class="mr-2 fa-solid fa-file-import"></i>
+                                <i class="mr-2 fa-solid fa-plus-square"></i>
                                 Add Employee
                             </p>
                             <p>
@@ -287,7 +287,6 @@
                     </div>
                 </Dialog>
             </TransitionRoot>
-                        <!-- Modal for File Import -->
             <TransitionRoot appear :show="showAddEmployeeModal" as="template">
                 <Dialog as="div" @close="showAddEmployeeModal = false" class="relative z-50">
                     <!-- Backdrop -->

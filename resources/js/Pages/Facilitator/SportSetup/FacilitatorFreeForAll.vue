@@ -9,7 +9,7 @@
                         <button 
                             @click="returnToFacilitator" 
                             type="button" 
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
@@ -113,14 +113,14 @@
                       </div>
                       <div>
                         <button 
-                          type="button"
-                          @click="openRankModal(variation)" 
-                          :disabled="variation.status === 'completed' || sport.status === 'completed'"                      
-                          class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
-                          >
-                          <i class="fa-solid fa-ranking-star mr-2"></i>
-                          Set Rankings
-                        </button>
+                        type="button"
+                        @click="openRankModal(variation)" 
+                        :disabled="!isRankingAllowed(variation) || variation.status === 'completed' || sport.status === 'completed'"
+                        class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2.5 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
+                      >
+                        <i class="fa-solid fa-ranking-star mr-2"></i>
+                        {{ isRankingAllowed(variation) ? 'Set Rankings' : 'Not Yet Available' }}
+                      </button>
                       </div>
                     </div>
                   </div>
@@ -426,6 +426,48 @@ const closeRankModal = () => {
 };
 //
 
+
+const isRankingAllowed = (variation) => {
+  if (!variation.date || !variation.time) return false;
+  
+  try {
+    // Parse the date
+    const [year, month, day] = variation.date.split('-').map(Number);
+    
+    // Parse the time (handling AM/PM format)
+    let [timeStr, period] = variation.time.split(' ');
+    let [hours, minutes] = timeStr.split(':').map(Number);
+    
+    // Convert to 24-hour format
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    // Create the scheduled date object
+    const scheduledDateTime = new Date(year, month - 1, day, hours, minutes);
+    const currentDateTime = new Date();
+    
+    // Debug info
+    console.log('Parsed time:', {
+      year, month, day, hours, minutes,
+      scheduledDateTime: scheduledDateTime.toLocaleString(),
+      currentDateTime: currentDateTime.toLocaleString()
+    });
+    
+    // Ensure we have a valid date before comparing
+    if (isNaN(scheduledDateTime.getTime())) {
+      console.error('Invalid scheduled date/time');
+      return false;
+    }
+
+    return currentDateTime >= scheduledDateTime;
+  } catch (error) {
+    console.error('Error parsing date/time:', error);
+    return false;
+  }
+};
 
 const returnToFacilitator = () => {
   const currentPath = window.location.pathname;

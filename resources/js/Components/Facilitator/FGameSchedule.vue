@@ -429,10 +429,21 @@ const sortedMatches = computed(() => {
 });
 
 const canUpdateMatch = (match) => {
+  // First, check if the match time has arrived
+  if (match.date && match.time) {
+    const matchDateTime = new Date(`${match.date} ${match.time}`);
+    const currentDateTime = new Date();
+    
+    // If the current time is before the match time, return false
+    if (currentDateTime < matchDateTime) {
+      return false;
+    }
+  }
+
   // Extract game number from match.game (e.g., "Game 1" -> 1)
   const currentGameNumber = parseInt(match.game.match(/\d+/)) || 0;
   
-  // If it's Game 1, it can always be updated if teams are assigned
+  // If it's Game 1, it can be updated if teams are assigned
   if (currentGameNumber === 1) {
     return match.teamA_id && match.teamB_id;
   }
@@ -492,12 +503,17 @@ const openScoreModal = (match) => {
     showScoreModal.value = true;
   } else {
     if (toastRef.value) {
+      const matchDateTime = new Date(`${match.date} ${match.time}`);
+      const currentDateTime = new Date();
+      
+      const message = currentDateTime < matchDateTime
+        ? "This match hasn't started yet."
+        : "This game is locked. Complete the previous games first.";
+      
       toastRef.value.show({
         type: 'error',
-        message: 'This game is locked. Complete the first game before updating others.'
+        message: message
       });
-    } else {
-      alert('This game is locked. Complete the first game before updating others.');
     }
   }
 };

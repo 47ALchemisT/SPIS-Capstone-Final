@@ -53,156 +53,224 @@
 
                 <!-- Tabs Content -->
                 <div class="mt-4">
-                    <!-- Palakasans (Details) Tab Content -->
-                    <div v-if="activeTab === 'details'">
-                        <div v-if="latestPalakasan">
-                            <div class="p-5 ring-1 ring-gray-300 rounded-lg">
-                                <!--head-->
-                                <div class="flex justify-between border-b pb-3 border-gray-300">
-                                    <div class="flex gap-2">
-                                        <div>
-                                            <div class="flex gap-2 items-center">
-                                                <h1  class="text-2xl font-semibold text-gray-800">Palakasan {{ latestPalakasan.year }}</h1>
-                                            </div>
-                                            <p v-if="latestPalakasan" class="text-xs text-gray-500">
-                                                {{ formatDate(latestPalakasan.start_date) }} - {{ formatDate(latestPalakasan.end_date) }}
-                                            </p>
+                <!-- Palakasans (Details) Tab Content -->
+                <div v-if="activeTab === 'details'" class="animate-fadeIn">
+                    <div v-if="latestPalakasan">
+                        <!-- Main Card -->
+                        <div class="bg-white rounded-xl   hover:border-blue-200/60 transition-all duration-300">
+                            <!-- Header Section -->
+                            <div class="flex justify-between items-start border-b border-gray-200/80 pb-5">
+                                <!-- Title and Date -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3">
+                                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
+                                            Palakasan {{ latestPalakasan.year }}
+                                        </h1>
+                                        <div :class="[
+                                            'px-3 py-1 rounded-full text-xs font-medium shadow-sm', 
+                                            statusColor,
+                                            'transform transition-all duration-300 hover:scale-105'
+                                        ]">
+                                            {{ capitalizedStatus }}
                                         </div>
-                                        <div>
-                                            <p :class="['text-xs px-2.5 py-1 rounded-xl mt-1', statusColor]">
-                                                {{ capitalizedStatus }}
-                                            </p>
-                                        </div>
-
                                     </div>
-                                    <!--utility, history and creating-->
-                                    <div class="flex">
-                                        <div>  <!-- Start Palakasan Button -->
-                                                <Tooltip 
-                                                    v-if="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
-                                                    :text="latestPalakasan.status === 'live' 
-                                                        ? 'Palakasan is currently live'
-                                                        : assignedSports.length < 2
-                                                        ? 'At least 2 sports must be assigned before starting'
-                                                        : 'At least 4 teams must be assigned before starting'"
-                                                    position="top"
-                                                >
-                                                    <button 
-                                                        v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
-                                                        @click="showModal = true"
-                                                        type="button" 
-                                                        :disabled="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
-                                                        :class="[
-                                                        'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                                        latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4
-                                                            ? 'text-blue-700 bg-blue-100 cursor-not-allowed'
-                                                            : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
-                                                        ]"
-                                                        >
-                                                        Start Palakasan
-                                                    </button>
-                                                </Tooltip>
-                                                <button 
-                                                    v-else-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
-                                                    @click="showModal = true"
-                                                    type="button" 
-                                                    :class="[
-                                                    'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
-                                                    'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
-                                                    ]"
-                                                    >
-                                                    Start Palakasan
-                                                </button>
+                                    <div class="flex items-center text-gray-500 text-sm">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        {{ formatDate(latestPalakasan.start_date) }} - {{ formatDate(latestPalakasan.end_date) }}
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex items-center gap-3">
+                                    <Tooltip 
+                                        v-if="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
+                                        :text="latestPalakasan.status === 'live' 
+                                            ? 'Palakasan is currently live'
+                                            : assignedSports.length < 2
+                                            ? 'At least 2 sports must be assigned before starting'
+                                            : 'At least 4 teams must be assigned before starting'"
+                                        position="top"
+                                    >
+                                        <button 
+                                            v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
+                                            @click="showModal = true"
+                                            type="button" 
+                                            :disabled="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
+                                            :class="[
+                                                'inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-all duration-200',
+                                                latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4
+                                                    ? 'bg-blue-50 text-blue-500 cursor-not-allowed'
+                                                    : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md active:transform active:scale-95'
+                                            ]"
+                                        >
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Start Palakasan
+                                        </button>
+                                    </Tooltip>
+
+                                    <button 
+                                        v-if="latestPalakasan?.status !== 'live' && latestPalakasan?.status !== 'pending'"
+                                        @click="openPalakasanModal" 
+                                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md active:transform active:scale-95"
+                                    >
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        Create New Palakasan
+                                    </button>
+
+                                    <button
+                                        v-if="latestPalakasan?.status !== 'completed' && latestPalakasan?.status !== 'cancelled' && latestPalakasan?.status !== 'pending' && progressPercentage === 100"
+                                        @click="concludePalakasan"
+                                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md active:transform active:scale-95"
+                                    >
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Conclude Palakasan
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Content Section -->
+                            <div class="mt-6 grid grid-cols-6 gap-8">
+                                <!-- Left Column -->
+                                <div class="col-span-3 space-y-6">
+                                    <!-- Theme and Description -->
+                                    <div class="space-y-4">
+                                        <h2 class="text-xl font-semibold text-gray-800">{{ latestPalakasan.theme }}</h2>
+                                        <p class="text-sm font-medium text-blue-600">{{ latestPalakasan.tagline }}</p>
+                                        <p class="text-sm text-gray-600 leading-relaxed">{{ latestPalakasan.description }}</p>
+                                    </div>
+
+                                    <!-- Progress Section -->
+                                    <div class="bg-white p-5 rounded-xl border border-gray-200/80 hover:border-blue-200/60 transition-all duration-300">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <h3 class="font-semibold text-gray-800">Palakasan Progress</h3>
+                                            <span class="text-sm font-medium text-blue-600">
+                                                {{ progressPercentage.toFixed(1) }}%
+                                            </span>
+                                        </div>
+                                        <div class="relative w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                            <div 
+                                                class="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-700 ease-in-out"
+                                                :style="{ width: `${progressPercentage}%` }"
+                                            >
+                                                <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
                                             </div>
-                                            <div class="flex items-center gap-2">
-                                                <div v-if="latestPalakasan?.status !== 'live' && latestPalakasan?.status !== 'pending'">
-                                                    <button 
-                                                        @click="openPalakasanModal" 
-                                                        type="button"
-                                                        class="flex gap-1.5 text-sm ml-2 font-medium focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2 bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                                                    >
-                                                        Create New Palakasan            
-                                                    </button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-2">
+                                            {{ completedSports }} out of {{ totalSports }} sports completed
+                                        </p>
+                                    </div>
+
+                                    <!-- Stats Cards -->
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <!-- Line ups Card -->
+                                        <div 
+                                            @click="activeTab = 'line ups'"
+                                            class="group p-5 bg-white rounded-xl border border-gray-200/80 hover:border-blue-200/60 cursor-pointer transition-all duration-300 hover:shadow-md"
+                                        >
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-500 group-hover:text-blue-600">Line ups</p>
+                                                    <p class="text-3xl font-bold text-gray-800 mt-2 group-hover:text-blue-600">
+                                                        {{ teamsCount }}
+                                                    </p>
                                                 </div>
-                                                <button
-                                                    v-if="latestPalakasan?.status !== 'completed' && latestPalakasan?.status !== 'cancelled' && latestPalakasan?.status !== 'pending' && progressPercentage === 100"
-                                                    @click="concludePalakasan"
-                                                    :disabled="latestPalakasan?.status === 'completed' || latestPalakasan?.status === 'cancelled'"
-                                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                >
-                                                    Conclude Palakasan
-                                                </button>
+                                                <div class="p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                </div>
                                             </div>
+                                        </div>
 
-                                </div>
-                            </div>
-
-                            <!--content-->
-                            <div class="mt-5 grid grid-cols-6 gap-6">
-                                <div class="col-span-3 flex flex-col justify-between">
-                                    <div>
-                                        <p class="text-lg font-semibold text-gray-800">{{ latestPalakasan.theme }}</p>
-                                        <p class="text-sm text-gray-700">{{ latestPalakasan.tagline }}</p>
-                                        <p class="text-sm text-gray-700 mt-2">{{ latestPalakasan.description }}</p>
-
-                                        <!--Add a progress bar here-->
-                                        <div class="w-full mt-5">
-                                            <h3 class="text-md font-medium mb-2">Palakasan Progress</h3>
-                                            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                            <div class="bg-blue-600 h-2.5 rounded-full" :style="{ width: `${progressPercentage}%` }"></div>
+                                        <!-- Leagues Card -->
+                                        <div 
+                                            @click="activeTab = 'leagues'"
+                                            class="group p-5 bg-white rounded-xl border border-gray-200/80 hover:border-blue-200/60 cursor-pointer transition-all duration-300 hover:shadow-md"
+                                        >
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-500 group-hover:text-blue-600">Leagues</p>
+                                                    <p class="text-3xl font-bold text-gray-800 mt-2 group-hover:text-blue-600">
+                                                        {{ sportsCount }}
+                                                    </p>
+                                                </div>
+                                                <div class="p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                            <p class="text-xs text-gray-600 mt-2">
-                                            {{ completedSports }} out of {{ totalSports }} sports completed ({{ progressPercentage.toFixed(1) }}%)
-                                            </p>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="grid grid-cols-3 mt-4 gap-4">
-                                        <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'line ups'">
-                                            <div>
-                                                <h1 class="text-sm font-semibold text-blue-700">Line ups</h1>
-                                            </div>
-                                            <p class="mt-4 text-3xl font-semibold text-blue-700 mb-3">{{ teamsCount }}</p>
-                                        </div>
-
-                                        <div class="p-4 bg-blue-50 hover:bg-blue-100 cursor-pointer rounded-lg" @click="activeTab = 'leagues'">
-                                            <div>
-                                                <h1 class="text-sm font-semibold text-blue-700">Leagues</h1>
-                                            </div>
-                                            <p class="mt-4  text-3xl font-semibold text-blue-700 mb-3">{{ sportsCount }}</p>
-                                        </div>
-
+                                <!-- Right Column - Graph -->
+                                <div class="col-span-3">
+                                    <div class="bg-white p-5 rounded-xl border border-gray-200/80 hover:border-blue-200/60 transition-all duration-300 h-full">
+                                        <Graph
+                                            :teams="assignedTeams"
+                                            :overallResult="overallResult"
+                                            :variationResult="variationResult"
+                                        />
                                     </div>
                                 </div>
-                                <!--display the accumolated points and ranking of all the teams here-->
-                                <div class="col-span-3 rounded-lg h-full">
-                                    <Graph
-                                        :teams="assignedTeams"
-                                        :overallResult="overallResult"
-                                        :variationResult="variationResult"
-                                    />
-                                </div>
-
                             </div>
                         </div>
-                        <div class=" mt-5">
-                            <PalakasanRankings :teams="assignedTeams" :overallResult="overallResult" :variationResult="variationResult" />
-                        </div>
 
+                        <!-- Rankings Section -->
+                        <div class="mt-6">
+                            <PalakasanRankings 
+                                :teams="assignedTeams" 
+                                :overallResult="overallResult" 
+                                :variationResult="variationResult" 
+                            />
+                        </div>
                     </div>
-                    <div v-else class="text-center py-10 bg-blue-50 border-2 border-blue-500 rounded-lg border-dashed border-spacing-4">
-                        <h1 class="text-2xl font-semibold text-blue-700">No Palakasan Created Yet</h1>
-                        <p class="text-blue-600 mb-4">Please create a new Palakasan event.</p>
-                        <button 
-                            @click="openPalakasanModal" 
-                            class="text-white py-1.5 px-2.5 text-sm rounded-md bg-blue-700 shadow hover:bg-blue-700/90 transition-colors">
-                            <i class="fa-solid fa-file mr-1.5"></i> Create Palakasan
-                        </button>
+
+                    <!-- Empty State -->
+                    <div v-else class="text-center py-16 bg-gradient-to-br from-blue-50 to-white rounded-xl border-2 border-blue-200 border-dashed">
+                        <div class="max-w-sm mx-auto">
+                            <div class="mb-6">
+                                <svg class="w-16 h-16 mx-auto text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                            </div>
+                            <h1 class="text-2xl font-bold text-gray-800 mb-2">No Palakasan Created Yet</h1>
+                            <p class="text-gray-600 mb-6">Get started by creating your first Palakasan event.</p>
+                            <button 
+                                @click="openPalakasanModal" 
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md active:transform active:scale-95"
+                            >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Create Palakasan
+                            </button>
+                        </div>
                     </div>
                 </div>
 
+
                 <!-- Teams Tab Content -->
-                <div v-if="activeTab === 'line ups'">
+                <div v-if="activeTab === 'line ups'" class="animate-fadeIn">
                     <div class="flex mb-4 items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <!-- Search Input -->
@@ -274,21 +342,50 @@
                     </div>
 
                     <!-- Display assigned teams as cards -->
-                    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div v-for="(team, index) in filteredAndSortedTeams" :key="index" class="bg-white ring-1 ring-gray-300 shadow rounded-lg hover:ring-blue-400 hover:bg-blue-50/80 transition p-4 group">
-                            <div class="flex items-center">
-                                <div class="">
-                                    <svg class='w-7 h-7 mb-2' xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"/></svg>
-                                    <h3 class="text-xl font-semibold">{{ team.assigned_team_name }}</h3>
-                                    <p class="text-sm text-gray-600">{{ team.college.name }}</p>
+                    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div 
+                            v-for="(team, index) in filteredAndSortedTeams" 
+                            :key="index" 
+                            class="bg-white ring-1 ring-gray-200 shadow-sm hover:shadow-md rounded-xl p-5 hover:ring-blue-400 hover:bg-blue-50/80 transition-all duration-300 group"
+                        >
+                            <div class="space-y-4">
+                                <!-- Team Icon with Background -->
+                                <div class="inline-flex bg-blue-100 w-14 h-14 justify-center items-center rounded-full mb-2 transition-all duration-300 group-hover:bg-blue-200">
+                                    <svg 
+                                        class='w-8 h-8 text-blue-600 group-hover:text-blue-700 transition-colors duration-300' 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path 
+                                            fill="currentColor" 
+                                            d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"
+                                        />
+                                    </svg>
                                 </div>
+
+                                <!-- Team Details -->
+                                <div class="space-y-1">
+                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                                        {{ team.assigned_team_name }}
+                                    </h3>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-500 group-hover:text-blue-600 transition-colors duration-300">
+                                            {{ team.college.name }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hover Indicator (Optional) -->
+                            <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <div class="h-2 w-2 rounded-full bg-blue-500"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Sports Tab Content -->
-                <div v-if="activeTab === 'leagues' && hasEnoughTeams" class="mt-4">
+                <div v-if="activeTab === 'leagues' && hasEnoughTeams" class="mt-4 animate-fadeIn">
                     <div class="flex mb-4 items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <!-- Search Input -->
@@ -369,101 +466,118 @@
                     </div>
 
                     <!-- Sports Grid -->
-                    <div v-show="filteredAndSortedSports.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div v-show="filteredAndSortedSports.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                         <div
-                        v-for="sport in filteredAndSortedSports"
-                        :key="sport.id"
-                        @click="isSelectionMode ? toggleSportSelection(sport) : viewSport(sport.id)"
-                        class="bg-white ring-1 ring-gray-300 cursor-pointer rounded-lg p-6 transition-all duration-300 ease-in-out hover:bg-blue-50/80 hover:ring-blue-400 group relative"
-                        :class="{ 'ring-2 ring-blue-500 bg-blue-50': isSelectionMode && selectedSports.includes(sport) }"
+                            v-for="sport in filteredAndSortedSports"
+                            :key="sport.id"
+                            @click="isSelectionMode ? toggleSportSelection(sport) : viewSport(sport.id)"
+                            class="bg-white ring-1 ring-gray-200 shadow-sm cursor-pointer rounded-xl p-6 transition-all duration-300 ease-in-out hover:bg-blue-50/80 hover:ring-blue-400 hover:shadow-md group relative"
+                            :class="{ 'ring-2 ring-blue-500 bg-blue-50': isSelectionMode && selectedSports.includes(sport) }"
                         >
-                        <!-- Selection Checkbox -->
-                        <div v-show="isSelectionMode" class="absolute top-2 right-2">
-                            <div class="w-5 h-5 rounded border-2" :class="[
-                                selectedSports.includes(sport) 
-                                    ? 'bg-blue-500 border-blue-500' 
-                                    : 'border-gray-300'
-                            ]">
-                                <svg v-if="selectedSports.includes(sport)" class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
+                            <!-- Status Indicator & Checkbox -->
+                            <div class="flex items-center gap-2 absolute top-3 right-3">
+                                <!-- Selection Checkbox -->
+                                <div v-show="isSelectionMode" 
+                                    class="transition-transform duration-200 hover:scale-105"
+                                >
+                                    <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center" 
+                                        :class="[
+                                            selectedSports.includes(sport) 
+                                                ? 'bg-blue-500 border-blue-500' 
+                                                : 'border-gray-300'
+                                        ]"
+                                    >
+                                        <svg v-if="selectedSports.includes(sport)" class="w-3.5 h-3.5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                                
+                                <!-- Status Indicator -->
+                                <div class="flex items-center gap-1.5">
+                                    <div
+                                        class="w-2.5 h-2.5 rounded-full transition-all duration-300"
+                                        :class="{
+                                            'bg-gray-300': sport.status === 'pending',
+                                            'bg-yellow-400': sport.status === 'scheduled',
+                                            'bg-red-500 animate-pulse': sport.status === 'Ongoing',
+                                            'bg-green-500': sport.status === 'completed'
+                                        }"
+                                        :title="sport.status"
+                                    ></div>
+                                    <span class="text-xs font-medium capitalize" 
+                                        :class="{
+                                            'text-gray-400': sport.status === 'pending',
+                                            'text-yellow-600': sport.status === 'scheduled',
+                                            'text-red-600': sport.status === 'Ongoing',
+                                            'text-green-600': sport.status === 'completed'
+                                        }"
+                                    >
+                                        {{ sport.status }}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <div 
-                            class="absolute top-2" 
-                            :class="{ 'right-9': isSelectionMode, 'right-2': !isSelectionMode }"
-                        >
-                            <div
-                                class="w-2.5 h-2.5 rounded-full"
-                                :class="{
-                                    'bg-gray-300': sport.status === 'pending',
-                                    'bg-yellow-400': sport.status === 'scheduled',
-                                    'bg-red-500': sport.status === 'Ongoing',
-                                    'bg-green-500': sport.status === 'completed'
-                                }"
-                                :title="sport.status"
-                            ></div>
-                        </div>
 
-                        <div class="flex items-center justify-between">
-                            <div class="w-full">
-                                <div class="flex bg-blue-100 w-14 h-14 justify-center items-center rounded-full mb-4">
-                                    <svg class="w-6 h-6 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                        <path fill="currentColor" fill-rule="evenodd" d="M5.166 2.621v.858q-1.553.223-3.071.543a.75.75 0 0 0-.584.859a6.75 6.75 0 0 0 6.138 5.6a6.7 6.7 0 0 1 2.743 1.346A6.7 6.7 0 0 1 9.279 15H8.54c-1.036 0-1.875.84-1.875 1.875V19.5h-.75a2.25 2.25 0 0 0-2.25 2.25c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75a2.25 2.25 0 0 0-2.25-2.25h-.75v-2.625c0-1.036-.84-1.875-1.875-1.875h-.739a6.7 6.7 0 0 1-1.112-3.173a6.7 6.7 0 0 0 2.743-1.347a6.75 6.75 0 0 0 6.139-5.6a.75.75 0 0 0-.585-.858a47 47 0 0 0-3.07-.543V2.62a.75.75 0 0 0-.658-.744a49 49 0 0 0-6.093-.377q-3.096.002-6.093.377a.75.75 0 0 0-.657.744m0 2.629c0 1.196.312 2.32.857 3.294A5.27 5.27 0 0 1 3.16 5.337a46 46 0 0 1 2.006-.343zm13.5 0v-.256q1.011.15 2.006.343a5.27 5.27 0 0 1-2.863 3.207a6.7 6.7 0 0 0 .857-3.294" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <h3 class="text-xl font-semibold">{{ sport.sport?.name }} {{ sport.categories }}</h3>
+                            <div class="space-y-4">
+                                <!-- Sport Icon -->
+                                <div class="inline-flex bg-blue-100 w-14 h-14 justify-center items-center rounded-full mb-2 transition-all duration-300 group-hover:bg-blue-200">
+                                    <i class="fa-solid fa-trophy text-xl text-blue-700"></i>
                                 </div>
 
-                                <div class="flex border-b pb-2 border-gray-300 text-gray-700 items-center gap-2 mt-2">
-                                    <p class="text-xs flex items-center gap-1">
-                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"><path stroke-linecap="round" d="M8 10.5h32m-16 9h16m-16 9h16m-32 9h32"/><path d="m8 19l8 5l-8 5z"/></g></svg>
-                                    {{ sport.setup }}
-                                    </p>
-                                    <p class="text-xs text-gray-400">|</p>
-                                    <p class="text-xs flex items-center gap-1">
-                                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2.5" d="m12 2l3.104 6.728l7.358.873l-5.44 5.03l1.444 7.268L12 18.28L5.534 21.9l1.444-7.268L1.538 9.6l7.359-.873z"/></svg>
-                                        {{ sport.type }}
-                                    </p>
+                                <!-- Sport Details -->
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                                        {{ sport.sport?.name }} {{ sport.categories }}
+                                    </h3>
+                                    
+                                    <div class="flex items-center gap-3 mt-2 pb-3 border-b border-gray-200">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
+                                            <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                                                <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                                                    <path stroke-linecap="round" d="M8 10.5h32m-16 9h16m-16 9h16m-32 9h32"/>
+                                                    <path d="m8 19l8 5l-8 5z"/>
+                                                </g>
+                                            </svg>
+                                            <span class="text-xs font-medium text-gray-600 group-hover:text-blue-600">{{ sport.setup }}</span>
+                                        </span>
+                                        
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
+                                            <svg class="w-3.5 h-3.5 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="m12 2l3.104 6.728l7.358.873l-5.44 5.03l1.444 7.268L12 18.28L5.534 21.9l1.444-7.268L1.538 9.6l7.359-.873z"/>
+                                            </svg>
+                                            <span class="text-xs font-medium text-gray-600 group-hover:text-blue-600">{{ sport.type }}</span>
+                                        </span>
+                                    </div>
                                 </div>
-                                <!-- Facilitator information -->
-                                <div class="flex items-center mt-3 gap-2">
-                                    <div class="p-2 bg-gray-200/80 rounded-md group-hover:bg-blue-200/50">
-                                    <svg class="w-5 h-5 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="6" r="4" fill="currentColor"/><path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/></svg>
+
+                                <!-- Facilitator -->
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 bg-gray-100 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
+                                        <svg class="w-5 h-5 text-gray-600 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="6" r="4" fill="currentColor"/>
+                                            <path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/>
+                                        </svg>
                                     </div>
                                     <div>
-                                    <p class="text-sm text-gray-800 font-semibold">
-                                        {{ getFacilitatorName(sport.facilitator_id) }}
-                                    </p>
-                                    <p class="text-xs text-gray-400 group-hover:text-blue-400">Facilitator</p>
+                                        <p class="text-sm font-medium text-gray-800 group-hover:text-blue-700 transition-colors duration-300">
+                                            {{ getFacilitatorName(sport.facilitator_id) }}
+                                        </p>
+                                        <p class="text-xs text-gray-400 group-hover:text-blue-400">Facilitator</p>
                                     </div>
-                                    
-                                </div>
-                                <!-- Animated Arrow -->
-                                <div class="absolute bottom-6  right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
-                                    <svg 
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        class="h-5 w-5 text-gray-500  group-hover:text-blue-600" 
-                                        fill="none" 
-                                        viewBox="0 0 24 24" 
-                                        stroke="currentColor"
-                                    >
-                                        <path 
-                                            stroke-linecap="round" 
-                                            stroke-linejoin="round" 
-                                            stroke-width="2" 
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                        />
-                                    </svg>
                                 </div>
                             </div>
-                        </div>
+
+                            <!-- Arrow Indicator -->
+                            <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1">
+                                <svg class="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <!-- Not Enough Teams State -->
-                <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4">
+                <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4 animate-fadeIn">
                         <div class="flex flex-col items-center justify-center text-center p-10 bg-yellow-50 rounded-lg">
                             <i class="fa-solid fa-people-group text-yellow-700 text-6xl mb-4"></i>
                             <h3 class="text-xl font-semibold text-yellow-700 mb-2">Not Enough Teams</h3>
@@ -482,14 +596,14 @@
                         </div>
                 </div>
 
-                <div v-if="activeTab === 'settings'">
+                <div v-if="activeTab === 'settings'" class="animate-fadeIn">
                     <Settings 
                         :latestPalakasan="latestPalakasan"
                         :admin="admin"
                     />   
                 </div>
 
-                <div v-if="activeTab === 'rankings'">
+                <div v-if="activeTab === 'rankings'" class="animate-fadeIn">
                     <div>
                         <SportsRankings 
                             :assigned-sports="assignedSports"
@@ -506,7 +620,7 @@
                     </div>
                 </div>
 
-                <div v-if="activeTab === 'Schedules'">
+                <div v-if="activeTab === 'Schedules'" class="animate-fadeIn">
                     <OverallSchedules
                         :latest-palakasan="latestPalakasan"
                         :active-sports="assignedSports"
@@ -2079,5 +2193,28 @@ select {
 
 select::-ms-expand {
   display: none;
+}
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
 }
 </style>

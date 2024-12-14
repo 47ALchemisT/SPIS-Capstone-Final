@@ -45,7 +45,7 @@
 
         <!-- Rankings Grid -->
         <div class="grid grid-cols-1 gap-6 mb-6">
-            <template v-for="(sport, sportIndex) in filteredSports" :key="sport.id">
+            <template v-for="(sport) in filteredSports" :key="sport.id">
                 <div v-for="category in getSportCategories(sport)" :key="category" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ sport.sport?.name }} {{ category }} <span class="font-normal text-gray-500">( {{ sport.setup }} )</span> </h3>
 

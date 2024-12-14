@@ -6,6 +6,7 @@
         isRoundCompleted(roundMatches) ? 'bg-blue-50' : 'bg-gray-50'
       ]">
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
+      <!--the button for setting schedule should be here not in each match-->
       <div class="flex justify-center gap-4 ">
         <div v-for="match in roundMatches" 
           :key="match.id" 
@@ -19,10 +20,10 @@
             </div>
             <div class="flex">
               <button 
-                @click="openTimeModal(match)" 
+                @click="openTimeModal(round)" 
                 type="button" 
                 class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                :disabled="match.status === 'completed'"
+                :disabled="isRoundCompleted(roundMatches)"
               >
                 <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
               </button>
@@ -63,7 +64,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span>{{ getVenueName(match.match_venue_id) }}</span>
+                <span>{{ getVenueName(roundMatches[0].match_venue_id) }}</span>
               </div>
             </div>
             <p class="text-xs text-gray-400">|</p>
@@ -72,15 +73,15 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span :class="{'text-red-500': !match.date || !match.time}">
-                  {{ formatDateTime(match.date, match.time) }}
+                <span :class="{'text-red-500': !roundMatches[0].date || !roundMatches[0].time}">
+                  {{ formatDateTime(roundMatches[0].date, roundMatches[0].time) }}
                 </span>
               </div>
             </div>
             <p class="text-xs text-gray-400">|</p>
             <div class="text-xs flex justify-between gap-1.5 items-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
-              <span :class="getStatusClass(match.status)">Status: {{ match.status }}</span>
+              <span :class="getStatusClass(roundMatches[0].status)">Status: {{ roundMatches[0].status }}</span>
             </div>
           </div>
         </div>
@@ -157,7 +158,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 border-b">
                   <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
-                    Schedule match
+                    Schedule round
                   </DialogTitle>
                   <button @click="closeTimeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -435,12 +436,12 @@ const formatDateTime = (date, time) => {
 };
 
 const updateAvailableTimeSlots = () => {
-  if (!selectedDate.value || !selectedMatch.value || !selectedVenue.value) return;
+  if (!selectedDate.value || !selectedRound.value || !selectedVenue.value) return;
 
   const conflictingRecords = props.venueRecords.filter(record => {
     return record.date === selectedDate.value && 
            record.venue_id === selectedVenue.value &&
-           record.match_id !== selectedMatch.value.id;
+           record.round === selectedRound.value;
   });
 
   const bookedTimes = new Set(conflictingRecords.map(record => record.time));
@@ -450,12 +451,12 @@ const updateAvailableTimeSlots = () => {
     disabled: bookedTimes.has(slot.value)
   }));
 
-  // If editing existing match and it's the same date and venue, make its current time slot available
-  if (selectedMatch.value.time && 
-      selectedMatch.value.date === selectedDate.value && 
-      selectedMatch.value.match_venue_id === selectedVenue.value) {
+  // If editing existing round and it's the same date and venue, make its current time slot available
+  if (selectedRound.value && 
+      selectedDate.value === props.matches.find(match => match.round === selectedRound.value).date && 
+      selectedVenue.value === props.matches.find(match => match.round === selectedRound.value).match_venue_id) {
     const currentTimeSlot = availableTimeSlots.value.find(slot => 
-      slot.value === selectedMatch.value.time
+      slot.value === props.matches.find(match => match.round === selectedRound.value).time
     );
     if (currentTimeSlot) {
       currentTimeSlot.disabled = false;
@@ -463,11 +464,11 @@ const updateAvailableTimeSlots = () => {
   }
 };
 
-const openTimeModal = (match) => {
-  selectedMatch.value = match;
-  selectedDate.value = match.date || '';
-  selectedTime.value = match.time || '';
-  selectedVenue.value = match.match_venue_id || '';
+const openTimeModal = (round) => {
+  selectedRound.value = round;
+  selectedDate.value = props.matches.find(match => match.round === round).date || '';
+  selectedTime.value = props.matches.find(match => match.round === round).time || '';
+  selectedVenue.value = props.matches.find(match => match.round === round).match_venue_id || '';
   formError.value = '';
   isTimeModalOpen.value = true;
   updateAvailableTimeSlots();
@@ -475,7 +476,7 @@ const openTimeModal = (match) => {
 
 const closeTimeModal = () => {
   isTimeModalOpen.value = false;
-  selectedMatch.value = null;
+  selectedRound.value = null;
   selectedDate.value = '';
   selectedTime.value = '';
   selectedVenue.value = '';
@@ -498,20 +499,21 @@ const saveDateTime = () => {
   isProcessing.value = true;
   formError.value = '';
 
-  form.matchId = selectedMatch.value.id;
-  form.date = selectedDate.value;
-  form.time = selectedTime.value;
-  form.venue_id = selectedVenue.value;
+  // Update all matches in the round with the selected date, time, and venue
+  const roundMatches = matchesByRound.value[selectedRound.value];
+  roundMatches.forEach(match => {
+    match.date = selectedDate.value;
+    match.time = selectedTime.value;
+    match.match_venue_id = selectedVenue.value;
+  });
 
+  // Optionally, save to backend if needed
   form.post(route('matches.updateDateTimeRR'), {
     preserveScroll: true,
     onSuccess: () => {
-      selectedMatch.value.date = selectedDate.value;
-      selectedMatch.value.time = selectedTime.value;
-      selectedMatch.value.match_venue_id = selectedVenue.value;
       closeTimeModal();
       showSuccessModal.value = true;
-      successMessage.value = 'Match time set successfully!';
+      successMessage.value = 'Round time set successfully!';
       isProcessing.value = false;
     },
     onError: (errors) => {
@@ -580,4 +582,6 @@ const declareWinner = () => {
 const isRoundCompleted = (matches) => {
   return matches.every(match => match.status === 'completed');
 };
+
+const selectedRound = ref(null);
 </script>

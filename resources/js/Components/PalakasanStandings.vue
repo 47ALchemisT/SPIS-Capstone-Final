@@ -1,44 +1,53 @@
 <template>
-  <div class="bg-white rounded-xl shadow-sm space-y-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-lg font-semibold text-gray-700">Tournament Standings</h2>
-      <div class="text-sm text-gray-500">Total Teams: {{ teamRankings.length }}</div>
+  <div class="bg-white rounded-xl">
+    <!-- Header section with improved spacing and styling -->
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800">Tournament Standings</h2>
+      <div class="px-4 py-1.5 bg-blue-50 rounded-full text-sm font-medium text-blue-600">
+        {{ teamRankings.length }} Teams
+      </div>
     </div>
     
-    <div class="relative overflow-hidden rounded-lg border border-gray-300">
+    <!-- Table with improved styling -->
+    <div class="relative overflow-hidden rounded-xl border border-gray-200">
       <table class="w-full text-sm">
         <thead>
-          <tr class="bg-gray-50 ">
-            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Rank</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Team</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">College</th>
-            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Points</th>
+          <tr class="bg-gray-50 border-b border-gray-200">
+            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Rank</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Team</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">College</th>
+            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Points</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
           <tr v-for="(team, index) in teamRankings" 
               :key="team.id"
-              class="hover:bg-blue-50/50 transition-colors duration-150 ease-in-out">
+              class="hover:bg-blue-50/40 transition-colors duration-200 ease-in-out">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <span :class="[
-                  'flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold',
-                  index < 3 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                  'flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold',
+                  index === 0 ? 'bg-yellow-100 text-yellow-700' : 
+                  index === 1 ? 'bg-gray-100 text-gray-600' :
+                  index === 2 ? 'bg-amber-100 text-amber-700' :
+                  'bg-gray-50 text-gray-500'
                 ]">
                   {{ index + 1 }}
                 </span>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="font-medium text-gray-900">{{ team.assigned_team_name }}</div>
+              <div class="font-semibold text-gray-900">{{ team.assigned_team_name }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-600">
-              {{ team.college?.name }}
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 inline-block">
+                {{ team.college?.name }}
+              </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center space-x-2">
-                <span class="font-semibold text-blue-700">{{ team.totalPoints }}</span>
-                <span class="text-gray-500 text-sm">pts</span>
+                <span class="text-lg font-bold text-blue-600">{{ team.totalPoints }}</span>
+                <span class="text-gray-400 text-sm">points</span>
               </div>
             </td>
           </tr>

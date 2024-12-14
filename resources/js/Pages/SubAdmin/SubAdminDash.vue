@@ -34,12 +34,13 @@
             <div v-if="activeTab === 'home'" class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
                 <!-- Header Section -->
-                <div class="bg-white rounded-lg pt-6 mb-6">
-                    <h1 class="text-lg font-medium text-gray-800">Sports Management</h1>
-                    <p class="text-gray-600">Manage and monitor all sports events and tournaments</p>
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
+                    <h1 class="text-xl font-semibold text-gray-800">Sports Management</h1>
+                    <p class="text-gray-600 mt-1">Manage and monitor all sports events and tournaments</p>
                 </div>
+
                 <!-- Filters Section -->
-                <div class="bg-white rounded-lg mb-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <!-- Search Input -->
                         <div class="relative">
@@ -52,54 +53,56 @@
                                 v-model="searchQuerySports"
                                 type="text"
                                 placeholder="Search sports..."
-                                class="pl-10 w-full border border-gray-300 bg-gray-50 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                                class="pl-10 w-full border-0 bg-gray-50 text-sm rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200"
                             />
                         </div>
 
-                        <!-- Setup Filter -->
-                        <div>
-                            <select
-                                v-model="setupFilter"
-                                class="w-full border border-gray-300 bg-gray-50 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                            >
+                        <!-- Filters with icons -->
+                        <div class="relative">
+                            <select v-model="setupFilter" class="w-full appearance-none border-0 bg-gray-50 text-sm rounded-lg pl-10 p-3 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200">
                                 <option value="">All Setups</option>
-                                <option v-for="setup in uniqueSetups" :key="setup" :value="setup">
-                                    {{ setup }}
-                                </option>
+                                <option v-for="setup in uniqueSetups" :key="setup" :value="setup">{{ setup }}</option>
                             </select>
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
                         </div>
 
-                        <!-- Type Filter -->
-                        <div>
-                            <select
-                                v-model="typeFilter"
-                                class="w-full border border-gray-300 bg-gray-50 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                            >
+                        <div class="relative">
+                            <select v-model="typeFilter" class="w-full appearance-none border-0 bg-gray-50 text-sm rounded-lg pl-10 p-3 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200">
                                 <option value="">All Types</option>
                                 <option value="Men">Men</option>
                                 <option value="Women">Women</option>
                                 <option value="Mixed">Mixed</option>
                             </select>
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
                         </div>
 
-                        <!-- Status Filter -->
-                        <div>
-                            <select
-                                v-model="statusFilter"
-                                class="w-full border border-gray-300 bg-gray-50 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                            >
+                        <div class="relative">
+                            <select v-model="statusFilter" class="w-full appearance-none border-0 bg-gray-50 text-sm rounded-lg pl-10 p-3 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200">
                                 <option value="">All Status</option>
                                 <option value="Ongoing">Ongoing</option>
                                 <option value="Completed">Completed</option>
                                 <option value="Pending">Pending</option>
                                 <option value="scheduled">Scheduled</option>
                             </select>
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Sports Grid -->
-                <div v-if="filteredAndSortedSports.length === 0" class="bg-white shadow-sm rounded-lg p-10">
+                <div v-if="filteredAndSortedSports.length === 0" class="bg-white shadow-sm rounded-xl p-10">
                     <div class="flex flex-col items-center justify-center text-center">
                         <div class="rounded-full bg-blue-50 p-3 mb-4">
                             <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,47 +119,49 @@
                         v-for="(sport, index) in filteredAndSortedSports"
                         :key="index"
                         @click="viewSport(sport.id)"
-                        :class="{
-                            'shadow-sm rounded-lg hover:shadow-md transition-all duration-200 ring-1 overflow-hidden group cursor-pointer': true,
-                            '': sport.status !== 'scheduled',
-                            'bg-blue-50 ring-blue-300': sport.status === 'scheduled'
-                        }"
+                        class="group cursor-pointer"
                     >
-                        <div class="p-6">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                        {{ sport.sport.name }}
-                                    </h3>
-                                    <p class="text-sm text-gray-500 mt-1">{{ sport.categories }}</p>
+                        <div :class="{
+                            'bg-white rounded-xl border transition-all duration-200 hover:shadow-lg': true,
+                            'border-gray-100': sport.status !== 'scheduled',
+                            'border-blue-200 bg-blue-50': sport.status === 'scheduled'
+                        }">
+                            <div class="p-6">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                            {{ sport.sport.name }}
+                                        </h3>
+                                        <p class="text-sm text-gray-500 mt-1">{{ sport.categories }}</p>
+                                    </div>
+                                    <div class="rounded-full p-2 bg-gray-50 group-hover:bg-blue-100 transition-colors">
+                                        <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
                                 </div>
-                                <div class="rounded-full p-2 group-hover:bg-blue-100 transition-colors">
-                                    <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </div>
 
-                            <div class="mt-4 space-y-2">
-                                <div :class="{
-                                    'flex items-center text-sm': true,
-                                    'text-gray-500': sport.status !== 'scheduled',
-                                    'text-blue-600': sport.status === 'scheduled'
-                                }">
-                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                    {{ sport.setup }}
-                                </div>
-                                <div :class="{
-                                    'flex items-center text-sm': true,
-                                    'text-gray-500': sport.status !== 'scheduled',
-                                    'text-blue-600': sport.status === 'scheduled'
-                                }">
-                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    {{ sport.type }}
+                                <div class="mt-4 space-y-3">
+                                    <div :class="{
+                                        'flex items-center text-sm': true,
+                                        'text-gray-500': sport.status !== 'scheduled',
+                                        'text-blue-600': sport.status === 'scheduled'
+                                    }">
+                                        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                        {{ sport.setup }}
+                                    </div>
+                                    <div :class="{
+                                        'flex items-center text-sm': true,
+                                        'text-gray-500': sport.status !== 'scheduled',
+                                        'text-blue-600': sport.status === 'scheduled'
+                                    }">
+                                        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        {{ sport.type }}
+                                    </div>
                                 </div>
                             </div>
                         </div>

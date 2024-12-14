@@ -10,7 +10,7 @@
           <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/>
           </svg>
-          Locked: Complete previous round first
+          Locked: Wait for the scheduled time or Complete previous round first
         </div>
       </div>
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
@@ -482,7 +482,6 @@ const formatDateTime = (date, time) => {
   return `${new Date(date).toLocaleDateString()} ${time}`;
 };
 
-// Winner modal functions
 const canUpdateRound = (round) => {
   // Check if all matches in previous rounds are completed
   for (let r = 1; r < round; r++) {
@@ -492,7 +491,18 @@ const canUpdateRound = (round) => {
       return false;
     }
   }
-  return true;
+
+  // Get current date and time
+  const now = new Date();
+  
+  // Check if current round matches are ready to be played based on schedule
+  const currentRoundMatches = matchesByRound.value[round] || [];
+  return currentRoundMatches.every(match => {
+    if (!match.date || !match.time) return false;
+    
+    const matchDateTime = new Date(`${match.date} ${match.time}`);
+    return now >= matchDateTime;
+  });
 };
 
 const openWinnerModal = (match) => {

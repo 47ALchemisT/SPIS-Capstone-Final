@@ -126,7 +126,6 @@
                                                 <h4 class="text-center text-sm font-bold bg-white py-2">Round {{ round }}</h4>
                                                 <div 
                                                 v-for="match in matches"
-                                                @click="openScoreModal(match)"
                                                 :key="match.id"
                                                 class=" w-56  space-y-2"
                                                 :disabled="!canUpdateMatch(match)"

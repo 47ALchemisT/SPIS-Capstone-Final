@@ -115,7 +115,6 @@
                                 <div 
                                     v-for="match in round" 
                                     :key="match.id" 
-                                    @click="openScoreModal(match)"
                                     class=" w-56 rounded-lg cursor-pointer space-y-2"
                                     :disabled="!canUpdateMatch(match)"
                                 >

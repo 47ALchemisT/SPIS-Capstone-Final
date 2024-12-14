@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Points;
 use Illuminate\Http\Request;
+use App\Models\Palakasan;
 use Inertia\Inertia;
 
 class PointsController extends Controller

@@ -33,26 +33,39 @@
                 <!-- Assigned State -->
                 <div v-else class="space-y-6">
                     <!-- Tabs Navigation -->
-                    <div class="sticky top-[4rem] z-40 bg-white/80 backdrop-blur-sm py-2">
-                        <nav class="flex relative justify-between items-center px-4">
-                            <div class="">
-                                <h1 class="text-lg font-medium text-gray-700">College Committee Head Dashboard</h1>
-                                <h1 class="text-xs text-gray-600">{{ assignedCollege.assigned_team.college.name }}</h1>
+                    <div class="sticky top-[4rem] py-3 z-40 bg-white/95 backdrop-blur-md">
+                        <nav class="flex flex-col sm:flex-row relative justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+                            <div class="sm:block hidden px-1">
+                                <h1 class="text-xl font-semibold text-gray-800">College Committee Head Dashboard</h1>
+                                <p class="text-sm text-gray-500 hidden sm:block">{{ assignedCollege.assigned_team.college.name }}</p>
                             </div>
-                            <div class="flex gap-2 rounded-lg">
-                                <div class="flex gap-2 rounded-lg">
+                            
+                            <div class="w-full sm:w-auto">
+                                <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl">
                                     <button 
                                         v-for="tab in ['home', 'sports', 'schedule', 'Overview', 'settings']"
                                         :key="tab"
                                         @click="activeTab = tab"
                                         :class="[
-                                        'px-5 py-2 text-sm',
-                                        activeTab === tab
-                                            ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-lg'
-                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 font-medium border-transparent'
+                                            'px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg',
+                                            activeTab === tab
+                                                ? 'text-blue-700 bg-white shadow-sm'
+                                                : 'text-blue-400 hover:text-blue-600 hover:bg-blue-100'
                                         ]"
                                     >
-                                        {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                                        <div class="flex items-center gap-2">
+                                            <i :class="[
+                                                'fas',
+                                                {
+                                                    'fa-home': tab === 'home',
+                                                    'fa-running': tab === 'sports',
+                                                    'fa-calendar': tab === 'schedule',
+                                                    'fa-chart-bar': tab === 'Overview',
+                                                    'fa-cog': tab === 'settings'
+                                                }
+                                            ]"></i>
+                                            <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -60,88 +73,126 @@
                     </div>
 
                     <div class="px-4 pb-4">
-                            <div class="py-6" v-if="activeTab === 'home'">
-                                <div class="grid grid-cols-1 gap-5">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="">
-                                            <p class="text-2xl text-gray-800">Hello, <span class="font-semibold">{{ comHead.student.first_name }} {{ comHead.student.last_name }}</span> !</p>
-                                            <p class="text-md text-gray-600 mb-4">It's great to see you, are you ready to get started.</p>
-                                            <!--add a task list here-->
-                                            <div class="mt-8">
-                                                <h3 class="text-md font-semibold text-gray-700">Tasks</h3>
-                                                <p class="text-sm text-gray-600 mb-4">You are assigned to assign players to these sports</p>
-                                                <div class="space-y-3">
-                                                    <div class="px-3 bg-white rounded-lg">
-                                                        <div class="space-y-2">
-                                                            <div v-for="sport in sportsWithStatus" :key="sport.id" class="flex items-center justify-between">
-                                                                <div class="flex items-center gap-2">
-                                                                    <svg :class="[
-                                                                        'w-4 h-4',
-                                                                        sport.assigned_players && sport.assigned_players.length > 0 ? 'text-green-600' : 'text-gray-400'
-                                                                    ]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3.34a10 10 0 1 1-14.995 8.984L2 12l.005-.324A10 10 0 0 1 17 3.34m-1.293 5.953a1 1 0 0 0-1.32-.083l-.094.083L11 12.585l-1.293-1.292l-.094-.083a1 1 0 0 0-1.403 1.403l.083.094l2 2l.094.083a1 1 0 0 0 1.226 0l.094-.083l4-4l.083-.094a1 1 0 0 0-.083-1.32"/></svg>                                                            
-                                                                    <span class="text-sm text-gray-600">{{ sport.sport.name }} {{ sport.categories }}</span>
-                                                                </div>
-                                                                <span :class="[
-                                                                    'px-2 py-0.5 text-xs rounded-full font-medium',
-                                                                    sport.assigned_players && sport.assigned_players.length > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                                                                ]">
-                                                                    {{ sport.assigned_players && sport.assigned_players.length > 0 ? `Players (${sport.assigned_players.length})` : 'No Players' }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                            <div class="py-8" v-if="activeTab === 'home'">
+                                <div class="space-y-8">
+                                    <!-- Welcome Section -->
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        <div class="space-y-6">
+                                            <div>
+                                                <h1 class="text-3xl font-bold text-gray-900">
+                                                    Welcome back, <span class="text-blue-600">{{ comHead.student.first_name }}</span>
+                                                </h1>
+                                                <p class="mt-2 text-gray-600">Manage your team and track progress for the Palakasan event.</p>
+                                            </div>
+
+                                            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <h2 class="text-2xl font-bold">{{ assignedCollege.assigned_team.assigned_team_name }}</h2>
+                                                        <p class="text-blue-100">{{ assignedCollege.assigned_team.college.name }}</p>
+                                                    </div>
+                                                    <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                                                        <i class="fa-solid fa-trophy text-2xl"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-4 rounded-xl">
+                                                    <div class="grid grid-cols-2 gap-4">
+                                                        <button 
+                                                            @click="activeTab = 'sports'"
+                                                            class="flex items-center justify-center gap-3 p-2.5 rounded-lg  bg-blue-500 hover:bg-blue-600 transition-all duration-200"
+                                                        >
+                                                            <i class="fa-solid fa-user-plus text-white text-lg"></i>
+                                                            <span class="text-sm font-medium text-white">Assign Players</span>
+                                                        </button>
+                                                        <button 
+                                                            @click="activeTab = 'schedule'"
+                                                            class="flex items-center justify-center gap-3 p-2.5 rounded-lg  bg-blue-500 hover:bg-blue-600  transition-all duration-200"
+                                                        >
+                                                            <i class="fa-solid fa-calendar text-white text-lg"></i>
+                                                            <span class="text-sm font-medium text-white">View Schedule</span>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="mt-8">
-                                                <button 
-                                                    @click="activeTab = 'sports'"
-                                                    type="button" 
-                                                    class="bg-white hover:bg-gray-100 focus:ring-4 text-gray-700 focus:ring-gray-300 ring-1 ring-gray-200 hover:ring-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 transition ease-in-out duration-300"
-                                                >
-                                                    Start assigning players
-                                                    <i class="fa-solid fa-arrow-right ms-2"></i>  
-                                                </button>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                                        <i class="fa-solid fa-graduation-cap text-blue-600 text-xl"></i>
+                                                    </div>
+                                                    <p class="text-sm text-gray-500">Total Students</p>
+                                                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ students.length }}</p>
+                                                </div>
+                                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                                        <i class="fa-solid fa-user-check text-green-600 text-xl"></i>
+                                                    </div>
+                                                    <p class="text-sm text-gray-500">Assigned Players</p>
+                                                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ totalAssignedStudents }}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="h-[28rem] w-full ">
-                                            <img class="w-full h-full object-cover" src="/resources/assets/comhead.png" alt="com head">
-                                        </div>
-                                    </div>
 
-                                    <div class="grid grid-cols-3 gap-4 h-full">
-                                        <div class="bg-blue-50 rounded-lg p-6">
-                                            <svg class="w-10 h-10 mb-3 text-blue-700" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="currentColor" d="M256 23.57l-16.1 48.86h32.2zM73 90.43v15.97h366V90.43zm48 33.97V479l135-105l135 105V124.4zm87 37h96l-32 80l80-32v96l-80-32l32 80h-96l32-80l-80 32v-96l80 32zm48 235.4l-23 17.9v73.7h46v-73.7z"/></svg>
-                                            <p class="text-2xl font-medium text-blue-700 mt-4">{{ assignedCollege.assigned_team.assigned_team_name }}</p>
-                                            <p class="text-sm text-blue-500 mb-3">{{ assignedCollege.assigned_team.college.name }}</p>
                                         </div>
-                                        <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <i class="fa-solid fa-graduation-cap text-blue-700 w-8 h-8 mb-6 text-3xl"></i>
 
-                                            <p class="text-sm text-blue-600 mb-1.5">Total number of Students</p>
-                                            <p class="text-2xl font-bold text-blue-700">{{ students.length }}</p>
-                                        </div>
-                                        <div class="bg-blue-50 h-full rounded-lg p-6">
-                                            <i class="fa-solid fa-user text-blue-700 w-8 h-8 mb-6 text-3xl"></i>
-                                            <p class="text-sm text-blue-600 mb-1.5">Assigned Students</p>
-                                            <p class="text-2xl font-bold text-blue-700">{{ totalAssignedStudents }}</p>
+                                        <!-- Stats Cards -->
+                                        <div class="space-y-6">
+                                            <!-- Task Progress -->
+                                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                                <div class="flex items-center justify-between mb-4">
+                                                    <h2 class="text-lg font-semibold text-gray-900">Sports Assignment Progress</h2>
+                                                    <span class="text-sm text-gray-500">
+                                                        {{ sportsWithStatus.filter(s => s.assigned_players?.length > 0).length }}/{{ sportsWithStatus.length }} completed
+                                                    </span>
+                                                </div>
+                                                <div class="space-y-3">
+                                                    <div v-for="sport in sportsWithStatus" :key="sport.id" 
+                                                        class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                                                    >
+                                                        <div class="flex items-center gap-3">
+                                                            <div :class="[
+                                                                'w-8 h-8 rounded-full flex items-center justify-center',
+                                                                sport.assigned_players?.length > 0 ? 'bg-green-100' : 'bg-gray-100'
+                                                            ]">
+                                                                <i :class="[
+                                                                    'fas fa-check',
+                                                                    sport.assigned_players?.length > 0 ? 'text-green-600' : 'text-gray-400'
+                                                                ]"></i>
+                                                            </div>
+                                                            <div>
+                                                                <p class="text-sm font-medium text-gray-900">{{ sport.sport.name }}</p>
+                                                                <p class="text-xs text-gray-500">{{ sport.categories }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <span :class="[
+                                                            'px-2.5 py-1 text-xs rounded-full font-medium',
+                                                            sport.assigned_players?.length > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                                                        ]">
+                                                            {{ sport.assigned_players?.length || 0 }} Players
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div v-if="activeTab === 'sports'" class="min-h-screen">
-                                <!--Content-->
-                                <div class="space-y-6 py-8 px-4">
-                                    <div>
-                                        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                            <h2 class="text-2xl font-semibold text-gray-900">Sports Management</h2>
-                                            <div class="relative w-full sm:w-72">
+                                <div class="space-y-5 py-8">
+                                    <!-- Header Section with improved styling -->
+                                    <div class="bg-white rounded-xl ">
+                                        <div class="space-y-4 sm:items-center sm:justify-between gap-4">
+                                            <div>
+                                                <h2 class="text-2xl font-semibold text-gray-900">Sports Management</h2>
+                                                <p class="mt-1 text-sm text-gray-500">Manage and assign players to different sports</p>
+                                            </div>
+                                            <!-- Enhanced search bar -->
+                                            <div class="relative w-full sm:w-80">
                                                 <input
                                                     v-model="sportsSearchQuery"
                                                     type="text"
                                                     placeholder="Search sports..."
-                                                    class="w-full pl-11 pr-10 py-3 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200"
+                                                    class="w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200"
                                                 >
                                                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                                                 <button
@@ -153,101 +204,97 @@
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="mb-4 flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-sm font-medium text-gray-600">Total Sports</span>
-                                                <span class="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-blue-700 rounded-full">{{ assignedSports.length }}</span>
-                                            </div>
-                                        </div>
-
-                                        <ul class="grid grid-cols-1 gap-6">
-                                            <li v-for="sport in filteredSports" :key="sport.id" 
-                                                class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200"
-                                            >
-                                                <div class="p-6">
-                                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                                                        <div class="flex items-center gap-4">
-                                                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                                                                <i class="fa-solid fa-trophy text-blue-600 text-xl"></i>
-                                                            </div>
-                                                            <div>
-                                                                <h3 class="text-lg font-semibold text-gray-900">
-                                                                    {{ sport.sport.name }} {{ sport.categories }}
-                                                                </h3>
-                                                                <div class="flex items-center gap-2 mt-1">
-                                                                    <span class="px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">{{ sport.setup }}</span>
-                                                                    <span class="px-2.5 py-1 text-xs font-medium bg-gray-50 text-gray-600 rounded-full">{{ sport.type }}</span>
-                                                                </div>
+                                    <!-- Sports List with improved card design -->
+                                    <ul class="grid grid-cols-1 gap-6">
+                                        <li v-for="sport in filteredSports" :key="sport.id" 
+                                            class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200"
+                                        >
+                                            <div class="p-6">
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                                    <div class="flex items-center gap-4">
+                                                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                                            <i class="fa-solid fa-trophy text-blue-600 text-2xl"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h3 class="text-lg font-semibold text-gray-900">
+                                                                {{ sport.sport.name }} {{ sport.categories }}
+                                                            </h3>
+                                                            <div class="flex items-center gap-2 mt-2">
+                                                                <span class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">{{ sport.setup }}</span>
+                                                                <span class="px-3 py-1.5 text-xs font-medium bg-gray-50 text-gray-600 rounded-full">{{ sport.type }}</span>
                                                             </div>
                                                         </div>
-                                                        <button
-                                                            @click="openPlayerModal(sport)"
-                                                            class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                                                            :disabled="palakasan.status === 'live' || palakasan.status === 'completed'"
-                                                        >
-                                                            <i class="fa-solid fa-user-plus mr-2"></i>
-                                                            Assign Players
-                                                        </button>
                                                     </div>
-                                                    
-                                                    <!-- Assigned Players List Accordion -->
-                                                    <Disclosure v-slot="{ open }" as="div" class="mt-4" v-if="sport.assigned_players">
-                                                        <DisclosureButton 
-                                                            class="flex w-full items-center justify-between rounded-lg bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500/50 focus-visible:ring-opacity-75 transition-all duration-200"
-                                                        >
-                                                            <div class="flex items-center gap-2">
-                                                                <i class="fa-solid fa-users text-gray-400"></i>
-                                                                <span>Players</span>
-                                                                <span class="ml-1 px-2 py-0.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-full">
-                                                                    {{ sport.assigned_players.length }}
-                                                                </span>
-                                                            </div>
-                                                            <i :class="[open ? 'fa-chevron-up' : 'fa-chevron-down', 'fa-solid text-gray-400']"></i>
-                                                        </DisclosureButton>
-                                                        <TransitionChild
-                                                            enter="transition duration-100 ease-out"
-                                                            enterFrom="transform scale-95 opacity-0"
-                                                            enterTo="transform scale-100 opacity-100"
-                                                            leave="transition duration-75 ease-out"
-                                                            leaveFrom="transform scale-100 opacity-100"
-                                                            leaveTo="transform scale-95 opacity-0"
-                                                        >
-                                                            <DisclosurePanel class="px-4 pt-4 pb-2">
-                                                                <div v-if="sport.assigned_players.length > 0" class="divide-y divide-gray-100">
-                                                                    <div v-for="player in sport.assigned_players" :key="player.id" 
-                                                                        class="flex items-center justify-between py-3"
-                                                                    >
-                                                                        <div class="flex items-center gap-3">
-                                                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                                                                                <span class="text-sm font-medium text-gray-700">
-                                                                                    {{ player.student.first_name[0] }}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div>
-                                                                                <p class="text-sm font-medium text-gray-900">
-                                                                                    {{ player.student.first_name }} {{ player.student.last_name }}
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <button 
-                                                                            @click="removePlayer(sport.id, player.id)"
-                                                                            class="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all duration-200"
-                                                                            title="Remove player"
-                                                                        >
-                                                                            <i class="fa-solid fa-xmark"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <p v-else class="text-center text-sm text-gray-500 py-4">No players assigned yet</p>
-                                                            </DisclosurePanel>
-                                                        </TransitionChild>
-                                                    </Disclosure>
-                                                    <p v-else class="mt-4 text-sm text-gray-500 text-center py-3 bg-gray-50 rounded-lg">No players assigned yet</p>
+                                                    <button
+                                                        @click="openPlayerModal(sport)"
+                                                        class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+                                                        :disabled="palakasan.status === 'live' || palakasan.status === 'completed'"
+                                                    >
+                                                        <i class="fa-solid fa-user-plus mr-2"></i>
+                                                        Assign Players
+                                                    </button>
                                                 </div>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                                
+                                                <!-- Enhanced Accordion -->
+                                                <Disclosure v-slot="{ open }" as="div" class="mt-6" v-if="sport.assigned_players">
+                                                    <DisclosureButton 
+                                                        class="flex w-full items-center justify-between rounded-lg bg-gray-50 px-5 py-3.5 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500/50 focus-visible:ring-opacity-75 transition-all duration-200"
+                                                    >
+                                                        <div class="flex items-center gap-3">
+                                                            <i class="fa-solid fa-users text-gray-500"></i>
+                                                            <span>Assigned Players</span>
+                                                            <span class="ml-1 px-2.5 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
+                                                                {{ sport.assigned_players.length }}
+                                                            </span>
+                                                        </div>
+                                                        <i :class="[open ? 'fa-chevron-up' : 'fa-chevron-down', 'fa-solid text-gray-400']"></i>
+                                                    </DisclosureButton>
+                                                    
+                                                    <!-- Enhanced player list -->
+                                                    <TransitionChild
+                                                        enter="transition duration-100 ease-out"
+                                                        enterFrom="transform scale-95 opacity-0"
+                                                        enterTo="transform scale-100 opacity-100"
+                                                        leave="transition duration-75 ease-out"
+                                                        leaveFrom="transform scale-100 opacity-100"
+                                                        leaveTo="transform scale-95 opacity-0"
+                                                    >
+                                                        <DisclosurePanel class="px-4 pt-4 pb-2">
+                                                            <div v-if="sport.assigned_players.length > 0" class="divide-y divide-gray-100">
+                                                                <div v-for="player in sport.assigned_players" :key="player.id" 
+                                                                    class="flex items-center justify-between py-4 hover:bg-gray-50 px-3 rounded-lg transition-colors duration-200"
+                                                                >
+                                                                    <div class="flex items-center gap-3">
+                                                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                                                            <span class="text-sm font-medium text-blue-700">
+                                                                                {{ player.student.first_name[0] }}{{ player.student.last_name[0] }}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div>
+                                                                            <p class="text-sm font-medium text-gray-900">
+                                                                                {{ player.student.first_name }} {{ player.student.last_name }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button 
+                                                                        @click="removePlayer(sport.id, player.id)"
+                                                                        class="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-all duration-200"
+                                                                        title="Remove player"
+                                                                    >
+                                                                        <i class="fa-solid fa-xmark"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <p v-else class="text-center text-sm text-gray-500 py-6 bg-gray-50 rounded-lg">No players assigned yet</p>
+                                                        </DisclosurePanel>
+                                                    </TransitionChild>
+                                                </Disclosure>
+                                                <p v-else class="mt-6 text-sm text-gray-500 text-center py-6 bg-gray-50 rounded-lg">No players assigned yet</p>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
 
@@ -318,168 +365,179 @@
                             </div>
 
                             <div v-if="activeTab === 'schedule'" class="bg-white overflow-hidden sm:rounded-lg">
-                                <div>
-                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Upcoming Matches</h2>
-                                    
-                                    <div v-if="!upcomingSchedules || upcomingSchedules.length === 0" class="text-center py-8">
-                                        <p class="text-gray-500">No upcoming matches scheduled for your team.</p>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h2 class="text-2xl font-bold text-gray-900">Match Schedule</h2>
+                                        
+                                        <!-- Enhanced Tab Navigation -->
+                                        <div class="inline-flex p-1 space-x-1 bg-gray-100 rounded-xl">
+                                            <button 
+                                                v-for="tab in ['all', 'pending', 'completed']"
+                                                :key="tab"
+                                                @click="matchTab = tab"
+                                                :class="[
+                                                    'px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200',
+                                                    matchTab === tab
+                                                        ? 'bg-white text-blue-600 shadow-sm'
+                                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                                ]"
+                                            >
+                                                <div class="flex items-center gap-2">
+                                                    <i :class="[
+                                                        'fas',
+                                                        {
+                                                            'fa-list': tab === 'all',
+                                                            'fa-clock': tab === 'pending',
+                                                            'fa-check-circle': tab === 'completed'
+                                                        }
+                                                    ]"></i>
+                                                    {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div v-if="!hasMatches" class="text-center py-12 bg-gray-50 rounded-xl">
+                                        <i class="fas fa-calendar-times text-4xl text-gray-400 mb-3"></i>
+                                        <p class="text-gray-500">No matches scheduled for your team at this time.</p>
                                     </div>
                                     
-                                    <div v-else class="space-y-4 mb-6">
-                                        <div class="flex justify-between mb-4">
-                                            <div class="flex gap-2 rounded-lg">
-                                                <button 
-                                                    v-for="tab in ['pending', 'completed']"
-                                                    :key="tab"
-                                                    @click="matchTab = tab"
-                                                    :class="[
-                                                        'px-4 py-2 text-sm font-medium rounded-md',
-                                                        matchTab === tab
-                                                            ? 'bg-blue-100 text-blue-700'
-                                                            : 'text-gray-500 hover:text-gray-700'
-                                                    ]"
-                                                >
-                                                    {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                                                </button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div v-for="match in displayedFreeForAllMatches" :key="match.id" 
-                                                class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
-                                                <div class="flex items-center justify-between">
-                                                    <div class="flex-1">
-                                                        <div class="flex items-center gap-2">
-                                                            <h3 class="text-lg font-medium text-gray-800">
-                                                                {{ match.assignedSport?.sport?.name || 'Free for All Event' }}
-                                                                <span class="text-lg font-medium text-gray-800">
-                                                                    <span>•</span>
-                                                                    {{ match.sport_variation_name }}
-                                                                </span>
-                                                            </h3>
+                                    <div v-else class="space-y-6">
+                                        <!-- Free for All Matches -->
+                                        <div v-for="match in filteredFreeForAllMatches" :key="'ffa-' + match.id" 
+                                            class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200"
+                                        >
+                                            <!-- Header -->
+                                            <div class="flex items-center justify-between mb-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div>
+                                                        <h3 class="text-lg font-semibold text-gray-900">
+                                                            {{ match.assignedSport?.sport?.name || 'Free for All Event' }}
+                                                            <span class="text-gray-600">• {{ match.sport_variation_name }}</span>
+                                                        </h3>
+                                                        <div class="flex items-center gap-3 mt-1">
                                                             <span :class="[
-                                                                'px-2 py-1 text-xs rounded-full font-medium',
-                                                                match.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                                'px-3 py-1 text-xs font-medium rounded-full',
+                                                                {
+                                                                    'bg-yellow-100 text-yellow-800': match.status === 'Pending',
+                                                                    'bg-green-100 text-green-800': match.status === 'Completed',
+                                                                    'bg-blue-100 text-blue-800': match.status === 'In Progress'
+                                                                }
                                                             ]">
                                                                 {{ match.status }}
                                                             </span>
-                                                        </div>
-                                                        <div class="flex gap-3 items-center mt-1">
-                                                            <div class=" text-xs text-gray-600" v-if="match.matchVenue">
-                                                                <div class="flex items-center gap-1">
-                                                                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21l-7-7-7 7V5a2 2 0 012-2h10a2 2 0 012 2v16z"/>
-                                                                    </svg>
-                                                                    {{ match.matchVenue.name }}
-                                                                </div>
+                                                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                                <i class="fas fa-map-marker-alt"></i>
+                                                                {{ match.matchVenue?.name || 'Venue TBD' }}
                                                             </div>
-                                                            <div class="text-xs text-gray-600">
-                                                                <div class="flex items-center gap-1">
-                                                                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                                    </svg>
-                                                                    {{ formatDate(match.date) }} at {{ formatTime(match.time) }}
-                                                                </div>
+                                                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                                <i class="far fa-calendar"></i>
+                                                                {{ formatDate(match.date) }} at {{ formatTime(match.time) }}
                                                             </div>
-                                                        </div>
-                                                        
-                                                        <div class="mt-4 ">
-                                                            <h4 class="text-sm mb-4 font-medium text-gray-700">Participating Teams:</h4>
-                                                            <div v-if="match.participating_teams?.length" class="mt-1 space-y-1 grid grid-cols-4 gap-4">
-                                                                <div v-for="team in match.participating_teams" :key="team.team_name" 
-                                                                     class="flex justify-between px-3 py-2 bg-gray-50 rounded">
-                                                                    <div>
-                                                                        <span class="text-sm font-medium">{{ team.team_name }}</span> <br>
-                                                                        <span class="text-xs text-gray-500">{{ team.college_name }}</span>
-                                                                    </div>
-                                                                    <div v-if="match.status === 'Completed'" class="text-sm">
-                                                                        Rank: {{ team.rank }} ({{ team.points }} pts)
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <p v-else class="text-sm text-gray-500 mt-1">No teams registered yet</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                    </div>
 
-                                    <div v-for="match in displayedMatches" :key="match.id" 
-                                        class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow duration-200 mb-6">
-                                        <div class="grid grid-cols-1">
-                                            <div class="flex-1">
-                                                <div class="flex items-center gap-2">
-                                                    <span class=" text-lg font-medium text-gray-900 inline-flex items-center">
+                                            <!-- Teams Grid -->
+                                            <div class="mt-4">
+                                                <h4 class="text-sm font-medium text-gray-700 mb-3">Participating Teams</h4>
+                                                <div v-if="match.participating_teams?.length" 
+                                                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                                                >
+                                                    <div v-for="team in match.participating_teams" :key="team.team_name" 
+                                                        class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                                                    >
+                                                        <div>
+                                                            <p class="font-medium text-gray-900">{{ team.team_name }}</p>
+                                                            <p class="text-sm text-gray-500">{{ team.college_name }}</p>
+                                                        </div>
+                                                        <div v-if="match.status === 'Completed'" 
+                                                            class="px-3 py-1 bg-white rounded-full text-sm font-medium"
+                                                            :class="{
+                                                                'text-yellow-600': team.rank === 1,
+                                                                'text-gray-600': team.rank !== 1
+                                                            }"
+                                                        >
+                                                            {{ team.rank }}{{ getOrdinalSuffix(team.rank) }} 
+                                                            <span class="text-xs text-gray-500">({{ team.points }}pts)</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p v-else class="text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-lg">
+                                                    No teams registered yet
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Head to Head Matches -->
+                                        <div v-for="match in filteredHeadToHeadMatches" :key="'h2h-' + match.id" 
+                                            class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200"
+                                        >
+                                            <!-- Match Header -->
+                                            <div class="flex items-center justify-between mb-6">
+                                                <div>
+                                                    <h3 class="text-lg font-semibold text-gray-900">
                                                         {{ match.assigned_sport?.sport?.name || 'Sport TBD' }}
-                                                    </span>
-                                                    <span>•</span>
-                                                    <span class=" text-lg font-medium text-gray-900 inline-flex items-center">Round {{ match.round || '?' }}</span>
-                                                    <span>•</span>
-
-                                                    <h3 class="text-lg font-medium text-gray-900">
-                                                        {{ match.game || '?' }}
+                                                        <span class="text-gray-600">• Round {{ match.round || '?' }}</span>
+                                                        <span class="text-gray-600">• {{ match.game || '?' }}</span>
                                                     </h3>
-                                                    <span class="px-2 py-1 text-xs font-medium rounded-full"
-                                                        :class="{
-                                                            'bg-yellow-100 text-yellow-800': match.status === 'Pending',
-                                                            'bg-green-100 text-green-800': match.status === 'Completed',
-                                                            'bg-blue-100 text-blue-800': match.status === 'In Progress'
-                                                        }">
-                                                        {{ match.status || 'Pending' }}
-                                                    </span>
-
-                                                </div>
-                                                <div class="flex items-center gap-3 mt-1">
-                                                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                                                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21l-7-7-7 7V5a2 2 0 012-2h10a2 2 0 012 2v16z"/>
-                                                        </svg>
-                                                        {{ match.match_venue?.name || 'Venue TBD' }}
-                                                    </div>
-                                                    <div class="flex items-center gap-2 text-xs text-gray-500">
-                                                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                        </svg>
-                                                        {{ formatDate(match.date) }} {{ formatTime(match.time) }}
+                                                    <div class="flex items-center gap-3 mt-1">
+                                                        <span :class="[
+                                                            'px-3 py-1 text-xs font-medium rounded-full',
+                                                            {
+                                                                'bg-yellow-100 text-yellow-800': match.status === 'Pending',
+                                                                'bg-green-100 text-green-800': match.status === 'Completed',
+                                                                'bg-blue-100 text-blue-800': match.status === 'In Progress'
+                                                            }
+                                                        ]">
+                                                            {{ match.status || 'Pending' }}
+                                                        </span>
+                                                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                            <i class="fas fa-map-marker-alt"></i>
+                                                            {{ match.match_venue?.name || 'Venue TBD' }}
+                                                        </div>
+                                                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                            <i class="far fa-calendar"></i>
+                                                            {{ formatDate(match.date) }} at {{ formatTime(match.time) }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="mt-2" >
-                                                <div class="flex items-center space-x-4">
-                                                    <div class=" bg-gray-50 text-center px-4 py-4 flex-1">
-                                                        <p class="font-medium text-gray-900">
+
+                                            <!-- Teams VS Display -->
+                                            <div class="flex items-center justify-between gap-4 bg-gray-50 rounded-xl p-6">
+                                                <div class="flex-1 text-center">
+                                                    <div class="p-4 bg-white rounded-lg">
+                                                        <p class="font-semibold text-lg text-gray-900">
                                                             {{ match.teamA?.assigned_team_name || 'TBD' }}
                                                         </p>
-                                                        <p class="text-sm text-gray-600">
+                                                        <p class="text-sm text-gray-500">
                                                             {{ match.teamA?.college?.name || 'TBD' }}
                                                         </p>
                                                     </div>
-                                                    <div class="text-gray-400 font-medium">VS</div>
-                                                    <div class="text-left bg-gray-50 text-center px-4 py-4 flex-1">
-                                                        <p class="font-medium text-gray-900">
+                                                </div>
+                                                <div class="flex flex-col items-center">
+                                                    <span class="text-2xl font-bold text-gray-400">VS</span>
+                                                    <div v-if="match.status === 'Completed'" class="mt-2 text-sm">
+                                                        <div class="space-y-1 text-center">
+                                                            <p class="text-green-600 font-medium">
+                                                                Winner: {{ match.match_result.winning_team?.assigned_team_name }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-1 text-center">
+                                                    <div class="p-4 bg-white rounded-lg">
+                                                        <p class="font-semibold text-lg text-gray-900">
                                                             {{ match.teamB?.assigned_team_name || 'TBD' }}
                                                         </p>
-                                                        <p class="text-sm text-gray-600">
+                                                        <p class="text-sm text-gray-500">
                                                             {{ match.teamB?.college?.name || 'TBD' }}
                                                         </p>
-                                                    </div>  
-                                                </div>                                   
-                                            </div>                        
-                                        </div>
-                                        
-                                        
-                                        <!--completed-->
-                                        <div class="mt-2 text-sm text-gray-500">
-
-                                            <template v-if="match.match_result">
-                                                <span class="mx-2">•</span>
-                                                <span class="text-green-600 font-medium">
-                                                    Winner: {{ match.match_result.winning_team?.assigned_team_name || 'Not specified' }}
-                                                </span>
-
-                                                <span class="text-red-600 font-medium">
-                                                    Loser: {{ match.match_result.losing_team?.assigned_team_name || 'Not specified' }}
-                                                </span>
-                                            </template>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -516,7 +574,7 @@
                                     leave-from="opacity-100 scale-100"
                                     leave-to="opacity-0 scale-95"
                                 >
-                                    <DialogPanel class="w-[28rem] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <DialogPanel class="w-[32rem] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                         <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
                                             Assign Players to {{ selectedSport ? selectedSport.sport.name : '' }} 
                                             {{ selectedSport ? selectedSport.categories : '' }}
@@ -568,21 +626,32 @@
                                             </div>
                                         </div>
 
+                                        <!-- Button section in the modal -->
                                         <div class="mt-6 flex justify-end gap-3">
                                             <button
                                                 type="button"
                                                 class="inline-flex justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                                 @click="closePlayerModal"
+                                                :disabled="isAssigning"
                                             >
                                                 Cancel
                                             </button>
                                             <button
                                                 type="button"
-                                                class="inline-flex justify-center rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                                                class="inline-flex justify-center rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 @click="assignPlayers"
-                                                :disabled="selectedStudents.length === 0"
+                                                :disabled="selectedStudents.length === 0 || isAssigning"
                                             >
-                                                Assign Players
+                                                <template v-if="isAssigning">
+                                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Assigning...
+                                                </template>
+                                                <template v-else>
+                                                    Assign Players
+                                                </template>
                                             </button>
                                         </div>
                                     </DialogPanel>
@@ -747,6 +816,7 @@
 
     const isModalOpen = ref(false);
     const selectedTeam = ref(null);
+    const isAssigning = ref(false);
     const activeTab = ref('home');  
 
     const formatDate = (dateString) => {
@@ -844,16 +914,18 @@
         selectedSport.value = null;
         selectedStudents.value = [];
         searchQuery.value = '';
+        isAssigning.value = false;
     };
 
     const assignPlayers = () => {
+        isAssigning.value = true;
+        
         router.post(route('chs.assign-players'), {
             sport_id: selectedSport.value.id,
             student_ids: selectedStudents.value,
             assigned_team_id: props.assignedCollege.assigned_team.id
         }, {
             onSuccess: () => {
-                
                 const newPlayers = selectedStudents.value.map(studentId => {
                     const student = props.students.find(s => s.id === studentId);
                     return {
@@ -863,13 +935,16 @@
                             last_name: student.last_name
                         }
                     };
-
                 });
                 newlyAssignedPlayers.value = [...newlyAssignedPlayers.value, ...newPlayers];
                 
                 closePlayerModal();
                 showSuccessModal.value = true;
                 successMessage.value = 'Players assigned successfully!';
+                isAssigning.value = false;
+            },
+            onError: () => {
+                isAssigning.value = false;
             }
         });
     };
@@ -922,7 +997,7 @@
         selectedTeam.value = teamId;
     };
 
-    const matchTab = ref('pending');
+    const matchTab = ref('all');
 
     const pendingMatches = computed(() => {
         return props.upcomingSchedules
@@ -988,6 +1063,50 @@
     });
 
     // Removed the watch since we don't need it anymore
+
+    const hasMatches = computed(() => {
+        return (props.upcomingSchedules && props.upcomingSchedules.length > 0) || 
+               (props.freeForAllMatches && props.freeForAllMatches.length > 0);
+    });
+
+    const filteredFreeForAllMatches = computed(() => {
+        if (!props.freeForAllMatches) return [];
+        
+        return props.freeForAllMatches.filter(match => {
+            if (matchTab.value === 'all') return true;
+            if (matchTab.value === 'pending') return match.status === 'Pending';
+            if (matchTab.value === 'completed') return match.status === 'Completed';
+            return true;
+        }).sort((a, b) => {
+            const dateA = new Date(a.date + ' ' + a.time);
+            const dateB = new Date(b.date + ' ' + b.time);
+            return matchTab.value === 'completed' ? dateB - dateA : dateA - dateB;
+        });
+    });
+
+    const filteredHeadToHeadMatches = computed(() => {
+        if (!props.upcomingSchedules) return [];
+        
+        return props.upcomingSchedules.filter(match => {
+            if (matchTab.value === 'all') return true;
+            if (matchTab.value === 'pending') return !match.match_result;
+            if (matchTab.value === 'completed') return match.match_result;
+            return true;
+        }).sort((a, b) => {
+            const dateA = new Date(a.date + ' ' + a.time);
+            const dateB = new Date(b.date + ' ' + b.time);
+            return matchTab.value === 'completed' ? dateB - dateA : dateA - dateB;
+        });
+    });
+
+    const getOrdinalSuffix = (number) => {
+        const j = number % 10;
+        const k = number % 100;
+        if (j == 1 && k != 11) return "st";
+        if (j == 2 && k != 12) return "nd";
+        if (j == 3 && k != 13) return "rd";
+        return "th";
+    };
 </script>
  
 <style scoped>

@@ -163,7 +163,7 @@
                             <li>
                                 <Link 
                                     href="/details" 
-                                    class="flex items-center py-2.5 px-3 text-sm rounded-lg transition-all"
+                                    class="flex items-center py-2.5 px-3  text-sm rounded-lg transition-all"
                                     :class="{
                                     'bg-blue-700 text-white': currentRoute.startsWith('/details'), 
                                     'text-gray-700 hover:bg-blue-100 hover:text-blue-600': !currentRoute.startsWith('/details')
@@ -171,7 +171,7 @@
                                 >
                                     <div>
                                         <i class="fa-solid fa-flag-checkered w-5 h-5"></i>
-                                        <span class="ms-3">Palakasan</span>
+                                        <span class="ms-3 font-medium">Palakasan</span>
                                     </div>
                                 </Link>
                             </li>
