@@ -196,6 +196,7 @@
                   <label class="block text-sm font-medium text-gray-900 mb-2">
                     Pick the Date and Time
                   </label>
+
                   <div class="mx-auto sm:mx-0 flex justify-center mb-5">
                     <input
                       type="date"
@@ -206,8 +207,21 @@
                     />
                   </div>
 
+                  <!-- Time Selection Type -->
+                  <div class="mb-4">
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="border border-gray-300 p-2 rounded-md">
+                        <input type="radio" id="selectTime" value="select" v-model="timeSelectionType" />
+                        <label for="selectTime" class="ml-2">Select time</label>
+                      </div>
+                      <div class="border border-gray-300 p-2 rounded-md">
+                        <input type="radio" id="manualTime" value="manual" v-model="timeSelectionType" />
+                        <label for="manualTime" class="ml-2">Custom time</label>
+                      </div>
+                    </div>
+                  </div>
                   <!-- Time Selection -->
-                  <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
+                  <ul v-if="timeSelectionType === 'select'" id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
                     <li v-for="slot in availableTimeSlots" :key="slot.value">
                       <input 
                         type="radio" 
@@ -228,6 +242,20 @@
                       </label>
                     </li>
                   </ul>
+                  <!-- Custom Time Selection -->
+                  <div v-if="timeSelectionType === 'manual'" class="mb-4">
+                    <label class="block text-sm font-medium text-gray-900 mb-2">
+                      Custom Time
+                    </label>
+                    <input
+                      type="text"
+                      v-model="customTime"
+                      placeholder="e.g. 2:00 PM"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+
 
                   <div v-if="formError" class="mb-4 text-red-500 text-sm">{{ formError }}</div>
 
@@ -304,7 +332,7 @@ const props = defineProps({
 
 const showSuccessModal = ref(false);
 const successMessage = ref('');
-
+const timeSelectionType = ref('select'); // Default to selecting from available times
 const isWinnerModalOpen = ref(false);
 const selectedMatch = ref(null);
 const winnerFormData = ref({
@@ -318,6 +346,7 @@ const selectedVenue = ref('');
 const formError = ref('');
 const availableTimeSlots = ref([]);
 const isProcessing = ref(false);
+const customTime = ref(''); // For custom time input
 
 const form = useForm({
   matchId: '',
@@ -466,12 +495,18 @@ const updateAvailableTimeSlots = () => {
 
 const openTimeModal = (round) => {
   selectedRound.value = round;
-  selectedDate.value = props.matches.find(match => match.round === round).date || '';
-  selectedTime.value = props.matches.find(match => match.round === round).time || '';
-  selectedVenue.value = props.matches.find(match => match.round === round).match_venue_id || '';
-  formError.value = '';
-  isTimeModalOpen.value = true;
-  updateAvailableTimeSlots();
+  const match = props.matches.find(m => m.round === round); // Find the match for the round
+  if (match) {
+    selectedMatch.value = match; // Set selectedMatch to the found match
+    selectedDate.value = match.date || '';
+    selectedTime.value = match.time || '';
+    selectedVenue.value = match.match_venue_id || '';
+    formError.value = '';
+    isTimeModalOpen.value = true;
+    updateAvailableTimeSlots();
+  } else {
+    console.error('No match found for the selected round');
+  }
 };
 
 const closeTimeModal = () => {
@@ -485,25 +520,38 @@ const closeTimeModal = () => {
 };
 
 const saveDateTime = () => {
-  if (!selectedDate.value || !selectedTime.value || !selectedVenue.value) {
+  if (!selectedMatch.value) {
+    formError.value = 'No match selected';
+    return;
+  }
+
+  if (!selectedDate.value || (!selectedTime.value && !customTime.value) || !selectedVenue.value) {
     formError.value = 'Please select date, time, and venue';
     return;
   }
 
-  const selectedSlot = availableTimeSlots.value.find(slot => slot.value === selectedTime.value);
-  if (!selectedSlot || selectedSlot.disabled) {
-    formError.value = 'Selected time slot is not available';
+  const timeToSave = timeSelectionType.value === 'manual' ? customTime.value : selectedTime.value;
+
+  // Ensure the selected time is valid
+  if (!timeToSave) {
+    formError.value = 'Selected time is not available';
     return;
   }
 
   isProcessing.value = true;
   formError.value = '';
 
-  // Update all matches in the round with the selected date, time, and venue
+  // Populate form data
+  form.matchId = selectedMatch.value.id; // Ensure this is set correctly
+  form.date = selectedDate.value;
+  form.time = timeToSave; // Use the appropriate time
+  form.venue_id = selectedVenue.value;
+
+  // Proceed with saving the data
   const roundMatches = matchesByRound.value[selectedRound.value];
   roundMatches.forEach(match => {
     match.date = selectedDate.value;
-    match.time = selectedTime.value;
+    match.time = timeToSave; // Use the appropriate time
     match.match_venue_id = selectedVenue.value;
   });
 

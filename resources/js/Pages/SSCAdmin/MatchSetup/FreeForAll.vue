@@ -332,52 +332,89 @@
                         />
                       </div>
 
-                      <!-- Time Selection -->
-                      <ul id="timetable" class="grid w-full grid-cols-4 gap-2 mb-5">
-                        <li v-for="slot in availableTimeSlots" :key="slot.value">
-                          <input 
-                            type="radio" 
-                            :id="slot.value" 
-                            :value="slot.value" 
-                            v-model="updateTimeForm.time" 
-                            class="hidden peer" 
-                            name="timetable"
+                      <!-- Time Input Toggle -->
+                      <div class="mb-4">
+                        <div class=" mb-4">
+                          <div class="grid grid-cols-2 items-center gap-4">
+                            <label class="inline-flex items-center p-2.5 ring-1 ring-gray-200 rounded-md">
+                              <input 
+                                type="radio" 
+                                v-model="timeInputType" 
+                                value="slot" 
+                                class="form-radio"
+                              >
+                              <span class="ml-2 text-sm">Select time slot</span>
+                            </label>
+                            <label class="inline-flex items-center p-2.5 ring-1 ring-gray-200 rounded-md">
+                              <input 
+                                type="radio" 
+                                v-model="timeInputType" 
+                                value="custom" 
+                                class="form-radio"
+                              >
+                              <span class="ml-2 text-sm">Enter custom time</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <!-- Time Slots Selection -->
+                        <div v-if="timeInputType === 'slot'" class="grid grid-cols-4 gap-2 mb-4">
+                          <button
+                            v-for="slot in availableTimeSlots"
+                            :key="slot.value"
+                            @click="!slot.disabled && (updateTimeForm.time = slot.value)"
+                            :class="[
+                              'px-3 py-2 text-sm rounded-md',
+                              updateTimeForm.time === slot.value
+                                ? 'bg-blue-600 text-white'
+                                : 'border border-gray-200 text-gray-700 hover:bg-blue-100 hover:text-blue-500 hover:border-blue-300',
+                              { 'opacity-50 bg-gray-200 cursor-not-allowed': slot.disabled }
+                            ]"
+                            type="button"
                             :disabled="slot.disabled"
                           >
-                          <label :for="slot.value"
-                            :class="[
-                              'inline-flex items-center justify-center w-full px-2 py-1.5 text-sm font-medium text-center',
-                              slot.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-400 rounded-md' : 'hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border rounded-lg cursor-pointer text-gray-500 border-gray-300 dark:border-gray-700 dark:peer-checked:border-blue-500 peer-checked:border-blue-700 dark:hover:border-gray-600 dark:peer-checked:text-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-600 dark:peer-checked:bg-blue-900'
-                            ]"
-                          >
                             {{ slot.label }}
-                          </label>
-                        </li>
-                      </ul>
+                          </button>
+                        </div>
 
-                      <div v-if="errorMessage" class="mb-4 text-red-500 text-sm">{{ errorMessage }}</div>
+                        <!-- Custom Time Input -->
+                        <div v-else class="flex items-center gap-2">
+                          <input 
+                            type="time" 
+                            v-model="customTime"
+                            class="px-3 py-2 border w-full border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            @input="updateScheduleTime"
+                          >
+                          <select 
+                            v-model="customTimePeriod"
+                            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            @change="updateScheduleTime"
+                          >
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div v-if="formError" class="mb-4 text-red-500 text-sm">{{ formError }}</div>
 
                       <!-- Action Buttons -->
                       <div class="grid grid-cols-2 gap-2">
                         <button 
                           @click="closeUpdateTimeModal" 
                           type="button" 
-                          :disabled="updateTimeForm.processing"
-                          class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                          :disabled="isProcessing"
+                          class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 disabled:opacity-50"
                         >
                           Discard
                         </button>
                         <button 
                           @click="updateTime" 
                           type="button"
-                          :disabled="updateTimeForm.processing || !isValidTimeSelection"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          :disabled="isProcessing || !isValidTimeSelection"
+                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50"
                         >
-                          <svg v-if="updateTimeForm.processing" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>{{ updateTimeForm.processing ? 'Saving...' : 'Save' }}</span>
+                          {{ isProcessing ? 'Saving...' : 'Save' }}
                         </button>
                       </div>
                     </div>
@@ -964,5 +1001,24 @@ watch(progressPercentage, (newValue) => {
   }
 });
 
+const timeInputType = ref('slot'); // To toggle between slot and custom input
+const customTime = ref(''); // For custom time input
+const customTimePeriod = ref('AM'); // For AM/PM selection
+
+const updateScheduleTime = () => {
+  if (timeInputType.value === 'custom' && customTime.value) {
+    const [hours, minutes] = customTime.value.split(':');
+    let formattedHours = parseInt(hours);
+    
+    // Convert to 12-hour format
+    if (formattedHours > 12) {
+      formattedHours -= 12;
+    } else if (formattedHours === 0) {
+      formattedHours = 12;
+    }
+    
+    updateTimeForm.time = `${formattedHours}:${minutes} ${customTimePeriod.value}`;
+  }
+};
 
 </script>
