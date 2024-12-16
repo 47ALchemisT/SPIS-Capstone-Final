@@ -281,10 +281,12 @@
                     </div>
 
                     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="(sport, index) in liveSports.slice(0, 6)" 
+                        <div v-for="(sport) in liveSports.slice(0, 6)" 
+                            @click="handleSportClick(sport.id)"
                              :key="sport.id"
-                             class="group bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:border-white/20">
-                            <div class="flex justify-between items-start mb-6">
+                             :class="['group bg-white/5 backdrop-blur-md rounded-xl cursor-pointer p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:border-white/20', { 'cursor-wait': loading }]"
+                             :disabled="loading">
+                            <div class="flex justify-between items-start mb-6 ">
                                 <div>
                                     <h3 class="text-lg font-semibold text-white group-hover:text-white/90">
                                         {{ sport.sport.name }}
@@ -484,6 +486,21 @@ const images = ref([
     img10
 ]);
 
+const loading = ref(false);
+
+const handleSportClick = (sportId) => {
+    if (loading.value) return; // Prevent further clicks if already loading
+    loading.value = true; // Set loading state
+
+    // Simulate loading (replace with your actual logic)
+    viewSport(sportId);
+    
+    // Reset loading state after some time or after the action is complete
+    setTimeout(() => {
+        loading.value = false; // Reset loading state
+    }, 2000); // Adjust time as needed
+};
+
 const currentIndex = ref(0);
 let intervalId = null;
 
@@ -497,6 +514,10 @@ const getVisibleImages = () => {
     }
     
     return visibleImages;
+};
+
+const viewSport = (sportId) => {
+    router.get(route('home-sportview.index', { sport: sportId }));
 };
 
 const startCarousel = () => {

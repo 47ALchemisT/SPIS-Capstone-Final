@@ -113,14 +113,14 @@
                       </div>
                       <div>
                         <button 
-                        type="button"
-                        @click="openRankModal(variation)" 
-                        :disabled="!isRankingAllowed(variation) || variation.status === 'completed' || sport.status === 'completed'"
-                        class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2.5 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
-                      >
-                        <i class="fa-solid fa-ranking-star mr-2"></i>
-                        {{ isRankingAllowed(variation) ? 'Set Rankings' : 'Not Yet Available' }}
-                      </button>
+                          type="button"
+                          @click="openRankModal(variation)  || !isMatchTimeReached(variation)" 
+                          :disabled="!isRankingAllowed(variation) || variation.status === 'completed' || sport.status === 'completed'"
+                          class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2.5 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
+                        >
+                          <i class="fa-solid fa-ranking-star mr-2"></i>
+                          {{ isRankingAllowed(variation) ? 'Set Rankings' : 'Not Yet Available' }}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -425,7 +425,15 @@ const closeRankModal = () => {
   rankUpdateForm.reset();
 };
 //
+const isMatchTimeReached = (variation) => {
+  if (!variation.date || !variation.time) return false; // Ensure both date and time are available
 
+  // Parse the scheduled date and time
+  const scheduledDateTime = new Date(`${variation.date}T${variation.time}`);
+  const currentDateTime = new Date(); // Get the current date and time
+
+  return currentDateTime >= scheduledDateTime; // Return true if current time is past or equal to scheduled time
+};
 
 const isRankingAllowed = (variation) => {
   if (!variation.date || !variation.time) return false;
@@ -448,13 +456,6 @@ const isRankingAllowed = (variation) => {
     // Create the scheduled date object
     const scheduledDateTime = new Date(year, month - 1, day, hours, minutes);
     const currentDateTime = new Date();
-    
-    // Debug info
-    console.log('Parsed time:', {
-      year, month, day, hours, minutes,
-      scheduledDateTime: scheduledDateTime.toLocaleString(),
-      currentDateTime: currentDateTime.toLocaleString()
-    });
     
     // Ensure we have a valid date before comparing
     if (isNaN(scheduledDateTime.getTime())) {

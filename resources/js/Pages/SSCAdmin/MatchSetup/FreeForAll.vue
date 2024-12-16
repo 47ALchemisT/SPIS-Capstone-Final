@@ -385,14 +385,6 @@
                             class="px-3 py-2 border w-full border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             @input="updateScheduleTime"
                           >
-                          <select 
-                            v-model="customTimePeriod"
-                            class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            @change="updateScheduleTime"
-                          >
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                          </select>
                         </div>
                       </div>
 
@@ -411,7 +403,7 @@
                         <button 
                           @click="updateTime" 
                           type="button"
-                          :disabled="isProcessing || !isValidTimeSelection"
+                          :disabled="isProcessing"
                           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50"
                         >
                           {{ isProcessing ? 'Saving...' : 'Save' }}
@@ -581,11 +573,12 @@ const rankUpdates = ref({});
 const showUpdateTimeModal = ref(false);
 const selectedVariation = ref(null);
 const activeTab = ref('sports');
-
+const timeSelectionType = ref('select'); // Default to selecting from available times
 const totalMatches = computed(() => props.sportVariations.length);
 const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);
 const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMatches.value / totalMatches.value) * 100 : 0);
-
+const selectedTime = ref(''); // Reactive variable for selected time
+const selectedDate = ref('');
 const allMatchesScheduled = computed(() => {
   return props.sportVariations.every(variation => 
     variation.date && variation.time && variation.sport_variation_venue_id
@@ -695,6 +688,8 @@ const openUpdateTimeModal = (variation) => {
 const closeUpdateTimeModal = () => {
   showUpdateTimeModal.value = false;
   selectedVariation.value = null;
+  selectedDate.value = '';
+  selectedTime.value = '';
   updateTimeForm.reset();
   updateTimeForm.clearErrors();
   errorMessage.value = '';
@@ -726,30 +721,14 @@ const updateTime = async () => {
   }
 };
 
-const openRankModal = (variation) => {
-    selectedVariation.value = variation;
-    selectedVariationMatches.value = props.sportVariationMatches
-      .filter(m => m.sport_variation_id === variation.id)
-      .filter(m => currentSportTeams.value.some(team => team.id === m.sport_variation_team_id));
-    
-    rankUpdates.value = selectedVariationMatches.value.reduce((acc, match) => ({
-      ...acc,
-      [match.id]: {
-        rank: match.rank || '',
-        points: match.points || ''
-      }
-    }), {});
-    showRankModal.value = true;
-  };
-
-  const closeRankModal = () => {
-  showRankModal.value = false;
-  selectedVariation.value = null;
-  selectedVariationMatches.value = [];
-  rankUpdates.value = {};
-  rankUpdateError.value = '';
-  rankUpdateForm.reset();
+const formatTo12Hour = (time) => {
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+  return `${formattedHour}:${minutes} ${period}`;
 };
+
 
   const isValidRankSelection = computed(() => {
     const selectedMatches = Object.values(rankUpdates.value);
@@ -760,46 +739,6 @@ const openRankModal = (variation) => {
     return allFieldsFilled && selectedRanks.size === selectedVariationMatches.value.length;
   });
 
-  const updateRanks = async () => {
-    const selectedRanks = Object.values(rankUpdates.value)
-      .filter(match => match.rank !== '')
-      .map(match => match.rank.toString());
-    
-    const uniqueRanks = new Set(selectedRanks);
-    
-    if (selectedRanks.length !== uniqueRanks.size) {
-      rankUpdateError.value = 'Each team must have a unique rank.';
-      return;
-    }
-
-    if (selectedRanks.length !== selectedVariationMatches.value.length) {
-      rankUpdateError.value = 'All teams must have a rank and points assigned.';
-      return;
-    }
-
-    rankUpdateForm.matches = Object.entries(rankUpdates.value).map(([id, data]) => ({
-      id: parseInt(id),
-      rank: parseInt(data.rank),
-      points: parseInt(data.points)
-    }));
-
-    try {
-      await rankUpdateForm.patch(route('sport-variations.update-ranks', selectedVariation.value.id), {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: () => {
-          closeRankModal();
-        },
-        onError: (errors) => {
-          console.error('Update ranks errors:', errors);
-          rankUpdateError.value = 'Please correct the errors and try again.';
-        },
-      });
-    } catch (error) {
-      console.error('Update ranks error:', error);
-      rankUpdateError.value = 'An unexpected error occurred. Please try again.';
-    }
-  };
 
 const formatDateTime = (date, time) => {
   if (!date && !time) return 'Not scheduled';
@@ -1010,11 +949,17 @@ const updateScheduleTime = () => {
     const [hours, minutes] = customTime.value.split(':');
     let formattedHours = parseInt(hours);
     
-    // Convert to 12-hour format
-    if (formattedHours > 12) {
-      formattedHours -= 12;
-    } else if (formattedHours === 0) {
-      formattedHours = 12;
+    // Determine AM/PM
+    if (formattedHours >= 12) {
+      customTimePeriod.value = 'PM';
+      if (formattedHours > 12) {
+        formattedHours -= 12; // Convert to 12-hour format
+      }
+    } else {
+      customTimePeriod.value = 'AM';
+      if (formattedHours === 0) {
+        formattedHours = 12; // Convert 0 to 12 for 12 AM
+      }
     }
     
     updateTimeForm.time = `${formattedHours}:${minutes} ${customTimePeriod.value}`;

@@ -411,8 +411,8 @@ const handleScheduleClick = () => {
         status: 'scheduled'
     }, {
         onSuccess: () => {
-          showSuccessModal.value = true;
-          successMessage.value = 'Successfully scheduled the matches!';
+            showSuccessModal.value = true;
+            successMessage.value = 'Successfully scheduled the matches!';
         },
         onError: (errors) => {
             console.error('Error scheduling matches:', errors);

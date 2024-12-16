@@ -199,9 +199,8 @@
                       Custom Time
                     </label>
                     <input
-                      type="text"
+                      type="time"
                       v-model="customTime"
-                      placeholder="e.g. 2:00 PM"
                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -447,8 +446,17 @@ const closeTimeModal = () => {
   selectedTime.value = '';
   previousTime.value = ''; // Reset previous time
   selectedVenue.value = '';
+  customTime.value = '';
   formError.value = '';
   availableTimeSlots.value = [];
+};
+
+const formatTo12Hour = (time) => {
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+  return `${formattedHour}:${minutes} ${period}`;
 };
 
 const saveDateTime = () => {
@@ -457,15 +465,33 @@ const saveDateTime = () => {
     return;
   }
 
-  const selectedSlot = availableTimeSlots.value.find(slot => slot.value === selectedTime.value);
-  if ((selectedTime.value && (!selectedSlot || selectedSlot.disabled)) || (customTime.value && !isValidTime(customTime.value))) {
-    formError.value = 'Selected time slot is not available or invalid';
+  let finalTime;
+
+  if (timeSelectionType.value === 'manual') {
+    if (!customTime.value) {
+      formError.value = 'Please enter a valid custom time';
+      return;
+    }
+    finalTime = formatTo12Hour(customTime.value); // Format the custom time
+  } else {
+    finalTime = selectedTime.value; // Use the selected time
+  }
+
+  // Check if the final time is already booked
+  const isTimeBooked = props.venueRecords.some(record => 
+    record.date === selectedDate.value && 
+    record.venue_id === selectedVenue.value && 
+    record.time === finalTime
+  );
+
+  if (isTimeBooked) {
+    formError.value = 'The selected time is already booked. Please choose a different time.';
     return;
   }
 
   form.matchId = selectedMatch.value.id;
   form.date = selectedDate.value;
-  form.time = customTime.value || selectedTime.value; // Use custom time if provided
+  form.time = finalTime; // Use formatted custom time if provided
   form.venue_id = selectedVenue.value;
 
   isProcessing.value = true;
@@ -483,10 +509,7 @@ const saveDateTime = () => {
   });
 };
 
-const isValidTime = (time) => {
-  const regex = /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i;
-  return regex.test(time);
-};
+
 
 const sortedMatches = computed(() => {
   if (!props.matches) return [];

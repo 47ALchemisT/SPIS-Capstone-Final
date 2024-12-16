@@ -187,7 +187,14 @@
                                             <div class="col-span-full">
                                                 <div v-if="match.sport_variation_i_d && match.sport_variation_i_d.length > 0" 
                                                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                                    <div v-for="team in match.sport_variation_i_d" :key="team.id" 
+                                                    <div v-for="team in match.sport_variation_i_d.sort((a, b) => {
+                                                        const rankA = a.rank || Infinity;
+                                                        const rankB = b.rank || Infinity;
+                                                        const pointsA = a.points || 0;
+                                                        const pointsB = b.points || 0;
+                                                        // First sort by rank, then by points
+                                                        return rankA - rankB || pointsB - pointsA;
+                                                    })" :key="team.id" 
                                                         class="bg-gray-50 hover:bg-gray-100 rounded-lg p-3 transition-colors">
                                                         <div class="flex flex-col items-center">
                                                             <span class="text-md font-medium text-gray-700">{{ team.assigned_team_variation_i_d?.assigned_team_name || 'TBA' }}</span>
@@ -213,7 +220,7 @@
 
     <!-- Result Modal -->
     <div v-if="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 px-4 py-6 sm:px-0">
-        <div class="relative h-full flex items-center justify-center">
+        <div class="relative flex items-center justify-center">
             <div class="absolute inset-0" @click="closeModal"></div>
             
             <div class="relative w-full max-w-lg mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
@@ -236,6 +243,7 @@
                         <h4 class="text-base sm:text-lg font-medium text-gray-900">
                             {{ selectedMatch?.assignedSport?.sport?.name || selectedMatch?.sport_id?.sport?.name }}
                             {{ selectedMatch?.assignedSport?.categories || selectedMatch?.sport_id?.categories }}
+                            {{ selectedMatch?.assignedSport?.setup || selectedMatch?.sport_id?.setup }}
                         </h4>
                         <div class="text-sm text-gray-600 space-y-1">
                             <p>{{ formatDate(selectedMatch?.date) }}</p>
@@ -264,15 +272,24 @@
                                     <p class="font-semibold text-base sm:text-lg mb-1 line-clamp-2">{{ selectedMatch?.teamA?.assigned_team_name }}</p>
                                     <p class="text-xs text-gray-600 mb-3 line-clamp-2">{{ selectedMatch?.teamA?.college?.name }}</p>
                                     <div>
-                                        <template v-if="selectedMatch?.assignedSport?.round_robin || selectedMatch?.sport_id?.round_robin">
+                                        <template v-if="selectedMatch?.assignedSport?.setup === 'Round Robin' || selectedMatch?.sport_id?.setup === 'Round Robin'">
                                             <div class="flex justify-center space-x-4">
                                                 <div>
-                                                    <p class="text-2xl sm:text-4xl font-bold text-green-600">{{ selectedMatch?.match_result?.teamA_score }}</p>
-                                                    <p class="text-xs text-gray-500">Wins</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-2xl sm:text-4xl font-bold text-red-600">{{ selectedMatch?.match_result?.teamA_losses || '0' }}</p>
-                                                    <p class="text-xs text-gray-500">Losses</p>
+                                                    <p
+                                                        v-if="selectedMatch?.match_result?.teamA_score > selectedMatch?.match_result?.teamB_score"
+                                                        class="text-2xl sm:text-4xl font-bold text-green-600">
+                                                        Win
+                                                    </p>
+                                                    <p
+                                                        v-if="selectedMatch?.match_result?.teamA_score == selectedMatch?.match_result?.teamB_score"
+                                                        class="text-2xl sm:text-4xl font-bold text-blue-600">
+                                                        Draw
+                                                    </p>
+                                                    <p
+                                                     v-if="selectedMatch?.match_result?.teamA_score < selectedMatch?.match_result?.teamB_score"
+                                                        class="text-2xl sm:text-4xl font-bold text-red-600">
+                                                        Lose
+                                                    </p>
                                                 </div>
                                             </div>
                                         </template>
@@ -294,15 +311,24 @@
                                     <p class="font-semibold text-base sm:text-lg mb-1 line-clamp-2">{{ selectedMatch?.teamB?.assigned_team_name }}</p>
                                     <p class="text-xs text-gray-600 mb-3 line-clamp-2">{{ selectedMatch?.teamB?.college?.name }}</p>
                                     <div>
-                                        <template v-if="selectedMatch?.assignedSport?.round_robin || selectedMatch?.sport_id?.round_robin">
+                                        <template v-if="selectedMatch?.assignedSport?.setup === 'Round Robin' || selectedMatch?.sport_id?.setup === 'Round Robin'">
                                             <div class="flex justify-center space-x-4">
                                                 <div>
-                                                    <p class="text-2xl sm:text-4xl font-bold text-green-600">{{ selectedMatch?.match_result?.teamB_score }}</p>
-                                                    <p class="text-xs text-gray-500">Wins</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-2xl sm:text-4xl font-bold text-red-600">{{ selectedMatch?.match_result?.teamB_losses || '0' }}</p>
-                                                    <p class="text-xs text-gray-500">Losses</p>
+                                                    <p
+                                                        v-if="selectedMatch?.match_result?.teamB_score > selectedMatch?.match_result?.teamA_score"
+                                                        class="text-2xl sm:text-4xl font-bold text-green-600">
+                                                        Win
+                                                    </p>
+                                                    <p
+                                                        v-if="selectedMatch?.match_result?.teamB_score == selectedMatch?.match_result?.teamA_score"
+                                                        class="text-2xl sm:text-4xl font-bold text-blue-600">
+                                                        Draw
+                                                    </p>
+                                                    <p
+                                                        v-if="selectedMatch?.match_result?.teamB_score < selectedMatch?.match_result?.teamA_score"
+                                                        class="text-2xl sm:text-4xl font-bold text-red-600">
+                                                        Lose
+                                                    </p>
                                                 </div>
                                             </div>
                                         </template>
@@ -319,9 +345,10 @@
                             <div class="inline-block bg-green-50 rounded-lg w-full text-center px-6 py-3">
                                 <p class="text-sm text-green-600 font-medium">Winner</p>
                                 <p class="text-base sm:text-lg font-semibold text-green-700 mt-1">
-                                    {{ selectedMatch.match_result.winning_team_id === selectedMatch.teamA?.id 
+                                    <span v-if="selectedMatch.match_result.winning_team_id === null">Draw</span>
+                                    <span v-else>{{ selectedMatch.match_result.winning_team_id === selectedMatch.teamA?.id 
                                         ? selectedMatch.teamA?.assigned_team_name 
-                                        : selectedMatch.teamB?.assigned_team_name }}
+                                        : selectedMatch.teamB?.assigned_team_name }}</span>
                                 </p>
                             </div>
                         </div>
@@ -329,8 +356,15 @@
 
                     <!-- Sports Variation Result -->
                     <div v-else class="py-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div v-for="team in selectedMatch?.sport_variation_i_d" :key="team.id" 
+                        <div class="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                            <div v-for="team in selectedMatch?.sport_variation_i_d.sort((a, b) => {
+                                const rankA = a.rank || Infinity;
+                                const rankB = b.rank || Infinity;
+                                const pointsA = a.points || 0;
+                                const pointsB = b.points || 0;
+                                // First sort by rank, then by points
+                                return rankA - rankB || pointsB - pointsA;
+                            })" :key="team.id" 
                                 class="bg-gray-50 rounded-lg p-4">
                                 <p class="font-semibold text-base sm:text-lg mb-1">
                                     {{ team.assigned_team_variation_i_d?.assigned_team_name }}
@@ -339,7 +373,7 @@
                                     {{ team.assigned_team_variation_i_d?.college?.name }}
                                 </p>
                                 <div class="flex items-center mt-2">
-                                    <span class="text-sm font-medium text-gray-600">Rank:</span>
+                                    <span class="text-sm font-medium text-gray-600">Rank : </span>
                                     <span class="ml-2 px-3 py-1 text-sm font-medium bg-blue-50 text-blue-700 rounded-full">
                                         {{ team.rank || 'N/A' }}
                                     </span>

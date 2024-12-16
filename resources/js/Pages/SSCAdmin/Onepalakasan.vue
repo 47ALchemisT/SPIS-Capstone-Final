@@ -1303,117 +1303,60 @@
             </TransitionRoot>
 
             <!-- Logs Modal -->
-            <TransitionRoot appear :show="isLogsModalOpen" as="template">
-                <Dialog as="div" @close="closeLogsModal" class="relative z-50">
-                    <TransitionChild
-                        as="template"
-                        enter="duration-300 ease-out"
-                        enter-from="opacity-0"
-                        enter-to="opacity-100"
-                        leave="duration-200 ease-in"
-                        leave-from="opacity-100"
-                        leave-to="opacity-0"
-                    >
-                        <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" />
-                    </TransitionChild>
-
-                    <div class="fixed inset-0 overflow-y-auto">
-                        <div class="flex min-h-full items-center justify-center p-4">
-                            <TransitionChild
-                                as="template"
-                                enter="duration-300 ease-out"
-                                enter-from="opacity-0 scale-95"
-                                enter-to="opacity-100 scale-100"
-                                leave="duration-200 ease-in"
-                                leave-from="opacity-100 scale-100"
-                                leave-to="opacity-0 scale-95"
+            <!-- Logs Modal -->
+            <div v-if="isLogsModalOpen" class="fixed inset-0 overflow-y-auto z-50">
+                <div class="flex min-h-full items-center justify-center p-4">
+                    <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" @click="closeLogsModal"></div>
+                    <div class="w-[62rem] h-[37rem] transform overflow-hidden rounded-lg bg-white shadow-xl transition-all flex flex-col">
+                        <div class="flex items-center justify-between p-4 border-b">
+                            <div class="text-lg font-semibold text-gray-900">
+                                Activity Logs
+                            </div>
+                            <button 
+                                @click="closeLogsModal"
+                                class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors duration-200"
                             >
-                                <DialogPanel class="w-[62rem] h-[37rem] transform overflow-hidden rounded-lg bg-white shadow-xl transition-all flex flex-col">
-                                    <div class="flex items-center justify-between p-4 border-b">
-                                        <DialogTitle as="h3" class="text-lg font-semibold text-gray-900">
-                                            Activity Logs
-                                        </DialogTitle>
-                                        <button 
-                                            @click="closeLogsModal"
-                                            class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-colors duration-200"
-                                        >
-                                            <span class="sr-only">Close</span>
-                                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
-                                        </button>
-                                    </div>
-                                    
-                                    <div class="p-4 space-y-4 overflow-y-auto flex-1">
-                                        <!-- Empty State -->
-                                        <div v-if="!allSubmits?.length" class="flex flex-col items-center justify-center h-full text-center">
-                                            <svg class="w-16 h-16 text-gray-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                                <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
-                                            </svg>
-                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Activity Logs Yet</h3>
-                                            <p class="text-gray-500 text-sm">
-                                                Activity logs will appear here once actions are performed.
-                                            </p>
-                                        </div>
-                                        <!-- Logs List -->
-                                        <div v-else>
-                                        <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg space-y-2 mb-4">
-                                            <!-- Regular Match Result -->
-                                            <template v-if="submit.type === 'regular'">
-                                                <div class="flex justify-between items-center overflow-y-auto">
-                                                    <div class="w-full">
-                                                        <div class="flex w-full justify-between gap-2 mb-2">
-                                                            <div class="flex items-center text-gray-600 gap-2">
-                                                                <p class="text-sm">{{ submit.match_result?.sport_match?.assigned_sport?.sport?.name }} {{ submit.match_result?.sport_match?.assigned_sport?.categories }}</p>
-                                                                <span class="text-sm">•</span>
-                                                                <p class="text-sm">Round {{ submit.match_result?.sport_match?.round }}</p>
-                                                                <span class="text-sm">•</span>
-                                                                <p class="text-sm">{{ submit.match_result?.sport_match?.game }}</p>
-                                                            </div>
-                                                            <p class="text-xs text-right text-gray-500">
-                                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
-                                                            </p>
-                                                        </div>
-
-                                                        <p class="text-sm font-medium text-gray-800">
-                                                            Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
-                                                        </p>
-                                                        <p class="text-sm text-gray-600">
-                                                            {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} won against {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
-                                                        </p>
-                                                        <div class="flex justify-between">
-                                                            <div class="mt-3 flex gap-2">
-                                                                <p class="text-xs text-gray-500">
-                                                                    Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
-                                                                </p>
-                                                                <span class="text-xs text-gray-500">•</span>
-                                                                <p class="text-xs text-gray-500">
-                                                                    Validated by: {{ submit.official_name }}
-                                                                </p>
-                                                            </div>
-                                                            <button 
-                                                                @click="openSignature(submit.signature)"
-                                                                class="mt-2 py-1.5 px-2.5 rounded-full bg-blue-100 text-xs hover:bg-blue-200 text-blue-600 hover:text-blue-800 font-medium"
-                                                            >
-                                                                View Signature
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                            <!-- FFO Match Result -->
-                                            <template v-else>
+                                <span class="sr-only">Close</span>
+                                <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                            </button>
+                        </div>
+                        
+                        <div class="p-4 space-y-4 overflow-y-auto flex-1">
+                            <!-- Empty State -->
+                            <div v-if="!allSubmits?.length" class="flex flex-col items-center justify-center h-full text-center">
+                                <svg class="w-16 h-16 text-gray-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm5.78 2.47a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06z"/>
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">No Activity Logs Yet</h3>
+                                <p class="text-gray-500 text-sm">
+                                    Activity logs will appear here once actions are performed.
+                                </p>
+                            </div>
+                            <!-- Logs List -->
+                            <div v-else>
+                                <div v-for="submit in allSubmits" :key="submit.id" class="p-4 bg-gray-50 rounded-lg space-y-2 mb-4">
+                                    <!-- Regular Match Result -->
+                                    <template v-if="submit.type === 'regular'">
+                                        <div class="flex justify-between items-center overflow-y-auto">
+                                            <div class="w-full">
                                                 <div class="flex w-full justify-between gap-2 mb-2">
                                                     <div class="flex items-center text-gray-600 gap-2">
-                                                        <p class="text-sm">{{ submit.match?.sport_id?.sport?.name }} {{ submit.match?.sport_id?.categories }}</p>
+                                                        <p class="text-sm">{{ submit.match_result?.sport_match?.assigned_sport?.sport?.name }} {{ submit.match_result?.sport_match?.assigned_sport?.categories }}</p>
                                                         <span class="text-sm">•</span>
-                                                        <p class="text-sm">{{ submit.match?.sport_variation_name }}</p>
+                                                        <p class="text-sm">Round {{ submit.match_result?.sport_match?.round }}</p>
+                                                        <span class="text-sm">•</span>
+                                                        <p class="text-sm">{{ submit.match_result?.sport_match?.game }}</p>
                                                     </div>
                                                     <p class="text-xs text-right text-gray-500">
                                                         <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
                                                     </p>
                                                 </div>
-                                                <h1 class="text-sm font-semibold text-gray-800">Game has been completed</h1>
+
+                                                <p class="text-sm font-medium text-gray-800">
+                                                    Winner: {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }}
+                                                </p>
                                                 <p class="text-sm text-gray-600">
-                                                    You can now check the {{ submit.match?.sport_id?.sport?.name }} to see the results
+                                                    {{ submit.match_result?.winning_team?.assigned_team_name || 'Unknown Team' }} won against {{ submit.match_result?.losing_team?.assigned_team_name || 'Unknown Team' }}
                                                 </p>
                                                 <div class="flex justify-between">
                                                     <div class="mt-3 flex gap-2">
@@ -1426,22 +1369,55 @@
                                                         </p>
                                                     </div>
                                                     <button 
-                                                        @click="openSignature(submit.signature)"
-                                                        class="mt-2 text-xs text-blue-600 py-1.5 px-2.5 rounded-full bg-blue-100 hover:bg-blue-200 hover:text-blue-800 font-medium"
+                                                        @click="openSignature(submit.signature, submit.official_name)"
+                                                        class="mt-2 py-1.5 px-2.5 rounded-full bg-blue-100 text-xs hover:bg-blue-200 text-blue-600 hover:text-blue-800 font-medium"
                                                     >
                                                         View Signature
                                                     </button>
                                                 </div>
-                                            </template>
+                                            </div>
                                         </div>
-                                    </div>
-                                    </div>
-                                </DialogPanel>
-                            </TransitionChild>
+                                    </template>
+                                    <!-- FFO Match Result -->
+                                    <template v-else>
+                                        <div class="flex w-full justify-between gap-2 mb-2">
+                                            <div class="flex items-center text-gray-600 gap-2">
+                                                <p class="text-sm">{{ submit.match?.sport_id?.sport?.name }} {{ submit.match?.sport_id?.categories }}</p>
+                                                <span class="text-sm">•</span>
+                                                <p class="text-sm">{{ submit.match?.sport_variation_name }}</p>
+                                            </div>
+                                            <p class="text-xs text-right text-gray-500">
+                                                <span class="ml-2">{{ formatDateTime(submit.created_at) }}</span>
+                                            </p>
+                                        </div>
+                                        <h1 class="text-sm font-semibold text-gray-800">Game has been completed</h1>
+                                        <p class="text-sm text-gray-600">
+                                            You can now check the {{ submit.match?.sport_id?.sport?.name }} to see the results
+                                        </p>
+                                        <div class="flex justify-between">
+                                            <div class="mt-3 flex gap-2">
+                                                <p class="text-xs text-gray-500">
+                                                    Submitted by: {{ submit.facilitator?.student?.first_name }} {{ submit.facilitator?.student?.last_name }}
+                                                </p>
+                                                <span class="text-xs text-gray-500">•</span>
+                                                <p class="text-xs text-gray-500">
+                                                    Validated by: {{ submit.official_name }}
+                                                </p>
+                                            </div>
+                                            <button 
+                                                @click="openSignature(submit.signature, submit.official_name)"
+                                                class="mt-2 text-xs text-blue-600 py-1.5 px-2.5 rounded-full bg-blue-100 hover:bg-blue-200 hover:text-blue-800 font-medium"
+                                            >
+                                                View Signature
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </Dialog>
-            </TransitionRoot>
+                </div>
+            </div>
 
             <!-- Signature Modal -->
             <TransitionRoot appear :show="showSignature" as="template">
@@ -1482,12 +1458,23 @@
                                             <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                                         </button>
                                     </div>
-                                    <div class="flex justify-center">
+
+
+                                    <div class="">
                                         <img 
                                             :src="selectedSignature" 
                                             alt="Official Signature" 
-                                            class="max-w-full max-h-[300px] object-contain border border-gray-200 rounded-lg bg-white p-2"
+                                            class="max-w-full max-h-[300px] object-contain border border-gray-200 rounded-lg mb-4 bg-white p-2"
                                         />
+                                        <div>
+                                            <label for="official_name" class="block text-sm font-medium mb-2">Official Full Name</label>
+                                            <div 
+                                                :src="selectedOfficialName"
+                                                class="text-sm text-gray-700 p-2.5 border border-gray-300 rounded-md"
+                                                >
+                                                {{ selectedOfficialName }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </DialogPanel>
                             </TransitionChild>
@@ -1495,6 +1482,7 @@
                     </div>
                 </Dialog>
             </TransitionRoot>
+            
         </template>
     </AppLayout>
     <SuccessModal
@@ -1581,9 +1569,11 @@
     const page = usePage();
     const showSignature = ref(false);
     const selectedSignature = ref(null);
+    const selectedOfficialName = ref(null);
     const showTooltip = ref(false);
-    const openSignature = (signature) => {
+    const openSignature = (signature,official_name) => {
         selectedSignature.value = signature;
+        selectedOfficialName.value = official_name;
         showSignature.value = true;
     };
 

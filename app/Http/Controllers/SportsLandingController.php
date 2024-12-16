@@ -487,7 +487,8 @@ class SportsLandingController extends Controller
                             'id' => $match->assignedSport?->sport?->id,
                             'name' => $match->assignedSport?->sport?->name
                         ],
-                        'categories' => $match->assignedSport?->categories
+                        'categories' => $match->assignedSport?->categories,
+                        'setup' => $match->assignedSport?->setup
                     ],
                     'teamA' => [
                         'id' => $match->teamA?->id,

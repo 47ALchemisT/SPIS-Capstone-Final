@@ -517,16 +517,7 @@
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div class="flex flex-col items-center">
-                                                    <span class="text-2xl font-bold text-gray-400">VS</span>
-                                                    <div v-if="match.status === 'Completed'" class="mt-2 text-sm">
-                                                        <div class="space-y-1 text-center">
-                                                            <p class="text-green-600 font-medium">
-                                                                Winner: {{ match.match_result.winning_team?.assigned_team_name }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+
                                                 <div class="flex-1 text-center">
                                                     <div class="p-4 bg-white rounded-lg">
                                                         <p class="font-semibold text-lg text-gray-900">

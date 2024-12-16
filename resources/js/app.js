@@ -6,7 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import { InertiaProgress } from '@inertiajs/progress';
-const appName = 'SPIS';
+const appName = 'SPSIS';
 
 createInertiaApp({
     title: (title) => `${appName} - ${title} `,
