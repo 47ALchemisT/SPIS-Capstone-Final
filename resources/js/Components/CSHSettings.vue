@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+  <div class="max-w-7xl mx-auto ">
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
       <div class="space-y-6">
         <!-- Account Settings Section -->
         <div class="">
@@ -19,8 +19,8 @@
                   <h3 class="text-lg font-medium text-gray-900">Personal Information</h3>
                   <p class="mt-1 text-sm text-gray-600">Your personal details and information.</p>
                 </div>
-                <div class="flex items-center">
-                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                <div class="flex sm:items-center">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap bg-blue-100 text-blue-800">
                     Committee Head
                   </span>
                 </div>
@@ -68,7 +68,7 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label class="block text-sm font-medium text-gray-700">Account Type</label>
-                  <p class="mt-2 text-sm text-gray-900">Committee Head</p>
+                  <p class="mt-2 text-sm text-gray-900 ">Committee Head</p>
                 </div>
 
                 <div>

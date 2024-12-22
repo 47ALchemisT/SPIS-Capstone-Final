@@ -86,7 +86,7 @@
 
     <!-- Score Modal -->
     <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg relative w-full mx-4">
+      <div class="bg-white rounded-lg shadow-lg relative w-full sm:w-[400px] mx-4">
         <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             Add Score

@@ -31,49 +31,109 @@
                 </div>
 
                 <!-- Assigned State -->
-                <div v-else class="space-y-6">
+                <div v-else class="space-y-3">
                     <!-- Tabs Navigation -->
-                    <div class="sticky top-[4rem] py-3 z-40 bg-white/95 backdrop-blur-md">
-                        <nav class="flex flex-col sm:flex-row relative justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-                            <div class="sm:block hidden px-1">
-                                <h1 class="text-xl font-semibold text-gray-800">College Committee Head Dashboard</h1>
-                                <p class="text-sm text-gray-500 hidden sm:block">{{ assignedCollege.assigned_team.college.name }}</p>
-                            </div>
-                            
-                            <div class="w-full sm:w-auto">
-                                <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl flex-wrap">
-                                    <button 
-                                        v-for="tab in ['home', 'sports', 'schedule', 'Overview', 'settings']"
-                                        :key="tab"
-                                        @click="activeTab = tab"
-                                        :class="[
-                                            'px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg',
-                                            activeTab === tab
-                                                ? 'text-blue-700 bg-white shadow-sm'
-                                                : 'text-blue-400 hover:text-blue-600 hover:bg-blue-100'
-                                        ]"
-                                    >
-                                        <div class="flex items-center gap-2">
-                                            <i :class="[
-                                                'fas',
-                                                {
-                                                    'fa-home': tab === 'home',
-                                                    'fa-running': tab === 'sports',
-                                                    'fa-calendar': tab === 'schedule',
-                                                    'fa-chart-bar': tab === 'Overview',
-                                                    'fa-cog': tab === 'settings'
-                                                }
-                                            ]"></i>
-                                            <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
-                                        </div>
-                                    </button>
+                    <div class="sticky top-[4rem] sm:py-3 z-40 bg-white/95 backdrop-blur-md">
+                        <nav
+                        class="flex flex-col sm:flex-row relative justify-between items-start sm:items-center space-y-4 sm:space-y-0"
+                        >
+                        <!-- Title and Description -->
+                        <div class="sm:block hidden px-1">
+                            <h1 class="text-xl font-semibold text-gray-800">Facilitator Dashboard</h1>
+                            <p class="text-sm text-gray-500 hidden sm:block">
+                            Manage your sports and activities
+                            </p>
+                        </div>
+
+                        <!-- Tabs Navigation for Larger Screens -->
+                        <div class="hidden sm:flex w-full sm:w-auto">
+                            <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl flex-wrap">
+                            <button
+                                v-for="tab in ['home', 'sports', 'Overview','schedule','settings']"
+                                :key="tab"
+                                @click="activeTab = tab"
+                                :class="[
+                                'px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg',
+                                activeTab === tab
+                                    ? 'text-blue-700 bg-white shadow-sm'
+                                    : 'text-blue-400 hover:text-blue-600 hover:bg-blue-100',
+                                ]"
+                            >
+                                <div class="flex items-center gap-2">
+                                <!-- Icons for each tab -->
+                                <i
+                                    :class="[
+                                    'fas',
+                                    {
+                                        'fa-home': tab === 'home',
+                                        'fa-running': tab === 'sports',
+                                        'fa-chart-bar': tab === 'Overview',
+                                        'fa-calendar': tab === 'schedule',
+                                        'fa-cog': tab === 'settings',
+                                    },
+                                    ]"
+                                ></i>
+                                <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
                                 </div>
+                            </button>
                             </div>
+                        </div>
+
+                        <!-- Custom Dropdown Navigation for Mobile View -->
+                        <div class="sm:hidden w-full relative">
+                            <button
+                            @click="dropdownOpen = !dropdownOpen"
+                            class="w-full flex justify-between items-center mb-2 px-4 py-2.5 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:outline-none"
+                            >
+                            <div class="flex items-center gap-2">
+                                <i
+                                :class="[
+                                    'fas',
+                                    {
+                                    'fa-home': activeTab === 'home',
+                                    'fa-running': activeTab === 'sports',
+                                    'fa-chart-bar': activeTab === 'Overview',
+                                    'fa-calendar': tab === 'schedule',
+                                    'fa-cog': activeTab === 'settings',
+                                    },
+                                ]"
+                                ></i>
+                                <span>{{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }}</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-500"></i>
+                            </button>
+
+                            <ul
+                            v-if="dropdownOpen"
+                            class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg"
+                            >
+                            <li
+                                v-for="tab in ['home', 'sports', 'Overview','schedule', 'settings']"
+                                :key="tab"
+                                @click="activeTab = tab; dropdownOpen = false"
+                                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-blue-100 cursor-pointer"
+                            >
+                                <i
+                                :class="[
+                                    'fas',
+                                    {
+                                    'fa-home': tab === 'home',
+                                    'fa-running': tab === 'sports',
+                                    'fa-chart-bar': tab === 'Overview',
+                                    'fa-calendar': tab === 'schedule',
+                                    'fa-cog': tab === 'settings',
+                                    },
+                                ]"
+                                ></i>
+                                <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
+                            </li>
+                            </ul>
+                        </div>
                         </nav>
                     </div>
 
-                    <div class="px-4 pb-4">
-                            <div class="py-8" v-if="activeTab === 'home'">
+                    <div class=" pb-4">
+                            <div class="pb-8" v-if="activeTab === 'home'">
                                 <div class="space-y-8">
                                     <!-- Welcome Section -->
                                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -96,7 +156,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="mt-4 rounded-xl">
-                                                    <div class="grid grid-cols-2 gap-4">
+                                                    <div class="grid sm:grid-cols-2 gap-4">
                                                         <button 
                                                             @click="activeTab = 'sports'"
                                                             class="flex items-center justify-center gap-3 p-2.5 rounded-lg  bg-blue-500 hover:bg-blue-600 transition-all duration-200"
@@ -115,20 +175,24 @@
                                                 </div>
                                             </div>
 
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                            <div class="grid sm:grid-cols-2 gap-4">
+                                                <div class="flex sm:block gap-4 rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                                                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                                                         <i class="fa-solid fa-graduation-cap text-blue-600 text-xl"></i>
                                                     </div>
-                                                    <p class="text-sm text-gray-500">Total Students</p>
-                                                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ students.length }}</p>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Total Students</p>
+                                                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ students.length }}</p>
+                                                    </div>
                                                 </div>
-                                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                                                <div class="flex sm:block gap-4 bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                                                     <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                                                         <i class="fa-solid fa-user-check text-green-600 text-xl"></i>
                                                     </div>
-                                                    <p class="text-sm text-gray-500">Assigned Players</p>
-                                                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ totalAssignedStudents }}</p>
+                                                    <div>
+                                                        <p class="text-sm text-gray-500">Assigned Students</p>
+                                                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ totalAssignedStudents }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -138,7 +202,7 @@
                                         <div class="space-y-6">
                                             <!-- Task Progress -->
                                             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                                                <div class="flex items-center justify-between mb-4">
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
                                                     <h2 class="text-lg font-semibold text-gray-900">Sports Assignment Progress</h2>
                                                     <span class="text-sm text-gray-500">
                                                         {{ sportsWithStatus.filter(s => s.assigned_players?.length > 0).length }}/{{ sportsWithStatus.length }} completed
@@ -178,7 +242,7 @@
                             </div>
 
                             <div v-if="activeTab === 'sports'" class="min-h-screen">
-                                <div class="space-y-5 py-8">
+                                <div class="space-y-5 pb-8">
                                     <!-- Header Section with improved styling -->
                                     <div class="bg-white rounded-xl ">
                                         <div class="space-y-4 sm:items-center sm:justify-between gap-4">
@@ -211,7 +275,7 @@
                                         <li v-for="sport in filteredSports" :key="sport.id" 
                                             class="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200"
                                         >
-                                            <div class="p-6">
+                                            <div class="p-4 sm:p-6">
                                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                                                     <div class="flex items-center gap-4">
                                                         <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
@@ -238,7 +302,7 @@
                                                 </div>
                                                 
                                                 <!-- Enhanced Accordion -->
-                                                <Disclosure v-slot="{ open }" as="div" class="mt-6" v-if="sport.assigned_players">
+                                                <Disclosure v-slot="{ open }" as="div" class="mt-4" v-if="sport.assigned_players">
                                                     <DisclosureButton 
                                                         class="flex w-full items-center justify-between rounded-lg bg-gray-50 px-5 py-3.5 text-left text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500/50 focus-visible:ring-opacity-75 transition-all duration-200"
                                                     >
@@ -298,13 +362,13 @@
                                 </div>
                             </div>
 
-                            <div v-if="activeTab === 'Overview'" class="py-6">
-                                <div class="max-w-7xl mx-auto px-12 space-y-8">
+                            <div v-if="activeTab === 'Overview'" class="pb-6">
+                                <div class="max-w-7xl mx-auto sm:px-12 space-y-4">
                                     <!-- Important Dates Section -->
                                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                                         <h3 class="text-lg font-medium text-gray-900 mb-4">Important Dates</h3>
                                         <div class="space-y-3">
-                                            <div class="flex items-start gap-4">
+                                            <div class="flex flex-col items-start gap-2 sm:gap-4">
                                                 <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
                                                     {{ formatDate(palakasan.start_date) }}
                                                 </div>
@@ -313,7 +377,7 @@
                                                     <p class="text-sm text-gray-600">Opening ceremony and start of competitions</p>
                                                 </div>
                                             </div>
-                                            <div class="flex items-start gap-4">
+                                            <div class="flex flex-col items-start gap-2 sm:gap-4">
                                                 <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
                                                     {{ formatDate(palakasan.end_date) }}
                                                 </div>
@@ -362,12 +426,12 @@
                             </div>
 
                             <div v-if="activeTab === 'schedule'" class="bg-white overflow-hidden sm:rounded-lg">
-                                <div class="p-6">
-                                    <div class="flex items-center justify-between mb-6">
-                                        <h2 class="text-2xl font-bold text-gray-900">Match Schedule</h2>
+                                <div class="">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Match Schedule</h2>
                                         
                                         <!-- Enhanced Tab Navigation -->
-                                        <div class="inline-flex p-1 space-x-1 bg-gray-100 rounded-xl">
+                                        <div class="grid grid-cols-3 sm:inline-flex p-1 space-x-1 bg-gray-100 rounded-xl">
                                             <button 
                                                 v-for="tab in ['all', 'pending', 'completed']"
                                                 :key="tab"
@@ -408,21 +472,19 @@
                                             <div class="flex items-center justify-between mb-4">
                                                 <div class="flex items-center gap-3">
                                                     <div>
-                                                        <h3 class="text-lg font-semibold text-gray-900">
+                                                        <h3 class=" text-sm sm:text-lg font-semibold mb-2 sm:mb-0 text-gray-900">
+                                                            <i class="fa-solid fa-bolt"></i>
                                                             {{ match.assignedSport?.sport?.name || 'Free for All Event' }}
                                                             <span class="text-gray-600">• {{ match.sport_variation_name }}</span>
                                                         </h3>
-                                                        <div class="flex items-center gap-3 mt-1">
-                                                            <span :class="[
-                                                                'px-3 py-1 text-xs font-medium rounded-full',
-                                                                {
-                                                                    'bg-yellow-100 text-yellow-800': match.status === 'Pending',
-                                                                    'bg-green-100 text-green-800': match.status === 'Completed',
-                                                                    'bg-blue-100 text-blue-800': match.status === 'In Progress'
-                                                                }
-                                                            ]">
+                                                        <div class="sm:flex block items-center gap-3 mt-1">
+                                                            <div :class="['flex', 'items-center', 'gap-2', 'text-sm', {
+                                                                'text-yellow-600': match.status === 'pending',
+                                                                'text-green-600': match.status === 'Completed',
+                                                            }]">
+                                                                <i class="fas fa-circle-check"></i>
                                                                 {{ match.status }}
-                                                            </span>
+                                                            </div>
                                                             <div class="flex items-center gap-2 text-sm text-gray-500">
                                                                 <i class="fas fa-map-marker-alt"></i>
                                                                 {{ match.matchVenue?.name || 'Venue TBD' }}
@@ -438,7 +500,7 @@
 
                                             <!-- Teams Grid -->
                                             <div class="mt-4">
-                                                <h4 class="text-sm font-medium text-gray-700 mb-3">Participating Teams</h4>
+                                                <h4 class="text-sm font-semibpld text-gray-700 mb-2">Participating Teams</h4>
                                                 <div v-if="match.participating_teams?.length" 
                                                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
                                                 >
@@ -448,16 +510,6 @@
                                                         <div>
                                                             <p class="font-medium text-gray-900">{{ team.team_name }}</p>
                                                             <p class="text-sm text-gray-500">{{ team.college_name }}</p>
-                                                        </div>
-                                                        <div v-if="match.status === 'Completed'" 
-                                                            class="px-3 py-1 bg-white rounded-full text-sm font-medium"
-                                                            :class="{
-                                                                'text-yellow-600': team.rank === 1,
-                                                                'text-gray-600': team.rank !== 1
-                                                            }"
-                                                        >
-                                                            {{ team.rank }}{{ getOrdinalSuffix(team.rank) }} 
-                                                            <span class="text-xs text-gray-500">({{ team.points }}pts)</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -474,22 +526,20 @@
                                             <!-- Match Header -->
                                             <div class="flex items-center justify-between mb-6">
                                                 <div>
-                                                    <h3 class="text-lg font-semibold text-gray-900">
+                                                    <h3 class="text-sm sm:text-lg font-semibold text-gray-900">
+                                                        <i class="fa-solid fa-bolt"></i>
                                                         {{ match.assigned_sport?.sport?.name || 'Sport TBD' }}
                                                         <span class="text-gray-600">• Round {{ match.round || '?' }}</span>
                                                         <span class="text-gray-600">• {{ match.game || '?' }}</span>
                                                     </h3>
-                                                    <div class="flex items-center gap-3 mt-1">
-                                                        <span :class="[
-                                                            'px-3 py-1 text-xs font-medium rounded-full',
-                                                            {
-                                                                'bg-yellow-100 text-yellow-800': match.status === 'Pending',
-                                                                'bg-green-100 text-green-800': match.status === 'Completed',
-                                                                'bg-blue-100 text-blue-800': match.status === 'In Progress'
-                                                            }
-                                                        ]">
-                                                            {{ match.status || 'Pending' }}
-                                                        </span>
+                                                    <div class="sm:flex block items-center gap-3 mt-1">
+                                                        <div :class="['flex', 'items-center', 'gap-2', 'text-sm', {
+                                                                'text-yellow-500': match.status === 'Pending',
+                                                                'text-green-600': match.status === 'Completed',
+                                                            }]">
+                                                                <i class="fas fa-circle-check"></i>
+                                                                {{ match.status }}
+                                                            </div>
                                                         <div class="flex items-center gap-2 text-sm text-gray-500">
                                                             <i class="fas fa-map-marker-alt"></i>
                                                             {{ match.match_venue?.name || 'Venue TBD' }}
@@ -503,9 +553,9 @@
                                             </div>
 
                                             <!-- Teams VS Display -->
-                                            <div class="flex items-center justify-between gap-4 bg-gray-50 rounded-xl p-6">
-                                                <div class="flex-1 text-center">
-                                                    <div class="p-4 bg-white rounded-lg">
+                                            <div class="block space-y-2 sm:space-y-0 sm:flex items-center justify-between gap-4 rounded-xl">
+                                                <div class=" flex-1 text-center">
+                                                    <div class="p-4 bg-gray-50 rounded-lg">
                                                         <p class="font-semibold text-lg text-gray-900">
                                                             {{ match.teamA?.assigned_team_name || 'TBD' }}
                                                         </p>
@@ -516,7 +566,7 @@
                                                 </div>
 
                                                 <div class="flex-1 text-center">
-                                                    <div class="p-4 bg-white rounded-lg">
+                                                    <div class="p-4 bg-gray-50 rounded-lg">
                                                         <p class="font-semibold text-lg text-gray-900">
                                                             {{ match.teamB?.assigned_team_name || 'TBD' }}
                                                         </p>
@@ -553,7 +603,7 @@
                         </TransitionChild>
 
                         <div class="fixed inset-0 overflow-y-auto">
-                            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                            <div class="flex items-center justify-center w-full px-4 py-8 text-center">
                                 <TransitionChild
                                     enter="duration-300 ease-out"
                                     enter-from="opacity-0 scale-95"
@@ -562,7 +612,7 @@
                                     leave-from="opacity-100 scale-100"
                                     leave-to="opacity-0 scale-95"
                                 >
-                                    <DialogPanel class="w-[32rem] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <DialogPanel class="w-full sm:w-[32rem] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                                         <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
                                             Assign Players to {{ selectedSport ? selectedSport.sport.name : '' }} 
                                             {{ selectedSport ? selectedSport.categories : '' }}
@@ -615,7 +665,7 @@
                                         </div>
 
                                         <!-- Button section in the modal -->
-                                        <div class="mt-6 flex justify-end gap-3">
+                                        <div class="mt-6 grid grid-cols-2 sm:flex sm:justify-end gap-3">
                                             <button
                                                 type="button"
                                                 class="inline-flex justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -801,6 +851,7 @@
     const showConfirmModal = ref(false);
     const playerToRemove = ref(null);
     const sportIdToRemove = ref(null);
+    const dropdownOpen = ref(false);
 
     const isModalOpen = ref(false);
     const selectedTeam = ref(null);

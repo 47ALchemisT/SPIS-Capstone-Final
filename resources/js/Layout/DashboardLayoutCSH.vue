@@ -9,7 +9,7 @@
                         <span class="text-lg sm:text-xl font-semibold text-white tracking-wide">SPSIS</span>
                     </div>
                     <div class="ml-2 sm:ml-3 relative flex items-center gap-2 sm:gap-3">
-                        <div class="hidden sm:block">
+                        <div>
                             <p class="text-white text-sm font-semibold text-right tracking-wide">{{ comHead.student.first_name }} {{ comHead.student.last_name }}</p>
                             <p class="text-blue-100 text-xs text-right">College Committee Head</p>
                         </div>

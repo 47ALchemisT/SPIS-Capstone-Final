@@ -130,9 +130,14 @@
                             </div>
 
                             <!-- Description with fade effect -->
-                            <div class="mt-4 relative">
-                                <p class="text-sm text-gray-600 line-clamp-2">{{ sport.description || 'No description available' }}</p>
-                                <div class="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent"></div>
+                            <div class="mt-2 relative">
+                                <p v-if="!isExpanded" class="text-sm text-gray-600 line-clamp-2">{{ sport.description || 'No description available' }}</p>
+                                <p v-else class="text-sm text-gray-600">{{ sport.description || 'No description available' }}</p>
+                                
+                                <button @click="toggleDescription" class="text-blue-500 text-sm mt-2">
+                                    {{ isExpanded ? 'See Less' : 'See More' }}
+                                </button>
+                                
                             </div>
                         </div>
                     </div>
@@ -337,6 +342,11 @@
 
     const searchQuery = ref('');
 
+    const isExpanded = ref(false);
+
+    function toggleDescription() {
+        isExpanded.value = !isExpanded.value;
+    }
     const filteredSports = computed(() => {
         if (!searchQuery.value) return props.sports;
         

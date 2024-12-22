@@ -26,10 +26,7 @@ class DashboardController extends Controller
         $account = StudentAccount::all();
         $students = Student::where('status', 'active')->get();
         $palakasans = Palakasan::all();
-        $latestPalakasan = Palakasan::where('status', 'live')
-            ->orWhere('status', 'completed')
-            ->latest()
-            ->first();
+        $latestPalakasan = Palakasan::latest()->first();
 
         if (!$latestPalakasan) {
             $latestPalakasan = Palakasan::latest()->first();

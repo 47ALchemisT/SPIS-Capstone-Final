@@ -151,8 +151,6 @@
 
             <section class="bg-white mt-5 overflow-hidden rounded-lg p-2">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-full">
-
-
                     <div class="col-span-2 h-full">
                         <div v-if="latestPalakasan" class="bg-white overflow-hidden ring-1 ring-gray-200 rounded-lg h-full">
                             <div class="p-6 h-full">

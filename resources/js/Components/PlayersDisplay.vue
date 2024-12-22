@@ -13,20 +13,20 @@
                     <table class="min-w-full">
                         <thead>
                             <tr class="text-gray-700 font-normal">
-                                <th class="py-2 px-4 text-left">Player Name</th>
-                                <th class="py-2 px-4 text-left">Student ID</th>
-                                <th class="py-2 px-4 text-left">College</th>
-                                <th class="py-2 px-4 text-left">Email</th>
+                                <th class="py-2 px-4 text-left whitespace-nowrap">Player Name</th>
+                                <th class="py-2 px-4 text-left whitespace-nowrap">Student ID</th>
+                                <th class="py-2 px-4 text-left whitespace-nowrap">College</th>
+                                <th class="py-2 px-4 text-left whitespace-nowrap">Email</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="player in group.players" :key="player.id" class="hover:bg-gray-50">
-                                <td class="py-2 px-4 text-sm text-gray-800 font-semibold">
+                                <td class="py-2 px-4 text-sm text-gray-800 font-semibold whitespace-nowrap">
                                     {{ player.student.first_name }} {{ player.student.last_name }}
                                 </td>
-                                <td class="py-2 px-4 text-sm text-gray-600">{{ player.student.id_number }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-600">{{ player.student.college }}</td>
-                                <td class="py-2 px-4 text-sm text-gray-600">{{ player.student.univ_email }}</td>
+                                <td class="py-2 px-4 text-sm text-gray-600 whitespace-nowrap">{{ player.student.id_number }}</td>
+                                <td class="py-2 px-4 text-sm text-gray-600 whitespace-nowrap">{{ player.student.college }}</td>
+                                <td class="py-2 px-4 text-sm text-gray-600 whitespace-nowrap">{{ player.student.univ_email }}</td>
                             </tr>
                         </tbody>
                     </table>

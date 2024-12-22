@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="mt-4">
+                <div v-if="latestPalakasan.status === 'completed' || latestPalakasan.status === 'live'" class="mt-4">
                     <div v-if="filteredSports.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div v-for="sport in filteredSports" :key="sport.id" 
                             @click="viewSport(sport.id)"
@@ -97,6 +97,9 @@
                     <div v-else class="text-center mt-10">
                         <p class="text-gray-500">No sports found matching your search.</p>
                     </div>
+                </div>
+                <div v-else class="text-center text-gray-500 py-4">
+                    The Palakasan has not started yet.
                 </div>
             </div>
         </div>

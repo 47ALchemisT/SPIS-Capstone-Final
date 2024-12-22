@@ -83,8 +83,6 @@ class OnePalakasanController extends Controller
                 }
             ])
                 ->whereIn('assigned_sport_id', $assignedSports->pluck('id'))
-                ->where('date', '>=', $latestPalakasan->start_date)
-                ->where('date', '<=', $latestPalakasan->end_date)
                 ->where(function($query) {
                     $query->where('status', '!=', 'cancelled')
                           ->orWhereNull('status');

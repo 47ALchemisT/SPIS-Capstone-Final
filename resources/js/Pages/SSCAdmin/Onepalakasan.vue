@@ -1959,7 +1959,7 @@ const openTeamsModal = () => {
         case 'completed':
         return 'text-green-500 bg-green-100';
         case 'cancelled':
-        return 'text-red-500 bg-red-100';
+        return 'text-gray-500 bg-gray-100';
         default:
         return 'text-gray-500';
     }

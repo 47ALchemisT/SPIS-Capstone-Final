@@ -82,7 +82,7 @@
                 </div>
 
                 <!-- Schedule Cards -->
-                <div class="space-y-4">
+                <div v-if="latestPalakasan.status === 'live' || latestPalakasan.status === 'completed'" class="space-y-4">
                     <template v-if="Object.keys(groupedMatches).length === 0">
                         <div class="text-center text-gray-500 py-4">
                             There are no scheduled matches yet.
@@ -236,6 +236,10 @@
                         </template>
                     </template>
                 </div>
+                <div v-else class="text-center text-gray-500 py-4">
+                    The Palakasan has not started yet.
+                </div>
+
             </div>
         </div>
     </MainLayout>

@@ -603,6 +603,7 @@ const submitResult = () => {
       scoreLoading.value = false;
       showSuccessModal.value = true;
       successMessage.value = 'Result submitted successfully!';
+      window.location.reload();
     },
     onError: (errors) => {
       console.error('Error submitting result:', errors);

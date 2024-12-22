@@ -63,61 +63,160 @@
         <main>
             <slot></slot>
         </main>
+
         <footer class="bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-12 mt-4">
-                <div class="text-left mb-4">
-                    <h1 class="text-2xl font-bold text-gray-900">Footer</h1>
-                    <p class="text-gray-600">Browse all available sports in Palakasan</p>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-12">
+            <div class="">
+                <!-- Desktop Grid View - hidden on mobile -->
+                <div class="hidden md:grid md:grid-cols-4 md:gap-8">
+                <!-- About Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">About Palakasan</h3>
+                    <div class="text-gray-600 text-sm leading-relaxed">
+                    <p>A comprehensive sports tournament management platform.</p>
+                    </div>
                 </div>
 
-                <div class="border-b border-gray-200 mb-4">
-                    <nav class="space-y-2">
-                        <div @click="toggleSection('about')" class="cursor-pointer">
-                            <h3 class="text-lg font-semibold text-gray-900">About Palakasan</h3>
-                        </div>
-                        <div v-if="openSections.about" class="text-gray-600 text-sm leading-relaxed">
-                            <p>A comprehensive sports tournament management platform.</p>
-                        </div>
-
-                        <div @click="toggleSection('features')" class="cursor-pointer">
-                            <h3 class="text-lg font-semibold text-gray-900">Features</h3>
-                        </div>
-                        <div v-if="openSections.features" class="space-y-2">
-                            <ul>
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-chart-line text-blue-600 w-5"></i><span class="text-sm">Real-time Updates</span></li>
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-users text-blue-600 w-5"></i><span class="text-sm">Team Management</span></li>
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-trophy text-blue-600 w-5"></i><span class="text-sm">Tournament Brackets</span></li>
-                            </ul>
-                        </div>
-
-                        <div @click="toggleSection('team')" class="cursor-pointer">
-                            <h3 class="text-lg font-semibold text-gray-900">Web Development Team</h3>
-                        </div>
-                        <div v-if="openSections.team" class="space-y-2">
-                            <ul>
-                                <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Jolander C. Guiral</li>
-                                <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">Kent Remar L. Cuñado</li>
-                                <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">James Bryan V. Balambao</li>
-                            </ul>
-                        </div>
-
-                        <div @click="toggleSection('contact')" class="cursor-pointer">
-                            <h3 class="text-lg font-semibold text-gray-900">Contact Us</h3>
-                        </div>
-                        <div v-if="openSections.contact" class="space-y-2">
-                            <ul>
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-map-marker-alt text-blue-600 w-5"></i><span class="text-sm">MSU Naawan</span></li>
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-envelope text-blue-600 w-5"></i><span class="text-sm">palakasan@tup.edu.ph</span></li>
-                                <li class="flex items-center gap-2 text-gray-600"><i class="fas fa-phone text-blue-600 w-5"></i><span class="text-sm">(02) 8301-3001</span></li>
-                            </ul>
-                        </div>
-                    </nav>
+                <!-- Features Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Features</h3>
+                    <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-chart-line text-blue-600 w-5"></i>
+                        <span class="text-sm">Real-time Updates</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-users text-blue-600 w-5"></i>
+                        <span class="text-sm">Team Management</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-trophy text-blue-600 w-5"></i>
+                        <span class="text-sm">Tournament Brackets</span>
+                    </li>
+                    </ul>
                 </div>
 
-                <div class="mt-12 pt-8 border-t border-gray-200">
-                    <p class="text-center text-gray-600 text-sm"> {{ new Date().getFullYear() }} Supreme Student Council - Mindanao State University at Naawan</p>
-                    <p class="text-center text-gray-600 text-sm"></p>
+                <!-- Team Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Web Development Team</h3>
+                    <ul class="space-y-2">
+                    <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                        Jolander C. Guiral
+                    </li>
+                    <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                        Kent Remar L. Cuñado
+                    </li>
+                    <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                        James Bryan V. Balambao
+                    </li>
+                    </ul>
                 </div>
+
+                <!-- Contact Section -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-map-marker-alt text-blue-600 w-5"></i>
+                        <span class="text-sm">MSU Naawan</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-envelope text-blue-600 w-5"></i>
+                        <span class="text-sm">palakasan@tup.edu.ph</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-phone text-blue-600 w-5"></i>
+                        <span class="text-sm">(02) 8301-3001</span>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+
+                <!-- Mobile Accordion View - hidden on desktop -->
+                <nav class="md:hidden space-y-2">
+                <!-- About Section -->
+                <div>
+                    <div @click="toggleSection('about')" class="cursor-pointer">
+                    <h3 class="text-lg font-semibold text-gray-900">About Palakasan</h3>
+                    </div>
+                    <div v-if="openSections.about" class="text-gray-600 text-sm leading-relaxed mt-2">
+                    <p>A comprehensive sports tournament management platform.</p>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div>
+                    <div @click="toggleSection('features')" class="cursor-pointer">
+                    <h3 class="text-lg font-semibold text-gray-900">Features</h3>
+                    </div>
+                    <div v-if="openSections.features" class="mt-2">
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-chart-line text-blue-600 w-5"></i>
+                        <span class="text-sm">Real-time Updates</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-users text-blue-600 w-5"></i>
+                        <span class="text-sm">Team Management</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-trophy text-blue-600 w-5"></i>
+                        <span class="text-sm">Tournament Brackets</span>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+
+                <!-- Team Section -->
+                <div>
+                    <div @click="toggleSection('team')" class="cursor-pointer">
+                    <h3 class="text-lg font-semibold text-gray-900">Web Development Team</h3>
+                    </div>
+                    <div v-if="openSections.team" class="mt-2">
+                    <ul class="space-y-2">
+                        <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                        Jolander C. Guiral
+                        </li>
+                        <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                        Kent Remar L. Cuñado
+                        </li>
+                        <li class="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                        James Bryan V. Balambao
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div>
+                    <div @click="toggleSection('contact')" class="cursor-pointer">
+                    <h3 class="text-lg font-semibold text-gray-900">Contact Us</h3>
+                    </div>
+                    <div v-if="openSections.contact" class="mt-2">
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-map-marker-alt text-blue-600 w-5"></i>
+                        <span class="text-sm">MSU Naawan</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-envelope text-blue-600 w-5"></i>
+                        <span class="text-sm">palakasan@tup.edu.ph</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-phone text-blue-600 w-5"></i>
+                        <span class="text-sm">(02) 8301-3001</span>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+                </nav>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <p class="text-center text-gray-600 text-sm">
+                {{ currentYear }} Supreme Student Council - Mindanao State University at Naawan
+                </p>
+            </div>
             </div>
         </footer>
     </div>

@@ -5,7 +5,6 @@
                 :teams="assignedTeams"
                 :overallResult="overallResult"
                 :variationResult="variationResult"
-                class="h-[400px]"
             />
         </div>
 
