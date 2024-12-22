@@ -116,6 +116,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     })->name('history-sportview.index');
 
     Route::get('details', [OnePalakasanController::class, 'details'])->name('palakasan.details');
+    Route::put('/palakasan/updateTeams/{id}', [OnePalakasanController::class, 'updateTeams'])->name('palakasan.updateTeams');    
     Route::get('/details/documentation', [OnePalakasanController::class, 'documentation'])->name('palakasan.documentation');
     Route::post('detail/store', [OnePalakasanController::class, 'store_palakasan'])->name('palakasan.store');
     Route::post('sport/store', [OnePalakasanController::class, 'store_sports'])->name('palakasanSport.store');

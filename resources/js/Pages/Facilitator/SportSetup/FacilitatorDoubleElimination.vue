@@ -2,20 +2,21 @@
     <Head :title="sport.sport.name"/>
     <AppLayout :facilitator="facilitator">
         <template v-slot:default>
-            <div class="flex flex-col pt-4">
-                <div class="flex items-center justify-between gap-2">
+            <div class="flex flex-col">
+                <div class="flex items-center justify-between gap-2 pt-4">
                     <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <div>
+                    <div class="hidden sm:flex justify-end mb-2">
                         <button 
                             @click="returnToFacilitator" 
                             type="button" 
-                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-md text-sm px-3 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
                     </div>
-                </div>
+                </div> 
+
 
                 <div class="flex items-center text-gray-600 gap-2 ">
                     <p class="text-sm"> {{ sport.setup }}</p>
@@ -27,7 +28,7 @@
                 
                 <!-- Progress Bar -->
                 <div class="flex mt-3 flex-col">
-                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class=" sm:w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
                     </div>
                     <div class="flex items-center mt-2">
@@ -53,23 +54,21 @@
                 </div>
 
                 <!-- Tabs Navigation -->
-                <nav class="flex relative justify-between mt-4  items-center">
-                    <div class="flex gap-2 rounded-lg ">
-                        <div class=" flex gap-2 rounded-lg">
-                            <button 
-                                v-for="tab in ['matches', 'standing', 'brackets', 'players']"
-                                :key="tab"
-                                @click="activeTab = tab"
-                                :class="[
-                                'px-5 py-2 text-sm',
+                <nav class="mt-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                        <button 
+                            v-for="tab in ['matches', 'standing', 'brackets', 'players']"
+                            :key="tab"
+                            @click="activeTab = tab"
+                            :class="[
+                                'px-5 py-2.5 font-medium sm:py-2 text-sm w-full sm:w-auto',
                                 activeTab === tab
-                                    ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
+                                    ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-md'
                                     : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
-                                ]"
-                            >
-                                {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                            </button>
-                        </div>
+                            ]"
+                        >
+                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                        </button>
                     </div>
                 </nav>
 

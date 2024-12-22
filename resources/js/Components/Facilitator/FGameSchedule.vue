@@ -21,7 +21,7 @@
             <button 
               @click="openScoreModal(match)"
               type="button" 
-              class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
+              class="bg-blue-700 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
               :disabled="!canUpdateMatch(match) || match.status === 'completed'"
             >
               <i class="fa-solid fa-flag mr-2"></i>
@@ -86,7 +86,7 @@
 
     <!-- Score Modal -->
     <div v-if="showScoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg relative w-96">
+      <div class="bg-white rounded-lg shadow-lg relative w-full mx-4">
         <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             Add Score
@@ -179,7 +179,7 @@
 
     <!-- Signature Modal -->
     <div v-if="showSignatureModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg relative w-[500px]">
+      <div class="bg-white rounded-lg shadow-lg relative sm:w-[500px] w-full mx-4">
         <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             Confirm Signature
@@ -228,6 +228,10 @@
                   @mousemove="draw"
                   @mouseup="stopDrawing"
                   @mouseleave="stopDrawing"
+                  @touchstart.prevent="startDrawingTouch"
+                  @touchmove.prevent="drawTouch"
+                  @touchend.prevent="stopDrawing"
+                  @touchcancel.prevent="stopDrawing"
                   width="450"
                   height="200"
                   class="border-2 border-gray-300 rounded-lg w-full"
@@ -331,7 +335,8 @@ const toastRef = ref(null);
 
 const startDrawing = (e) => {
   isDrawing.value = true;
-  [lastX.value, lastY.value] = [e.offsetX, e.offsetY];
+  const pos = getPosition(e);
+  [lastX.value, lastY.value] = [pos.x, pos.y];
 };
 
 const draw = (e) => {
@@ -339,13 +344,47 @@ const draw = (e) => {
   
   const canvas = signatureCanvas.value;
   const ctx = canvas.getContext('2d');
+  const pos = getPosition(e);
   
   ctx.beginPath();
   ctx.moveTo(lastX.value, lastY.value);
-  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.lineTo(pos.x, pos.y);
   ctx.stroke();
   
-  [lastX.value, lastY.value] = [e.offsetX, e.offsetY];
+  [lastX.value, lastY.value] = [pos.x, pos.y];
+};
+
+const drawTouch = (e) => {
+  e.preventDefault(); // Prevent scrolling
+  draw(e);
+};
+
+const startDrawingTouch = (e) => {
+  e.preventDefault(); // Prevent scrolling
+  startDrawing(e);
+};
+
+const getPosition = (e) => {
+  const canvas = signatureCanvas.value;
+  const rect = canvas.getBoundingClientRect();
+  
+  // Calculate the scaling factors
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  let x, y;
+  
+  if (e.touches && e.touches[0]) {
+    // Touch event
+    x = (e.touches[0].clientX - rect.left) * scaleX;
+    y = (e.touches[0].clientY - rect.top) * scaleY;
+  } else {
+    // Mouse event
+    x = e.offsetX * scaleX;
+    y = e.offsetY * scaleY;
+  }
+  
+  return { x, y };
 };
 
 const stopDrawing = () => {
@@ -670,6 +709,9 @@ watch(signatureCanvas, (canvas) => {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
+    
+    // Add touch-action CSS property to prevent default touch behaviors
+    canvas.style.touchAction = 'none';
   }
 });
 

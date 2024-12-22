@@ -4,11 +4,11 @@
       <template v-slot:default>
         <div class="flex items-center justify-between gap-2 pt-4">
                     <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <div>
+                    <div class="hidden sm:flex justify-end mb-2">
                         <button 
                             @click="returnToFacilitator" 
                             type="button" 
-                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-md text-sm px-3 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
@@ -27,7 +27,7 @@
         <!-- Progress Bar -->
         <div class="flex mt-3 flex-col">
 
-          <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div class="sm:w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
           </div>
           <div class="flex items-center mt-2">
@@ -41,9 +41,9 @@
         <!-- Winner/Leading Team Display -->
         <div 
           v-if="displayWinner" 
-          class="mt-6 p-6 border rounded-lg flex flex-col items-center justify-center"
-          :class="[allMatchesCompleted ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200']"
-        >
+            class="mt-6 p-6 border rounded-lg flex flex-col items-center justify-center"
+            :class="[allMatchesCompleted ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200']"
+          >
           <h2 
             class="text-md font-semibold"
             :class="[allMatchesCompleted ? 'text-green-800' : 'text-blue-800']"
@@ -326,6 +326,20 @@ const submitRankings = () => {
     }
   });
 };
+
+watch(progressPercentage, (newValue) => {
+  if (newValue === 100 && !tournamentWinner.value && !props.winner) {
+    determineWinner();
+  }
+});
+
+onMounted(() => {
+  if (props.winner) {
+    tournamentWinner.value = props.winner;
+  } else if (allMatchesCompleted.value) {
+    determineWinner();
+  }
+});
 </script>
 
 <style scoped>

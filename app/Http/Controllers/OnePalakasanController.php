@@ -733,4 +733,19 @@ class OnePalakasanController extends Controller
             return back()->withErrors(['message' => 'Failed to continue Palakasan: ' . $e->getMessage()]);
         }
     }
+
+    public function updateTeams(Request $request, String $id)
+    {
+        $teams = AssignedTeams::findOrFail($id);
+    
+        $validated = $request->validate([
+            'assigned_team_name' => 'required|string|max:255',
+            'college_id' => 'required|exists:colleges,id',
+            'palakasan_id' => 'required|exists:palakasans,id',
+        ]);
+    
+        $teams->update($validated);
+    
+        return redirect()->back()->with('success', 'Team updated successfully.');
+    }
 }

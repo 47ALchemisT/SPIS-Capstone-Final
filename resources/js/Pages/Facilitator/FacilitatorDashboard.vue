@@ -1,43 +1,100 @@
 <template>
   <AppLayout :facilitator="facilitator">
     <Head title="Facilitator Dashboard" />
-    <div class="container px-4">
+    <div class="container">
       <!-- Tabs Navigation -->
-      <div class="sticky top-[4rem] py-3 z-40 bg-white/95 backdrop-blur-md">
-        <nav class="flex flex-col sm:flex-row relative justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+      <div class="sticky top-[4rem] sm:py-3 z-40 bg-white/95 backdrop-blur-md">
+        <nav
+          class="flex flex-col sm:flex-row relative justify-between items-start sm:items-center space-y-4 sm:space-y-0"
+        >
+          <!-- Title and Description -->
           <div class="sm:block hidden px-1">
-            <h1 class=" text-xl font-semibold text-gray-800">Facilitator Dashboard</h1>
-            <p class="text-sm text-gray-500 hidden sm:block">Manage your sports and activities</p>
+            <h1 class="text-xl font-semibold text-gray-800">Facilitator Dashboard</h1>
+            <p class="text-sm text-gray-500 hidden sm:block">
+              Manage your sports and activities
+            </p>
           </div>
-          
-          <div class="w-full sm:w-auto">
-            <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl">
-              <button 
+
+          <!-- Tabs Navigation for Larger Screens -->
+          <div class="hidden sm:flex w-full sm:w-auto">
+            <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl flex-wrap">
+              <button
                 v-for="tab in ['home', 'sports', 'Overview', 'settings']"
                 :key="tab"
                 @click="activeTab = tab"
                 :class="[
                   'px-4 py-2 text-sm font-medium transition-all duration-200 rounded-lg',
                   activeTab === tab
-                    ? 'text-blue-700 bg-white shadow-sm '
-                    : 'text-blue-400 hover:text-blue-600 hover:bg-blue-100'
+                    ? 'text-blue-700 bg-white shadow-sm'
+                    : 'text-blue-400 hover:text-blue-600 hover:bg-blue-100',
                 ]"
               >
                 <div class="flex items-center gap-2">
-                  <!-- Add icons for each tab -->
-                  <i :class="[
+                  <!-- Icons for each tab -->
+                  <i
+                    :class="[
+                      'fas',
+                      {
+                        'fa-home': tab === 'home',
+                        'fa-running': tab === 'sports',
+                        'fa-chart-bar': tab === 'Overview',
+                        'fa-cog': tab === 'settings',
+                      },
+                    ]"
+                  ></i>
+                  <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Custom Dropdown Navigation for Mobile View -->
+          <div class="sm:hidden w-full relative">
+            <button
+              @click="dropdownOpen = !dropdownOpen"
+              class="w-full flex justify-between items-center mb-2 px-4 py-2.5 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:outline-none"
+            >
+              <div class="flex items-center gap-2">
+                <i
+                  :class="[
+                    'fas',
+                    {
+                      'fa-home': activeTab === 'home',
+                      'fa-running': activeTab === 'sports',
+                      'fa-chart-bar': activeTab === 'Overview',
+                      'fa-cog': activeTab === 'settings',
+                    },
+                  ]"
+                ></i>
+                <span>{{ activeTab.charAt(0).toUpperCase() + activeTab.slice(1) }}</span>
+              </div>
+              <i class="fas fa-chevron-down text-gray-500"></i>
+            </button>
+
+            <ul
+              v-if="dropdownOpen"
+              class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg"
+            >
+              <li
+                v-for="tab in ['home', 'sports', 'Overview', 'settings']"
+                :key="tab"
+                @click="activeTab = tab; dropdownOpen = false"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-blue-100 cursor-pointer"
+              >
+                <i
+                  :class="[
                     'fas',
                     {
                       'fa-home': tab === 'home',
                       'fa-running': tab === 'sports',
                       'fa-chart-bar': tab === 'Overview',
-                      'fa-cog': tab === 'settings'
-                    }
-                  ]"></i>
-                  <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
-                </div>
-              </button>
-            </div>
+                      'fa-cog': tab === 'settings',
+                    },
+                  ]"
+                ></i>
+                <span>{{ tab.charAt(0).toUpperCase() + tab.slice(1) }}</span>
+              </li>
+            </ul>
           </div>
         </nav>
       </div>
@@ -60,8 +117,8 @@
                   </div>
                   
                   <!-- Quick Stats -->
-                  <div class="grid grid-cols-2 gap-4 mt-6">
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mt-6">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
                       <div class="flex gap-3">
                         <div class="">
                           <i class="fas fa-trophy text-blue-600 py-3 px-2.5 bg-blue-100 rounded-lg"></i>
@@ -72,7 +129,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-300">
                       <div class="flex gap-3">
                         <div class="">
                           <i class="fas fa-check text-green-600 py-3 px-3 bg-green-100 rounded-lg"></i>
@@ -90,7 +147,7 @@
             </div>
 
             <!-- Task List Card -->
-            <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100 hover:border-blue-200 transition-all duration-300">
+            <div class="bg-white rounded-xl p-4 sm:p-8 shadow-sm border border-gray-100 hover:border-blue-200 transition-all duration-300">
               <div class="flex flex-col h-full">
                 <div class="flex items-center justify-between mb-6">
                   <div>
@@ -122,7 +179,7 @@
                     <div 
                       v-for="sport in assignedSports" 
                       :key="sport.id" 
-                      class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200 border border-gray-50 hover:border-gray-100"
+                      class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors duration-200 "
                     >
                       <div 
                         class="w-3 h-3 rounded-full mr-4"
@@ -153,9 +210,9 @@
             </div>
           </div>
         </div>
-        <div v-if="activeTab === 'sports'" class="py-6">
+        <div v-if="activeTab === 'sports'" class="pt-3 pb-6 sm:py-6">
           <!-- Header Section -->
-          <div class="mb-8">
+          <div class="mb-4 sm:mb-8">
             <h2 class="text-2xl font-bold text-gray-800">Assigned Sports</h2>
             <p class="text-gray-600">Manage and view your assigned sports activities</p>
           </div>
@@ -185,66 +242,73 @@
             </div>
           </div>
 
-          <!-- Sports List -->
-          <div v-if="filteredSports.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div v-for="sport in filteredSports" :key="sport.id" 
-              class="bg-white rounded-xl shadow-sm border transition-all duration-200 group hover:shadow-md"
+          <div v-if="filteredSports.length > 0" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div 
+              v-for="sport in filteredSports" 
+              :key="sport.id" 
+              class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow border border-gray-200 hover:border-blue-300 overflow-hidden"
               :class="[
                 sport.status?.toLowerCase() === 'completed'
                   ? 'border-green-200 hover:border-green-300' 
                   : 'border-gray-200 hover:border-blue-300'
               ]"
             >
-              <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 mb-1">
-                      {{ sport.sport.name }} {{ sport.categories }}
-                    </h3>
-                    <div class="flex items-center gap-2">
-                      <div 
-                        class="w-2.5 h-2.5 rounded-full"
-                        :class="{
-                          'bg-green-500': sport.status?.toLowerCase() === 'completed',
-                          'bg-red-500': sport.status?.toLowerCase() === 'ongoing',
-                        }"
-                      ></div>
-                      <span class="text-sm capitalize"
-                        :class="{
-                          'text-green-700': sport.status?.toLowerCase() === 'completed',
-                          'text-red-700': sport.status?.toLowerCase() === 'ongoing',
-                        }"
-                      >
-                        {{ sport.status }}
-                      </span>
-                    </div>
-                  </div>
+              <!-- Header -->
+              <div class="p-5 border-b bg-gray-50">
+                <div class="flex justify-between ">
+                  <h3 class="text-lg font-semibold text-gray-800 truncate">
+                    {{ sport.sport.name }} {{ sport.categories }}
+                  </h3>
                   <button 
                     @click="navigateToSportView(sport.id)"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 flex items-center gap-2"
+                    class="flex justify-center items-center gap-2 px-3 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:ring-2 focus:ring-offset-1 focus:ring-blue-500"
                   >
-                    View Details
+                    <span class="hidden sm:block">View Details</span>
                     <i class="fas fa-arrow-right"></i>
                   </button>
                 </div>
+                <div class="flex items-center gap-2 sm:mt-2">
+                  <div 
+                    class="w-2.5 h-2.5 rounded-full"
+                    :class="{
+                      'bg-green-500': sport.status?.toLowerCase() === 'completed',
+                      'bg-red-500': sport.status?.toLowerCase() === 'ongoing',
+                    }"
+                  ></div>
+                  <span class="text-sm capitalize"
+                    :class="{
+                      'text-green-600': sport.status?.toLowerCase() === 'completed',
+                      'text-red-600': sport.status?.toLowerCase() === 'ongoing',
+                    }"
+                  >
+                    {{ sport.status }}
+                  </span>
+                </div>
+              </div>
 
-                <div class="flex flex-wrap gap-3 text-sm text-gray-600">
-                  <div class="flex text-blue-500 items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-md">
-                    <i class="fas fa-user text-blue-500"></i>
+              <!-- Body -->
+              <div class="p-5 space-y-3">
+                <div class="flex flex-wrap gap-3">
+                  <!-- Category -->
+                  <div class="flex items-center gap-2 px-3 py-1.5 text-blue-500 bg-blue-50 rounded-full text-xs">
+                    <i class="fas fa-user"></i>
                     <span>{{ sport.categories }}</span>
                   </div>
-                  <div class="flex text-purple-500 items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-md">
-                    <i class="fas fa-bolt text-purple-500"></i>
+                  <!-- Setup -->
+                  <div class="flex items-center gap-2 px-3 py-1.5 text-purple-500 bg-purple-50 rounded-full text-xs">
+                    <i class="fas fa-bolt"></i>
                     <span>{{ sport.setup }}</span>
                   </div>
-                  <div class="flex text-amber-500 items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-md">
-                    <i class="fas fa-trophy text-amber-500"></i>
+                  <!-- Type -->
+                  <div class="flex items-center gap-2 px-3 py-1.5 text-amber-500 bg-amber-50 rounded-full text-xs">
+                    <i class="fas fa-trophy"></i>
                     <span>{{ sport.type }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
 
           <!-- Empty State -->
           <div v-else class="text-center py-12 bg-white rounded-xl border border-gray-200">
@@ -355,7 +419,7 @@ const props = defineProps({
     default: () => []
   }
 });
-
+const dropdownOpen = ref(false);
 const searchQuery = ref('');
 const activeTab = ref('home');  // Default to "Details" 
 

@@ -65,7 +65,7 @@
         </nav>
 
         <!-- Main content -->
-        <div class="contatiner flex-1 px-48 mt-16">
+        <div class="container flex-1 px-4 sm:px-6 lg:px-48 mt-16">
             <slot />
         </div>
     </div>

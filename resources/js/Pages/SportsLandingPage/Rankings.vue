@@ -1,15 +1,15 @@
 <template>
     <Head title="Rankings" />
     <MainLayout :latestPalakasan="latestPalakasan">
-        <div class="py-12">
+        <div class="py-2 sm:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                 <!-- Header Section -->
-                <div class="sm:text-left text-center mb-8">
+                <div class="text-left mb-2 sm:mb-8">
                     <h1 class="text-2xl font-bold text-gray-900">Overall Rankings</h1>
-                    <p class="mt-2 text-gray-600">List of rankings in different sports</p>
+                    <p class=" text-gray-600">List of rankings in different sports</p>
                 </div>
 
-                <div class="p-6">
+                <div class="">
                     <PalakasanRankings 
                         :assignedTeams="assignedTeams" 
                         :overallResult="overallResult" 

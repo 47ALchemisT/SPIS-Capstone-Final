@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <div class="rounded-xl">
-      <div class="h-96 w-full">
+      <div class="h-[50vh] min-h-[300px] w-full">
         <Bar
           :data="chartData"
           :options="chartOptions"
@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -51,6 +51,17 @@ const props = defineProps({
   }
 });
 
+const isSmallScreen = ref(false);
+
+onMounted(() => {
+  checkScreenSize();
+  window.addEventListener('resize', checkScreenSize);
+});
+
+const checkScreenSize = () => {
+  isSmallScreen.value = window.innerWidth < 768;
+};
+
 const teamRankings = computed(() => {
   const rankings = props.teams.map(team => {
     const teamOverallResults = props.overallResult.filter(
@@ -83,7 +94,12 @@ const generateGradient = (ctx, colorStart, colorEnd) => {
 };
 
 const chartData = computed(() => ({
-  labels: teamRankings.value.map(team => team.assigned_team_name),
+  labels: teamRankings.value.map(team => {
+    const name = team.assigned_team_name;
+    return isSmallScreen.value && name.length > 10 
+      ? `${name.slice(0, 10)}...` 
+      : name;
+  }),
   datasets: [
     {
       label: 'Overall Points',
@@ -95,21 +111,21 @@ const chartData = computed(() => ({
       },
       borderRadius: 8,
       borderSkipped: false,
-      barThickness: 60,
-      maxBarThickness: 64
+      barThickness: isSmallScreen.value ? 30 : 60,
+      maxBarThickness: isSmallScreen.value ? 32 : 64
     }
   ]
 }));
 
-const chartOptions = {
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   layout: {
     padding: {
-      top: 20,
-      right: 20,
-      bottom: 20,
-      left: 20
+      top: isSmallScreen.value ? 10 : 20,
+      right: isSmallScreen.value ? 10 : 20,
+      bottom: isSmallScreen.value ? 10 : 20,
+      left: isSmallScreen.value ? 10 : 20
     }
   },
   plugins: {
@@ -119,9 +135,10 @@ const chartOptions = {
       labels: {
         font: {
           family: "'Inter', sans-serif",
-          size: 12
+          size: isSmallScreen.value ? 10 : 12
         },
-        color: '#6b7280'
+        color: '#6b7280',
+        padding: isSmallScreen.value ? 4 : 8
       }
     },
     tooltip: {
@@ -129,15 +146,15 @@ const chartOptions = {
       titleColor: '#1f2937',
       bodyColor: '#4b5563',
       titleFont: {
-        size: 14,
+        size: isSmallScreen.value ? 12 : 14,
         weight: '600',
         family: "'Inter', sans-serif"
       },
       bodyFont: {
-        size: 13,
+        size: isSmallScreen.value ? 11 : 13,
         family: "'Inter', sans-serif"
       },
-      padding: 12,
+      padding: isSmallScreen.value ? 8 : 12,
       borderColor: 'rgb(229, 231, 235)',
       borderWidth: 1,
       displayColors: false,
@@ -161,10 +178,10 @@ const chartOptions = {
       ticks: {
         font: {
           family: "'Inter', sans-serif",
-          size: 12
+          size: isSmallScreen.value ? 10 : 12
         },
         color: '#6b7280',
-        padding: 8
+        padding: isSmallScreen.value ? 4 : 8
       }
     },
     x: {
@@ -177,10 +194,12 @@ const chartOptions = {
       ticks: {
         font: {
           family: "'Inter', sans-serif",
-          size: 12
+          size: isSmallScreen.value ? 10 : 12
         },
         color: '#6b7280',
-        padding: 8,
+        padding: isSmallScreen.value ? 4 : 8,
+        maxRotation: isSmallScreen.value ? 45 : 0,
+        minRotation: isSmallScreen.value ? 45 : 0
       }
     }
   },
@@ -188,7 +207,7 @@ const chartOptions = {
     duration: 750,
     easing: 'easeInOutQuart'
   },
-  barPercentage: 0.9,
-  categoryPercentage: 0.9
-};
+  barPercentage: isSmallScreen.value ? 0.8 : 0.9,
+  categoryPercentage: isSmallScreen.value ? 0.8 : 0.9
+}));
 </script>

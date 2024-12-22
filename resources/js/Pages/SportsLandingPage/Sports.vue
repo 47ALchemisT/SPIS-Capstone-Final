@@ -2,30 +2,30 @@
     <Head title="Sports" />
     <MainLayout :latestPalakasan="latestPalakasan">
         <div class="min-h-screen">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-4">
-                <div class="sm:text-left text-center mb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-12 mt-4">
+                <div class="text-left mb-4">
                     <h1 class="text-2xl font-bold text-gray-900">All Sports</h1>
-                    <p class="mt-2 text-gray-600">Browse all available sports in Palakasan</p>
+                    <p class=" text-gray-600">Browse all available sports in Palakasan</p>
                 </div>
 
                 <!-- Search and Filter Bar -->
-                <div class="mt-6 flex flex-col sm:flex-row justify-between gap-4">
+                <div class=" flex flex-col sm:flex-row justify-between gap-4">
                     <div class="relative flex-1 sm:max-w-sm max-w-full">
                         <input 
                             type="text" 
                             v-model="searchQuery"
                             placeholder="Search sports..."
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        <div class="relative">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="relative ">
                             <select 
                                 v-model="selectedCategory"
-                                class="appearance-none text-sm pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                                class="appearance-none w-full text-sm pl-4 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                             >
                                 <option value="">All Categories</option>
                                 <option v-for="category in uniqueCategories" :key="category" :value="category">
@@ -39,7 +39,7 @@
                         <div class="relative">
                             <select 
                                 v-model="selectedType"
-                                class="appearance-none text-sm pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                                class="appearance-none w-full text-sm pl-4 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                             >
                                 <option value="">All Types</option>
                                 <option v-for="type in uniqueTypes" :key="type" :value="type">
@@ -53,7 +53,7 @@
                         <div class="relative">
                             <select 
                                 v-model="selectedStatus"
-                                class="appearance-none text-sm pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                                class="appearance-none text-sm w-full pl-4 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                             >
                                 <option value="">All Status</option>
                                 <option v-for="status in uniqueStatuses" :key="status" :value="status">

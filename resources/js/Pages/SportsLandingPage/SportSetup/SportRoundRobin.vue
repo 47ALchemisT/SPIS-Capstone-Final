@@ -5,16 +5,19 @@
       <template v-slot:default>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
           <div class="flex flex-col">
-            <div class="flex justify-between">
-                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <button 
+            <div class="flex justify-end mb-2">
+              <button 
                         @click="redirectToDashboard" 
                         type="button" 
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-md text-sm px-3 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                         >
                         <i class="fa-solid fa-arrow-left mr-2"></i>
                         Return
                     </button>
+            </div>
+            <div class="flex justify-between">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+
                 </div>
 
                   <div class="flex items-center text-gray-600 gap-2 ">
@@ -60,7 +63,7 @@
 
                 <!-- Tabs Navigation -->
                 <nav class="mt-4">
-                    <div class="grid grid-cols-4 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                    <div class="grid grid-cols-3 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
                         <button 
                             v-for="tab in ['matches', 'standing', 'players']"
                             :key="tab"

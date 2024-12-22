@@ -3,8 +3,7 @@
     <MainLayout :latestPalakasan="latestPalakasan">
         <template v-slot:default>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
-                <div class="flex justify-between">
-                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                <div>
                     <button 
                         @click="redirectToDashboard" 
                         type="button" 
@@ -14,7 +13,10 @@
                         Return
                     </button>
                 </div>
+                <div class="flex flex-row sm:flex-col justify-between">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
 
+                </div>
 
                 <div class="flex items-center text-gray-600 gap-2 ">
                     <p class="text-sm"> {{ sport.setup }}</p>

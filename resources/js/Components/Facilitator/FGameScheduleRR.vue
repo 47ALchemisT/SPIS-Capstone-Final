@@ -2,10 +2,10 @@
   <div class="game-schedule">
     <div v-for="(roundMatches, round) in matchesByRound" :key="round" 
       :class="[
-        'mb-8 p-5 rounded-lg transition-all duration-200',
+        'mb-8 p-4 rounded-lg transition-all duration-200',
         canUpdateRound(round) ? 'bg-gray-50' : 'bg-gray-100 opacity-75'
       ]">
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center justify-between">
         <div v-if="!canUpdateRound(round)" class="flex items-center text-sm text-gray-600">
           <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path fill="currentColor" d="M12 17a2 2 0 0 0 2-2a2 2 0 0 0-2-2a2 2 0 0 0-2 2a2 2 0 0 0 2 2m6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2h1m-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3Z"/>
@@ -14,28 +14,28 @@
         </div>
       </div>
       <h3 class="text-md font-semibold mb-4">Round {{ round }}</h3>
-      <div class="flex justify-center gap-4 ">
+      <div class="flex flex-wrap justify-center gap-4">
         <div v-for="match in roundMatches" 
             :key="match.id" 
-            class="bg-white shadow-sm rounded-lg p-4 border border-gray-200 hover:shadow transition-all duration-200">
-          <div class="flex justify-between items-center mb-3">
+            class="bg-white shadow-sm rounded-lg p-4 border border-gray-200 hover:shadow transition-all duration-200 w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)]">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
             <div class="flex flex-col">
               <span class="font-semibold text-md">{{ match.game }}</span>
             </div>
-            <div class="flex">
+            <div class="flex mt-3 sm:mt-0">
               <button 
                 @click="openWinnerModal(match)"
                 :disabled="!canUpdateRound(round) || match.status === 'completed'"
                 type="button" 
-                class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
-                >
+                class="bg-blue-700 w-full hover:bg-blue-600 text-white text-sm font-medium py-2.5 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
+              >
                 <i class="fa-solid fa-flag mr-2"></i>
                 Score
               </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-4 gap-3 items-center">
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
             <div class="col-span-2 flex justify-center bg-gray-100 p-2 rounded-md items-center">
               <span class="font-medium mr-3">{{ getTeamName(match.teamA_id) }}</span>
               <span :class="getResultClass(match, 'teamA')">{{ getResult(match, 'teamA') }}</span>
@@ -46,29 +46,25 @@
             </div>
           </div>
 
-          <div class="flex items-center mt-4 gap-2.5">
-            <div class="text-xs text-gray-600">
-              <div class="flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>{{ getVenueName(match.match_venue_id) }}</span>
-              </div>
+          <div class="flex flex-col sm:flex-row sm:items-center mt-4 gap-2.5">
+            <div class="text-xs text-gray-600 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>{{ getVenueName(match.match_venue_id) }}</span>
             </div>
-            <p class="text-xs text-gray-400">|</p>
-            <div class="text-xs text-gray-600">
-              <div class="flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span :class="{'text-red-500': !match.date || !match.time}">
-                  {{ formatDateTime(match.date, match.time) }}
-                </span>
-              </div>
+            <p class="hidden sm:block text-xs text-gray-400">|</p>
+            <div class="text-xs text-gray-600 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span :class="{'text-red-500': !match.date || !match.time}">
+                {{ formatDateTime(match.date, match.time) }}
+              </span>
             </div>
-            <p class="text-xs text-gray-400">|</p>
-            <div class="text-xs flex justify-between gap-1.5 items-center">
+            <p class="hidden sm:block text-xs text-gray-400">|</p>
+            <div class="text-xs flex items-center gap-1.5">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
               <span :class="getStatusClass(match.status)">Status: {{ match.status }}</span>
             </div>
@@ -76,6 +72,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Winner Modal -->
     <div v-if="isWinnerModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -146,7 +143,7 @@
 
     <!-- Signature Modal -->
     <div v-if="showSignatureModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-lg relative w-[500px]">
+      <div class="bg-white rounded-lg shadow-lg relative sm:w-[500px] w-full mx-4">
         <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
             Confirm Signature
@@ -194,6 +191,10 @@
                   @mousemove="draw"
                   @mouseup="stopDrawing"
                   @mouseleave="stopDrawing"
+                  @touchstart.prevent="startDrawingTouch"
+                  @touchmove.prevent="drawTouch"
+                  @touchend.prevent="stopDrawing"
+                  @touchcancel.prevent="stopDrawing"
                   width="450"
                   height="200"
                   class="border-2 border-gray-300 rounded-lg w-full"
@@ -325,7 +326,8 @@ const backToWinnerModal = () => {
 // Signature canvas functions
 const startDrawing = (e) => {
   isDrawing.value = true;
-  [lastX.value, lastY.value] = [e.offsetX, e.offsetY];
+  const pos = getPosition(e);
+  [lastX.value, lastY.value] = [pos.x, pos.y];
 };
 
 const draw = (e) => {
@@ -333,13 +335,47 @@ const draw = (e) => {
   
   const canvas = signatureCanvas.value;
   const ctx = canvas.getContext('2d');
+  const pos = getPosition(e);
   
   ctx.beginPath();
   ctx.moveTo(lastX.value, lastY.value);
-  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.lineTo(pos.x, pos.y);
   ctx.stroke();
   
-  [lastX.value, lastY.value] = [e.offsetX, e.offsetY];
+  [lastX.value, lastY.value] = [pos.x, pos.y];
+};
+
+const drawTouch = (e) => {
+  e.preventDefault(); // Prevent scrolling
+  draw(e);
+};
+
+const startDrawingTouch = (e) => {
+  e.preventDefault(); // Prevent scrolling
+  startDrawing(e);
+};
+
+const getPosition = (e) => {
+  const canvas = signatureCanvas.value;
+  const rect = canvas.getBoundingClientRect();
+  
+  // Calculate the scaling factors
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  let x, y;
+  
+  if (e.touches && e.touches[0]) {
+    // Touch event
+    x = (e.touches[0].clientX - rect.left) * scaleX;
+    y = (e.touches[0].clientY - rect.top) * scaleY;
+  } else {
+    // Mouse event
+    x = e.offsetX * scaleX;
+    y = e.offsetY * scaleY;
+  }
+  
+  return { x, y };
 };
 
 const stopDrawing = () => {

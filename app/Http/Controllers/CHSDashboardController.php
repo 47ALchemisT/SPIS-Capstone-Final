@@ -91,7 +91,6 @@ class CHSDashboardController extends Controller
                 ->whereHas('sport_id', function($query) use ($latestPalakasan) {
                     $query->where('palakasan_sport_id', $latestPalakasan->id);
                 })
-                ->where('date', '>=', now()->toDateString())
                 ->orderBy('date', 'asc')
                 ->orderBy('time', 'asc')
                 ->get()
@@ -141,7 +140,6 @@ class CHSDashboardController extends Controller
                         $query->where('teamA_id', $assignedCollege->assigned_team_id)
                               ->orWhere('teamB_id', $assignedCollege->assigned_team_id);
                     })
-                    ->where('date', '>=', now()->toDateString())
                     ->orderBy('date', 'asc')
                     ->orderBy('time', 'asc')
                     ->get();

@@ -11,9 +11,9 @@
                     <img src="/resources/assets/Ball animation.gif" alt="Background" class="w-full h-full object-cover">
                 </div>
                 
-                <main class="grid grid-cols-1 md:grid-cols-2 mx-auto max-w-7xl h-[100vh] overflow-hidden px-4 sm:px-6 lg:px-8">
-                    <div class="relative px-6 lg:px-8">
-                        <div class="w-full py-44 ">
+                <main class="grid grid-cols-1 md:grid-cols-2 mx-auto max-w-7xl h-full overflow-hidden px-4 sm:px-6 lg:px-8">
+                    <div class="relative px-2 lg:px-8">
+                        <div class="w-full py-16 sm:py-44  ">
                             <!-- Hero content -->
                             <div class="text-left w-full">
                                 <h1 class="text-xl tracking-tight text-white font-medium sm:text-3xl md:text-5xl">
@@ -26,7 +26,7 @@
                                     {{ latestPalakasan.description }}
                                 </p>
                                 <div class="mt-5 sm:mt-8 flex flex-col gap-4 sm:flex-row sm:space-y-0 sm:space-x-3">
-                                    <div class=" gap-4 w-full  flex">
+                                    <div class=" gap-4 w-full  grid grid-cols-1 md:grid-cols-2">
                                         <a @click="scrollToFeatured" class="flex items-center justify-center px-8 py-3 border border-gray-200 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-2 md:text-md md:px-6 cursor-pointer">
                                             Get Started
                                         </a>
@@ -72,13 +72,13 @@
             </div>
 
             <!--add a section here where it displays how many active sports assigned teams and players there are-->
-            <div class="py-12">
+            <div class="py-4 sm:py-12">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="grid grid-cols-3 gap-8">
                         <div class="text-center">
                             <div class="flex flex-col items-center justify-center p-6 bg-white">
                                 <div class="text-4xl font-bold text-gray-900 mb-2">{{ activeSports.length }}</div>
-                                <div class="text-lg text-gray-600">Active Sports</div>
+                                <div class="text-xs sm:text-lg text-gray-600">Active Sports</div>
                                 <div class="mt-4 p-2 bg-blue-50 rounded-full">
                                     <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -89,7 +89,7 @@
                         <div class="text-center">
                             <div class="flex flex-col items-center justify-center p-6 bg-white">
                                 <div class="text-4xl font-bold text-gray-900 mb-2">{{ assignedTeams.length }}</div>
-                                <div class="text-lg text-gray-600">Teams Participating</div>
+                                <div class="text-xs sm:text-lg text-gray-600">Teams Participating</div>
                                 <div class="mt-4 p-2 bg-green-50 rounded-full">
                                     <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -100,7 +100,7 @@
                         <div class="text-center">
                             <div class="flex flex-col items-center justify-center p-6 bg-white">
                                 <div class="text-4xl font-bold text-gray-900 mb-2">{{ studentPlayers.length }}</div>
-                                <div class="text-lg text-gray-600">Active Players</div>
+                                <div class="text-xs sm:text-lg text-gray-600">Active Players</div>
                                 <div class="mt-4 p-2 bg-purple-50 rounded-full">
                                     <svg class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -112,130 +112,124 @@
                 </div>
             </div>
 
-            <!-- Featured Sports Section -->
             <div id="featured-sports" class="py-16 bg-blue-50">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Sports Info Section -->
-                        <div class="lg:col-span-1 order-first lg:order-last">
-                            <div class="sticky top-24 space-y-6">
-                                <div class="bg-white p-6 rounded-xl shadow-sm shadow-blue-100">
-                                    <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-2">
-                                        Upcoming Sports Schedules
-                                    </h2>
-                                    <p class="text-gray-600 mb-6">
-                                        Stay updated with all upcoming matches and events in Palakasan
-                                    </p>
-                                    <button @click="goToAllSchedules" 
-                                            class="group w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                                        See All Schedules
-                                        <svg xmlns="http://www.w3.org/2000/svg" 
-                                             class="h-5 w-5 ml-2 transform transition-transform duration-200" 
-                                             fill="none" 
-                                             viewBox="0 0 24 24" 
-                                             stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                  d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                        </svg>
-                                    </button>
-                                </div>
+                    <!-- Sports Info Section -->
+                    <div class="lg:col-span-1 order-first lg:order-last">
+                        <div class="sticky top-24 space-y-6">
+                        <div class="bg-white p-6 rounded-lg sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                            <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-3">
+                            Upcoming Sports Schedules
+                            </h2>
+                            <p class="text-gray-600 mb-6">
+                            Stay updated with all upcoming matches and events in Palakasan.
+                            </p>
+                            <button @click="goToAllSchedules"
+                                    class="group w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                            See All Schedules
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                class="h-5 w-5 ml-2 transform transition-transform duration-200" 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedules Section -->
+                    <div class="lg:col-span-2">
+                        <div class="space-y-6">
+                        <div v-if="!sportMatches?.length || latestPalakasan?.status !== 'live'" 
+                            class="bg-white p-8 sm:p-12 rounded-2xl shadow-md text-center">
+                            <div class="text-gray-400 mb-4">
+                            <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                             </div>
+                            <h3 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
+                            {{ latestPalakasan?.status !== 'live' ? 'No Live Event' : 'No Matches Scheduled' }}
+                            </h3>
+                            <p class="text-gray-600">
+                            {{ latestPalakasan?.status !== 'live' ? 'Please wait for the event to go live' : 'Check back later for upcoming matches and events' }}
+                            </p>
                         </div>
 
-                        <!-- Schedules Section -->
-                        <div class="lg:col-span-2">
-                            <div class="space-y-6">
-                                <div v-if="!sportMatches?.length || latestPalakasan?.status !== 'live'" 
-                                     class="bg-white p-12 rounded-xl shadow-sm shadow-blue-100 text-center">
-                                    <div class="text-gray-400 mb-4">
-                                        <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
-                                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                                        {{ latestPalakasan?.status !== 'live' ? 'No Live Event' : 'No Matches Scheduled' }}
+                        <template v-else-if="latestPalakasan?.status === 'live'">
+                            <div v-for="(match, index) in sortedMatches" 
+                                :key="match?.id" 
+                                class="group bg-white rounded-lg sm:rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            <div class="p-6 sm:p-8">
+                                <!-- Match Header -->
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 mb-4">
+                                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2">
+                                        <span>{{ match?.assignedSport?.sport?.name || 'Unknown Sport' }}</span>
+                                        <span class="text-gray-400 hidden sm:inline-block">•</span>
+                                        <span class="text-gray-600">{{ match?.assignedSport?.categories || 'Unknown'}}</span>
+                                        <span class="text-gray-400 hidden sm:inline-block">•</span>
+                                        <span class="text-gray-600">{{ match?.game || 'Unknown'}}</span>
                                     </h3>
-                                    <p class="text-gray-600">
-                                        {{ latestPalakasan?.status !== 'live' ? 'Please wait for the event to go live' : 'Check back later for upcoming matches and events' }}
-                                    </p>
-                                </div>
-                                
-                                <template v-else-if="latestPalakasan?.status === 'live'">
-                                    <div v-for="(match, index) in sortedMatches" 
-                                         :key="match?.id" 
-                                         class="group bg-white rounded-xl shadow-sm shadow-blue-100 hover:shadow-md transition-all duration-300 overflow-hidden">
-                                        <div class="p-6">
-                                            <!-- Match Header -->
-                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                                                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                                    <span>{{ match?.assignedSport?.sport?.name || 'Unknown Sport' }}</span>
-                                                    <span class="text-gray-400">•</span>
-                                                    <span class="text-gray-600">{{ match?.assignedSport?.categories || 'Unknown'}}</span>
-                                                    <span class="text-gray-400">•</span>
-                                                    <span class="text-gray-600">{{ match?.game || 'Unknown'}}</span>
-                                                </h3>
-                                                <div class="flex items-center gap-4 text-sm text-gray-600">
-                                                    <div class="flex items-center gap-2">
-                                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                        </svg>
-                                                        <span>{{ match?.date || 'TBA' }}</span>
-                                                    </div>
-                                                    <div class="flex items-center gap-2">
-                                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                        <span>{{ match?.time || 'TBA' }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Teams Section -->
-                                            <div class="grid grid-cols-7 gap-4 items-center">
-                                                <div class="col-span-3 bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200 p-4 rounded-lg text-center">
-                                                    <div class="font-semibold text-gray-900 mb-1">
-                                                        {{ match?.teamA?.assigned_team_name || 'Team A' }}
-                                                    </div>
-                                                    <div class="text-sm text-gray-600">
-                                                        {{ match?.teamA?.college.name || 'Team A College' }}
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col-span-1 flex items-center justify-center">
-                                                    <span class="text-lg font-bold text-gray-400">VS</span>
-                                                </div>
-                                                
-                                                <div class="col-span-3 bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200 p-4 rounded-lg text-center">
-                                                    <div class="font-semibold text-gray-900 mb-1">
-                                                        {{ match?.teamB?.assigned_team_name || 'Team B' }}
-                                                    </div>
-                                                    <div class="text-sm text-gray-600">
-                                                        {{ match?.teamB?.college.name || 'Team B College' }}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Venue -->
-                                            <div class="mt-4 flex items-center justify-end text-sm text-gray-600">
-                                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                </svg>
-                                                <span>{{ match?.matchVenue?.name || 'TBA' }}</span>
-                                            </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm text-gray-600">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span>{{ match?.date || 'TBA' }}</span>
+                                        </div>
+                                            <div class="flex items-center gap-2">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span>{{ match?.time || 'TBA' }}</span>
+                                        </div>
+                                        <div class=" flex items-center text-sm text-gray-600">
+                                            <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            <span>{{ match?.matchVenue?.name || 'TBA' }}</span>
                                         </div>
                                     </div>
-                                </template>
+                                </div>
+
+                                <!-- Teams Section -->
+                                <div class="grid grid-cols-2 sm:grid-cols-6 gap-4 items-center">
+                                    <div class="col-span-1 sm:col-span-3 bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200 p-4 rounded-lg text-center">
+                                        <div class="font-semibold text-gray-900 mb-1">
+                                        {{ match?.teamA?.assigned_team_name || 'Team A' }}
+                                        </div>
+                                        <div class="sm:block hidden text-sm text-gray-600">
+                                        {{ match?.teamA?.college.name || 'Team A College' }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-span-1 sm:col-span-3 bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200 p-4 rounded-lg text-center">
+                                        <div class="font-semibold text-gray-900 mb-1">
+                                        {{ match?.teamB?.assigned_team_name || 'Team B' }}
+                                        </div>
+                                        <div class="sm:block hidden text-sm text-gray-600">
+                                        {{ match?.teamB?.college.name || 'Team B College' }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            </div>
+                        </template>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
+
 
             <!--All sport section-->
             <div class="relative py-16 bg-blue-700 overflow-hidden">
@@ -244,7 +238,7 @@
                     <div class="absolute inset-0 bg-blue-700/80 backdrop-blur-sm"></div>
                 </div>
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between items-center mb-8">
+                    <div class="flex flex-col sm:flex-row justify-between  mb-8">
                         <div>
                             <h2 class="text-xl sm:text-3xl font-bold text-white">
                                 Palakasan Sports
@@ -253,17 +247,19 @@
                                 Sports that are currently in progress
                             </p>
                         </div>
-                        <button @click="goToAllSports" 
-                                class="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-blue-700 bg-white hover:bg-blue-50 focus:ring-4 focus:ring-blue-300 font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                            View All Sports
-                            <svg xmlns="http://www.w3.org/2000/svg" 
-                                 class="h-5 w-5 ml-2" 
-                                 fill="none" 
-                                 viewBox="0 0 24 24" 
-                                 stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </button>
+                        <div>
+                            <button @click="goToAllSports" 
+                                class="inline-flex justify-center mt-4 sm:mt-0 items-center w-full px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-blue-700 bg-white hover:bg-blue-50 focus:ring-4 focus:ring-blue-300 font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                View All Sports
+                                <svg xmlns="http://www.w3.org/2000/svg" 
+                                    class="h-5 w-5 ml-2" 
+                                    fill="none" 
+                                    viewBox="0 0 24 24" 
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div v-if="!liveSports.length" 
@@ -420,7 +416,6 @@
                                 :teams="assignedTeams"
                                 :overallResult="overallResult"
                                 :variationResult="variationResult"
-                                class="h-[400px]"
                             />
                         </div>
                     </div>

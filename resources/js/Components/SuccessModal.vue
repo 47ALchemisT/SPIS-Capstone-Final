@@ -9,31 +9,31 @@
     >
         <div
             v-if="show"
-            class="fixed top-4 right-4 z-50 w-full max-w-sm"
+            class="fixed mx-4 sm:mx-0 top-4 sm:right-4 z-50 w-auto min-w-full sm:min-w-0 sm:w-full sm:max-w-sm"
         >
-            <div class="bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 p-4">
-                <div class="flex items-start">
+            <div class="bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 p-3 sm:p-4">
+                <div class="flex items-start space-x-2 sm:space-x-3">
                     <!-- Success Icon -->
                     <div class="flex-shrink-0">
-                        <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-check text-green-600"></i>
+                        <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-check text-green-600 text-sm sm:text-base"></i>
                         </div>
                     </div>
-
+                    
                     <!-- Content -->
-                    <div class="ml-3 w-0 flex-1 pt-0.5">
-                        <p class="text-sm font-medium text-gray-900">{{ title }}</p>
-                        <p class="mt-1 text-sm text-gray-500">{{ message }}</p>
+                    <div class="flex-1 pt-0.5">
+                        <p class="text-sm sm:text-base font-medium text-gray-900">{{ title }}</p>
+                        <p class="mt-1 text-xs sm:text-sm text-gray-500">{{ message }}</p>
                     </div>
-
+                    
                     <!-- Close Button -->
-                    <div class="ml-4 flex-shrink-0 flex">
+                    <div class="flex-shrink-0">
                         <button
                             @click="close"
                             class="rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                             <span class="sr-only">Close</span>
-                            <i class="fas fa-times h-5 w-5"></i>
+                            <i class="fas fa-times h-4 w-4 sm:h-5 sm:w-5"></i>
                         </button>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, watch } from 'vue';
+import { defineProps, defineEmits, watch } from 'vue';
 
 const props = defineProps({
     show: {

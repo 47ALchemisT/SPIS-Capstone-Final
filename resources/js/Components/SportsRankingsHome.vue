@@ -5,12 +5,11 @@
                 :teams="assignedTeams"
                 :overallResult="overallResult"
                 :variationResult="variationResult"
-                class="h-[400px]"
             />
         </div>
 
         <!-- Sports Filter -->
-        <div class="flex justify-between items-center mb-2">
+        <div class="flex justify-between items-center mb-4">
             <div class="flex gap-4">
                 <div class="relative">
                     <select v-model="selectedSport" class="appearance-none w-full py-2 pl-3 pr-10 text-sm bg-white rounded-lg ring-1 ring-gray-200 focus:border-blue-500 focus:ring-blue-500">
@@ -41,13 +40,11 @@
             </div>
         </div>
 
-
-
         <!-- Rankings Grid -->
         <div class="grid grid-cols-1 gap-6 mb-6">
             <template v-for="(sport) in filteredSports" :key="sport.id">
-                <div v-for="category in getSportCategories(sport)" :key="category" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ sport.sport?.name }} {{ category }} <span class="font-normal text-gray-500">( {{ sport.setup }} )</span> </h3>
+                <div v-for="category in getSportCategories(sport)" :key="category" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-4 sm:p-6">
+                    <h3 class="text-sm sm:text-lg font-semibold text-gray-800 mb-2">{{ sport.sport?.name }} {{ category }} <span class="font-normal text-gray-500">( {{ sport.setup }} )</span> </h3>
 
                     <!-- Regular Matches Rankings -->
                     <div v-if="getSportRankings(sport.id, category).length > 0" class="mb-6">
@@ -67,7 +64,7 @@
                                     <td class="py-3 px-4">
                                         <div class="flex flex-col">
                                             <span class="text-sm font-medium text-gray-800">{{ getTeamName(team.teamId).name }}</span>
-                                            <span class="text-xs text-gray-600">{{ getTeamName(team.teamId).college }}</span>
+                                            <span class="text-xs text-gray-600 sm:block hidden">{{ getTeamName(team.teamId).college }}</span>
                                         </div>
                                     </td>
                                     <td class="py-3 px-4 text-sm font-medium text-gray-600 text-right">{{ team.points }}</td>
@@ -85,11 +82,14 @@
             </template>
         </div>
 
-        <div v-for="(variation, index) in filteredAndCompletedVariations" :key="index" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6 mb-6">
-            <h4 class="text-lg font-semibold">{{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} {{ variation.sport_id?.categories }} <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span> - {{ variation.sport_variation_name }} </h4>            
+        <div v-for="(variation, index) in filteredAndCompletedVariations" :key="index" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-4 sm:p-6 mb-6">
+            <div class="flex flex-col sm:flex-row mb-4  sm:gap-2">
+                <h4 class="text-sm sm:text-lg font-semibold">{{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} {{ variation.sport_id?.categories }} <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span></h4>
+                <h4 class="text-sm sm:text-lg font-normal sm:font-semibold">{{ variation.sport_variation_name }} </h4>
+            </div>
             <!-- Rankings Section -->
             <div>
-                <div v-if="getVariationRankings(variation.id).length > 0" class="mb-6">
+                <div v-if="getVariationRankings(variation.id).length > 0">
                     <table class="min-w-full">
                         <thead>
                             <tr class="border-b">
@@ -106,7 +106,7 @@
                                 <td class="py-3 px-4">
                                     <div class="flex flex-col">
                                         <span class="text-sm font-medium text-gray-800">{{ getTeamName(team.teamId).name }}</span>
-                                        <span class="text-xs text-gray-600">{{ getTeamName(team.teamId).college }}</span>
+                                        <span class="text-xs text-gray-600 hidden sm:block">{{ getTeamName(team.teamId).college }}</span>
                                     </div>
                                 </td>
                                 <td class="py-3 px-4 text-sm font-medium text-gray-600 text-right">{{ team.points }}</td>

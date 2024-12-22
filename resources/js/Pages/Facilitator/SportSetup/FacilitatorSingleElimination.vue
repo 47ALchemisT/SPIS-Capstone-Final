@@ -4,17 +4,17 @@
         <template v-slot:default>
             <div class="flex items-center justify-between gap-2 pt-4">
                     <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <div>
+                    <div class="hidden sm:flex justify-end mb-2">
                         <button 
                             @click="returnToFacilitator" 
                             type="button" 
-                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-md text-sm px-3 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
                     </div>
-                </div>
+                </div> 
 
                 <div class="flex items-center text-gray-600 gap-2 ">
                     <p class="text-sm"> {{ sport.setup }}</p>
@@ -26,7 +26,7 @@
                 
                 <!-- Progress Bar -->
                 <div class="flex mt-3 flex-col">
-                    <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="sm:w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" :style="{ width: `${progressPercentage}%` }"></div>
                     </div>
                     <div class="flex items-center mt-2">
@@ -53,26 +53,24 @@
 
 
 
-            <!--tab navigation-->
-            <nav class="flex relative justify-between mt-4  items-center">
-                    <div class="flex gap-2 rounded-lg ">
-                        <div class=" flex gap-2 rounded-lg">
-                            <button 
-                                v-for="tab in ['matches', 'standing', 'brackets', 'players']"
-                                :key="tab"
-                                @click="activeTab = tab"
-                                :class="[
-                                'px-5 py-2 text-sm',
+                <!-- Tabs Navigation -->
+                <nav class="mt-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                        <button 
+                            v-for="tab in ['matches', 'standing', 'brackets', 'players']"
+                            :key="tab"
+                            @click="activeTab = tab"
+                            :class="[
+                                'px-5 py-2.5 font-medium sm:py-2 text-sm w-full sm:w-auto',
                                 activeTab === tab
-                                    ? 'text-gray-800  bg-blue-700 text-white font-medium rounded-md'
+                                    ? 'text-gray-800 bg-blue-700 text-white font-medium rounded-md'
                                     : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 border-transparent'
-                                ]"
-                            >
-                                {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
-                            </button>
-                        </div>
+                            ]"
+                        >
+                            {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
+                        </button>
                     </div>
-            </nav>
+                </nav>
 
             <div class="mt-4 pb-6">
                 <div v-if="activeTab === 'matches'">
@@ -98,50 +96,49 @@
                         <div class="flex justify-between">
                             <h2 class="text-md font-semibold mb-4">Tournament Bracket</h2>
                         </div>
-                        <div v-if="groupedMatches.length > 0" class="flex gap-8">
-                            <div 
-                                v-for="(round, index) in groupedMatches" 
-                                :key="index" 
-                                class="space-y-6"
-                            >
- 
-                                <h3 class="text-center text-sm font-bold">
-                                    {{ index + 1 === groupedMatches.length ? 'Championship' : `Round ${index + 1}` }}
-                                </h3>
+                        <div v-if="groupedMatches.length > 0" class="overflow-x-auto">
+                            <div class="flex gap-8">
                                 <div 
-                                    v-for="match in round" 
-                                    :key="match.id" 
-                                    class=" w-56 rounded-lg space-y-2"
+                                    v-for="(round, index) in groupedMatches" 
+                                    :key="index" 
+                                    class="space-y-6"
                                 >
-                                    <div class="flex justify-between items-center">
-                                        <p class="font-medium text-xs flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1-7 0a5 5 0 0 0-7 0zm0 16v-7"/></svg>
-                                            {{ match.game }}
-                                        </p>
-                                    </div>
-                                    <div class="shadow border border-gray-300 p-2 rounded-lg" :class="{'ring-1 bg-green-50 ring-green-500': isChampionshipMatch(match)}"
+                                    <h3 class="text-center text-sm font-bold">
+                                        {{ index + 1 === groupedMatches.length ? 'Championship' : `Round ${index + 1}` }}
+                                    </h3>
+                                    <div 
+                                        v-for="match in round" 
+                                        :key="match.id" 
+                                        class="w-56 rounded-lg space-y-2"
                                     >
-                                        <span 
-                                            class="mb-1 px-2 text-xs rounded-md flex items-center justify-between"
-                                            :class="getTeamBackgroundColor(match.id, match.teamA_id)"
-                                        >
-                                            <p class="p-2">{{ getTeamName(match.teamA_id) }}</p>
-                                            <div v-if="getMatchResult(match.id)" class="p-2 text-center">
-                                                <p>{{ getMatchResult(match.id).teamA_score }}</p>
-                                            </div>
-                                        </span>
-                                        <span 
-                                            class=" px-2 text-xs rounded-md flex items-center justify-between"
-                                            :class="getTeamBackgroundColor(match.id, match.teamB_id)"
-                                        >
-                                            <p class="p-2">{{ getTeamName(match.teamB_id) }}</p>
-                                            <div v-if="getMatchResult(match.id)" class=" p-2 text-center">
-                                                <p>{{ getMatchResult(match.id).teamB_score }}</p>
-                                            </div>
-                                        </span>
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-medium text-xs flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1-7 0a5 5 0 0 0-7 0zm0 16v-7"/></svg>
+                                                {{ match.game }}
+                                            </p>
+                                        </div>
+                                        <div class="shadow border border-gray-300 p-2 rounded-lg" :class="{'ring-1 bg-green-50 ring-green-500': isChampionshipMatch(match)}">
+                                            <span 
+                                                class="mb-1 px-2 text-xs rounded-md flex items-center justify-between"
+                                                :class="getTeamBackgroundColor(match.id, match.teamA_id)"
+                                            >
+                                                <p class="p-2">{{ getTeamName(match.teamA_id) }}</p>
+                                                <div v-if="getMatchResult(match.id)" class="p-2 text-center">
+                                                    <p>{{ getMatchResult(match.id).teamA_score }}</p>
+                                                </div>
+                                            </span>
+                                            <span 
+                                                class="px-2 text-xs rounded-md flex items-center justify-between"
+                                                :class="getTeamBackgroundColor(match.id, match.teamB_id)"
+                                            >
+                                                <p class="p-2">{{ getTeamName(match.teamB_id) }}</p>
+                                                <div v-if="getMatchResult(match.id)" class="p-2 text-center">
+                                                    <p>{{ getMatchResult(match.id).teamB_score }}</p>
+                                                </div>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div v-else>
@@ -156,7 +153,7 @@
 
             <!-- Ranking Modal -->
             <div v-if="showRankingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-lg relative w-96 max-h-[90vh] overflow-y-auto">
+                <div class="bg-white rounded-lg shadow-lg relative sm:w-96 w-full sm:mx-0 mx-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between p-4 border-b">
                     <h3 class="text-lg font-semibold text-gray-900">Submit Rankings</h3>
                     <button @click="closeRankingModal" class="text-gray-400 hover:text-gray-900">
@@ -439,4 +436,8 @@ const refreshData = () => {
  
 <style scoped>
 /* Home page specific styles */
+.overflow-x-auto {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent line breaks */
+}
 </style>

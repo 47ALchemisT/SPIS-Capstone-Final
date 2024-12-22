@@ -3,19 +3,21 @@
     <AppLayout :facilitator="facilitator">
       <template v-slot:default>
         <!-- Header Section -->
-        <div class="flex items-center justify-between gap-2 pt-4">
-                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                    <div>
+        <div class=" flex items-center justify-between gap-2 pt-4">
+          <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+          <div class="hidden sm:block flex justify-end mb-2">
+
                         <button 
                             @click="returnToFacilitator" 
                             type="button" 
-                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white bg-blue-700 font-medium hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
                     </div>
-                </div>
+
+        </div>
 
 
         <!-- Tags Section -->
@@ -29,7 +31,7 @@
 
         <!-- Progress Bar -->
         <div class="mt-3 space-y-2">
-          <div class="w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div class="sm:w-1/3 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
             <div 
               class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-in-out" 
               :style="{ width: `${progressPercentage}%` }"
@@ -78,10 +80,10 @@
                     'bg-green-50 border-green-400': variation.status?.toLowerCase() === 'completed'
                   }">
                   <div class="flex justify-between items-center">
-                    <div class="flex justify-between w-full">
+                    <div class="flex flex-col sm:flex-row justify-between gap-3 w-full">
                       <div>
                         <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
-                        <div class="flex items-center mt-1 gap-2.5">
+                        <div class="flex flex-col sm:flex-row sm:items-center mt-1 sm:gap-2.5">
                           <div class="text-xs text-gray-600">
                             <div class="flex items-center gap-1.5">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,7 +93,7 @@
                               <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
                             </div>
                           </div>
-                          <p class="text-xs text-gray-400">|</p>
+                          <p class="sm:block hidden text-xs text-gray-400">|</p>
                           <div class="text-xs text-gray-600">
                             <div class="flex items-center gap-1.5">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,13 +104,6 @@
                               </span>
                             </div>
                           </div>
-                          <p class="text-xs text-gray-400">|</p>
-                          <div class="text-xs flex justify-between gap-1.5 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
-                            <span :class="getStatusClass(variation.status)">
-                              {{ formatStatus(variation.status) }}
-                            </span>
-                          </div>
                         </div>
                       </div>
                       <div>
@@ -116,7 +111,7 @@
                           type="button"
                           @click="openRankModal(variation)  || !isMatchTimeReached(variation)" 
                           :disabled="!isRankingAllowed(variation) || variation.status === 'completed' || sport.status === 'completed'"
-                          class="bg-blue-700 hover:bg-blue-600 text-white text-xs font-medium py-2.5 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
+                          class="bg-blue-700 hover:bg-blue-600 text-white w-full text-sm font-medium py-2.5 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-700 transition duration-200"
                         >
                           <i class="fa-solid fa-ranking-star mr-2"></i>
                           {{ isRankingAllowed(variation) ? 'Set Rankings' : 'Not Yet Available' }}
@@ -181,7 +176,7 @@
                     <tbody>
                       <tr v-for="match in sortedMatches" :key="match.id">
                         <td class="px-4 py-2 w-72">{{ getTeamName(match.sport_variation_team_id) }}</td>
-                        <td class="px-4 py-2 w-44">
+                        <td class="px-4 py-2 w-full">
                           <select 
                             v-model="rankUpdates[match.id].rank"
                             class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -197,12 +192,12 @@
                             </option>
                           </select>
                         </td>
-                        <td class="px-4 py-2 w-12">
+                        <td class="px-4 py-2 w-full ">
                           <input 
                             type="number"
                             v-model="rankUpdates[match.id].points"
                             min="0"
-                            class="px-2 py-2 border w-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="px-2 py-2 border w-full border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Points"
                             readonly
                           />

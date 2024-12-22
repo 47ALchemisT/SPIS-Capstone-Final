@@ -6,17 +6,20 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
           <!-- Header Section -->
           <div class="flex flex-col">
-                  <div class="flex justify-between">
-
-                        <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
-                        <button 
+            <div class="flex items-center mb-2 justify-end">
+              <button 
                             @click="redirectToDashboard" 
                             type="button" 
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            class="text-white py-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-md text-sm px-3 py-2  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                             >
                             <i class="fa-solid fa-arrow-left mr-2"></i>
                             Return
                         </button>
+             </div>
+  
+                  <div class="flex sm:flex-row flex-col justify-between sm:mb-0 ">
+                        <h1 class="text-2xl font-semibold sm:mb-0 mb-2">{{ sport.sport.name }} {{ sport.categories }}</h1>
+
                 </div>
 
                   <div class="flex items-center text-gray-600 gap-2 ">
@@ -41,7 +44,7 @@
           </div>
                 <!-- Tabs Navigation -->
                 <nav class="mt-4">
-                    <div class="grid grid-cols-4 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                    <div class="grid grid-cols-3 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
                         <button 
                             v-for="tab in ['sports', 'players']"
                             :key="tab"
@@ -97,8 +100,8 @@
                                 </span>
                               </div>
                             </div>
-                            <p class="text-xs text-gray-400">|</p>
-                            <div class="text-xs flex justify-between gap-1.5 items-center">
+                            <p class="text-xs text-gray-400 hidden sm:block">|</p>
+                            <div class="text-xs flex justify-between gap-1.5 items-center hidden sm:block">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
                               <span :class="getStatusClass(variation.status)">
                                 {{ formatStatus(variation.status) }}

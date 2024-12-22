@@ -41,7 +41,7 @@
                             </div>
                             
                             <div class="w-full sm:w-auto">
-                                <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl">
+                                <div class="flex gap-1 p-1.5 bg-blue-100/80 rounded-xl flex-wrap">
                                     <button 
                                         v-for="tab in ['home', 'sports', 'schedule', 'Overview', 'settings']"
                                         :key="tab"
@@ -331,8 +331,7 @@
                                         <div class="space-y-4">
                                             <div class="flex items-start gap-3">
                                                 <div class="flex-shrink-0 w-6 h-6 text-blue-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M11.645 20.91l-16.1 48.86h32.2zM73 90.43v15.97h366V90.43zm48 33.97V479l135-105l135 105V124.4zm87 37h96l-32 80l80-32v96l-80-32l32 80h-96l32-80l-80 32v-96l80 32zm48 235.4l-23 17.9v73.7h46v-73.7z"/></svg>
+                                                    <i class="fa-solid fa-person text-2xl"></i>
                                                 </div>
                                                 <div>
                                                     <h4 class="font-medium text-gray-900">Player Assignment</h4>
@@ -341,8 +340,7 @@
                                             </div>
                                             <div class="flex items-start gap-3">
                                                 <div class="flex-shrink-0 w-6 h-6 text-blue-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.694 3.397 1.672c.8.488 1.484 1.064 1.978 1.69c.486.615.844 1.351.844 2.138c0 .845-.411 1.511-1.003 1.986c-.56.45-1.299.748-2.084.956c-1.578.417-3.684.558-5.913.558s-4.335-.14-5.913-.558c-.785-.208-1.524-.506-2.084-.956C3.41 20.01 3 19.345 3 18.5c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z"/></svg>
+                                                    <i class="fa-solid fa-lock text-2xl"></i>
                                                 </div>
                                                 <div>
                                                     <h4 class="font-medium text-gray-900">Verification</h4>
@@ -351,8 +349,7 @@
                                             </div>
                                             <div class="flex items-start gap-3">
                                                 <div class="flex-shrink-0 w-6 h-6 text-blue-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" /></svg>
+                                                    <i class="fa-solid fa-clock text-2xl"></i>
                                                 </div>
                                                 <div>
                                                     <h4 class="font-medium text-gray-900">Timely Updates</h4>
@@ -824,6 +821,10 @@
         if (!timeString) return '';
         return timeString; // Just return the time string as is since it's already in the correct format
     };
+
+    console.log('Upcoming Schedules:', props.upcomingSchedules);
+    console.log('Free For All Matches:', props.freeForAllMatches);
+
 
     // Compute sports with player assignment status
     const sportsWithStatus = computed(() => {

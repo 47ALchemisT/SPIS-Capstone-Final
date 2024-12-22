@@ -28,7 +28,7 @@
                             class="text-gray-600 ring-1 font-medium flex items-center ring-gray-300 hover:bg-gray-100 hover:text-gray-800 hover:ring-gray-400 text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-2 py-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
                         >
                             <svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4.5 0 0 1 4-4h8.5a4 4.5 0 0 1 4 4v8.5a4 4.5 0 0 1-4 4h-8.5a4 4.5 0 0 1-4-4zm0 1h16.5"/>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.25 12.5h3.5m-10-4.75a4 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                             <span>Archive</span>
                         </button>
@@ -54,7 +54,7 @@
                 <!-- Tabs Content -->
                 <div class="mt-4">
                 <!-- Palakasans (Details) Tab Content -->
-                <div v-if="activeTab === 'details'" class="animate-fadeIn">
+                <div v-if="activeTab === 'details'" class="animate-fadeIn max-w-7xl mx-auto">
                     <div v-if="latestPalakasan">
                         <!-- Main Card -->
                         <div class="bg-white rounded-xl   hover:border-blue-200/60 transition-all duration-300">
@@ -85,36 +85,20 @@
 
                                 <!-- Action Buttons -->
                                 <div class="flex items-center gap-3">
-                                    <Tooltip 
-                                        v-if="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
-                                        :text="latestPalakasan.status === 'live' 
-                                            ? 'Palakasan is currently live'
-                                            : assignedSports.length < 2
-                                            ? 'At least 2 sports must be assigned before starting'
-                                            : 'At least 4 teams must be assigned before starting'"
-                                        position="top"
+                                    <button 
+                                        v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
+                                        @click="showModal = true"
+                                        type="button" 
+                                        :disabled="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
+                                        :class="[
+                                            'flex gap-1.5 font-medium text-sm focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg px-4 py-2',
+                                            latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4
+                                            ? ' text-blue-700 bg-blue-100 cursor-not-allowed'
+                                            : 'bg-blue-700 text-white hover:bg-blue-700/90 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700'
+                                        ]"
                                     >
-                                        <button 
-                                            v-if="progressPercentage < 100 && latestPalakasan.status !== 'cancelled'"
-                                            @click="showModal = true"
-                                            type="button" 
-                                            :disabled="latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4"
-                                            :class="[
-                                                'inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-all duration-200',
-                                                latestPalakasan.status === 'live' || assignedSports.length < 2 || assignedTeams.length < 4
-                                                    ? 'bg-blue-50 text-blue-500 cursor-not-allowed'
-                                                    : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md active:transform active:scale-95'
-                                            ]"
-                                        >
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            Start Palakasan
-                                        </button>
-                                    </Tooltip>
+                                        {{ assignedSports.length < 2 || assignedTeams.length < 4 ? 'You need to have at least 2 sports and 4 teams to start Palakasan' : 'Start Palakasan' }}
+                                    </button>
 
                                     <button 
                                         v-if="latestPalakasan?.status !== 'live' && latestPalakasan?.status !== 'pending'"
@@ -270,7 +254,7 @@
 
 
                 <!-- Teams Tab Content -->
-                <div v-if="activeTab === 'line ups'" class="animate-fadeIn">
+                <div v-if="activeTab === 'line ups'" class="animate-fadeIn max-w-7xl mx-auto">
                     <div class="flex mb-4 items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <!-- Search Input -->
@@ -349,43 +333,38 @@
                             class="bg-white ring-1 ring-gray-200 shadow-sm hover:shadow-md rounded-xl p-5 hover:ring-blue-400 hover:bg-blue-50/80 transition-all duration-300 group"
                         >
                             <div class="space-y-4">
-                                <!-- Team Icon with Background -->
-                                <div class="inline-flex bg-blue-100 w-14 h-14 justify-center items-center rounded-full mb-2 transition-all duration-300 group-hover:bg-blue-200">
-                                    <svg 
-                                        class='w-8 h-8 text-blue-600 group-hover:text-blue-700 transition-colors duration-300' 
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path 
-                                            fill="currentColor" 
-                                            d="M14.754 10c.966 0 1.75.784 1.75 1.75v4.749a4.501 4.501 0 0 1-9.002 0V11.75c0-.966.783-1.75 1.75-1.75zm0 1.5H9.252a.25.25 0 0 0-.25.25v4.749a3.001 3.001 0 0 0 6.002 0V11.75a.25.25 0 0 0-.25-.25M3.75 10h3.381a2.74 2.74 0 0 0-.618 1.5H3.75a.25.25 0 0 0-.25.25v3.249a2.5 2.5 0 0 0 3.082 2.433c.085.504.24.985.453 1.432Q6.539 18.999 6 19a4 4 0 0 1-4-4.001V11.75c0-.966.784-1.75 1.75-1.75m13.125 0h3.375c.966 0 1.75.784 1.75 1.75V15a4 4 0 0 1-5.03 3.866c.214-.448.369-.929.455-1.433q.277.066.575.067a2.5 2.5 0 0 0 2.5-2.5v-3.25a.25.25 0 0 0-.25-.25h-2.757a2.74 2.74 0 0 0-.618-1.5M12 3a3 3 0 1 1 0 6a3 3 0 0 1 0-6m6.5 1a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m-13 0a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5m6.5.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0-3m6.5 1a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-13 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2"
-                                        />
-                                    </svg>
+                                <div class="flex justify-between ">
+                                    <div class="inline-flex bg-blue-100 w-16 h-16 justify-center items-center rounded-full mb-2 transition-all duration-300 group-hover:bg-blue-200">
+                                    <svg class="w-9 h-9 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><path fill="currentColor" d="M279 25v30h-46V25zm178 35.396c3.485 1.262 7.267 2.717 11.195 4.55c5.553 2.589 10.945 5.739 14.409 8.742C486.067 76.69 487 78.936 487 80c0 1.063-.933 3.31-4.396 6.313s-8.856 6.152-14.409 8.742c-3.928 1.832-7.71 3.287-11.195 4.549zm-402 0v39.208c-3.485-1.262-7.267-2.717-11.195-4.55c-5.553-2.589-10.945-5.739-14.409-8.742C25.933 83.31 25 81.064 25 80c0-1.063.933-3.31 4.396-6.313s8.856-6.152 14.409-8.742c3.928-1.832 7.71-3.287 11.195-4.549M439 73v14h-46V73zm-64 0v291.578L256 498.453L137 364.578V73zm-256 0v14H73V73zm210 23h-18v252.844l-55 68.75l-55-68.75V96h-18v259.156l73 91.25l73-91.25z"/></svg>
                                 </div>
-
-                                <!-- Team Details -->
-                                <div class="space-y-1">
-                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
-                                        {{ team.assigned_team_name }}
-                                    </h3>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm text-gray-500 group-hover:text-blue-600 transition-colors duration-300">
-                                            {{ team.college.name }}
-                                        </span>
+                                    <div>
+                                        <template v-if="!(latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed')">
+                                            <button 
+                                                @click="openModal(team)" 
+                                                :disabled="latestPalakasan?.status === 'live' || latestPalakasan?.status === 'completed'"
+                                                :class="[
+                                                    'flex gap-1.5 text-sm focus:outline-none text-blue-400 hover:text-blue-600 transition-colors duration-300 font-medium focus:ring-4 focus:ring-blue-300 rounded-lg px-3 py-2',
+                                                ]"
+                                            >
+                                                <i class="fa-solid fa-pen text-sm"></i>
+                                            </button>
+                                        </template>
                                     </div>
                                 </div>
-                            </div>
+                                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                                    {{ team.assigned_team_name }}
+                                </h3>
+                                <span class="text-sm text-gray-500 group-hover:text-blue-600 transition-colors duration-300">
+                                    {{ team.college.name }}
+                                </span>
 
-                            <!-- Hover Indicator (Optional) -->
-                            <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                <div class="h-2 w-2 rounded-full bg-blue-500"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Sports Tab Content -->
-                <div v-if="activeTab === 'leagues' && hasEnoughTeams" class="mt-4 animate-fadeIn">
+                <div v-if="activeTab === 'leagues' && hasEnoughTeams" class="mt-4 animate-fadeIn max-w-7xl mx-auto">
                     <div class="flex mb-4 items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <!-- Search Input -->
@@ -577,7 +556,7 @@
                     </div>
                 </div>
                 <!-- Not Enough Teams State -->
-                <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4 animate-fadeIn">
+                <div v-if="activeTab === 'leagues' && !hasEnoughTeams" class="mt-4 animate-fadeIn max-w-7xl mx-auto">
                         <div class="flex flex-col items-center justify-center text-center p-10 bg-yellow-50 rounded-lg">
                             <i class="fa-solid fa-people-group text-yellow-700 text-6xl mb-4"></i>
                             <h3 class="text-xl font-semibold text-yellow-700 mb-2">Not Enough Teams</h3>
@@ -596,14 +575,14 @@
                         </div>
                 </div>
 
-                <div v-if="activeTab === 'settings'" class="animate-fadeIn">
+                <div v-if="activeTab === 'settings'" class="animate-fadeIn max-w-7xl mx-auto">
                     <Settings 
                         :latestPalakasan="latestPalakasan"
                         :admin="admin"
                     />   
                 </div>
 
-                <div v-if="activeTab === 'rankings'" class="animate-fadeIn">
+                <div v-if="activeTab === 'rankings'" class="animate-fadeIn max-w-7xl mx-auto">
                     <div>
                         <SportsRankings 
                             :assigned-sports="assignedSports"
@@ -620,7 +599,7 @@
                     </div>
                 </div>
 
-                <div v-if="activeTab === 'Schedules'" class="animate-fadeIn">
+                <div v-if="activeTab === 'Schedules'" class="animate-fadeIn ">
                     <OverallSchedules
                         :latest-palakasan="latestPalakasan"
                         :active-sports="assignedSports"
@@ -788,24 +767,22 @@
                                                         >
                                                             <!-- Search input within dropdown -->
                                                             <div class="p-2 border-b border-gray-200">
-                                                                <div class="relative">
-                                                                    <input
-                                                                        type="text"
-                                                                        v-model="sportSearch"
-                                                                        placeholder="Search sports..."
-                                                                        class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
-                                                                        @input="filterSports"
-                                                                    />
-                                                                    <button
-                                                                        v-if="sportSearch"
-                                                                        @click="clearSearch"
-                                                                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                                                    >
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
+                                                                <input
+                                                                    type="text"
+                                                                    v-model="sportSearch"
+                                                                    placeholder="Search sports..."
+                                                                    class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
+                                                                    @input="filterSports"
+                                                                />
+                                                                <button
+                                                                    v-if="sportSearch"
+                                                                    @click="clearSearch"
+                                                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                                                >
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                                    </svg>
+                                                                </button>
                                                             </div>
                                                             
                                                             <!-- Sports list -->
@@ -1482,6 +1459,15 @@
                     </div>
                 </Dialog>
             </TransitionRoot>
+
+            <UpdateTeamModal
+                v-if="showModalTeam"
+                :isOpen="showModalTeam"
+                :team="selectedTeam"
+                @close="closeModal"
+                @update="updateTeam"
+                class="z-50"
+            />
             
         </template>
     </AppLayout>
@@ -1506,6 +1492,7 @@
     import SportsRankings from '@/Components/SportsRankings.vue';
     import SuccessModal from '@/Components/SuccessModal.vue';
     import { Dialog, DialogPanel, DialogTitle, TransitionRoot } from '@headlessui/vue';
+    import UpdateTeamModal from '@/Components/UpdateTeamModal.vue';
 
     const props = defineProps({
         colleges: Array,
@@ -1570,7 +1557,9 @@
     const showSignature = ref(false);
     const selectedSignature = ref(null);
     const selectedOfficialName = ref(null);
-    const showTooltip = ref(false);
+    // Reactive state
+    const showModalTeam = ref(false);
+    const selectedTeam = ref(null);
     const openSignature = (signature,official_name) => {
         selectedSignature.value = signature;
         selectedOfficialName.value = official_name;
@@ -1606,6 +1595,40 @@
 
     const goToDocumentation = () => {
     router.get(route('palakasan.documentation'));
+    };
+
+    const form3 = useForm({
+        assigned_team_name: '',
+        college_id: '',
+        palakasan_id: ''
+    })
+
+    const openModal = (team) => {
+        selectedTeam.value = team;
+        showModalTeam.value = true;
+    }
+
+    const closeModal = () => {
+        showModalTeam.value = false;
+        selectedTeam.value = null;
+    }
+
+    const updateTeam = (teamData) => {
+        form3.assigned_team_name = teamData.assigned_team_name;
+        form3.college_id = teamData.college_id;
+        form3.palakasan_id = teamData.palakasan_id;
+
+        form3.put(route('palakasan.updateTeams', teamData.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeModal();
+                showSuccessModal.value = true;
+                successMessage.value = 'Team updated successfully!';
+            },
+            onError: (errors) => {
+                console.error(errors);
+            }
+        });
     };
 
     //tabs funtcions

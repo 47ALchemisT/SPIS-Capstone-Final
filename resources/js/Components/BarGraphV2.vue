@@ -1,39 +1,72 @@
 <template>
-  <div class="flex flex-col md:flex-row gap-6">
-    <!-- Left side: Top 3 Teams -->
-    <div class="md:w-1/3 bg-white p-6">
-      <h3 class="text-md font-semibold text-gray-900 mb-4">Top Teams</h3>
-      <div class="space-y-3">
-        <template v-if="topThreeTeams.length">
-          <div v-for="(team, index) in topThreeTeams" :key="team.id" 
-              class="flex p-3 bg-blue-50 rounded-lg">
-            <div :class="{
-              'w-8 h-8 flex items-center justify-center rounded-full text-white font-bold mr-3': true,
-              'bg-yellow-400': index === 0,
-              'bg-gray-400': index === 1,
-              'bg-amber-600': index === 2
-            }">
-              {{ index + 1 }}
-            </div>
-            <div class="flex-1">
-              <h4 class="font-medium text-blue-900">{{ team.assigned_team_name }}</h4>
-              <p class="text-xs text-blue-500/80">{{ team.college?.name }}</p>
-              <p class="text-sm mt-2 font-medium text-blue-600">{{ team.totalPoints }} points</p>
-            </div>
-          </div>
-        </template>
-        <p v-else class="text-gray-500 text-sm">No team rankings available</p>
+  <div class="flex flex-col gap-6">
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+      <h2 class="text-xl font-semibold text-gray-900">Team Rankings</h2>
+      <div class="flex items-center space-x-4">
+        <button 
+          @click="toggleView"
+          class="px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+        >
+          {{ isCompact ? 'Show All' : 'Compact View' }}
+        </button>
       </div>
     </div>
 
-    <!-- Right side: Bar Graph -->
-    <div class="md:w-2/3">
-      <div class="rounded-xl">
-        <div class="h-96 w-full">
-          <Bar
-            :data="chartData"
-            :options="chartOptions"
-          />
+    <!-- Main Content -->
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Left side: Top Teams -->
+      <div class="lg:w-1/3 space-y-4">
+        <div class="bg-white ">
+          <h3 class="text-md font-semibold text-gray-900 mb-4">Top Performers</h3>
+          <div class="space-y-3">
+            <template v-if="topThreeTeams.length">
+              <div 
+                v-for="(team, index) in topThreeTeams" 
+                :key="team.id"
+                class="flex  p-3 rounded-lg bg-gradient-to-r"
+                :class="[
+                  index === 0 ? 'from-blue-50 to-blue-100' : 
+                  index === 1 ? 'from-blue-50 to-blue-100/80' : 
+                  'from-blue-50 to-blue-100/60'
+                ]"
+              >
+                <div 
+                  class="w-10 h-10 flex items-center justify-center rounded-full text-white font-bold mr-4 bg-gradient-to-br"
+                  :class="[
+                    index === 0 ? 'from-blue-500 to-blue-600' : 
+                    index === 1 ? 'from-blue-400 to-blue-500' : 
+                    'from-blue-300 to-blue-400'
+                  ]"
+                >
+                  {{ index + 1 }}
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-medium text-gray-900">{{ team.assigned_team_name }}</h4>
+                  <p class="text-sm text-gray-500">{{ team.college?.name }}</p>
+                  <div class="flex items-center mt-2">
+                    <span class="text-sm font-semibold text-blue-600">
+                      {{ team.totalPoints.toLocaleString() }} points
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </template>
+            <p v-else class="text-gray-500 text-sm">No team rankings available</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side: Enhanced Bar Graph -->
+      <div class="lg:w-2/3">
+        <div class="bg-white">
+          <div :class="['h-[400px] w-full', { 'h-[300px]': isCompact }]">
+            <Bar
+              :data="chartData"
+              :options="chartOptions"
+              ref="chart"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -41,7 +74,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -80,57 +113,68 @@ const props = defineProps({
   }
 });
 
+const chart = ref(null);
+const isCompact = ref(false);
+const toggleView = () => {
+  isCompact.value = !isCompact.value;
+};
+
 const teamRankings = computed(() => {
   const rankings = props.teams.map(team => {
-    const teamOverallResults = props.overallResult.filter(
-      result => result.assigned_team_id === team.id
-    );
-    const overallPoints = teamOverallResults.reduce((sum, result) => sum + (result.points || 0), 0);
+    const overallPoints = props.overallResult
+      .filter(result => result.assigned_team_id === team.id)
+      .reduce((sum, result) => sum + (result.points || 0), 0);
     
-    const teamVariationResults = props.variationResult.filter(
-      result => result.sport_variation_team_id === team.id
-    );
-    const variationPoints = teamVariationResults.reduce((sum, result) => sum + (result.points || 0), 0);
-    
-    const totalPoints = overallPoints + variationPoints;
+    const variationPoints = props.variationResult
+      .filter(result => result.sport_variation_team_id === team.id)
+      .reduce((sum, result) => sum + (result.points || 0), 0);
     
     return {
       ...team,
-      totalPoints
+      totalPoints: overallPoints + variationPoints
     };
   });
   
   return rankings.sort((a, b) => b.totalPoints - a.totalPoints);
 });
 
-const generateGradient = (ctx, colorStart, colorEnd) => {
-  if (!ctx) return null;
-  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient.addColorStop(0, colorStart);
-  gradient.addColorStop(1, colorEnd);
-  return gradient;
+const topThreeTeams = computed(() => teamRankings.value.slice(0, 3));
+
+const getGradient = (context) => {
+  const chart = context.chart;
+  const {ctx, chartArea} = chart;
+  
+  if (!chartArea) {
+    return null;
+  }
+  
+  const gradientFill = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+  gradientFill.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
+  gradientFill.addColorStop(1, 'rgba(37, 99, 235, 0.8)');
+  
+  return gradientFill;
 };
 
 const chartData = computed(() => ({
-  labels: teamRankings.value.map(team => team.assigned_team_name),
-  datasets: [
-    {
-      label: 'Overall Points',
-      data: teamRankings.value.map(team => team.totalPoints),
-      backgroundColor: 'rgba(29, 78, 216, 0.9)',
-      borderRadius: 8,
-      borderSkipped: false,
-      barThickness: 60,
-      maxBarThickness: 64
-    }
-  ]
+  labels: teamRankings.value
+    .slice(0, isCompact.value ? 5 : undefined)
+    .map(team => team.assigned_team_name),
+  datasets: [{
+    label: 'Total Points',
+    data: teamRankings.value
+      .slice(0, isCompact.value ? 5 : undefined)
+      .map(team => team.totalPoints),
+    backgroundColor: function(context) {
+      return getGradient(context);
+    },
+    borderRadius: 8,
+    borderSkipped: false,
+    barThickness: isCompact.value ? 40 : 30,
+    maxBarThickness: 64
+  }]
 }));
 
-const topThreeTeams = computed(() => {
-  return teamRankings.value.slice(0, 3);
-});
-
-const chartOptions = {
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   layout: {
@@ -143,15 +187,7 @@ const chartOptions = {
   },
   plugins: {
     legend: {
-      display: true,
-      position: 'top',
-      labels: {
-        font: {
-          family: "'Inter', sans-serif",
-          size: 12
-        },
-        color: '#6b7280'
-      }
+      display: false
     },
     tooltip: {
       backgroundColor: 'white',
@@ -172,7 +208,10 @@ const chartOptions = {
       displayColors: false,
       callbacks: {
         title: (items) => items[0].label,
-        label: (context) => `Total Points: ${context.raw.toLocaleString()}`
+        label: (context) => {
+          const value = context.raw;
+          return `${value.toLocaleString()} points`;
+        }
       }
     }
   },
@@ -193,7 +232,10 @@ const chartOptions = {
           size: 12
         },
         color: '#6b7280',
-        padding: 8
+        padding: 8,
+        callback: function(value) {
+          return value.toLocaleString();
+        }
       }
     },
     x: {
@@ -210,6 +252,8 @@ const chartOptions = {
         },
         color: '#6b7280',
         padding: 8,
+        maxRotation: 45,
+        minRotation: 45
       }
     }
   },
@@ -219,5 +263,5 @@ const chartOptions = {
   },
   barPercentage: 0.9,
   categoryPercentage: 0.9
-};
+}));
 </script>

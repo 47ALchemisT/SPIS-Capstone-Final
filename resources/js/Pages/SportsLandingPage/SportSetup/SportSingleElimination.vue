@@ -3,16 +3,19 @@
     <MainLayout :latestPalakasan="latestPalakasan">
         <template v-slot:default>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12">
-                <div class="flex justify-between">
-                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+                <div class="mb-2 flex justify-end">
                     <button 
                         @click="redirectToDashboard" 
                         type="button" 
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-3 py-2 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-md text-sm px-3 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                         >
                         <i class="fa-solid fa-arrow-left mr-2"></i>
                         Return
                     </button>
+                </div>
+                <div class="flex flex-row sm:flex-col justify-between">
+                    <h1 class="text-2xl font-semibold">{{ sport.sport.name }} {{ sport.categories }}</h1>
+
                 </div>
                 <!--add a text if the view is from the history or current-->
                 <div class="flex items-center text-gray-600 gap-2 ">
@@ -56,7 +59,7 @@
 
                 <!-- Tabs Navigation -->
                 <nav class="mt-4">
-                    <div class="grid grid-cols-4 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
+                    <div class="grid grid-cols-2 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
                         <button 
                             v-for="tab in ['matches', 'standing', 'brackets', 'players']"
                             :key="tab"
@@ -87,62 +90,62 @@
                             <Standing :teams="teams" :results="results" />
                         </div>
                     </div>
-                    <div v-if="activeTab === 'brackets'">
-                        <!-- Display Bracket -->
-                        <div class="mt-2">
-                            <div class="flex justify-between">
-                                <h2 class="text-md font-semibold mb-4">Tournament Bracket</h2>
+                    <div v-if="activeTab === 'brackets'" class="w-full overflow-x-auto">
+                        <div class="mt-2 mx-1 min-w-full">
+                            <div class="flex justify-between mb-4">
+                                <h2 class="text-md font-semibold">Tournament Bracket</h2>
                             </div>
-                            <div v-if="groupedMatches.length > 0" class="flex gap-8">
+                            <div v-if="groupedMatches.length > 0" class="flex flex-nowrap gap-4 md:gap-8 pb-4">
                                 <div 
-                                    v-for="(round, index) in groupedMatches" 
-                                    :key="index" 
-                                    class="space-y-6"
+                                v-for="(round, index) in groupedMatches" 
+                                :key="index" 
+                                class="flex-none space-y-4 md:space-y-6"
                                 >
-    
-                                    <h3 class="text-center text-sm font-bold">
-                                        {{ index + 1 === groupedMatches.length ? 'Championship' : `Round ${index + 1}` }}
-                                    </h3>
-                                    <div 
-                                        v-for="match in round" 
-                                        :key="match.id" 
-                                        class=" w-56 rounded-lg  space-y-2"
-                                        :disabled="!canUpdateMatch(match)"
-                                    >
-
-                                        <div class="flex justify-between items-center">
-                                            <p class="font-medium text-xs flex items-center gap-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1-7 0a5 5 0 0 0-7 0zm0 16v-7"/></svg>
-                                                {{ match.game }}
-                                            </p>
-                                        </div>
-                                        <div class="shadow border border-gray-300 p-2 rounded-lg" :class="{'ring-1 bg-green-50 ring-green-500': isChampionshipMatch(match)}"
-                                        >
-                                            <span 
-                                                class="mb-1 px-2 text-xs rounded-md flex items-center justify-between"
-                                                :class="getTeamBackgroundColor(match.id, match.teamA_id)"
-                                            >
-                                                <p class="p-2">{{ getTeamName(match.teamA_id) }}</p>
-                                                <div v-if="getMatchResult(match.id)" class="p-2 text-center">
-                                                    <p>{{ getMatchResult(match.id).teamA_score }}</p>
-                                                </div>
-                                            </span>
-                                            <span 
-                                                class=" px-2 text-xs rounded-md flex items-center justify-between"
-                                                :class="getTeamBackgroundColor(match.id, match.teamB_id)"
-                                            >
-                                                <p class="p-2">{{ getTeamName(match.teamB_id) }}</p>
-                                                <div v-if="getMatchResult(match.id)" class=" p-2 text-center">
-                                                    <p>{{ getMatchResult(match.id).teamB_score }}</p>
-                                                </div>
-                                            </span>
-                                        </div>
+                                <h3 class="text-center text-xs md:text-sm font-bold">
+                                    {{ index + 1 === groupedMatches.length ? 'Championship' : `Round ${index + 1}` }}
+                                </h3>
+                                <div 
+                                    v-for="match in round" 
+                                    :key="match.id" 
+                                    class="w-40 sm:w-48 md:w-56 space-y-2"
+                                    :disabled="!canUpdateMatch(match)"
+                                >
+                                    <div class="flex justify-between items-center">
+                                    <p class="font-medium text-xs flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1-7 0a5 5 0 0 0-7 0zm0 16v-7"/>
+                                        </svg>
+                                        {{ match.game }}
+                                    </p>
                                     </div>
-
+                                    <div 
+                                    class="shadow border border-gray-300 p-2 rounded-lg" 
+                                    :class="{'ring-1 bg-green-50 ring-green-500': isChampionshipMatch(match)}"
+                                    >
+                                    <span 
+                                        class="mb-1 px-2 text-xs rounded-md flex items-center justify-between"
+                                        :class="getTeamBackgroundColor(match.id, match.teamA_id)"
+                                    >
+                                        <p class="p-1 md:p-2 truncate">{{ getTeamName(match.teamA_id) }}</p>
+                                        <div v-if="getMatchResult(match.id)" class="p-1 md:p-2 text-center">
+                                        <p>{{ getMatchResult(match.id).teamA_score }}</p>
+                                        </div>
+                                    </span>
+                                    <span 
+                                        class="px-2 text-xs rounded-md flex items-center justify-between"
+                                        :class="getTeamBackgroundColor(match.id, match.teamB_id)"
+                                    >
+                                        <p class="p-1 md:p-2 truncate">{{ getTeamName(match.teamB_id) }}</p>
+                                        <div v-if="getMatchResult(match.id)" class="p-1 md:p-2 text-center">
+                                        <p>{{ getMatchResult(match.id).teamB_score }}</p>
+                                        </div>
+                                    </span>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
-                            <div v-else>
-                                <p>No matches have been created yet. Click 'Start Tournament' to begin.</p>
+                            <div v-else class="text-center py-8">
+                                <p class="text-gray-600">No matches have been created yet. Click 'Start Tournament' to begin.</p>
                             </div>
                         </div>
                     </div>

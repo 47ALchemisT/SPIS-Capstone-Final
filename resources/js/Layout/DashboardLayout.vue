@@ -4,10 +4,21 @@
         <nav class="bg-blue-700 fixed top-0 left-0 right-0 z-50 shadow-md">
             <div class="px-4 sm:px-6">
                 <div class="flex justify-between h-16">
-                    <div class="flex-shrink-0 flex space-x-2 sm:space-x-3 items-center">
-                        <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer shadow-md ring-2 ring-blue-400" src='/resources/assets/ssclogo.jpg' alt="SSC Logo">
-                        <span class="text-lg sm:text-xl font-semibold text-white tracking-wide">SPSIS</span>
+                    <div class="flex items-center">
+                        <!-- Hamburger menu for both mobile and desktop -->
+                        <button 
+                            @click="toggleSidebar" 
+                            class="text-white p-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                        >
+                            <i :class="['fa-solid', isSidebarOpen ? 'fa-bars' : 'fa-times', 'w-6 h-6']"></i>
+                        </button>
+                        
+                        <div class="flex-shrink-0 flex space-x-2 sm:space-x-3 items-center ml-2">
+                            <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer shadow-md ring-2 ring-blue-400" src='/resources/assets/ssclogo.jpg' alt="SSC Logo">
+                            <span class="text-lg sm:text-xl font-semibold text-white tracking-wide">SPSIS</span>
+                        </div>
                     </div>
+                    
                     <div class="ml-2 sm:ml-3 relative flex items-center gap-2 sm:gap-3">
                         <div class="hidden sm:block">
                             <p class="text-white text-sm font-semibold tracking-wide">Supreme Student Council</p>
@@ -71,10 +82,24 @@
             </div>
         </nav>
 
+        <!-- Overlay for mobile only when sidebar is open -->
+        <div 
+            v-if="isSidebarOpen && isMobile" 
+            @click="closeSidebar"
+            class="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 md:hidden"
+        ></div>
+
         <div class="flex pt-16">
-            <!-- Sidebar -->
-            <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white ring-right ring-1 ring-gray-200 pt-16">
-                <div class="h-full px-4 py-4 overflow-y-auto flex flex-col justify-between space-y-2">
+            <!-- Sidebar with modified classes for both mobile and desktop -->
+            <aside 
+                :class="[
+                    'fixed top-0 left-0 z-40 h-screen bg-white ring-right ring-1 ring-gray-200 pt-16 transition-all duration-300',
+                    isSidebarOpen ? 'w-64' : 'w-0',
+                    'overflow-hidden' // Prevent content flash during transition
+                ]"
+            >
+                <!-- Sidebar content with conditional rendering -->
+                <div v-if="isSidebarOpen" class="h-full px-4 py-4 overflow-y-auto flex flex-col justify-between space-y-2">
                     <div>
                         <div class="text-xs mb-3 mt-1 text-gray-500 font-medium uppercase tracking-wider">Dashboard</div>
                         <ul class="space-y-1.5" style="margin-bottom: 8px;">
@@ -180,8 +205,11 @@
                 </div>
             </aside>
 
-            <!-- Main content -->
-            <div class="flex-1 p-6 main-content">
+            <!-- Main content with dynamic margin -->
+            <div 
+                class="flex-1 transition-all duration-300 p-6"
+                :style="{ marginLeft: isSidebarOpen ? '256px' : '0' }"
+            >
                 <slot />
             </div>
         </div>
@@ -189,41 +217,72 @@
 </template>
 
 <script setup>
-    import { Link, usePage } from '@inertiajs/vue3';
-    import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-    import { onMounted, ref } from 'vue';
-    import { router } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { router } from '@inertiajs/vue3';
 
-    const { url: currentRoute } = usePage();
+const { url: currentRoute } = usePage();
+const isSidebarOpen = ref(true);
+const isMobile = ref(false);
 
-    onMounted(() => {
-        if (currentRoute === '/') {
-            router.visit(route('admin.show'));
-        }
-    });
+// Toggle sidebar for both mobile and desktop
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+// Close sidebar (for mobile only)
+const closeSidebar = () => {
+    if (isMobile.value) {
+        isSidebarOpen.value = false;
+    }
+};
+
+// Handle screen resize
+const handleResize = () => {
+    isMobile.value = window.innerWidth < 768;
+    // Don't automatically open sidebar on desktop resize
+    // This allows the sidebar to maintain its state across breakpoints
+};
+
+onMounted(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    if (currentRoute === '/') {
+        router.visit(route('admin.show'));
+    }
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
-.main-content {
-    margin-left: 256px;
+/* Transition for sidebar and main content */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
 }
 
-/* Add smooth transitions for hover effects */
+/* Smooth hover effects */
 a, button {
     transition: all 0.2s ease-in-out;
 }
 
-/* Add subtle hover effect for interactive elements */
+/* Interactive element hover effect */
 a:hover, button:hover {
     transform: translateY(-1px);
 }
 
-/* Add shadow transition for cards and buttons */
+/* Shadow transition */
 .shadow-transition {
     transition: box-shadow 0.2s ease-in-out;
 }
 
-/* Custom scrollbar for sidebar */
+/* Custom scrollbar styles */
 .overflow-y-auto {
     scrollbar-width: thin;
     scrollbar-color: #e2e8f0 #ffffff;
@@ -244,5 +303,10 @@ a:hover, button:hover {
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
     background-color: #cbd5e1;
+}
+
+/* Prevent body scroll when mobile menu is open */
+body.sidebar-open {
+    overflow: hidden;
 }
 </style>

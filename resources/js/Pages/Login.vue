@@ -1,12 +1,16 @@
 <template>
     <Head title="Login" />
-    <section class="grid grid-cols-2  dark:bg-gray-900 min-h-screen flex items-center justify-center relative">
-      <div class="h-screen">
-        <img class="h-screen w-full object-cover" src="/resources/assets/U.png" alt="">
+    <section class="grid grid-cols-1 sm:grid-cols-2  dark:bg-gray-900 min-h-full flex items-center justify-center relative">
+      <div class="h-screen sm:block hidden">
+        <img class="h-screen w-full object-cover hidden-mobile" src="/resources/assets/U.png" alt="">
       </div>
       <div class="flex items-center justify-center">
         <div class="w-full max-w-xl p-4 relative z-10">
           <div class="p-6 bg-white dark:bg-gray-800">
+            <div class="flex sm:mb-2 mb-2 gap-2 relative">
+              <img src="/resources/assets/logoMSU.png" alt="MSU Logo" class="h-12 w-auto relative">
+              <img src="/resources/assets/ssclogo.jpg" alt="MSU Logo" class="h-12 w-auto relative rounded-full">
+            </div>
             <h1 class="text-xl font-semibold text-gray-900 dark:text-white mb-0.5">Log in to your account</h1>
             <h3 class="text-sm  text-gray-600 mb-6">Welcome back! Please enter your account details.</h3>
     
@@ -174,5 +178,4 @@
   </script>
   
   <style scoped>
-  /* Add any component-specific styles here */
-  </style>
+</style>
