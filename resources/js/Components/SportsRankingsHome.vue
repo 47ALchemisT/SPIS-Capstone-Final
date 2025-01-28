@@ -60,7 +60,7 @@
                                 <tr v-for="(team, index) in getSportRankings(sport.id, category)" 
                                     :key="team.teamId"
                                     class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 text-sm font-medium text-gray-600">{{ index + 1 }}</td>
+                                    <td class="py-3 px-4 text-sm font-medium text-gray-600"> {{ team.rank }}</td>
                                     <td class="py-3 px-4">
                                         <div class="flex flex-col">
                                             <span class="text-sm font-medium text-gray-800">{{ getTeamName(team.teamId).name }}</span>
@@ -82,41 +82,7 @@
             </template>
         </div>
 
-        <div v-for="(variation, index) in filteredAndCompletedVariations" :key="index" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-4 sm:p-6 mb-6">
-            <div class="flex flex-col sm:flex-row mb-4  sm:gap-2">
-                <h4 class="text-sm sm:text-lg font-semibold">{{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} {{ variation.sport_id?.categories }} <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span></h4>
-                <h4 class="text-sm sm:text-lg font-normal sm:font-semibold">{{ variation.sport_variation_name }} </h4>
-            </div>
-            <!-- Rankings Section -->
-            <div>
-                <div v-if="getVariationRankings(variation.id).length > 0">
-                    <table class="min-w-full">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Rank</th>
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Team</th>
-                                <th class="text-right py-3 px-4 text-sm font-medium text-gray-600">Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(team, rankIndex) in getVariationRankings(variation.id)" 
-                                :key="rankIndex"
-                                class="hover:bg-gray-50">
-                                <td class="py-3 px-4 text-sm font-medium text-gray-600">{{ rankIndex + 1 }}</td>
-                                <td class="py-3 px-4">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-medium text-gray-800">{{ getTeamName(team.teamId).name }}</span>
-                                        <span class="text-xs text-gray-600 hidden sm:block">{{ getTeamName(team.teamId).college }}</span>
-                                    </div>
-                                </td>
-                                <td class="py-3 px-4 text-sm font-medium text-gray-600 text-right">{{ team.points }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p v-else class="text-gray-500">No rankings available</p>
-            </div>
-        </div>
+
     </div>
 </template>
 
@@ -124,7 +90,6 @@
 import { ref, computed } from 'vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue';
 import Graph from '@/Components/BarGraphV2.vue';  // Adjust the path as necessary
-import jsPDF from 'jspdf';
 
 const props = defineProps({
     assignedSports: {
@@ -161,17 +126,6 @@ const props = defineProps({
 const selectedSport = ref('');
 const selectedCategory = ref('');
 
-// Modal state
-const showPreviewModal = ref(false);
-
-const openPreviewModal = () => {
-    showPreviewModal.value = true;
-};
-
-const closePreviewModal = () => {
-    showPreviewModal.value = false;
-};
-
 // Filter sports based on search and completion status
 const filteredSports = computed(() => {
     let sports = props.assignedSports;
@@ -190,7 +144,7 @@ const filteredSports = computed(() => {
     }
 
     // Filter out free-for-all sports
-    sports = sports.filter(sport => sport.setup !== 'Free for All' && sport.status === 'completed');
+    sports = sports.filter(sport => sport.status === 'completed');
 
     return sports;
 });
@@ -215,23 +169,6 @@ const filteredVariations = computed(() => {
     return variations;
 });
 
-const filteredAndCompletedVariations = computed(() => {
-    console.log('assignedSports:', props.assignedSports);
-    console.log('filteredVariations:', filteredVariations.value);
-    
-    if (!props.assignedSports || !filteredVariations.value) return [];
-    
-    return filteredVariations.value.filter(variation => {
-        if (!variation.assigned_sport_id) {
-            console.log('Variation missing assigned_sport_id:', variation);
-            return false;
-        }
-        const sport = props.assignedSports.find(s => s.id === variation.assigned_sport_id);
-        console.log('Found sport for variation:', sport);
-        console.log('Sport status:', sport?.status);
-        return sport?.status === 'completed';
-    });
-});
 
 // Get all available sports for the filter dropdown
 const availableSports = computed(() => {
@@ -260,13 +197,6 @@ const getSportCategories = (sport) => {
     return sport.categories ? [sport.categories] : ['Men', 'Women', 'Mixed'];
 };
 
-// Get matches for a specific sport and category
-const getSportMatches = (sportId, category) => {
-    return props.sportMatches.filter(match => 
-        match.sport_id?.id === sportId && 
-        match.sport_id?.categories === category
-    );
-};
 
 // Get variations for a specific sport and category
 const getSportVariations = (sportId, category) => {
@@ -277,8 +207,9 @@ const getSportVariations = (sportId, category) => {
 };
 
 // Get rankings from overall results
-const getSportRankings = (sportId, category) => {
-    return props.overallResult
+// Get rankings from overall results
+const getSportRankings = (sportId) => {
+    const rankings = props.overallResult
         .filter(result => result.assigned_sport_id === sportId)
         .map(result => ({
             teamId: result.assigned_team_id,
@@ -286,6 +217,11 @@ const getSportRankings = (sportId, category) => {
             points: result.points
         }))
         .sort((a, b) => a.rank - b.rank);
+
+    // Log the rankings data to the console
+    console.log('Rankings for sportId:', sportId, rankings);
+
+    return rankings;
 };
 
 // Get rankings for variations
@@ -333,181 +269,6 @@ const getSportName = (sportId) => {
     return sport.sport?.name || 'Unknown Sport';
 };
 
-// Download PDF function
-const downloadRankingsAsPDF = () => {
-    const doc = new jsPDF();
-    let yPos = 20;
-    const lineHeight = 10;
-    const margin = 20;
-    const pageWidth = doc.internal.pageSize.width;
-    
-    // Add title
-    doc.setFontSize(16);
-    doc.text('Sports Rankings', margin, yPos);
-    yPos += lineHeight * 2;
-    
-    // Table configuration
-    const columns = ['Rank', 'Team', 'Points'];
-    const columnWidths = [20, 120, 30];  // Widths for each column
-    
-    // Function to draw table header
-    const drawTableHeader = (startY) => {
-        let xPos = margin;
-        doc.setFillColor(245, 245, 245); // Light gray background
-        doc.setTextColor(0); // Black text
-        doc.setFontSize(12);
-        
-        // Draw header background
-        doc.rect(xPos, startY - 7, columnWidths.reduce((a, b) => a + b, 0), 10, 'F');
-        
-        // Draw header text
-        columns.forEach((col, index) => {
-            doc.text(col, xPos + 2, startY);
-            xPos += columnWidths[index];
-        });
-        return startY + lineHeight;
-    };
-    
-    // Add regular rankings
-    filteredSports.value.forEach(sport => {
-        getSportCategories(sport).forEach(category => {
-            const rankings = getSportRankings(sport.id, category);
-            if (rankings.length > 0) {
-                // Check if we need a new page
-                if (yPos > 250) {
-                    doc.addPage();
-                    yPos = 20;
-                }
-                
-                // Add sport and category header
-                doc.setFontSize(14);
-                doc.text(`${sport.sport?.name} ${category}`, margin, yPos);
-                yPos += lineHeight * 1.5;
-                
-                // Draw table header
-                yPos = drawTableHeader(yPos);
-                
-                // Add rankings in table format
-                doc.setFontSize(11);
-                rankings.forEach((team, index) => {
-                    // Check if we need a new page
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                        yPos = drawTableHeader(yPos);
-                    }
-                    
-                    const teamName = getTeamName(team.teamId);
-                    let xPos = margin;
-                    
-                    // Draw row background (alternating colors)
-                    if (index % 2 === 0) {
-                        doc.setFillColor(252, 252, 252);
-                        doc.rect(xPos, yPos - 7, columnWidths.reduce((a, b) => a + b, 0), 10, 'F');
-                    }
-                    
-                    // Add row data
-                    doc.setTextColor(0); // Ensure text is black
-                    doc.text(`${index + 1}`, xPos + 2, yPos);
-                    doc.text(`${teamName.name} (${teamName.college})`, xPos + columnWidths[0] + 2, yPos);
-                    doc.text(`${team.points}`, xPos + columnWidths[0] + columnWidths[1] + 2, yPos);
-                    
-                    yPos += lineHeight;
-                });
-                
-                yPos += lineHeight * 1.5;
-            }
-        });
-    });
-    
-    // Add variations rankings with the same table format
-    filteredAndCompletedVariations.value.forEach(variation => {
-        const rankings = getVariationRankings(variation.id);
-        if (rankings.length > 0) {
-            // Check if we need a new page
-            if (yPos > 250) {
-                doc.addPage();
-                yPos = 20;
-            }
-            
-            // Add variation header
-            doc.setFontSize(14);
-            const header = `${getSportName(variation.assigned_sport_id)} ${variation.sport_id?.categories} - ${variation.sport_variation_name}`;
-            doc.text(header, margin, yPos);
-            yPos += lineHeight * 1.5;
-            
-            // Draw table header
-            yPos = drawTableHeader(yPos);
-            
-            // Add rankings in table format
-            doc.setFontSize(11);
-            rankings.forEach((team, index) => {
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                    yPos = drawTableHeader(yPos);
-                }
-                
-                const teamName = getTeamName(team.teamId);
-                let xPos = margin;
-                
-                // Draw row background (alternating colors)
-                if (index % 2 === 0) {
-                    doc.setFillColor(252, 252, 252);
-                    doc.rect(xPos, yPos - 7, columnWidths.reduce((a, b) => a + b, 0), 10, 'F');
-                }
-                
-                // Add row data
-                doc.setTextColor(0); // Ensure text is black
-                doc.text(`${index + 1}`, xPos + 2, yPos);
-                doc.text(`${teamName.name} (${teamName.college})`, xPos + columnWidths[0] + 2, yPos);
-                doc.text(`${team.points}`, xPos + columnWidths[0] + columnWidths[1] + 2, yPos);
-                
-                yPos += lineHeight;
-            });
-            
-            yPos += lineHeight * 1.5;
-        }
-    });
-    
-    // Save the PDF
-    doc.save('sports-rankings.pdf');
-};
-
-//
-// Add this computed property after your existing computed properties
-const topThreeTeams = computed(() => {
-    if (!props.assignedTeams || !props.overallResult) return [];
-
-    const pointsMap = new Map();
-
-    // Sum up points from overall results
-    props.overallResult.forEach(result => {
-        if (result.assigned_team_id && result.total_points) {
-            const currentPoints = pointsMap.get(result.assigned_team_id) || 0;
-            pointsMap.set(result.assigned_team_id, currentPoints + result.total_points);
-        }
-    });
-
-    // Add points from variation results if they exist
-    if (props.variationResult) {
-        props.variationResult.forEach(result => {
-            if (result.assigned_team_id && result.total_points) {
-                const currentPoints = pointsMap.get(result.assigned_team_id) || 0;
-                pointsMap.set(result.assigned_team_id, currentPoints + result.total_points);
-            }
-        });
-    }
-
-    // Map and sort teams
-    return props.assignedTeams
-        .map(team => ({
-            ...team,
-            total_points: pointsMap.get(team.id) || 0
-        }))
-        .sort((a, b) => b.total_points - a.total_points)
-        .slice(0, 3);
-});
 </script>
 
 <style>

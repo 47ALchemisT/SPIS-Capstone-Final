@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->string('type');//major or minor
-            $table->string('rank');
+            $table->integer('rank'); // Changed from string to integer
             $table->integer('points');
             $table->timestamps();
         });

@@ -106,11 +106,7 @@ const props = defineProps({
     required: true,
     default: () => []
   },
-  variationResult: {
-    type: Array,
-    required: true,
-    default: () => []
-  }
+
 });
 
 const chart = ref(null);
@@ -125,13 +121,10 @@ const teamRankings = computed(() => {
       .filter(result => result.assigned_team_id === team.id)
       .reduce((sum, result) => sum + (result.points || 0), 0);
     
-    const variationPoints = props.variationResult
-      .filter(result => result.sport_variation_team_id === team.id)
-      .reduce((sum, result) => sum + (result.points || 0), 0);
-    
+
     return {
       ...team,
-      totalPoints: overallPoints + variationPoints
+      totalPoints: overallPoints 
     };
   });
   
@@ -169,7 +162,7 @@ const chartData = computed(() => ({
     },
     borderRadius: 8,
     borderSkipped: false,
-    barThickness: isCompact.value ? 40 : 30,
+    barThickness: isCompact.value ? 80 : 60,
     maxBarThickness: 64
   }]
 }));
@@ -252,8 +245,6 @@ const chartOptions = computed(() => ({
         },
         color: '#6b7280',
         padding: 8,
-        maxRotation: 45,
-        minRotation: 45
       }
     }
   },

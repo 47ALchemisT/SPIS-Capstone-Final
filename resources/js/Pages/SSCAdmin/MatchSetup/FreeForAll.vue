@@ -38,7 +38,99 @@
                         <span class="text-xs font-medium">{{ progressPercentage.toFixed(0) }}% completed</span>
                     </div>
                 </div>
+        </div>
+        <div class="w-full pt-4">
+          <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b">
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    {{ progressPercentage < 100 ? 'Initial Rankings' : 'Final Rankings' }}
+                  </h3>
+                  <span 
+                    v-if="progressPercentage < 100" 
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                  >
+                    In Progress
+                  </span>
                 </div>
+                
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex items-center p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    title="More Information"
+                  >
+                    <svg 
+                      class="w-5 h-5" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                      Rank
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Team
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      College
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Points
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr
+                    v-for="(entry, index) in rankedTeams"
+                    :key="entry.teamId"
+                    class="hover:bg-gray-50 transition-colors duration-150"
+                  >
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                      <div
+                        v-if="rankedTeams[index]"
+                        :class="[ 
+                          'inline-flex items-center justify-center h-8 w-8 rounded-full font-semibold text-sm',
+                          rankedTeams[index].rank === 1 ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-200' :
+                          rankedTeams[index].rank === 2 ? 'bg-gray-100 text-gray-800 ring-2 ring-gray-200' :
+                          'bg-orange-100 text-orange-800 ring-2 ring-orange-200'
+                        ]"
+                      >
+                        {{ rankedTeams[index].rank }}
+                      </div>
+                      <span v-else class="text-sm text-gray-600">
+                        {{ rankedTeams[index]?.rank || 'Unranked' }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{{ entry.teamName }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-600">{{ entry.collegeName }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                      <div class="text-sm font-medium text-gray-900">{{ entry.points }}</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
         <nav class="flex relative justify-between mt-4  items-center">
           <div class="flex gap-2 rounded-lg ">
@@ -78,7 +170,6 @@
                 </button>
               </div>
         </nav>
-
         
         <div v-if="sport.status === 'pending'" class="mt-4 p-6 rounded-lg bg-blue-50 text-sm text-center text-blue-700">
             <i class="fa-solid fa-circle-info mr-2"></i>
@@ -100,46 +191,59 @@
                     'border border-gray-300': variation.status?.toLowerCase() !== 'completed'
                   }">
                   <div class="flex justify-between items-center">
-                    <div class="flex justify-between w-full">
-                      <div>
-                        <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
-                        <div class="flex items-center mt-1 gap-2.5">
-                          <div class="text-xs text-gray-600">
-                            <div class="flex items-center gap-1.5">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                              </svg>
-                              <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
+                    <div class="flex items-center justify-between w-full gap-2">
+                      <div class="flex gap-2 w-full">
+                        <div>
+                          <button v-if="variation.status?.toLowerCase() !== 'completed'"
+                            @click="openUpdateTimeModal(variation)"
+                            type="button" 
+                            class="p-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                          >
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
+                          </button>
+                        </div>
+                        <div>
+                          <h3 class="text-md font-semibold">{{ variation.sport_variation_name }}</h3>
+                          <div class="flex items-center mt-1 gap-2.5">
+                            <div class="text-xs text-gray-600">
+                              <div class="flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span>{{ getVenueName(variation.sport_variation_venue_id) }}</span>
+                              </div>
                             </div>
-                          </div>
-                          <p class="text-xs text-gray-400">|</p>
-                          <div class="text-xs text-gray-600">
-                            <div class="flex items-center gap-1.5">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              <span :class="{'text-red-500': !variation.date || !variation.time}">
-                                {{ formatDateTime(variation.date, variation.time) }}
+                            <p class="text-xs text-gray-400">|</p>
+                            <div class="text-xs text-gray-600">
+                              <div class="flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span :class="{'text-red-500': !variation.date || !variation.time}">
+                                  {{ formatDateTime(variation.date, variation.time) }}
+                                </span>
+                              </div>
+                            </div>
+                            <p class="text-xs text-gray-400">|</p>
+                            <div class="text-xs flex justify-between gap-1.5 items-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
+                              <span :class="getStatusClass(variation.status)">
+                                {{ formatStatus(variation.status) }}
                               </span>
                             </div>
                           </div>
-                          <p class="text-xs text-gray-400">|</p>
-                          <div class="text-xs flex justify-between gap-1.5 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m5 0v.01m4-.01v.01m4-.01v.01"/></svg>            
-                            <span :class="getStatusClass(variation.status)">
-                              {{ formatStatus(variation.status) }}
-                            </span>
-                          </div>
                         </div>
                       </div>
-                      <div>
-                        <button 
-                          @click="openUpdateTimeModal(variation)"
+                      <div class="flex items-center gap-2">
+                        <!-- Delete Button -->
+                        <button
+                          @click="openDeleteModal(variation.id)"
+                          v-if="sport.status !== 'Ongoing'"
                           type="button" 
-                          class="p-2 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                          class="py-2 px-3 text-sm font-medium text-gray-500 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-red-600 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                         >
-                          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 12a9 9 0 1 0-9.972 8.948q.48.051.972.052"/><path d="M12 7v5l2 2m4.42 1.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"/></g></svg>
+                          <i class="fa-solid fa-trash"></i>
                         </button>
                       </div>
                     </div>
@@ -172,8 +276,6 @@
             <PlayersDisplay class="mt-1" :players="players" :teams="teams" />
           </div>
         </div>
-
-
 
 
         <!-- Sport Variation Modal -->
@@ -497,6 +599,66 @@
             </div>
           </div>
         </div>
+        <!-- Delete Modal -->
+        <div
+          v-if="isDeleteModalOpen"
+          class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+          >
+          <div class="bg-white rounded-lg p-6 w-96 shadow-lg dark:bg-gray-800">
+            <div>
+              <i
+                class="fa-solid fa-circle-exclamation text-red-500 text-2xl py-4 px-5 bg-red-100 rounded-full mb-5"
+              ></i>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+                Confirm Deletion
+              </h2>
+            </div>
+
+            <p class="text-sm text-gray-600 mt-2 dark:text-gray-300">
+              Are you sure you want to delete this item? This action cannot be undone.
+            </p>
+
+            <div class="flex justify-end gap-3 mt-6">
+              <button
+                @click="closeDeleteModal"
+                class="py-2 px-4 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                :disabled="isDeleting"
+              >
+                Cancel
+              </button>
+              <button
+                @click="confirmDelete"
+                class="py-2 px-4 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200 dark:focus:ring-red-800 flex items-center justify-center gap-2"
+                :disabled="isDeleting"
+              >
+                <template v-if="isDeleting">
+                  <svg
+                    class="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    ></path>
+                  </svg>
+                  Deleting...
+                </template>
+                <span v-else>Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </template>
     </AppLayout>
     <SuccessModal
@@ -549,6 +711,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  variationMatches: {
+    type: Array,
+    default: () => []
+  },
   venueRecords: {
     type: Array,
     default: () => []
@@ -560,7 +726,7 @@ const props = defineProps({
   },
 
 });
-
+console.log('Sport:', props.sport);
 const showSuccessModal = ref(false);
 const successMessage = ref('');
 
@@ -584,6 +750,134 @@ const allMatchesScheduled = computed(() => {
     variation.date && variation.time && variation.sport_variation_venue_id
   );
 });
+
+const isDeleteModalOpen = ref(false);
+const isDeleting = ref(false);
+const variationIdToDelete = ref(null);
+
+const openDeleteModal = (variationId) => {
+  variationIdToDelete.value = variationId;
+  isDeleteModalOpen.value = true;
+};
+
+const closeDeleteModal = () => {
+  isDeleteModalOpen.value = false;
+  variationIdToDelete.value = null;
+  isDeleting.value = false; // Reset in case of reopening
+};
+
+const confirmDelete = () => {
+  isDeleting.value = true; // Set to true before making the request
+
+  router.delete(route('variation.destroy', variationIdToDelete.value), {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                closeDeleteModal();
+                showSuccessModal.value = true;
+                successMessage.value = 'Variation deleted successfully!';
+            },
+            onError: () => {
+                // Handle errors if needed
+                showSuccessModal.value = false;
+                closeDeleteModal();
+                isDeleting.value = false; // Reset after error
+            }
+        });
+};
+
+const pointsType = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
+
+const getPoints = (index) => {
+  if (!pointsType.value || !Array.isArray(pointsType.value)) {
+    return 'No Points';
+  }
+  return pointsType.value[index]?.points ?? 'No Points';
+};
+
+console.log('Points Type:', pointsType.value);
+
+// Calculate accumulated points with separated team and college information
+const accumulatedPoints = computed(() => {
+  return props.variationMatches.reduce((acc, match) => {
+    const team = match.assigned_team_variation_i_d;
+    const teamId = team?.id || `unknown-${Math.random()}`; // Unique identifier for each team
+    const teamName = team?.assigned_team_name || 'Unknown Team';
+    const collegeName = team?.college?.name || 'Unknown College';
+    const points = match.points || 0;
+
+    if (!acc[teamId]) {
+      acc[teamId] = {
+        teamId,
+        teamName,
+        collegeName,
+        points: 0
+      };
+    }
+
+    acc[teamId].points += points;
+    return acc;
+  }, {});
+});
+
+const rankedTeams = computed(() => {
+  const teams = Object.values(accumulatedPoints.value);
+
+  // Sort teams by points in descending order
+  teams.sort((a, b) => b.points - a.points);
+
+  let currentRank = 1;
+  let previousPoints = null;
+  let skippedRanks = 0; // To account for ties
+
+  return teams.map((team, index) => {
+    if (team.points === previousPoints) {
+      // If points are tied, assign the same rank as the previous team
+      skippedRanks++;
+    } else {
+      // If points are not tied, calculate rank based on the index and skippedRanks
+      currentRank = index + 1;
+      currentRank -= skippedRanks; // Adjust rank based on skipped ranks
+      skippedRanks = 0; // Reset skipped ranks for the next group
+    }
+
+    previousPoints = team.points;
+
+    // Assign the rank to the team
+    return { ...team, rank: currentRank };
+  });
+});
+
+
+// Sort teams by points and convert to array for easier template rendering
+const sortedTeams = computed(() => {
+  return Object.values(accumulatedPoints.value)
+    .sort((a, b) => b.points - a.points);
+});
+
+const isAnyFieldFilled = computed(() => {
+  return Object.values(rankUpdates.value).some(match => 
+    match.rank !== '' || match.points !== ''
+  );
+});
+
+const setPoints = (matchId) => {
+  const rank = rankUpdates.value[matchId].rank;
+  const pointsMapping = {
+    "1": 20, 
+    "2": 18,  
+    "3": 16,  
+    "4": 14,
+    "5": 12,
+    "6": 10,
+    "0": 0,
+  };
+
+  rankUpdates.value[matchId].points = pointsMapping[rank] || 0; 
+};
+
 
 const handleScheduleClick = async () => {
   try {

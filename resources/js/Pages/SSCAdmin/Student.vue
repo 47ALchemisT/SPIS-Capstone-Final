@@ -503,19 +503,16 @@
     });
     // Computed property to filter students based on the search query
     const filteredStudents = computed(() => {
-        if (!searchQuery.value) return props.students || [];
-        
-        const query = searchQuery.value.toLowerCase();
-        return (props.students || []).filter(student => {
-            const fullname = student?.fullname || '';
-            const email = student?.email || '';
-            const contact = student?.contact || '';
-            
-            return fullname.toLowerCase().includes(query) ||
-                   email.toLowerCase().includes(query) ||
-                   contact.toLowerCase().includes(query);
-        });
+    if (!searchQuery.value) return props.students || [];
+    
+    const query = searchQuery.value.toLowerCase();
+    return (props.students || []).filter(student => {
+        const fullname = `${student.first_name} ${student.last_name}`.toLowerCase();
+        return fullname.includes(query) || 
+               student.univ_email.toLowerCase().includes(query) || 
+               student.contact.toLowerCase().includes(query);
     });
+});
 
     // Computed property to get paginated students
     const paginatedStudents = computed(() => {

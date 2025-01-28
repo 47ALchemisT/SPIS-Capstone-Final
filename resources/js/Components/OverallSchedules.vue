@@ -539,6 +539,42 @@ const downloadScheduleAsPDF = () => {
     let yPos = 20;
     const lineHeight = 10;
     const margin = 20;
+    const pageWidth = doc.internal.pageSize.width;
+
+    // Define paths for logos
+    const leftLogo = 'assets/logoMSU.png'; // Path to the left logo in the assets directory
+    const rightLogo = 'assets/logoMSU.png'; // Path to the right logo in the assets directory
+
+    // Add logos with reduced size
+    doc.addImage(leftLogo, 'PNG', 20, yPos - 10, 20, 20); // Adjust dimensions (x, y, width, height)
+    doc.addImage(rightLogo, 'PNG', pageWidth - 45, yPos - 10, 20, 20); // Adjust dimensions (x, y, width, height)
+
+    // Add header text
+    doc.setFontSize(14);
+    doc.setFont('times', 'bold');
+    const headerText = 'Mindanao State University at Naawan';
+    const textWidth = doc.getTextWidth(headerText);
+    const xPos = (pageWidth - textWidth) / 2; // Center alignment
+    doc.text(headerText, xPos, yPos);
+    yPos += lineHeight * 0.6; // Reduce spacing
+
+    // Add subheader text
+    doc.setFontSize(14);
+    doc.setFont('times', 'bold');
+    const subheaderText = 'Supreme Student Council';
+    const subtextWidth = doc.getTextWidth(subheaderText);
+    const subxPos = (pageWidth - subtextWidth) / 2; // Center alignment
+    doc.text(subheaderText, subxPos, yPos);
+    yPos += lineHeight * 0.6; // Reduce spacing
+
+    // Add additional subheader text
+    doc.setFontSize(12);
+    doc.setFont('times', 'normal');
+    const subHeaderText = '9023 Naawan, Misamis Oriental';
+    const subTextWidth = doc.getTextWidth(subHeaderText);
+    const subXPos = (pageWidth - subTextWidth) / 2; // Center alignment
+    doc.text(subHeaderText, subXPos, yPos);
+    yPos += lineHeight * 1.5; // Extra spacing for the next section
     
     // Add title
     doc.setFontSize(16);
@@ -593,7 +629,7 @@ const downloadScheduleAsPDF = () => {
     });
     
     // Save the PDF
-    doc.save('sports-schedule.pdf');
+    doc.save('PALAKASAN-Sports-Schedule.pdf');
 };
 
 // Preview modal function

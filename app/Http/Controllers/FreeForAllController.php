@@ -38,9 +38,17 @@ class FreeForAllController extends Controller
             $allMatches = SportMatch::all();
             $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)
                 ->get();
-            $sportVariationMatches = SportsVariationsMatches::all();
+            $sportVariationMatches = SportsVariationsMatches::with(['assignedTeamVariationID', 'assignedTeamVariationID.college'])
+                ->whereIn('sport_variation_id', $sportVariations->pluck('id'))
+                ->get();
+            $variationMatches = SportsVariationsMatches::with(['assignedTeamVariationID', 'assignedTeamVariationID.college'])
+                ->whereIn('sport_variation_id', $sportVariations->pluck('id'))
+                ->get();
+
             $latestPalakasan = Palakasan::latest()->first();
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
+            $majorPoints = Points::where('type', 'Major')->get();
+            $minorPoints = Points::where('type', 'Minor')->get();
             $players = StudentPlayer::with(['student', 'assignedTeam'])
             ->where('student_assigned_sport_id', $assignedSports->id)
             ->get();
@@ -59,6 +67,9 @@ class FreeForAllController extends Controller
                 'venueRecords' => $venueRecords,
                 'players' => $players,
                 'latestPalakasan' => $latestPalakasan,
+                'majorPoints' => $majorPoints,
+                'minorPoints' => $minorPoints,
+                'variationMatches' => $variationMatches
 
             ]);
 
@@ -108,22 +119,29 @@ class FreeForAllController extends Controller
         try {
             $facilitatorId = Crypt::decryptString($encryptedFacilitatorId);
             $facilitator = StudentAccount::with('student')->findOrFail($facilitatorId);
+            $latestPalakasan = Palakasan::latest()->first();
 
             $points = Points::all();
             $colleges = College::all();
             $venues = Venue::all();
             $assignedSports->load('sport');
+
             $tournaments = Palakasan::all();
             $teams = AssignedTeams::where('palakasan_id', $assignedSports->palakasan_sport_id)->get();
             $allMatches = SportMatch::all();
-            $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)
-                ->get();
-            $sportVariationMatches = SportsVariationsMatches::all();
-            $latestPalakasan = Palakasan::latest()->first();
+            $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)->get();
+
+            $sportVariationMatches = SportsVariationsMatches::with(['assignedTeamVariationID', 'assignedTeamVariationID.college'])
+            ->whereIn('sport_variation_id', $sportVariations->pluck('id'))
+            ->get();
+            $variationMatches = SportsVariationsMatches::with(['assignedTeamVariationID', 'assignedTeamVariationID.college'])
+            ->whereIn('sport_variation_id', $sportVariations->pluck('id'))
+            ->get();
+
+
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
             $majorPoints = Points::where('type', 'Major')->get();
             $minorPoints = Points::where('type', 'Minor')->get();
-            $latestPalakasan = Palakasan::latest()->first();
             $players = StudentPlayer::with(['student', 'assignedTeam'])
             ->where('student_assigned_sport_id', $assignedSports->id)
             ->get();
@@ -145,6 +163,7 @@ class FreeForAllController extends Controller
                 'minorPoints' => $minorPoints,
                 'players' => $players,
                 'latestPalakasan' => $latestPalakasan,
+                'variationMatches' => $variationMatches
 
             ]);
 
@@ -165,8 +184,15 @@ class FreeForAllController extends Controller
             $allMatches = SportMatch::all();
             $sportVariations = SportsVariations::where('assigned_sport_id', $assignedSports->id)
                 ->get();
-            $sportVariationMatches = SportsVariationsMatches::all();
+            $sportVariationMatches = SportsVariationsMatches::with(['assignedTeamVariationID', 'assignedTeamVariationID.college'])
+                ->whereIn('sport_variation_id', $sportVariations->pluck('id'))
+                ->get();
+            $variationMatches = SportsVariationsMatches::with(['assignedTeamVariationID', 'assignedTeamVariationID.college'])
+                ->whereIn('sport_variation_id', $sportVariations->pluck('id'))
+                ->get();
             $latestPalakasan = Palakasan::latest()->first();
+            $majorPoints = Points::where('type', 'Major')->get();
+            $minorPoints = Points::where('type', 'Minor')->get();
             $venueRecords = UsedVenueRecord::where('palakasan_id', $latestPalakasan->id)->get();
             $players = StudentPlayer::with(['student', 'assignedTeam'])
             ->where('student_assigned_sport_id', $assignedSports->id)
@@ -186,6 +212,9 @@ class FreeForAllController extends Controller
                 'venueRecords' => $venueRecords,
                 'players' => $players,
                 'latestPalakasan' => $latestPalakasan,
+                'variationMatches' => $variationMatches,
+                'majorPoints' => $majorPoints,
+                'minorPoints' => $minorPoints
 
             ]);
 
@@ -415,7 +444,7 @@ class FreeForAllController extends Controller
             $validated = $request->validate([
                 'matches' => 'required|array',
                 'matches.*.id' => 'required|exists:sports_variations_matches,id',
-                'matches.*.rank' => 'required|integer|min:1',
+                'matches.*.rank' => 'required|integer|min:0',
                 'matches.*.points' => 'required|integer|min:0',
                 'signature' => 'required|string',
                 'official_name' => 'required|string',
@@ -490,6 +519,14 @@ class FreeForAllController extends Controller
         $assignedSport->update(['status' => $request->input('status')]);
         
         return redirect()->back()->with('message', 'Status updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        $variation = SportsVariations::findOrFail($id);
+        $variation->delete();
+    
+        return redirect()->back()->with('success', 'Product deleted successfully.');
     }
 
 }

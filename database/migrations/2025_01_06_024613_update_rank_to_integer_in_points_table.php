@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('colleges', function (Blueprint $table) {
-            $table->dropColumn('teamName');
+        Schema::table('points', function (Blueprint $table) {
+            $table->integer('rank')->change(); // Modify the rank column to integer
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('colleges', function (Blueprint $table) {
-            $table->string('teamName');
+        Schema::table('points', function (Blueprint $table) {
+            $table->string('rank')->change(); // Revert the rank column to string
         });
     }
 };

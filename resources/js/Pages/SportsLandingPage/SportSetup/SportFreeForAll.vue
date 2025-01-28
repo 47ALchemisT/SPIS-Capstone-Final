@@ -42,6 +42,99 @@
                       </div>
                   </div>
           </div>
+
+          <div class="w-full pt-4">
+            <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+              <!-- Header -->
+              <div class="px-6 py-4 border-b">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                      {{ progressPercentage < 100 ? 'Initial Rankings' : 'Final Rankings' }}
+                    </h3>
+                    <span 
+                      v-if="progressPercentage < 100" 
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                    >
+                      In Progress
+                    </span>
+                  </div>
+                  
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="inline-flex items-center p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                      title="More Information"
+                    >
+                      <svg 
+                        class="w-5 h-5" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table -->
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                        Rank
+                      </th>
+                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Team
+                      </th>
+                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        College
+                      </th>
+                      <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Points
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr
+                      v-for="(entry, index) in sortedTeams"
+                      :key="entry.teamId"
+                      class="hover:bg-gray-50 transition-colors duration-150"
+                    >
+                      <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <div
+                          v-if="rankedTeams[index]"
+                          :class="[ 
+                            'inline-flex items-center justify-center h-8 w-8 rounded-full font-semibold text-sm',
+                            rankedTeams[index].rank === 1 ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-200' :
+                            rankedTeams[index].rank === 2 ? 'bg-gray-100 text-gray-800 ring-2 ring-gray-200' :
+                            'bg-orange-100 text-orange-800 ring-2 ring-orange-200'
+                          ]"
+                        >
+                          {{ rankedTeams[index].rank }}
+                        </div>
+                        <span v-else class="text-sm text-gray-600">
+                          {{ rankedTeams[index]?.rank || 'Unranked' }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ entry.teamName }}</div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-600">{{ entry.collegeName }}</div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <div class="text-sm font-medium text-gray-900">{{ entry.points }}</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
                 <!-- Tabs Navigation -->
                 <nav class="mt-4">
                     <div class="grid grid-cols-3 sm:grid-cols-none sm:flex sm:gap-2 gap-2 rounded-lg">
@@ -195,6 +288,10 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
+  variationMatches: {
+    type: Array,
+    default: () => []
+  },
 
 });
 
@@ -205,6 +302,96 @@ const totalMatches = computed(() => props.sportVariations.length);
 const completedMatches = computed(() => props.sportVariations.filter(variation => variation.status === 'completed').length);
 const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMatches.value / totalMatches.value) * 100 : 0);
 
+const pointsType = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
+
+const getPoints = (index) => {
+  if (!pointsType.value || !Array.isArray(pointsType.value)) {
+    return 'No Points';
+  }
+  return pointsType.value[index]?.points ?? 'No Points';
+};
+
+console.log('Points Type:', pointsType.value);
+
+// Calculate accumulated points with separated team and college information
+const accumulatedPoints = computed(() => {
+  return props.variationMatches.reduce((acc, match) => {
+    const team = match.assigned_team_variation_i_d;
+    const teamId = team?.id || `unknown-${Math.random()}`; // Unique identifier for each team
+    const teamName = team?.assigned_team_name || 'Unknown Team';
+    const collegeName = team?.college?.name || 'Unknown College';
+    const points = match.points || 0;
+
+    if (!acc[teamId]) {
+      acc[teamId] = {
+        teamId,
+        teamName,
+        collegeName,
+        points: 0
+      };
+    }
+
+    acc[teamId].points += points;
+    return acc;
+  }, {});
+});
+
+const rankedTeams = computed(() => {
+  const teams = Object.values(accumulatedPoints.value);
+
+  // Sort teams by points in descending order
+  teams.sort((a, b) => b.points - a.points);
+
+  let currentRank = 1;
+  let previousPoints = null;
+  let skippedRanks = 0; // To account for ties
+
+  return teams.map((team, index) => {
+    if (team.points === previousPoints) {
+      // If points are tied, assign the same rank as the previous team
+      skippedRanks++;
+    } else {
+      // If points are not tied, calculate rank based on the index and skippedRanks
+      currentRank = index + 1;
+      currentRank -= skippedRanks; // Adjust rank based on skipped ranks
+      skippedRanks = 0; // Reset skipped ranks for the next group
+    }
+
+    previousPoints = team.points;
+
+    // Assign the rank to the team
+    return { ...team, rank: currentRank };
+  });
+});
+
+// Sort teams by points and convert to array for easier template rendering
+const sortedTeams = computed(() => {
+  return Object.values(accumulatedPoints.value)
+    .sort((a, b) => b.points - a.points);
+});
+
+const isAnyFieldFilled = computed(() => {
+  return Object.values(rankUpdates.value).some(match => 
+    match.rank !== '' || match.points !== ''
+  );
+});
+
+const setPoints = (matchId) => {
+  const rank = rankUpdates.value[matchId].rank;
+  const pointsMapping = {
+    "1": 20, 
+    "2": 18,  
+    "3": 16,  
+    "4": 14,
+    "5": 12,
+    "6": 10,
+    "0": 0,
+  };
+
+  rankUpdates.value[matchId].points = pointsMapping[rank] || 0; 
+};
 
 const returnToPalakasan = () => {
   router.get(route('sports.sports'));

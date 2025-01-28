@@ -415,7 +415,6 @@
                             <Graph
                                 :teams="assignedTeams"
                                 :overallResult="overallResult"
-                                :variationResult="variationResult"
                             />
                         </div>
                     </div>
@@ -549,20 +548,13 @@ const teamRankings = computed(() => {
         );
         const overallPoints = teamOverallResults.reduce((sum, result) => sum + (result.points || 0), 0);
         
-        // Calculate variation points - using the correct field for filtering
-        const teamVariationResults = props.variationResult.filter(
-            result => result.sport_variation_team_id === team.id
-        );
-        const variationPoints = teamVariationResults.reduce((sum, result) => sum + (result.points || 0), 0);
-        
         // Calculate total points
-        const totalPoints = overallPoints + variationPoints;
+        const totalPoints = overallPoints;
         
         return {
             ...team,
             totalPoints,
-            overallPoints,
-            variationPoints
+            overallPoints
         };
     }).sort((a, b) => b.totalPoints - a.totalPoints);
 });

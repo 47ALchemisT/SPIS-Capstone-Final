@@ -14,7 +14,7 @@
                         </button>
                         
                         <div class="flex-shrink-0 flex space-x-2 sm:space-x-3 items-center ml-2">
-                            <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer shadow-md ring-2 ring-blue-400" src='/resources/assets/ssclogo.jpg' alt="SSC Logo">
+                            <img class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover cursor-pointer shadow-md ring-2 ring-blue-400" src='/resources/assets/ssclogo.png' alt="SSC Logo">
                             <span class="text-lg sm:text-xl font-semibold text-white tracking-wide">SPSIS</span>
                         </div>
                     </div>
@@ -265,16 +265,6 @@ onBeforeUnmount(() => {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
-}
-
-/* Smooth hover effects */
-a, button {
-    transition: all 0.2s ease-in-out;
-}
-
-/* Interactive element hover effect */
-a:hover, button:hover {
-    transform: translateY(-1px);
 }
 
 /* Shadow transition */

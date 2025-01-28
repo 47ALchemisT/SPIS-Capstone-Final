@@ -402,7 +402,7 @@ import FacilitatorSettings from '@/Components/FacilitatorSettings.vue';
 
 const props = defineProps({
   facilitator: {
-    type: Object,
+    type: Array,
     required: true
   },
   assignedSports: {
@@ -410,13 +410,17 @@ const props = defineProps({
     default: () => []
   },
   palakasan: {
-    type: Object,
+    type: [Array],
     default: () => ({})
   },
   activityLogs: {
     type: Array,
     default: () => []
-  }
+  },
+  latestPalakasan: {
+      type: Array,
+      required: true
+    },
 });
 const dropdownOpen = ref(false);
 const searchQuery = ref('');

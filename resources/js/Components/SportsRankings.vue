@@ -24,6 +24,8 @@
                         </svg>
                     </div>
                 </div>
+
+
                 <div class="relative">
                     <select v-model="selectedCategory" class="appearance-none w-full py-2 pl-3 pr-10 text-sm bg-white rounded-lg ring-1 ring-gray-200 focus:border-blue-500 focus:ring-blue-500">
                         <option value="">All Categories</option>
@@ -37,6 +39,10 @@
                         </svg>
                     </div>
                 </div>
+                <!-- Display the number of available sports -->
+                <p class="mt-2 text-sm text-gray-600">
+                    Total Number of Sports : <span class="font-bold">{{ availableSports.length }}</span>
+                </p>
             </div>
             <div class="flex justify-end mb-4">
                 <button
@@ -73,7 +79,7 @@
                                 <tr v-for="(team, index) in getSportRankings(sport.id, category)" 
                                     :key="team.teamId"
                                     class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 text-sm font-medium text-gray-600">{{ index + 1 }}</td>
+                                    <td class="py-3 px-4 text-sm font-medium text-gray-600">{{ team.rank }}</td>
                                     <td class="py-3 px-4">
                                         <div class="flex flex-col">
                                             <span class="text-sm font-medium text-gray-800">{{ getTeamName(team.teamId).name }}</span>
@@ -95,38 +101,6 @@
             </template>
         </div>
 
-        <div v-for="(variation, index) in filteredAndCompletedVariations" :key="index" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6 mb-6">
-            <h4 class="text-lg font-semibold">{{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} {{ variation.sport_id?.categories }} <span class="font-normal text-gray-500">({{ variation.sport_id?.setup }})</span> - {{ variation.sport_variation_name }} </h4>            
-            <!-- Rankings Section -->
-            <div>
-                <div v-if="getVariationRankings(variation.id).length > 0" class="mb-6">
-                    <table class="min-w-full">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Rank</th>
-                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">Team</th>
-                                <th class="text-right py-3 px-4 text-sm font-medium text-gray-600">Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(team, rankIndex) in getVariationRankings(variation.id)" 
-                                :key="rankIndex"
-                                class="hover:bg-gray-50">
-                                <td class="py-3 px-4 text-sm font-medium text-gray-600">{{ rankIndex + 1 }}</td>
-                                <td class="py-3 px-4">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-medium text-gray-800">{{ getTeamName(team.teamId).name }}</span>
-                                        <span class="text-xs text-gray-600">{{ getTeamName(team.teamId).college }}</span>
-                                    </div>
-                                </td>
-                                <td class="py-3 px-4 text-sm font-medium text-gray-600 text-right">{{ team.points }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p v-else class="text-gray-500">No rankings available</p>
-            </div>
-        </div>
 
         <!-- Preview Modal -->
         <TransitionRoot appear :show="showPreviewModal" as="template">
@@ -178,13 +152,12 @@
                                             </button>
                                         </div>
                                     </div>
-
                                     <div class="mt-4 max-h-[70vh] overflow-y-auto preview-content">
                                         <!-- Regular Rankings -->
-                                        <template v-for="(sport, sportIndex) in filteredSports" :key="sport.id">
+                                        <template v-for="(sport) in filteredSports" :key="sport.id">
                                             <div v-for="category in getSportCategories(sport)" :key="category" class="mb-8">
                                                 <h3 class="text-xl font-semibold mb-4">{{ sport.sport?.name }} {{ category }}</h3>
-                                                <div v-if="getSportRankings(sport.id, category).length > 0" class="mb-6">
+                                                <div v-if="getSportRankings(sport.id).length > 0" class="mb-6">
                                                     <table class="min-w-full">
                                                         <thead>
                                                             <tr class="border-b">
@@ -194,46 +167,10 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr v-for="(team, index) in getSportRankings(sport.id, category)" 
+                                                            <tr v-for="(team) in getSportRankings(sport.id)" 
                                                                 :key="team.teamId"
                                                                 class="border-b">
-                                                                <td class="py-3 px-4">{{ index + 1 }}</td>
-                                                                <td class="py-3 px-4">
-                                                                    <div>
-                                                                        <div class="font-medium">{{ getTeamName(team.teamId).name }}</div>
-                                                                        <div class="text-sm text-gray-600">{{ getTeamName(team.teamId).college }}</div>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="py-3 px-4 text-right">{{ team.points }}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </template>
-
-                                        <!-- Variations Rankings -->
-                                        <template v-for="(variation, index) in filteredAndCompletedVariations" :key="index">
-                                            <div class="mb-8">
-                                                <h3 class="text-xl font-semibold mb-4">
-                                                    {{ getSportName(variation.assigned_sport_id) || 'Unknown Sport' }} 
-                                                    {{ variation.sport_id?.categories }} 
-                                                    - {{ variation.sport_variation_name }}
-                                                </h3>
-                                                <div v-if="getVariationRankings(variation.id).length > 0" class="mb-6">
-                                                    <table class="min-w-full">
-                                                        <thead>
-                                                            <tr class="border-b">
-                                                                <th class="text-left py-3 px-4">Rank</th>
-                                                                <th class="text-left py-3 px-4">Team</th>
-                                                                <th class="text-right py-3 px-4">Points</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(team, rankIndex) in getVariationRankings(variation.id)" 
-                                                                :key="rankIndex"
-                                                                class="border-b">
-                                                                <td class="py-3 px-4">{{ rankIndex + 1 }}</td>
+                                                                <td class="py-3 px-4">{{ team.rank }}</td>
                                                                 <td class="py-3 px-4">
                                                                     <div>
                                                                         <div class="font-medium">{{ getTeamName(team.teamId).name }}</div>
@@ -328,7 +265,7 @@ const filteredSports = computed(() => {
     }
 
     // Filter out free-for-all sports
-    sports = sports.filter(sport => sport.setup !== 'Free for All' && sport.status === 'completed');
+    sports = sports.filter(sport => sport.status === 'completed');
 
     return sports;
 });
@@ -415,8 +352,8 @@ const getSportVariations = (sportId, category) => {
 };
 
 // Get rankings from overall results
-const getSportRankings = (sportId, category) => {
-    return props.overallResult
+const getSportRankings = (sportId) => {
+    const rankings = props.overallResult
         .filter(result => result.assigned_sport_id === sportId)
         .map(result => ({
             teamId: result.assigned_team_id,
@@ -424,6 +361,11 @@ const getSportRankings = (sportId, category) => {
             points: result.points
         }))
         .sort((a, b) => a.rank - b.rank);
+
+    // Log the rankings data to the console
+    console.log('Rankings for sportId:', sportId, rankings);
+
+    return rankings;
 };
 
 // Get rankings for variations
@@ -478,12 +420,43 @@ const downloadRankingsAsPDF = () => {
     const lineHeight = 10;
     const margin = 20;
     const pageWidth = doc.internal.pageSize.width;
-    
-    // Add title
-    doc.setFontSize(16);
-    doc.text('Sports Rankings', margin, yPos);
-    yPos += lineHeight * 2;
-    
+
+    // Define paths for logos
+    const leftLogo = 'assets/logoMSU.png'; // Path to the left logo in the assets directory
+    const rightLogo = 'assets/logoMSU.png'; // Path to the right logo in the assets directory
+
+    // Add logos with reduced size
+    doc.addImage(leftLogo, 'PNG', 20, yPos - 10, 20, 20); // Adjust dimensions (x, y, width, height)
+    doc.addImage(rightLogo, 'PNG', pageWidth - 45, yPos - 10, 20, 20); // Adjust dimensions (x, y, width, height)
+
+    // Add header text
+    doc.setFontSize(14);
+    doc.setFont('times', 'bold');
+    const headerText = 'Mindanao State University at Naawan';
+    const textWidth = doc.getTextWidth(headerText);
+    const xPos = (pageWidth - textWidth) / 2; // Center alignment
+    doc.text(headerText, xPos, yPos);
+    yPos += lineHeight * 0.6; // Reduce spacing
+
+    // Add subheader text
+    doc.setFontSize(14);
+    doc.setFont('times', 'bold');
+    const subheaderText = 'Supreme Student Council';
+    const subtextWidth = doc.getTextWidth(subheaderText);
+    const subxPos = (pageWidth - subtextWidth) / 2; // Center alignment
+    doc.text(subheaderText, subxPos, yPos);
+    yPos += lineHeight * 0.6; // Reduce spacing
+
+    // Add additional subheader text
+    doc.setFontSize(12);
+    doc.setFont('times', 'normal');
+    const subHeaderText = '9023 Naawan, Misamis Oriental';
+    const subTextWidth = doc.getTextWidth(subHeaderText);
+    const subXPos = (pageWidth - subTextWidth) / 2; // Center alignment
+    doc.text(subHeaderText, subXPos, yPos);
+    yPos += lineHeight * 1.5; // Extra spacing for the next section
+
+
     // Table configuration
     const columns = ['Rank', 'Team', 'Points'];
     const columnWidths = [20, 120, 30];  // Widths for each column
@@ -505,7 +478,7 @@ const downloadRankingsAsPDF = () => {
         });
         return startY + lineHeight;
     };
-    
+
     // Add regular rankings
     filteredSports.value.forEach(sport => {
         getSportCategories(sport).forEach(category => {
@@ -557,59 +530,15 @@ const downloadRankingsAsPDF = () => {
             }
         });
     });
-    
-    // Add variations rankings with the same table format
-    filteredAndCompletedVariations.value.forEach(variation => {
-        const rankings = getVariationRankings(variation.id);
-        if (rankings.length > 0) {
-            // Check if we need a new page
-            if (yPos > 250) {
-                doc.addPage();
-                yPos = 20;
-            }
-            
-            // Add variation header
-            doc.setFontSize(14);
-            const header = `${getSportName(variation.assigned_sport_id)} ${variation.sport_id?.categories} - ${variation.sport_variation_name}`;
-            doc.text(header, margin, yPos);
-            yPos += lineHeight * 1.5;
-            
-            // Draw table header
-            yPos = drawTableHeader(yPos);
-            
-            // Add rankings in table format
-            doc.setFontSize(11);
-            rankings.forEach((team, index) => {
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                    yPos = drawTableHeader(yPos);
-                }
-                
-                const teamName = getTeamName(team.teamId);
-                let xPos = margin;
-                
-                // Draw row background (alternating colors)
-                if (index % 2 === 0) {
-                    doc.setFillColor(252, 252, 252);
-                    doc.rect(xPos, yPos - 7, columnWidths.reduce((a, b) => a + b, 0), 10, 'F');
-                }
-                
-                // Add row data
-                doc.setTextColor(0); // Ensure text is black
-                doc.text(`${index + 1}`, xPos + 2, yPos);
-                doc.text(`${teamName.name} (${teamName.college})`, xPos + columnWidths[0] + 2, yPos);
-                doc.text(`${team.points}`, xPos + columnWidths[0] + columnWidths[1] + 2, yPos);
-                
-                yPos += lineHeight;
-            });
-            
-            yPos += lineHeight * 1.5;
-        }
-    });
-    
+
+    yPos += lineHeight * 2; // Move down for the signature section
+    doc.setFontSize(12);
+    doc.setFont('times', 'normal');
+    doc.text('__________________________', margin, yPos); // Line for signature
+    yPos += lineHeight; // Move down for the name
+    doc.text('Authorized Signature', margin, yPos); // Text below the line
     // Save the PDF
-    doc.save('sports-rankings.pdf');
+    doc.save('PALAKASAN-Sports-Rankings.pdf');
 };
 
 //

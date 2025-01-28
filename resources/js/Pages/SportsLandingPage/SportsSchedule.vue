@@ -402,10 +402,17 @@
                             </div>
                             <div class="flex items-center space-x-2">
                             <span class="text-sm font-medium text-gray-600">Rank</span>
-                            <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold">
-                                {{ team.rank || 'N/A' }}
+                            <span 
+                            class="px-3 py-1 rounded-full text-sm font-semibold"
+                            :class="{
+                                'bg-red-50 text-red-700': team.rank === 0,
+                                'bg-blue-50 text-blue-700': team.rank > 0,
+                                'bg-gray-50 text-gray-600': !team.rank
+                            }"
+                            >
+                            {{ formatRank(team.rank) }}
                             </span>
-                            </div>
+                        </div>
                         </div>
                         </div>
                     </div>
@@ -469,6 +476,13 @@ const tabs = [
     { id: 'pending', label: 'Pending' },
     { id: 'completed', label: 'Completed' }
 ]
+
+const formatRank = (rank) => {
+  if (rank === 0) return 'Disqualified'
+  if (!rank) return 'N/A'
+  return rank
+}
+
 const allMatches = computed(() => {
     const regularMatches = props.sportMatches.map(match => ({
         ...match,

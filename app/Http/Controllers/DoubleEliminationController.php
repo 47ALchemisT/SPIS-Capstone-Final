@@ -13,6 +13,7 @@ use App\Models\Points;
 use App\Models\SportMatch;
 use App\Models\StudentAccount;
 use App\Models\StudentPlayer;
+use Illuminate\Support\Facades\Validator;
 use App\Models\UsedVenueRecord;
 use App\Models\Venue;
 use App\Models\ActivityLog;
@@ -557,6 +558,102 @@ class DoubleEliminationController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'There was an error saving the scores.');
+        }
+    }
+
+    public function storeOverallResultsFof(Request $request)
+    {
+        \Log::info('Incoming request data:', $request->all());
+    
+        try {
+            // Validate the request structure
+            if (!$request->has('data') || !$request->data['rankings']) {
+                throw new \Exception('Invalid request structure. Expected data.rankings array.');
+            }
+    
+            $rankings = $request->data['rankings'];
+            
+            // Validate each ranking entry
+            foreach ($rankings as $index => $ranking) {
+                if (!isset($ranking['assigned_sport_id'], $ranking['assigned_team_id'], $ranking['rank'], $ranking['points'])) {
+                    \Log::error('Invalid ranking entry:', ['index' => $index, 'data' => $ranking]);
+                    throw new \Exception('Invalid ranking entry at index ' . $index);
+                }
+            }
+    
+            // Validate the request data
+            $validator = Validator::make($request->data, [
+                'rankings' => 'required|array',
+                'rankings.*.assigned_sport_id' => 'required|exists:assigned_sports,id',
+                'rankings.*.assigned_team_id' => 'required|exists:assigned_teams,id',
+                'rankings.*.rank' => 'required|integer|min:1',
+                'rankings.*.points' => 'required|integer|min:0',
+            ]);
+    
+            if ($validator->fails()) {
+                \Log::error('Validation failed:', $validator->errors()->toArray());
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+    
+            DB::beginTransaction();
+    
+            // Get the sport name
+            $firstRanking = $rankings[0];
+            $assignedSport = AssignedSports::with('sport')->find($firstRanking['assigned_sport_id']);
+            
+            if (!$assignedSport) {
+                throw new \Exception('Cannot find assigned sport with ID: ' . $firstRanking['assigned_sport_id']);
+            }
+            
+            $sportName = $assignedSport->sport->name ?? 'Unknown Sport';
+    
+            // Process rankings
+            foreach ($rankings as $ranking) {
+                \Log::info('Processing ranking:', $ranking);
+                
+                $overallResult = OverallResult::updateOrCreate(
+                    [
+                        'assigned_sport_id' => $ranking['assigned_sport_id'],
+                        'assigned_team_id' => $ranking['assigned_team_id'],
+                    ],
+                    [
+                        'rank' => $ranking['rank'],
+                        'points' => $ranking['points'],
+                    ]
+                );
+                
+                \Log::info('Created/Updated overall result:', ['id' => $overallResult->id]);
+            }
+    
+            // Update sport status
+            $assignedSport->update(['status' => 'completed']);
+    
+            // Log activity
+            ActivityLog::create([
+                'description' => "Submitted final rankings for {$sportName}",
+                'type' => 'create',
+                'model_type' => 'OverallResult',
+                'model_id' => $assignedSport->id,
+                'properties' => json_encode([
+                    'action' => 'submit_overall_result',
+                    'assigned_sport_id' => $assignedSport->id,
+                    'sport_name' => $sportName,
+                    'rankings_count' => count($rankings)
+                ]),
+                'causer_type' => 'StudentAccount',
+                'causer_id' => auth()->user()->id
+            ]);
+    
+            DB::commit();
+            return redirect()->back()->with('message', 'Ranking successfully submitted');
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error in storeOverallResults:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 }

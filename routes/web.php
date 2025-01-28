@@ -136,6 +136,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/matchesDE', [DoubleEliminationController::class, 'store'])->name('matches.store');
     Route::post('/sport-variations', [FreeForAllController::class, 'store'])->name('sport-variations.store');
     Route::post('/generate-teams', [FreeForAllController::class, 'generateTeams'])->name('generate-teams');
+    Route::delete('/sport-variations/{id}/destroy', [FreeForAllController::class, 'destroy'])->name('variation.destroy');
     Route::put('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');
     Route::post('/resultsSE', [SingleEliminationController::class, 'storeResult'])->name('results.store');
     Route::post('/resultsDE', [DoubleEliminationController::class, 'storeResult'])->name('results.store');
@@ -146,6 +147,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::patch('/sport-variations/{sportVariation}/update-time', [FreeForAllController::class, 'updateTime'])->name('sport-variations.update-time');
     Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
     Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
+    Route::post('/overall-results-fof', [DoubleEliminationController::class, 'storeOverallResultsFof'])->name('overall-resultsFof.store');
     Route::post('/palakasan/{id}/emergency-cancel', [OnePalakasanController::class, 'emergencyCancel'])->name('palakasan.emergency-cancel');
     Route::post('/palakasan/conclude', [OnePalakasanController::class, 'concludePalakasan'])->name('palakasan.conclude');
     Route::patch('/assigned-sports/{id}/update-admin-status', [FreeForAllController::class, 'updateStatusAdmin'])->name('assigned-sports.update-admin-status');
@@ -182,7 +184,7 @@ Route::middleware(['web', 'auth', 'facilitatorMiddleware'])->group(function () {
     Route::patch('/sport-variations/{sportVariation}/ranks', [FreeForAllController::class, 'updateRanks'])->name('sport-variations.update-ranks');
     Route::post('/overall-results', [DoubleEliminationController::class, 'storeOverallResults'])->name('overall-results.store');
     Route::post('/results/store', [RoundRobinController::class, 'storeResult'])->name('resultsRR.store');
-
+    Route::post('/overall-results-fof', [DoubleEliminationController::class, 'storeOverallResultsFof'])->name('overall-resultsFof.store');
 
     Route::get('sportview/{sport}/{facilitator}', function ($sport, $facilitator) {
         $sportModel = AssignedSports::findOrFail($sport);

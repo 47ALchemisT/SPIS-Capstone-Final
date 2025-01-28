@@ -51,7 +51,6 @@
               <!--Buttons-->
               <button
                 @click="openModal(false)"
-                :disabled="latestPalakasan?.status !== 'pending'"
                 type="button"
                 class="inline-flex items-center gap-2 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 font-medium rounded-lg px-4 py-2.5 transition-all duration-200 shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70"
               >
@@ -83,12 +82,10 @@
                       <h3 class="text-base font-medium text-gray-900">{{ point.type }}</h3>
                       <div class="flex items-center gap-2">
                         <button 
-                        :disabled="latestPalakasan?.status !== 'pending'"
                         @click="openModal(true, point)" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
                           <i class="fas fa-edit"></i>
                         </button>
                         <button 
-                        :disabled="latestPalakasan?.status !== 'pending'"
                         @click="confirmDelete(point.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
                           <i class="fa-regular fa-trash-can"></i>
                         </button>

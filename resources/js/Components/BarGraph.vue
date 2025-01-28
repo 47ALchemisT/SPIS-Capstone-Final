@@ -69,12 +69,8 @@ const teamRankings = computed(() => {
     );
     const overallPoints = teamOverallResults.reduce((sum, result) => sum + (result.points || 0), 0);
     
-    const teamVariationResults = props.variationResult.filter(
-      result => result.sport_variation_team_id === team.id
-    );
-    const variationPoints = teamVariationResults.reduce((sum, result) => sum + (result.points || 0), 0);
-    
-    const totalPoints = overallPoints + variationPoints;
+
+    const totalPoints = overallPoints;
     
     return {
       ...team,

@@ -16,9 +16,7 @@
                             Return
                         </button>
                     </div>
-
         </div>
-
 
         <!-- Tags Section -->
         <div class="flex items-center text-gray-600 gap-2">
@@ -26,7 +24,7 @@
             <span class="text-sm">•</span>
             <p class=" text-sm">{{ sport.type }}</p>
             <span class="text-sm">•</span>
-            <p class=" text-sm">{{ sport.status }}</p>
+            <p class=" text-sm capitalize">{{ sport.status }}</p>
         </div>
 
         <!-- Progress Bar -->
@@ -43,6 +41,130 @@
           </div>
 
         </div>
+        
+        <div class="w-full pt-4 grid grid-cols-4 gap-6">
+          <!-- Rankings Section -->
+          <div class="col-span-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900">
+                  {{ progressPercentage < 100 ? 'Initial Rankings' : 'Final Rankings' }}
+                </h3>
+                <span 
+                  v-if="progressPercentage < 100" 
+                  class="inline-block mt-1 text-xs font-medium bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded"
+                >
+                  In Progress
+                </span>
+              </div>
+              <div>
+                <button
+                  v-if="!(progressPercentage < 100 || sport.status === 'completed')"
+                  @click="openRankingModal"
+                  class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                >
+                  <svg 
+                    class="w-4 h-4 mr-1 inline-block" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Submit
+                </button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-hidden">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-600 text-center uppercase">Rank</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-600 text-left uppercase">Team</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-600 text-left uppercase">College</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-600 text-center uppercase">Points</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                  <tr
+                    v-for="(entry, index) in sortedTeams"
+                    :key="entry.teamId"
+                    class="hover:bg-gray-50"
+                  >
+                    <td class="px-6 py-4 text-center">
+                      <div
+                        v-if="rankedTeams[index]"
+                        class="inline-flex items-center justify-center h-8 w-8 rounded-full text-sm font-semibold"
+                        :class="{
+                          'bg-yellow-100 text-yellow-800': rankedTeams[index].rank === 1,
+                          'bg-gray-100 text-gray-800': rankedTeams[index].rank === 2,
+                          'bg-orange-100 text-orange-800': rankedTeams[index].rank > 2
+                        }"
+                      >
+                        {{ rankedTeams[index].rank }}
+                      </div>
+                      <span v-else class="text-sm text-gray-500">Unranked</span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-sm font-medium text-gray-900">{{ entry.teamName }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-sm text-gray-600">{{ entry.collegeName }}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                      <div class="text-sm font-semibold text-gray-900">{{ entry.points }}</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pointing System -->
+          <div class="col-span-1 bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Pointing System</h3>
+            <div class="space-y-3">
+              <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                <li class="grid grid-cols-2">
+                  <span>1st Place</span>
+                  <span>12 Points</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>2nd Place</span>
+                  <span>10 Points</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>3rd Place</span>
+                  <span>8 Points</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>4th Place</span>
+                  <span>6 Points</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>5th Place</span>
+                  <span>4 Points</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>6th Place</span>
+                  <span>2 Points</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>Non-Finisher</span>
+                  <span>1 Point</span>
+                </li>
+                <li class="grid grid-cols-2">
+                  <span>No Player</span>
+                  <span>0 Points</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
 
         <nav class="flex relative justify-between mt-4  items-center">
           <div class="flex gap-2 rounded-lg ">
@@ -61,7 +183,7 @@
                             {{ tab.charAt(0).toUpperCase() + tab.slice(1) }}
                     </button>
                   </div>
-              </div>
+          </div>
         </nav>
 
         <div class="mt-4">
@@ -71,10 +193,10 @@
               <div v-if="sportVariations.length === 0" class="text-gray-500">
                 No variations added yet.
               </div>
-              <ul v-else class="space-y-4">
+              <ul v-else class="grid grid-cols-1 sm:grid-cols-1 gap-4">
                 <li v-for="variation in sportVariations" 
                   :key="variation.id" 
-                  class="pb-4 border p-4 border-gray-300 rounded-lg"
+                  class="border p-4 border-gray-300 rounded-lg"
                   :class="{
                     'bg-gray-50': latestPalakasan?.status?.toLowerCase() === 'completed',
                     'bg-green-50 border-green-400': variation.status?.toLowerCase() === 'completed'
@@ -126,15 +248,17 @@
                       <thead>
                         <tr>
                           <th class="px-4 py-2 text-left" :class="{ 'bg-green-100': variation.status?.toLowerCase() === 'completed' }">Team</th>
-                          <th class="px-4 py-2 text-center" :class="{ 'bg-green-100': variation.status?.toLowerCase() === 'completed' }">Rank</th>
+                          <th class="px-4 py-2 text-left" :class="{ 'bg-green-100': variation.status?.toLowerCase() === 'completed' }">Rank</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-for="match in getSortedMatches(getVariationMatches(variation.id))" 
                             :key="match.id" 
                             class="border-b">
-                          <td class="px-4 py-2">{{ getTeamName(match.sport_variation_team_id) }}</td>
-                          <td class="px-4 py-2 text-center">{{ match.rank || '--' }}</td>
+                          <td class="px-4 py-2 text-left">{{ getTeamName(match.sport_variation_team_id) }}</td>
+                          <td class="px-4 py-2 text-left">
+                            {{ match.rank === '0' ? 'Disqualified' : (match.rank ? formatRank(match.rank) : '--') }}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -148,7 +272,7 @@
           </div>
         </div>
 
-        <!-- Ranking Modal -->
+        <!-- Ranking Modal-->
         <div v-if="showRankModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div class="relative p-4 w-full max-w-[32rem] max-h-full">
             <div class="relative bg-white rounded-lg shadow">
@@ -167,32 +291,32 @@
                 <div class="mt-4 p-2 bg-gray-100 rounded-md border border-gray-300">
                   <table class="w-full text-sm">
                     <thead>
-                      <tr>
+                      <tr class="grid grid-cols-3">
                         <th class="px-4 py-2 font-medium text-left">Team</th>
                         <th class="px-4 py-2 font-medium text-left">Rank</th>
                         <th class="px-4 py-2 font-medium text-left">Points</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="match in sortedMatches" :key="match.id">
+                      <tr v-for="match in sortedMatches" :key="match.id" class="grid grid-cols-3">
                         <td class="px-4 py-2 w-72">{{ getTeamName(match.sport_variation_team_id) }}</td>
-                        <td class="px-4 py-2 w-full">
+                        <td class="px-4 py-2 w-36">
                           <select 
                             v-model="rankUpdates[match.id].rank"
+                            @change="setPoints(match.id)" 
                             class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
                             <option value="">Select</option>                              
-                            <option value="10">Disqualified</option>
                             <option 
                               v-for="rank in availableRanks(match.id)" 
                               :key="rank"
                               :value="rank"
                             >
-                              {{ formatRank(rank) }}
+                              {{ rank === '0' ? 'No Player' : (rank === '10' ? 'Non-Finisher' : formatRank(rank)) }}
                             </option>
                           </select>
                         </td>
-                        <td class="px-4 py-2 w-full ">
+                        <td class="px-4 py-2 w-auto ">
                           <input 
                             type="number"
                             v-model="rankUpdates[match.id].points"
@@ -217,7 +341,7 @@
                   </button>
                   <button 
                     @click="openValidationModal"
-                    :disabled="!isValidRankSelection"
+                    :disabled="!isAnyFieldFilled" 
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 disabled:opacity-50"
                   >
                     Validate
@@ -226,8 +350,137 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> 
 
+        <div
+          v-if="showRankingModal"
+          class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div class="relative p-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="relative bg-white rounded-lg shadow">
+              <!-- Header -->
+              <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-xl font-semibold text-gray-900">
+                  Set Rankings and Points
+                </h3>
+                <button
+                  @click="closeRankingModal"
+                  class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg p-2 inline-flex items-center"
+                >
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Info Section -->
+              <div class="p-4 bg-blue-50 border-b">
+                <div class="flex items-start space-x-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 text-blue-600 mt-0.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                  </svg>
+                  <div>
+                    <h4 class="font-medium text-blue-900 mb-1">
+                      Understanding Points Calculation
+                    </h4>
+                    <p class="text-sm text-blue-800">
+                      Teams are ranked based on their total points, then assigned final
+                      points according to their position. This helps normalize scores
+                      across different rounds and ensures fair progression in the
+                      tournament.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Content -->
+              <form @submit.prevent="submitRankings" class="p-4">
+                <div class="overflow-x-auto">
+                  <table class="w-full">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th
+                          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Teams
+                        </th>
+                        <th
+                          class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Accumulated Points
+                        </th>
+                        <th class="w-8"></th>
+                        <th
+                          class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Final Points
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr
+                          v-for="(team, index) in rankedTeams"
+                          :key="team.teamId"
+                          class="hover:bg-gray-50"
+                        >
+                          <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                            {{ team.teamName }}
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-center font-medium text-gray-900">
+                            {{ team.points }}
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-center text-gray-900">
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-center font-medium text-blue-600">
+                            {{ getPoints(index) }}
+                          </td>
+                        </tr>
+                      </tbody>
+
+                  </table>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-3 mt-6">
+                  <button
+                    type="button"
+                    @click="closeRankingModal"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Submit Rankings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div>
+
+        </div>
         <!-- Validation Modal -->
         <div v-if="showValidationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div class="relative p-4 w-full max-w-[32rem] max-h-full">
@@ -310,6 +563,7 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/Layout/DashboardLayoutF.vue';
 import PlayersDisplay from '@/Components/PlayersDisplay.vue';
 import SuccessModal from '@/Components/SuccessModal.vue';
+import VariationPointSummary from '@/Components/VariationPointSummary.vue';
 
 const props = defineProps({
   players: {
@@ -348,11 +602,15 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  variationMatches: {
+    type: Array,
+    default: () => []
+  },
   venueRecords: {
     type: Array,
     default: () => []
   },
-  facilitator: Object,
+  facilitator: [Array, Object],
   majorPoints: {
     type: Array,
     default: () => []
@@ -361,10 +619,28 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  latestPalakasan: {
-    type: Array
-  }
 });
+
+const pointsType = computed(() => {
+  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+});
+
+const getPoints = (index) => {
+  const rankedTeam = rankedTeams.value[index]; // Access the team from rankedTeams
+
+  if (!rankedTeam || !pointsType.value || !Array.isArray(pointsType.value)) {
+    return 'No Points'; // Handle invalid cases
+  }
+
+  // Find matching pointsType by rank
+  const matchingPointsType = pointsType.value.find(
+    (point) => point.rank === rankedTeam.rank
+  );
+
+  return matchingPointsType ? matchingPointsType.points : 'No Points';
+};
+
+console.log('Points Type:', pointsType.value);
 
 const showSuccessModal = ref(false);
 const successMessage = ref('');
@@ -382,6 +658,67 @@ const progressPercentage = computed(() => totalMatches.value > 0 ? (completedMat
 const hasValidSignature = ref(false);
 const signaturePadContainer = ref(null);
 const signaturePad = ref(null);
+
+// Calculate accumulated points with separated team and college information
+const accumulatedPoints = computed(() => {
+  return props.variationMatches.reduce((acc, match) => {
+    const team = match.assigned_team_variation_i_d;
+    const teamId = team?.id || `unknown-${Math.random()}`; // Unique identifier for each team
+    const teamName = team?.assigned_team_name || 'Unknown Team';
+    const collegeName = team?.college?.name || 'Unknown College';
+    const points = match.points || 0;
+
+    if (!acc[teamId]) {
+      acc[teamId] = {
+        teamId,
+        teamName,
+        collegeName,
+        points: 0
+      };
+    }
+
+    acc[teamId].points += points;
+    return acc;
+  }, {});
+});
+
+const rankedTeams = computed(() => {
+  const teams = Object.values(accumulatedPoints.value);
+
+  // Sort teams by points in descending order
+  teams.sort((a, b) => b.points - a.points);
+
+  let currentRank = 1;
+  let previousPoints = null;
+  let skippedRanks = 0; // To account for ties
+
+  return teams.map((team, index) => {
+    if (team.points === previousPoints) {
+      // If points are tied, assign the same rank as the previous team
+      skippedRanks++;
+    } else {
+      // If points are not tied, calculate rank based on the index and skippedRanks
+      currentRank = index + 1;
+      currentRank -= skippedRanks; // Adjust rank based on skipped ranks
+      skippedRanks = 0; // Reset skipped ranks for the next group
+    }
+
+    previousPoints = team.points;
+
+    // Assign the rank to the team
+    return { ...team, rank: currentRank };
+  });
+});
+
+console.log('Ranked Teams:', rankedTeams.value);
+
+
+// Sort teams by points and convert to array for easier template rendering
+const sortedTeams = computed(() => {
+  return Object.values(accumulatedPoints.value)
+    .sort((a, b) => b.points - a.points);
+});
+
 
 const rankUpdateForm = useForm({
   matches: [],
@@ -418,6 +755,23 @@ const closeRankModal = () => {
   rankUpdates.value = {};
   rankUpdateError.value = '';
   rankUpdateForm.reset();
+};
+
+const getSortedMatches = (matches) => {
+  return [...matches].sort((a, b) => {
+    if (a.rank === '0' && b.rank !== '0') return 1; // Move Disqualified to the end
+    if (b.rank === '0' && a.rank !== '0') return -1; // Move Disqualified to the end
+    if (a.rank && b.rank) return a.rank - b.rank; // Sort by rank
+    if (a.rank) return -1; // If a has a rank but b doesn't, a comes first
+    if (b.rank) return 1; // If b has a rank but a doesn't, b comes first
+    return 0; // If neither has a rank, maintain order
+  });
+};
+
+const formatRank = (rank) => {
+  const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
+  const suffix = suffixes[rank] || 'th'; // Default to 'th' for all other numbers
+  return `${rank}${suffix} place`;
 };
 //
 const isMatchTimeReached = (variation) => {
@@ -484,12 +838,14 @@ const getTeamName = (teamId) => {
   return team ? team.assigned_team_name : 'Unknown team';
 };
 
-const currentSportTeams = computed(() => {
-  return props.teams.filter(team => team.palakasan_id === props.sport.palakasan_sport_id);
+const isAnyFieldFilled = computed(() => {
+  return Object.values(rankUpdates.value).some(match => 
+    match.rank !== '' || match.points !== ''
+  );
 });
 
-const pointsToUse = computed(() => {
-  return props.sport.type === 'Major' ? props.majorPoints : props.minorPoints;
+const currentSportTeams = computed(() => {
+  return props.teams.filter(team => team.palakasan_id === props.sport.palakasan_sport_id);
 });
 
 const sortedMatches = computed(() => {
@@ -600,16 +956,19 @@ onMounted(() => {
 
 
 const initSignaturePad = () => {
-  const canvas = document.createElement('canvas');
-  canvas.width = 300;
-  canvas.height = 200;
-  signaturePadContainer.value.appendChild(canvas);
-  
-  signaturePad.value = new SignaturePad(canvas);
-  
-  // Add event listeners to update hasValidSignature
-  canvas.addEventListener('mouseup', checkSignatureValidity);
-  canvas.addEventListener('touchend', checkSignatureValidity);
+  if (signaturePadContainer.value) { // Check if the container is available
+    const canvas = document.createElement('canvas');
+    canvas.width = 300;
+    canvas.height = 200;
+    signaturePadContainer.value.appendChild(canvas);
+    
+    signaturePad.value = new SignaturePad(canvas);
+    
+    // Add event listeners to update hasValidSignature
+    canvas.addEventListener('mouseup', checkSignatureValidity);
+    canvas.addEventListener('touchend', checkSignatureValidity);
+  } else {
+  }
 };
 
 const checkSignatureValidity = () => {
@@ -650,11 +1009,9 @@ const openRankModal = (variation) => {
 };
 
 watch(() => rankUpdates.value, (newRankUpdates) => {
-  const sortedPoints = [...pointsToUse.value].sort((a, b) => b.points - a.points);
-  
-  // Get all selected ranks and sort them, excluding Desqualified
+  // Instead of using pointsToUse, directly use setPoints logic
   const selectedRanks = Object.values(newRankUpdates)
-    .filter(match => match.rank !== '' && match.rank !== '10')  // Exclude Desqualified rank
+    .filter(match => match.rank !== '' && match.rank !== '0' && match.rank !== '99')  // Exclude Disqualified rank
     .map(match => parseInt(match.rank))
     .sort((a, b) => a - b);
 
@@ -662,28 +1019,12 @@ watch(() => rankUpdates.value, (newRankUpdates) => {
   Object.keys(newRankUpdates).forEach((matchId) => {
     const rank = newRankUpdates[matchId].rank;
     if (rank !== '') {
-      // If rank is 10 (Desqualified), set points to 0
-      if (rank === '10') {
-        newRankUpdates[matchId].points = 0;
-      } else {
-        const rankIndex = selectedRanks.indexOf(parseInt(rank));
-        newRankUpdates[matchId].points = sortedPoints[rankIndex] 
-          ? sortedPoints[rankIndex].points 
-          : 0;
-      }
+      setPoints(matchId); // Call setPoints to assign points based on the rank
     }
   });
 }, { deep: true });
 
 
-const isValidRankSelection = computed(() => {
-  const selectedMatches = Object.values(rankUpdates.value);
-  const allFieldsFilled = selectedMatches.every(match => 
-    match.rank !== '' && match.points !== ''
-  );
-  const selectedRanks = new Set(selectedMatches.map(match => match.rank).filter(rank => rank !== ''));
-  return allFieldsFilled && selectedRanks.size === selectedVariationMatches.value.length;
-});
 
 const updateRanks = async () => {
   if (!signaturePad.value || !signaturePad.value.isValid()) {
@@ -772,20 +1113,7 @@ const getStatusClass = (status) => {
   return statusClasses[status?.toLowerCase()] || 'text-gray-600';
 };
 
-const formatRank = (rank) => {
-  const suffixes = { 1: 'st', 2: 'nd', 3: 'rd' };
-  const suffix = suffixes[rank] || 'th';
-  return `${rank}${suffix} place`;
-};
 
-const getSortedMatches = (matches) => {
-  return [...matches].sort((a, b) => {
-    if (a.rank && b.rank) return a.rank - b.rank;
-    if (a.rank) return -1;
-    if (b.rank) return 1;
-    return 0;
-  });
-};
 
 const getVariationMatches = (variationId) => {
   return props.sportVariationMatches
@@ -793,9 +1121,26 @@ const getVariationMatches = (variationId) => {
     .filter(match => currentSportTeams.value.some(team => team.id === match.sport_variation_team_id));
 };
 
+const setPoints = (matchId) => {
+  const rank = rankUpdates.value[matchId].rank;
+  const pointsMapping = {
+    "1": 12, 
+    "2": 10,  
+    "3": 8,  
+    "4": 6,
+    "5": 4,
+    "6": 2,
+    "10": 1,
+    "0": 0,
+  };
+
+  rankUpdates.value[matchId].points = pointsMapping[rank] || 0; 
+};
+
 const availableRanks = (matchId) => {
   const currentRanks = new Set();
   
+  // Gather current ranks for all matches except the current match
   Object.entries(rankUpdates.value).forEach(([id, data]) => {
     if (id !== matchId.toString() && data.rank) {
       currentRanks.add(data.rank.toString());
@@ -806,18 +1151,19 @@ const availableRanks = (matchId) => {
     { length: selectedVariationMatches.value.length }, 
     (_, i) => (i + 1).toString()
   );
-  
+
+  // Include Disqualified option and No Player option in available ranks
+  allRanks.push('0'); // Adding Disqualified option explicitly
+  allRanks.push('10'); // Adding No Player option explicitly
+
   return allRanks.filter(rank => 
-    !currentRanks.has(rank) || 
-    rankUpdates.value[matchId]?.rank === rank
+    rank === '0' || rank === '10' || !currentRanks.has(rank)
   );
 };
-
 
 watch(
   () => rankUpdates.value,
   () => {
-    // The computed property will automatically update the sort
   },
   { deep: true }
 );
@@ -835,11 +1181,81 @@ const updateAssignedSportStatus = async () => {
   }
 };
 
-watch(progressPercentage, (newValue) => {
-  if (newValue === 100) {
-    updateAssignedSportStatus();
+console.log('Points Type:', pointsType.value);
+
+const showRankingModal = ref(false)
+const openRankingModal = () => {
+  showRankingModal.value = true;
+};
+const closeRankingModal = () => {
+  showRankingModal.value = false;
+};
+
+const submitRankings = async () => {
+  console.log('Ranked Teams:', rankedTeams.value);
+
+  const rankings = [];
+  let currentRank = 1;
+
+  for (let i = 0; i < rankedTeams.value.length; i++) {
+    const team = rankedTeams.value[i];
+    const previousTeam = rankedTeams.value[i - 1];
+
+    // Check for a tie
+    if (i > 0 && team.rank === previousTeam.rank) {
+      // Assign the same rank as the previous team
+      rankings.push({
+        assigned_sport_id: props.sport.id,
+        assigned_team_id: team.teamId,
+        rank: rankings[rankings.length - 1].rank, // Use the rank of the previous team
+        points: getPoints(i), // Use points from getPoints method
+      });
+    } else {
+      // Assign the current rank to the team
+      rankings.push({
+        assigned_sport_id: props.sport.id,
+        assigned_team_id: team.teamId,
+        rank: currentRank, // Use the team's current rank
+        points: getPoints(i), // Use points from getPoints method
+      });
+      currentRank++; // Increment the rank for the next team
+    }
   }
-});
+
+  const payload = {
+    rankings: rankings,
+  };
+
+  console.log('Final payload:', payload);
+
+  try {
+    const response = await router.post(route('overall-resultsFof.store'), {
+      data: payload,
+      preserveScroll: true,
+      onSuccess: () => {
+        console.log('Rankings submitted successfully');
+        showSuccessModal.value = true;
+        showRankingModal.value = false; // Ensure the modal closes
+        successMessage.value = 'Rankings submitted successfully!';
+        closeRankingModal();
+        updateAssignedSportStatus();
+      },
+      onError: (errors) => {
+        console.error('Submission errors:', errors);
+        const errorMessage = typeof errors === 'string' 
+          ? errors 
+          : Object.values(errors).flat().join('\n');
+        alert('Error submitting rankings: ' + errorMessage);
+      }
+    });
+
+    console.log('Response:', response);
+  } catch (error) {
+    console.error('Critical error:', error);
+    alert('An unexpected error occurred. Please try again.');
+  }
+};
+
 </script>
 
 <style scoped>
