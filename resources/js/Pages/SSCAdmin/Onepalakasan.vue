@@ -1594,7 +1594,7 @@
     };
 
     const goToDocumentation = () => {
-    router.get(route('palakasan.documentation'));
+        router.get(route('palakasan.documentation'));
     };
 
     const form3 = useForm({
