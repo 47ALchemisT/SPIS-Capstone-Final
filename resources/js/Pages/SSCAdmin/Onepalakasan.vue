@@ -1487,7 +1487,7 @@
     import Tooltip from '@/Components/Tooltip.vue';
     import PalakasanRankings from '@/Components/PalakasanStandings.vue'; 
     import Graph from '@/Components/BarGraph.vue';  // Adjust the path as necessary
-    import Settings from '@/Components/Settings.vue';
+    import Settings from '@/Components/settings.vue';
     import OverallSchedules from '@/Components/OverallSchedules.vue';
     import SportsRankings from '@/Components/SportsRankings.vue';
     import SuccessModal from '@/Components/SuccessModal.vue';
