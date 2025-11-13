@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Palakasan;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; 
 use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
+        
         Inertia::share([
             'sharedPalakasans' => fn () => Palakasan::all(),
         ]);

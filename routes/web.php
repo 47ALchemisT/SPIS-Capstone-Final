@@ -128,7 +128,7 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/palakasan/{palakasan}/continue', [OnePalakasanController::class, 'continuePalakasan'])->name('palakasan.continue');
 
     Route::resource('student', StudentController::class);
-    Route::post('student/store', [StudentController::class, 'store'])->name('student.store');
+    //Route::post('student/store', [StudentController::class, 'store'])->name('student.store');
     Route::post('student/import', [StudentController::class, 'import'])->name('student.import');
 
     Route::get('details/palakasan-history/{palakasan}', [PalakasanHistoryController::class, 'show'])->name('palakasanHistory.show');
@@ -138,8 +138,8 @@ Route::middleware(['web', 'auth', 'adminMiddleware'])->group(function () {
     Route::post('/generate-teams', [FreeForAllController::class, 'generateTeams'])->name('generate-teams');
     Route::delete('/sport-variations/{id}/destroy', [FreeForAllController::class, 'destroy'])->name('variation.destroy');
     Route::put('/matches/update-date-time', [SingleEliminationController::class, 'updateDateTime'])->name('matches.updateDateTime');
-    Route::post('/resultsSE', [SingleEliminationController::class, 'storeResult'])->name('results.store');
-    Route::post('/resultsDE', [DoubleEliminationController::class, 'storeResult'])->name('results.store');
+    Route::post('/resultsSE', [SingleEliminationController::class, 'storeResult'])->name('results-se.store');
+    Route::post('/resultsDE', [DoubleEliminationController::class, 'storeResult'])->name('results-de.store');
 
     Route::post('/round-robin/store', [RoundRobinController::class, 'store_round_robin'])->name('round-robin.store');
     Route::post('/matches/update-date-time', [RoundRobinController::class, 'updateDateTime'])->name('matches.updateDateTimeRR');
